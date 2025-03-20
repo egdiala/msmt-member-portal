@@ -39,6 +39,7 @@
   --color-text-2: var(--text-2);
   --color-text-tertiary: var(--text-tertiary);
   --color-button-primary: var(--button-primary);
+  --color-input-field: var(--input-field);
   --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
@@ -62,6 +63,7 @@
   --text-2: #354959;
   --text-tertiary: #808D97;
   --button-primary: #007BFF;
+  --input-field: #F6F8F9;
   --modal-shadow: 0px 10px 153px -32px #00000033;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
