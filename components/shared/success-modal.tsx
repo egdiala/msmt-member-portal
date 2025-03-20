@@ -7,15 +7,17 @@ interface ISuccessModal {
   className?: string;
   successMessage: string;
   isOpen: boolean;
+  handleClose: () => void;
 }
 export const SuccessModal = ({
   className,
   successMessage,
   isOpen,
+  handleClose,
   ...props
 }: ISuccessModal) => {
   return (
-    <Dialog defaultOpen={true}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogPortal data-slot="dialog-portal">
         <DialogOverlay />
         <DialogPrimitive.Content
