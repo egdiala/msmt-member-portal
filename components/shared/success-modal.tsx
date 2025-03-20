@@ -6,10 +6,12 @@ import { Dialog, DialogOverlay, DialogPortal, DialogTitle } from "../ui";
 interface ISuccessModal {
   className?: string;
   successMessage: string;
+  isOpen: boolean;
 }
 export const SuccessModal = ({
   className,
   successMessage,
+  isOpen,
   ...props
 }: ISuccessModal) => {
   return (
