@@ -1,17 +1,78 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/components/query-provider";
+import { cn } from "@/lib/utils";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const alliance = localFont({
+  src: [
+    {
+      path: './font/AllianceNo1-Black.woff2',
+      weight: '900',
+      style: 'normal',
+    },
+    {
+      path: './font/AllianceNo1-BlackItalic.woff2',
+      weight: '900',
+      style: 'italic',
+    },
+    {
+      path: './font/AllianceNo1-ExtraBold.woff2',
+      weight: '800',
+      style: 'normal',
+    },
+    {
+      path: './font/AllianceNo1-ExtraBoldItalic.woff2',
+      weight: '800',
+      style: 'italic',
+    },
+    {
+      path: './font/AllianceNo1-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: './font/AllianceNo1-BoldItalic.woff2',
+      weight: '700',
+      style: 'italic',
+    },
+    {
+      path: './font/AllianceNo1-SemiBold.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: './font/AllianceNo1-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: './font/AllianceNo1-MediumItalic.woff2',
+      weight: '500',
+      style: 'italic',
+    },
+    {
+      path: './font/AllianceNo1-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './font/AllianceNo1-RegularItalic.woff2',
+      weight: '400',
+      style: 'italic',
+    },
+    {
+      path: './font/AllianceNo1-Light.woff2',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: './font/AllianceNo1-LightItalic.woff2',
+      weight: '300',
+      style: 'italic',
+    },
+  ],
+})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,7 +87,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={cn(alliance.className, "antialiased")}
       >
         <QueryProvider>
           {children}
