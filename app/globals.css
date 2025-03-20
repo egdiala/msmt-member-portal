@@ -37,6 +37,8 @@
   --color-grey-400: var(--grey-400);
   --color-text-1: var(--text-1);
   --color-text-2: var(--text-2);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-button-primary: var(--button-primary);
   --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
@@ -46,6 +48,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --shadow-modal-shadow: var(--modal-shadow);
 }
 
 :root {
@@ -57,6 +60,9 @@
   --grey-400: #F2F3F5;
   --text-1: #00050A;
   --text-2: #354959;
+  --text-tertiary: #808D97;
+  --button-primary: #007BFF;
+  --modal-shadow: 0px 10px 153px -32px #00000033;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
