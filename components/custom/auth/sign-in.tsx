@@ -14,7 +14,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { FloatingInput } from "@/components/shared/floating-input";
 import { signInSchema } from "@/lib/validations";
 import { IconEye, IconEyeOff, IconEmail } from "@/components/icons";
 
@@ -32,7 +32,7 @@ export default function SignIn() {
   async function onSubmit(values: z.infer<typeof signInSchema>) {}
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto w-full px-1">
+    <div className="space-y-6 max-w-[650px] mx-auto w-full px-1">
       <div className="space-y-1 text-center">
         <h1 className="lg:text-2xl font-bold">Sign In</h1>
         <p className="text-sm text-brand-2">
@@ -41,7 +41,7 @@ export default function SignIn() {
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="bg-white w-full rounded-lg p-4 lg:p-6 space-y-4">
+          <div className="bg-white w-full rounded-xl p-4 lg:p-6 space-y-4">
             <FormField
               control={form.control}
               name="email"
@@ -49,8 +49,8 @@ export default function SignIn() {
                 <FormItem>
                   <FormControl>
                     <div className="relative">
-                      <Input
-                        placeholder="Email"
+                      <FloatingInput
+                        label="Email"
                         type="email"
                         autoComplete="email"
                         className=" pr-10"
@@ -72,8 +72,8 @@ export default function SignIn() {
                 <FormItem>
                   <FormControl>
                     <div className="relative">
-                      <Input
-                        placeholder="Password"
+                      <FloatingInput
+                        label="Password"
                         type={showPassword ? "text" : "password"}
                         autoComplete="current-password"
                         className=" pr-10"
