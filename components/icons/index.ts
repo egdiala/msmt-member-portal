@@ -11,7 +11,6 @@ export * from "./icon-bolt";
 export * from "./icon-book-open";
 export * from "./icon-bookmark";
 export * from "./icon-bus-front";
-export * from "./icon-button-check-anime";
 export * from "./icon-calendar";
 export * from "./icon-calendar-check2";
 export * from "./icon-camera";
