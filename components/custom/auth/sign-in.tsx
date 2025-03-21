@@ -116,7 +116,7 @@ export default function SignIn() {
           </div>
         </form>
       </Form>
-      <div className="text-center text-sm font-medium">
+      <div className="text-center text-sm font-semibold">
         <span className="text-brand-btn-secondary">
           Do not have an account?{" "}
         </span>
