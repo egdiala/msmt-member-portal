@@ -109,3 +109,5 @@ export * from "./icon-video";
 export * from "./icon-wallet";
 export * from "./icon-whatsapp";
 export * from "./icon-x";
+export * from "./icon-calendar-check-2";
+export * from "./icon-medical-savings";
