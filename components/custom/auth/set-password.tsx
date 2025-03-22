@@ -15,56 +15,33 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { FloatingInput } from "@/components/shared/floating-input";
-import { signInSchema } from "@/lib/validations";
-import { IconEye, IconEyeOff, IconEmail } from "@/components/icons";
+import { setNewPasswordSchema } from "@/lib/validations";
+import { IconEye, IconEyeOff } from "@/components/icons";
 
-export default function SignIn() {
+export default function SetNewPassword() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof setNewPasswordSchema>>({
+    resolver: zodResolver(setNewPasswordSchema),
     defaultValues: {
-      email: "",
       password: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof signInSchema>) {}
+  async function onSubmit(values: z.infer<typeof setNewPasswordSchema>) {}
 
   return (
     <div className="space-y-6 max-w-[650px] mx-auto w-full px-2">
       <div className="space-y-1 text-center">
-        <h1 className="lg:text-2xl font-bold">Sign In</h1>
+        <h1 className="lg:text-2xl font-bold">Set New Password</h1>
         <p className="text-sm text-brand-2">
-          Welcome Back to Care That Fits Your Life
+          Create a new password to keep your account secure.
         </p>
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="bg-white w-full rounded-xl p-4 lg:p-6 space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
-                      <FloatingInput
-                        label="Email"
-                        type="email"
-                        autoComplete="email"
-                        className=" pr-10"
-                        {...field}
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3 pointer-events-none">
-                        <IconEmail className="h-4 w-4" />
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="password"
@@ -74,7 +51,7 @@ export default function SignIn() {
                     <div className="relative">
                       <FloatingInput
                         label="Password"
-                        type={showPassword ? "text" : "password"}
+                        type="password"
                         autoComplete="current-password"
                         className=" pr-10"
                         {...field}
@@ -101,17 +78,51 @@ export default function SignIn() {
                 </FormItem>
               )}
             />
-            <Link
-              href="/reset-password"
-              className="text-sm text-brand-accent-2 underline transition-colors font-medium hover:opacity-80 "
-            >
-              Reset password
-            </Link>
+            <FormField
+              control={form.control}
+              name="confirm_password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative">
+                      <FloatingInput
+                        label="Confirm Password"
+                        type={showConfirmPassword ? "text" : "password"}
+                        autoComplete="current-password"
+                        className=" pr-10"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 inset-y-1 h-10 w-10"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <IconEyeOff className="h-4 w-4  stroke-brand-3 " />
+                        ) : (
+                          <IconEye className="h-4 w-4 stroke-brand-3 " />
+                        )}
+                        <span className="sr-only">
+                          {showConfirmPassword
+                            ? "Hide password"
+                            : "Show password"}
+                        </span>
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="flex items-center justify-center">
             <Button type="submit" className="w-fit">
-              Sign into your Account
+              Set Password
             </Button>
           </div>
         </form>

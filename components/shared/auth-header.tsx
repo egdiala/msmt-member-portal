@@ -20,7 +20,7 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
+    <header className="sticky top-0 z-50 w-full bg-[#F3F5F9] lg:border-b lg:bg-background">
       <div className="container flex mx-auto px-4 lg:px-5 h-16 items-center justify-between">
         <div className="flex items-center gap-10">
           <Image src="/assets/logo.svg" alt="Logo" width={40} height={40} />
@@ -45,12 +45,12 @@ export function SiteHeader() {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link href="/auth/sign-in">
+          <Link href="/sign-in">
             <Button variant="secondary" className="text-sm rounded-full">
               Sign In
             </Button>
           </Link>
-          <Link href="/auth/sign-up">
+          <Link href="/sign-up">
             <Button className="text-white text-sm">Sign Up</Button>
           </Link>
         </div>
@@ -109,12 +109,12 @@ export function SiteHeader() {
                 </Link>
               ))}
               <div className="flex flex-col  space-y-8">
-                <Link href="/auth/sign-up" onClick={() => setOpen(false)}>
+                <Link href="/sign-up" onClick={() => setOpen(false)}>
                   <Button className="w-full inline-block text-white">
                     Sign Up
                   </Button>
                 </Link>
-                <Link href="/auth/sign-in" onClick={() => setOpen(false)}>
+                <Link href="/sign-in" onClick={() => setOpen(false)}>
                   <Button
                     variant={"secondary"}
                     className="w-full inline-block rounded-full"
