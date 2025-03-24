@@ -16,7 +16,7 @@ export const DashboardStatCard = ({
       <h4
         className={cn(
           "text-text-2 text-xs md:text-sm overflow-hidden whitespace-nowrap text-ellipsis tracking-[-2%]",
-          index === 0 ? "w-full" : "w-[18ch]"
+          index === 0 ? "w-full" : "w-[18ch] md:w-full"
         )}
       >
         {title}

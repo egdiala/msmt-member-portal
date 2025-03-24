@@ -1,8 +1,14 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { IconCamera } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { CompleteProfileForm } from "@/components/shared";
+import { DASHBOARD } from "@/lib/routes";
 
 const CompleteProfile = () => {
+  const router = useRouter();
+
   return (
     <div className="flex items-center justify-center flex-col gap-y-8">
       <div className="text-center grid gap-y-1">
@@ -29,15 +35,10 @@ const CompleteProfile = () => {
       </div>
 
       <div className="flex justify-center gap-8 flex-col-reverse md:flex-row w-full md:w-fit">
-        <Button
-          variant="secondary"
-          className="bg-blue-400 rounded-[100px] font-semibold text-sm cursor-pointer shadow-none w-full"
-        >
+        <Button variant="secondary" onClick={() => router.push(DASHBOARD)}>
           Cancel
         </Button>
-        <Button className="bg-button-primary text-white rounded-[100px] font-semibold text-sm cursor-pointer shadow-none w-full">
-          Complete Profile
-        </Button>
+        <Button>Complete Profile</Button>
       </div>
     </div>
   );

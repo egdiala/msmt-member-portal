@@ -1,4 +1,5 @@
 "use client";
+
 import { IconDownload } from "@/components/icons";
 import {
   BreadcrumbCmp,
@@ -6,6 +7,7 @@ import {
   Searchbar,
   TableCmp,
 } from "@/components/shared";
+import { DASHBOARD } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 const Notifications = () => {
@@ -113,7 +115,7 @@ const Notifications = () => {
     <div className="grid gap-y-4">
       <BreadcrumbCmp
         breadcrumbItems={[
-          { id: 1, name: "Home", href: "/home" },
+          { id: 1, name: "Home", href: DASHBOARD },
           { id: 2, name: "Notifications" },
         ]}
       />

@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { IconTriangleAlert } from "@/components/icons";
 import {
   BookAppointmentCard,
@@ -10,8 +13,11 @@ import {
   NotificationsCard,
 } from "@/components/shared";
 import { Button } from "@/components/ui";
+import { COMPLETE_PROFILE } from "@/lib/routes";
 
 const Dashboard = () => {
+  const router = useRouter();
+
   const dashboardStats = [
     { id: 1, title: "Completed Appointments", value: 53 },
     { id: 2, title: "Upcoming Appointments", value: 53 },
@@ -40,7 +46,7 @@ const Dashboard = () => {
           </div>
 
           <div className="ml-6 md:ml-0">
-            <Button className="bg-button-primary h-[38px] rounded-[100px]">
+            <Button onClick={() => router.push(COMPLETE_PROFILE)}>
               Complete Profile
             </Button>
           </div>
