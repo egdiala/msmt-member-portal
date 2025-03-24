@@ -59,6 +59,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
               onValueChange={(value) => {
                 handleChange(value)
               }}
+              {...props}
             >
               <SelectTrigger className="pr-1.5 focus:ring-0">
                 <SelectValue>{selected?.props?.children}</SelectValue>
@@ -75,8 +76,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
             </Select>
           )
         },
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" {...props} />,
+        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" {...props} />,
       }}
       {...props}
     />
