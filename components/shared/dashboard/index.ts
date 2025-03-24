@@ -7,3 +7,4 @@ export * from "./wallet-balance-card";
 export * from "./profile-card";
 export * from "./favourite-providers-card";
 export * from "./notifications-card";
+export * from "./logout-modal";

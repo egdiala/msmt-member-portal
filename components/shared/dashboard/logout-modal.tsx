@@ -1,14 +1,11 @@
 import { Button } from "@/components/ui";
 import { Modal } from "../modal";
 
-interface IDeleteAccountModal {
+interface ILogoutModal {
   handleClose: () => void;
   isOpen: boolean;
 }
-export const DeleteAccountModal = ({
-  handleClose,
-  isOpen,
-}: IDeleteAccountModal) => {
+export const LogoutModal = ({ handleClose, isOpen }: ILogoutModal) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -16,14 +13,12 @@ export const DeleteAccountModal = ({
       showCloseButton={false}
       className="w-full md:w-[400px] grid gap-y-2"
     >
-      <h2 className="font-bold text-lg md:text-2xl tracking-[0%]">
-        Delete Your Account?
-      </h2>
+      <h2 className="font-bold text-lg md:text-2xl tracking-[0%]">Log out?</h2>
 
       <div className="grid gap-y-6">
         <p className="text-text-1 text-sm">
-          This would remove your details from MSMT and irreversible. You would
-          need to sign up again to access this platorm
+          This action would log you out. you would need to login again to access
+          this MSMT
         </p>
 
         <div className="grid grid-cols-2 gap-x-4">
@@ -35,7 +30,7 @@ export const DeleteAccountModal = ({
             Cancel
           </Button>
           <Button className="bg-button-primary text-white rounded-[100px] font-semibold text-sm cursor-pointer h-[38px]">
-            Delete Account
+            Log out
           </Button>
         </div>
       </div>

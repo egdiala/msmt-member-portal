@@ -86,7 +86,7 @@ const Profile = () => {
 
             <Button
               variant="secondary"
-              className="rounded-[100px] text-button-secondary font-semibold tracking-[-2%] bg-blue-400"
+              className="rounded-[100px] text-button-secondary font-semibold tracking-[-2%] bg-blue-400 cursor-pointer"
               onClick={() => setOpenUpdateProfileDetailsModal(true)}
             >
               <IconPen className="stroke-button-secondary" /> Edit
@@ -111,7 +111,7 @@ const Profile = () => {
 
             <Button
               variant="secondary"
-              className="rounded-[100px] text-button-secondary font-semibold tracking-[-2%] bg-blue-400"
+              className="rounded-[100px] text-button-secondary font-semibold tracking-[-2%] bg-blue-400 cursor-pointer"
               onClick={() => setOpenUpdateContactPersonDetailsModal(true)}
             >
               <IconPen className="stroke-button-secondary" /> Edit
@@ -153,7 +153,7 @@ const Profile = () => {
 
           <Button
             variant="secondary"
-            className="rounded-[100px] bg-blue-400 w-fit font-semibold tracking-[-2%]"
+            className="rounded-[100px] bg-blue-400 w-fit font-semibold tracking-[-2%] cursor-pointer"
           >
             Update Password
           </Button>
