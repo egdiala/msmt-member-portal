@@ -74,10 +74,8 @@ export const NOTIFICATION_DATA = [
 ];
 
 export const FAMILY_AND_FRIENDS_DATA = [
-  { name: "Group A", value: 400 },
-  { name: "Group B", value: 300 },
-  { name: "Group C", value: 300 },
-  { name: "Group D", value: 200 },
+  { name: "Group A", value: 55 },
+  { name: "Group B", value: 45 },
 ];
 
 export const PROFILE_ORGANISATIONS_DATA = [
