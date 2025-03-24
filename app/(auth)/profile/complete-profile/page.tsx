@@ -1,6 +1,6 @@
 import { IconCamera } from "@/components/icons";
-import { SelectCmp } from "@/components/shared";
-import { Button, Input } from "@/components/ui";
+import { Button } from "@/components/ui";
+import { CompleteProfileForm } from "@/components/shared";
 
 const CompleteProfile = () => {
   return (
@@ -25,21 +25,7 @@ const CompleteProfile = () => {
           </Button>
         </div>
 
-        <form className="bg-white rounded-2xl p-3 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-4 w-full md:w-[650px]">
-          <Input
-            placeholder="Preferred Name"
-            className="h-[50px] bg-input-field px-2 py-[15px] border-none outline-none focus-visible:ring-offset-0 focus-visible:ring-0 shadow-none"
-          />
-          <Input
-            placeholder="Phone Number"
-            className="h-[50px] bg-input-field px-2 py-[15px] border-none outline-none focus-visible:ring-offset-0 focus-visible:ring-0 shadow-none"
-          />
-          <SelectCmp selectItems={[]} placeholder={"Religion"} />
-          <SelectCmp selectItems={[]} placeholder={"Gender"} />
-          <SelectCmp selectItems={[]} placeholder={"Marital Status"} />
-          <SelectCmp selectItems={[]} placeholder={"Country"} />
-          <SelectCmp selectItems={[]} placeholder={"Preferred Language"} />
-        </form>
+        <CompleteProfileForm />
       </div>
 
       <div className="flex justify-center gap-8 flex-col-reverse md:flex-row w-full md:w-fit">
