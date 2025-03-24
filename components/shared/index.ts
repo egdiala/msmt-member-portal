@@ -7,3 +7,4 @@ export * from "./searchbar";
 export * from "./table";
 export * from "./select";
 export * from "./dashboard/index";
+export * from "./profile/index";
