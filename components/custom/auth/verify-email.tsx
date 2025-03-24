@@ -42,7 +42,7 @@ export default function VerifyEmail() {
   }, [timeLeft]);
 
   async function onSubmit(values: z.infer<typeof verifyEmailSchema>) {
-    console.log(values)
+    console.log(values);
   }
 
   const handleResendCode = async () => {};
@@ -54,11 +54,7 @@ export default function VerifyEmail() {
           <h1 className="text-lg lg:text-2xl font-bold">Verify your Email</h1>
         </div>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8
-          "
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm space-y-5">
               <div className="space-y-1">
                 <p className="font-semibold text-left text-brand-1">
@@ -82,20 +78,16 @@ export default function VerifyEmail() {
                   <FormItem className="flex flex-col items-center">
                     <FormControl>
                       <InputOTP
-                        maxLength={5}
-                        {...field}
+                        maxLength={6}
+                        value={field.value}
+                        onChange={field.onChange}
                         render={({ slots }) => (
-                          <InputOTPGroup className="gap-4">
+                          <InputOTPGroup className="gap-3 lg:gap-4 w-full">
                             {slots.map((slot, index) => (
                               <InputOTPSlot
                                 key={index}
-                                index={index}
                                 {...slot}
-                                className={` h-11 w-11 lg:h-12 lg:w-12 rounded-sm ${
-                                  index === slots.length - 1
-                                    ? "bg-input-field border-blue-200"
-                                    : ""
-                                }`}
+                                className="h-11 w-11 lg:h-12 lg:w-12 bg-input-field border-input-field focus:border-brand-accent-2 rounded-sm"
                               />
                             ))}
                           </InputOTPGroup>
