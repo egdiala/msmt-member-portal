@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { IconPen } from "@/components/icons";
 import { Button, Input } from "@/components/ui";
-import { cn } from "@/lib/utils";
 import {
   DeleteAccountModal,
   UpdateContactPersonDetailsModal,
@@ -44,24 +43,6 @@ const Profile = () => {
 
   return (
     <div className="rounded-lg md:rounded-2xl bg-white p-3 md:p-6 flex gap-x-5 w-full">
-      <div className="hidden md:inline-flex w-[227px] py-[38px] sticky top-35 h-[162px]">
-        <div className="border-l-2 border-input-field grid gap-y-3">
-          {sideActions.map((action) => (
-            <div
-              key={action.id}
-              className={cn(
-                "border-l-2 ml-[-2px] pl-3.5 text-sm tracking-[0%]",
-                action.name === "Contact Person"
-                  ? "border-button-primary text-button-primary font-medium"
-                  : "border-inherit text-text-tertiary"
-              )}
-            >
-              {action.name}
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div className="w-full md:w-calc(100%-227px) grid gap-y-4 md:gap-y-8">
         <div className="border border-divider rounded-lg p-4 md:py-4 md:px-6 w-full grid gap-y-6">
           <div className="flex justify-between">
@@ -93,7 +74,7 @@ const Profile = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {personalInfo.map((info) => (
               <div key={info.id} className="tracking-[0%]">
                 <h4 className="text-text-2 text-sm">{info.key}</h4>
@@ -118,7 +99,7 @@ const Profile = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
             {contactPerson.map((info) => (
               <div key={info.id} className="tracking-[0%]">
                 <h4 className="text-text-2 text-sm">{info.key}</h4>
