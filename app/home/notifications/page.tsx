@@ -7,7 +7,6 @@ import {
   TableCmp,
 } from "@/components/shared";
 import { cn } from "@/lib/utils";
-import { ChangeEvent } from "react";
 
 const Notifications = () => {
   const headers = [
