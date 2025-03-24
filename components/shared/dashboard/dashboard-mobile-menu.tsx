@@ -2,11 +2,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Drawer as DrawerPrimitive } from "vaul";
-import { Drawer, DrawerPortal } from "@/components/ui/drawer";
-import { IconClose } from "@/components/icons";
-import { Button } from "@/components/ui";
-import { cn } from "@/lib/utils";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { Drawer, DrawerPortal } from "@/components/ui/drawer";
+import { Button } from "@/components/ui";
+import { IconClose } from "@/components/icons";
+import { cn } from "@/lib/utils";
+import {
+  APPOINTMENTS,
+  DASHBOARD,
+  FAMILY_AND_FRIENDS,
+  NOTIFICATIONS,
+  PROFILE,
+  WALLET,
+} from "@/lib/routes";
 
 interface IDashboardMobileMenu {
   isOpen: boolean;
@@ -14,12 +22,12 @@ interface IDashboardMobileMenu {
 }
 
 const NAV_ITEMS = [
-  { id: 1, name: "Dashboard", href: "/home" },
-  { id: 2, name: "Appointments", href: "/appointments" },
-  { id: 3, name: "Wallet", href: "/wallet" },
-  { id: 4, name: "Family & Friends", href: "/family-and-friends" },
-  { id: 5, name: "Notifications", href: "/notifications" },
-  { id: 6, name: "Profile", href: "/profile" },
+  { id: 1, name: "Dashboard", href: DASHBOARD },
+  { id: 2, name: "Appointments", href: APPOINTMENTS },
+  { id: 3, name: "Wallet", href: WALLET },
+  { id: 4, name: "Family & Friends", href: FAMILY_AND_FRIENDS },
+  { id: 5, name: "Notifications", href: NOTIFICATIONS },
+  { id: 6, name: "Profile", href: PROFILE },
 ];
 export const DashboardMobileMenu = ({
   isOpen,
