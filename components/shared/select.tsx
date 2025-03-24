@@ -23,7 +23,10 @@ export const SelectCmp = ({
   return (
     <Select>
       <SelectTrigger className={cn("w-full", className)}>
-        <SelectValue placeholder={placeholder} />
+        <SelectValue
+          placeholder={placeholder}
+          className="placeholder:text-text-2"
+        />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
