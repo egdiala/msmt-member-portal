@@ -50,6 +50,7 @@ export const DashboardMobileMenu = ({
                 key={nav_item.id}
                 href={nav_item.href}
                 className="text-white text-center w-full py-4 rounded-lg border border-text-bg-3"
+                onClick={handleClose}
               >
                 {nav_item.name}
               </Link>
