@@ -27,12 +27,6 @@ const Profile = () => {
     { id: 4, key: "Relationship", value: "Mother" },
   ];
 
-  const sideActions = [
-    { id: 1, name: "Basic Details" },
-    { id: 2, name: "Contact Person" },
-    { id: 3, name: "Security" },
-  ];
-
   const [openUpdateProfileDetailsModal, setOpenUpdateProfileDetailsModal] =
     useState(false);
   const [
