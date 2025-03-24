@@ -27,7 +27,7 @@ export const FamilyAndFriendsCard = () => {
   } satisfies ChartConfig;
 
   return (
-    <div className="bg-white w-full md:w-[301px] grid gap-y-[29px] max-w-full md:max-w-[301px] h-[370px] rounded-2xl px-4 py-6">
+    <div className="bg-white w-full md:w-[48%] 3xl:w-[301px] grid gap-y-[29px] max-w-full md:max-w-[48%] 3xl:max-w-[301px] h-[370px] rounded-2xl px-4 py-6">
       <Button className="bg-blue-400 text-button-primary font-semibold rounded-[100px] w-fit">
         Family & Friends
         <IconExternalLink className="stroke-button-primary" />

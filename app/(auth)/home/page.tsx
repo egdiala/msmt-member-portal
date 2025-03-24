@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { IconTriangleAlert } from "@/components/icons";
+import { useRouter } from "next/navigation";
 import {
   BookAppointmentCard,
   DashboardStatCard,
@@ -53,11 +53,11 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {dashboardStats.map((stat, index) => (
           <div
             key={stat.id}
-            className={index === 0 ? "col-span-2 md:col-span-1" : "col-span-1"}
+            className={index === 0 ? "col-span-2 lg:col-span-1" : "col-span-1"}
           >
             <DashboardStatCard
               title={stat.title}
@@ -68,14 +68,14 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col md:flex-row gap-5 items-center">
+      <div className="flex flex-col justify-center xl:justify-normal md:flex-row gap-5 items-center flex-wrap 3xl:flex-nowrap">
         <BookAppointmentCard />
         <UpcomingAppointmentCard />
         <WalletBalanceCard />
         <FamilyAndFriendsCard />
       </div>
 
-      <div className="flex flex-col md:flex-row gap-[21px] items-center">
+      <div className="flex flex-col justify-center xl:justify-normal md:flex-row gap-[21px] items-center flex-wrap 3xl:flex-nowrap">
         <ProfileCard />
         <FavouriteProvidersCard />
         <NotificationsCard />

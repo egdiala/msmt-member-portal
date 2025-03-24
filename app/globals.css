@@ -62,6 +62,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --shadow-modal-shadow: var(--modal-shadow);
+  --breakpoint-3xl: 1400px;
 }
 
 :root {
