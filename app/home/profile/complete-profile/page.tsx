@@ -12,7 +12,7 @@ const CompleteProfile = () => {
         </p>
       </div>
 
-      <div className="grid gap-y-5 w-full justify-center">
+      <div className="grid gap-y-5 w-full md:justify-center">
         <div className="flex items-center justify-center flex-col">
           <div className="border border-text-tertiary rounded-full size-[100px] bg-white"></div>
           <Button
@@ -41,14 +41,14 @@ const CompleteProfile = () => {
         </form>
       </div>
 
-      <div className="flex justify-center gap-x-8">
+      <div className="flex justify-center gap-8 flex-col-reverse md:flex-row w-full">
         <Button
           variant="secondary"
-          className="bg-blue-400 rounded-[100px] font-semibold text-sm cursor-pointer shadow-none"
+          className="bg-blue-400 rounded-[100px] font-semibold text-sm cursor-pointer shadow-none w-full"
         >
           Cancel
         </Button>
-        <Button className="bg-button-primary text-white rounded-[100px] font-semibold text-sm cursor-pointer shadow-none">
+        <Button className="bg-button-primary text-white rounded-[100px] font-semibold text-sm cursor-pointer shadow-none w-full">
           Complete Profile
         </Button>
       </div>
