@@ -105,7 +105,7 @@ export default function SignIn() {
             />
             <Link
               href="/reset-password"
-              className="text-sm text-brand-accent-2 underline transition-colors font-medium hover:opacity-80 "
+              className="text-sm text-brand-1 underline transition-colors font-medium hover:opacity-80 "
             >
               Reset password
             </Link>
