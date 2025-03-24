@@ -16,11 +16,10 @@ import {
 } from "@/components/ui";
 import {
   DeleteAccountModal,
-  FloatingInput,
-  RenderIf,
   UpdateContactPersonDetailsModal,
   UpdateProfileDetailsModal,
-} from "@/components/shared";
+} from "@/components/custom";
+import { FloatingInput, RenderIf } from "@/components/shared";
 import { profileSecuritySchema } from "@/lib/validations";
 
 const Profile = () => {

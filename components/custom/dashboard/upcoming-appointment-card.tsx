@@ -83,7 +83,10 @@ export const UpcomingAppointmentCard = () => {
       </div>
 
       <div className="flex justify-between pt-5">
-        <Button variant="secondary" className="rounded-[100px]">
+        <Button
+          variant="secondary"
+          className="rounded-[100px] text-button-primary gap-x-1"
+        >
           All Appointments
           <IconExternalLink className="stroke-button-primary" />
         </Button>

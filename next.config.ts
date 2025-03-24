@@ -8,7 +8,10 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   images: {
-    remotePatterns: [{ hostname: "plus.unsplash.com" }],
+    remotePatterns: [
+      { hostname: "plus.unsplash.com" },
+      { hostname: "images.unsplash.com" },
+    ],
   },
   // basePath: '/home',
   // async redirects() {
