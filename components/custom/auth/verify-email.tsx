@@ -55,7 +55,7 @@ export default function VerifyEmail() {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm space-y-5">
+            <div className="bg-white rounded-xl p-4 lg:p-6 space-y-5">
               <div className="space-y-1">
                 <p className="font-semibold text-left text-brand-1">
                   Enter OTP
@@ -110,7 +110,7 @@ export default function VerifyEmail() {
                   <Button
                     type="button"
                     variant="link"
-                    className="text-brand-2 p-0 h-auto"
+                    className="text-brand-2 underline p-0 h-auto"
                     onClick={handleResendCode}
                   >
                     Resend code
