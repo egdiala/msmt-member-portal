@@ -83,17 +83,12 @@ export const UpcomingAppointmentCard = () => {
       </div>
 
       <div className="flex justify-between pt-5">
-        <Button
-          variant="secondary"
-          className="rounded-[100px] bg-blue-400 text-button-primary font-semibold gap-x-1 text-sm"
-        >
+        <Button variant="secondary" className="rounded-[100px]">
           All Appointments
           <IconExternalLink className="stroke-button-primary" />
         </Button>
 
-        <Button className="bg-button-primary text-white rounded-[100px] text-sm">
-          Join Session
-        </Button>
+        <Button className="rounded-[100px]">Join Session</Button>
       </div>
     </div>
   );

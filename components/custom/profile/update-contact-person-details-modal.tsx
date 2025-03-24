@@ -1,7 +1,6 @@
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconPhone, IconUserRound } from "@/components/icons";
 import {
   Button,
   Form,
@@ -10,33 +9,30 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
-import { profileDetailsSchema } from "@/lib/validations";
-import { Modal } from "../modal";
-import { SelectCmp } from "../select";
-import { FloatingInput } from "..";
+import { IconEmail, IconPhone, IconUserRound } from "@/components/icons";
+import { contactPersonDetailsSchema } from "@/lib/validations";
+import { FloatingInput, Modal } from "../../shared";
 
-interface IUpdateProfileDetailsModal {
+interface IUpdateContactPersonDetailsModal {
   handleClose: () => void;
   isOpen: boolean;
 }
-export const UpdateProfileDetailsModal = ({
+export const UpdateContactPersonDetailsModal = ({
   handleClose,
   isOpen,
-}: IUpdateProfileDetailsModal) => {
-  const form = useForm<z.infer<typeof profileDetailsSchema>>({
-    resolver: zodResolver(profileDetailsSchema),
+}: IUpdateContactPersonDetailsModal) => {
+  const form = useForm<z.infer<typeof contactPersonDetailsSchema>>({
+    resolver: zodResolver(contactPersonDetailsSchema),
     defaultValues: {
-      preferredName: "",
+      firstName: "",
+      lastName: "",
       phoneNumber: "",
-      religion: "",
-      gender: "",
-      maritalStatus: "",
-      country: "",
-      preferredLanguage: "",
+      email: "",
+      relationship: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
+  async function onSubmit(values: z.infer<typeof contactPersonDetailsSchema>) {
     console.log(values);
   }
 
@@ -47,7 +43,7 @@ export const UpdateProfileDetailsModal = ({
       className="max-w-[578px] grid gap-y-6"
     >
       <h2 className="font-bold text-lg md:text-2xl tracking-[0%]">
-        Profile Details
+        Update Contact Person Details
       </h2>
 
       <Form {...form}>
@@ -55,13 +51,35 @@ export const UpdateProfileDetailsModal = ({
           <div className="grid gap-y-4">
             <FormField
               control={form.control}
-              name="preferredName"
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <div className="relative">
                       <FloatingInput
-                        label="Preferred Name"
+                        label="First Name"
+                        className="pr-10"
+                        {...field}
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                        <IconUserRound className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative">
+                      <FloatingInput
+                        label="Last Name"
                         className="pr-10"
                         {...field}
                       />
@@ -99,57 +117,40 @@ export const UpdateProfileDetailsModal = ({
 
             <FormField
               control={form.control}
-              name="religion"
+              name="email"
               render={({ field }) => (
-                <SelectCmp
-                  selectItems={[]}
-                  placeholder={"Religion"}
-                  {...field}
-                />
+                <FormItem>
+                  <FormControl>
+                    <div className="relative">
+                      <FloatingInput
+                        label="Email"
+                        className="pr-10"
+                        {...field}
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                        <IconEmail className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
             />
 
             <FormField
               control={form.control}
-              name="gender"
+              name="relationship"
               render={({ field }) => (
-                <SelectCmp selectItems={[]} placeholder={"Gender"} {...field} />
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="maritalStatus"
-              render={({ field }) => (
-                <SelectCmp
-                  selectItems={[]}
-                  placeholder={"Marital Status"}
-                  {...field}
-                />
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <SelectCmp
-                  selectItems={[]}
-                  placeholder={"Country"}
-                  {...field}
-                />
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="preferredLanguage"
-              render={({ field }) => (
-                <SelectCmp
-                  selectItems={[]}
-                  placeholder={"Preferred Language"}
-                  {...field}
-                />
+                <FormItem>
+                  <FormControl>
+                    <FloatingInput
+                      label="Relationship"
+                      className="pr-10"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
             />
           </div>
@@ -157,16 +158,14 @@ export const UpdateProfileDetailsModal = ({
           <div className="flex justify-end gap-x-4 tracking-[-2%] pt-10">
             <Button
               variant="secondary"
-              className="bg-blue-400 rounded-[100px] font-semibold text-sm cursor-pointer"
-              onClick={handleClose}
               type="button"
+              className="rounded-[100px]"
+              onClick={handleClose}
             >
               Cancel
             </Button>
 
-            <Button className="bg-button-primary text-white rounded-[100px] font-semibold text-sm cursor-pointer">
-              Update
-            </Button>
+            <Button className="rounded-[100px]">Update</Button>
           </div>
         </form>
       </Form>

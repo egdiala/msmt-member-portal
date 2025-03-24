@@ -1,31 +1,13 @@
 "use client";
 
+import { Cell, Pie, PieChart } from "recharts";
+import { ChartContainer } from "@/components/ui/chart";
+import { CHART_CONFIG, COLORS } from "@/lib/constants";
 import { IconExternalLink } from "@/components/icons";
 import { Button } from "@/components/ui";
-import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { Cell, Pie, PieChart } from "recharts";
+import { FAMILY_AND_FRIENDS_DATA } from "@/lib/mock";
 
 export const FamilyAndFriendsCard = () => {
-  const data = [
-    { name: "Group A", value: 400 },
-    { name: "Group B", value: 300 },
-    { name: "Group C", value: 300 },
-    { name: "Group D", value: 200 },
-  ];
-
-  const COLORS = ["#DD2418", "#0AA571"];
-
-  const chartConfig = {
-    desktop: {
-      label: "Male",
-      color: "#DD2418",
-    },
-    mobile: {
-      label: "Femal",
-      color: "#0AA571",
-    },
-  } satisfies ChartConfig;
-
   return (
     <div className="order-4 bg-white w-full md:w-[48%] 3xl:!w-[301px] grid gap-y-[29px] max-w-full md:max-w-[48%] 3xl:!max-w-[301px] h-[370px] rounded-2xl px-4 py-6">
       <Button className="bg-blue-400 text-button-primary font-semibold rounded-[100px] w-fit">
@@ -35,10 +17,10 @@ export const FamilyAndFriendsCard = () => {
 
       <div className="flex flex-col items-center gap-y-[29px] px-[22.5px]">
         <div>
-          <ChartContainer config={chartConfig}>
+          <ChartContainer config={CHART_CONFIG}>
             <PieChart width={400} height={400}>
               <Pie
-                data={data}
+                data={FAMILY_AND_FRIENDS_DATA}
                 // cx="10%"
                 // cy="10%"
                 labelLine={false}
@@ -46,7 +28,7 @@ export const FamilyAndFriendsCard = () => {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {data.map((_, index) => (
+                {FAMILY_AND_FRIENDS_DATA.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}

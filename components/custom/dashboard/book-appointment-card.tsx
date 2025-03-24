@@ -11,9 +11,7 @@ export const BookAppointmentCard = () => {
           </p>
         </div>
 
-        <Button className="bg-button-primary font-semibold rounded-[100px]">
-          Book an Appointment
-        </Button>
+        <Button className="rounded-[100px]">Book an Appointment</Button>
       </div>
     </div>
   );

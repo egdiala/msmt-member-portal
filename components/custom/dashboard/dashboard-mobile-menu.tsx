@@ -7,28 +7,13 @@ import { Drawer, DrawerPortal } from "@/components/ui/drawer";
 import { Button } from "@/components/ui";
 import { IconClose } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import {
-  APPOINTMENTS,
-  DASHBOARD,
-  FAMILY_AND_FRIENDS,
-  NOTIFICATIONS,
-  PROFILE,
-  WALLET,
-} from "@/lib/routes";
+import { NAV_ITEMS } from "@/lib/constants";
 
 interface IDashboardMobileMenu {
   isOpen: boolean;
   handleClose: () => void;
 }
 
-const NAV_ITEMS = [
-  { id: 1, name: "Dashboard", href: DASHBOARD },
-  { id: 2, name: "Appointments", href: APPOINTMENTS },
-  { id: 3, name: "Wallet", href: WALLET },
-  { id: 4, name: "Family & Friends", href: FAMILY_AND_FRIENDS },
-  { id: 5, name: "Notifications", href: NOTIFICATIONS },
-  { id: 6, name: "Profile", href: PROFILE },
-];
 export const DashboardMobileMenu = ({
   isOpen,
   handleClose,
@@ -69,9 +54,7 @@ export const DashboardMobileMenu = ({
               </Link>
             ))}
 
-            <Button className="bg-button-primary rounded-[100px] h-[58px]">
-              Book An Appointment
-            </Button>
+            <Button className="rounded-[100px]">Book An Appointment</Button>
           </div>
         </DrawerPrimitive.Content>
       </DrawerPortal>

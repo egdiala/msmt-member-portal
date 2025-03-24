@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IconBell, IconHamMenu } from "@/components/icons";
-import { DashboardMobileMenu } from "@/components/shared";
+import { DashboardMobileMenu } from "@/components/custom";
 import { DASHBOARD, NOTIFICATIONS } from "@/lib/routes";
 import MSMT_LOGO from "../../public/msmt-logo.svg";
 

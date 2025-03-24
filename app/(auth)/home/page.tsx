@@ -11,7 +11,7 @@ import {
   ProfileCard,
   FavouriteProvidersCard,
   NotificationsCard,
-} from "@/components/shared";
+} from "@/components/custom";
 import { Button } from "@/components/ui";
 import { COMPLETE_PROFILE } from "@/lib/routes";
 

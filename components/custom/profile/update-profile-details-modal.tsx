@@ -1,6 +1,7 @@
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconPhone, IconUserRound } from "@/components/icons";
 import {
   Button,
   Form,
@@ -9,31 +10,31 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
-import { IconEmail, IconPhone, IconUserRound } from "@/components/icons";
-import { contactPersonDetailsSchema } from "@/lib/validations";
-import { Modal } from "../modal";
-import { FloatingInput } from "..";
+import { profileDetailsSchema } from "@/lib/validations";
+import { FloatingInput, SelectCmp, Modal } from "../../shared";
 
-interface IUpdateContactPersonDetailsModal {
+interface IUpdateProfileDetailsModal {
   handleClose: () => void;
   isOpen: boolean;
 }
-export const UpdateContactPersonDetailsModal = ({
+export const UpdateProfileDetailsModal = ({
   handleClose,
   isOpen,
-}: IUpdateContactPersonDetailsModal) => {
-  const form = useForm<z.infer<typeof contactPersonDetailsSchema>>({
-    resolver: zodResolver(contactPersonDetailsSchema),
+}: IUpdateProfileDetailsModal) => {
+  const form = useForm<z.infer<typeof profileDetailsSchema>>({
+    resolver: zodResolver(profileDetailsSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      preferredName: "",
       phoneNumber: "",
-      email: "",
-      relationship: "",
+      religion: "",
+      gender: "",
+      maritalStatus: "",
+      country: "",
+      preferredLanguage: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof contactPersonDetailsSchema>) {
+  async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
     console.log(values);
   }
 
@@ -44,7 +45,7 @@ export const UpdateContactPersonDetailsModal = ({
       className="max-w-[578px] grid gap-y-6"
     >
       <h2 className="font-bold text-lg md:text-2xl tracking-[0%]">
-        Update Contact Person Details
+        Profile Details
       </h2>
 
       <Form {...form}>
@@ -52,35 +53,13 @@ export const UpdateContactPersonDetailsModal = ({
           <div className="grid gap-y-4">
             <FormField
               control={form.control}
-              name="firstName"
+              name="preferredName"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <div className="relative">
                       <FloatingInput
-                        label="First Name"
-                        className="pr-10"
-                        {...field}
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                        <IconUserRound className="h-4 w-4" />
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
-                      <FloatingInput
-                        label="Last Name"
+                        label="Preferred Name"
                         className="pr-10"
                         {...field}
                       />
@@ -118,40 +97,57 @@ export const UpdateContactPersonDetailsModal = ({
 
             <FormField
               control={form.control}
-              name="email"
+              name="religion"
               render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
-                      <FloatingInput
-                        label="Email"
-                        className="pr-10"
-                        {...field}
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                        <IconEmail className="h-4 w-4" />
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <SelectCmp
+                  selectItems={[]}
+                  placeholder={"Religion"}
+                  {...field}
+                />
               )}
             />
 
             <FormField
               control={form.control}
-              name="relationship"
+              name="gender"
               render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <FloatingInput
-                      label="Relationship"
-                      className="pr-10"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <SelectCmp selectItems={[]} placeholder={"Gender"} {...field} />
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="maritalStatus"
+              render={({ field }) => (
+                <SelectCmp
+                  selectItems={[]}
+                  placeholder={"Marital Status"}
+                  {...field}
+                />
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <SelectCmp
+                  selectItems={[]}
+                  placeholder={"Country"}
+                  {...field}
+                />
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="preferredLanguage"
+              render={({ field }) => (
+                <SelectCmp
+                  selectItems={[]}
+                  placeholder={"Preferred Language"}
+                  {...field}
+                />
               )}
             />
           </div>
@@ -159,16 +155,14 @@ export const UpdateContactPersonDetailsModal = ({
           <div className="flex justify-end gap-x-4 tracking-[-2%] pt-10">
             <Button
               variant="secondary"
-              type="button"
-              className="bg-blue-400 rounded-[100px] font-semibold text-sm cursor-pointer"
+              className="rounded-[100px]"
               onClick={handleClose}
+              type="button"
             >
               Cancel
             </Button>
 
-            <Button className="bg-button-primary text-white rounded-[100px] font-semibold text-sm cursor-pointer">
-              Update
-            </Button>
+            <Button className="rounded-[100px]">Update</Button>
           </div>
         </form>
       </Form>

@@ -72,3 +72,10 @@ export const NOTIFICATION_DATA = [
     status: "read",
   },
 ];
+
+export const FAMILY_AND_FRIENDS_DATA = [
+  { name: "Group A", value: 400 },
+  { name: "Group B", value: 300 },
+  { name: "Group C", value: 300 },
+  { name: "Group D", value: 200 },
+];
