@@ -29,7 +29,9 @@ export default function SetNewPassword() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof setNewPasswordSchema>) {}
+  async function onSubmit(values: z.infer<typeof setNewPasswordSchema>) {
+    console.log(values)
+  }
 
   return (
     <div className="space-y-6 max-w-[650px] mx-auto w-full px-2">

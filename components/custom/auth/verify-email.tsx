@@ -41,7 +41,9 @@ export default function VerifyEmail() {
     return () => clearTimeout(timer);
   }, [timeLeft]);
 
-  async function onSubmit(values: z.infer<typeof verifyEmailSchema>) {}
+  async function onSubmit(values: z.infer<typeof verifyEmailSchema>) {
+    console.log(values)
+  }
 
   const handleResendCode = async () => {};
 

@@ -54,7 +54,6 @@ export default function SignUp() {
 
   function onSubmit(values: z.infer<typeof signUpSchema>) {
     console.log(values);
-    // In a real app, you would handle registration here
   }
 
   return (
