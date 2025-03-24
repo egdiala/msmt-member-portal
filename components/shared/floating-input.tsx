@@ -76,7 +76,7 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
           className={cn(
             "absolute left-1.25 text-brand-2 transition-all duration-200 pointer-events-none",
             hasValue
-              ? "transform -translate-y-3 left-3 text-left text-xs top-3.25 text-primary"
+              ? "transform -translate-y-2 left-3 text-left text-xs top-3.25 text-primary"
               : "top-1/2 -translate-y-1/2 text-sm left-3"
           )}
         >
