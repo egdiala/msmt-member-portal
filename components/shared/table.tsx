@@ -16,7 +16,7 @@ interface ITableCmp {
 
 export const TableCmp = ({ data, headers, onClickRow }: ITableCmp) => {
   return (
-    <Table>
+    <Table className="hidden md:block">
       <TableHeader>
         <TableRow>
           {headers.map((header, index) => (
