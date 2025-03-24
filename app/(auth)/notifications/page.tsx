@@ -7,6 +7,7 @@ import {
   Searchbar,
   TableCmp,
 } from "@/components/shared";
+import { NOTIFICATION_DATA } from "@/lib/mock";
 import { DASHBOARD } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
@@ -16,82 +17,7 @@ const Notifications = () => {
     { key: "message", value: "Message" },
   ];
 
-  const data = [
-    {
-      id: 1,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "unread",
-    },
-    {
-      id: 2,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "unread",
-    },
-    {
-      id: 3,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "unread",
-    },
-    {
-      id: 4,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "read",
-    },
-    {
-      id: 5,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "read",
-    },
-    {
-      id: 6,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "read",
-    },
-    {
-      id: 7,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "read",
-    },
-    {
-      id: 8,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "read",
-    },
-    {
-      id: 9,
-      date: "Today",
-      time: "12:34pm",
-      message:
-        "Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin. Sample notification Lorem ipsum dolor sit amet consectetur. Elit in id odio ut faucibus. Gravida sit quis cras sollicitudin.",
-      status: "read",
-    },
-  ];
-
-  const tableData = data.map((val) => {
+  const tableData = NOTIFICATION_DATA.map((val) => {
     return {
       id: val.id,
       date_and_time_added: (
@@ -134,7 +60,7 @@ const Notifications = () => {
         <TableCmp data={tableData} headers={headers} />
 
         <div className="grid md:hidden w-full gap-y-2">
-          {data.map((val) => (
+          {NOTIFICATION_DATA.map((val) => (
             <div
               key={val.id}
               className="rounded-sm bg-input-field py-4 px-3 grid gap-y-[5px]"

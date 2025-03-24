@@ -2,13 +2,26 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { IconPen } from "@/components/icons";
-import { Button, Input } from "@/components/ui";
+import type * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconEye, IconEyeOff, IconPen } from "@/components/icons";
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui";
 import {
   DeleteAccountModal,
+  FloatingInput,
+  RenderIf,
   UpdateContactPersonDetailsModal,
   UpdateProfileDetailsModal,
 } from "@/components/shared";
+import { profileSecuritySchema } from "@/lib/validations";
 
 const Profile = () => {
   const personalInfo = [
@@ -34,6 +47,23 @@ const Profile = () => {
     setOpenUpdateContactPersonDetailsModal,
   ] = useState(false);
   const [openDeleteAccountModal, setOpenDeleteAccountModal] = useState(false);
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const form = useForm<z.infer<typeof profileSecuritySchema>>({
+    resolver: zodResolver(profileSecuritySchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof profileSecuritySchema>) {
+    console.log(values);
+  }
 
   return (
     <div className="rounded-lg md:rounded-2xl bg-white p-3 md:p-6 flex gap-x-5 w-full">
@@ -61,7 +91,7 @@ const Profile = () => {
 
             <Button
               variant="secondary"
-              className="rounded-[100px] text-button-secondary font-semibold tracking-[-2%] bg-blue-400 cursor-pointer"
+              className="rounded-[100px]"
               onClick={() => setOpenUpdateProfileDetailsModal(true)}
             >
               <IconPen className="stroke-button-secondary" /> Edit
@@ -86,7 +116,7 @@ const Profile = () => {
 
             <Button
               variant="secondary"
-              className="rounded-[100px] text-button-secondary font-semibold tracking-[-2%] bg-blue-400 cursor-pointer"
+              className="rounded-[100px]"
               onClick={() => setOpenUpdateContactPersonDetailsModal(true)}
             >
               <IconPen className="stroke-button-secondary" /> Edit
@@ -108,30 +138,126 @@ const Profile = () => {
             Security
           </h2>
 
-          <div className="grid gap-4 grid-cols-2">
-            <Input
-              type="password"
-              placeholder="Current Password"
-              className="h-[50px] bg-input-field px-2 py-[15px] border-none outline-none focus-visible:ring-offset-0 focus-visible:ring-0 shadow-none"
-            />
-            <Input
-              type="password"
-              placeholder="New Password"
-              className="h-[50px] bg-input-field px-2 py-[15px] border-none outline-none focus-visible:ring-offset-0 focus-visible:ring-0 shadow-none"
-            />
-            <Input
-              type="password"
-              placeholder="Confirm Password"
-              className="h-[50px] bg-input-field px-2 py-[15px] border-none outline-none focus-visible:ring-offset-0 focus-visible:ring-0 shadow-none"
-            />
-          </div>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="grid gap-y-5"
+            >
+              <div className="grid gap-4 grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="currentPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <FloatingInput
+                            label="Current Password"
+                            type={showCurrentPassword ? "text" : "password"}
+                            className="pr-10"
+                            {...field}
+                          />
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                            <button
+                              onClick={() =>
+                                setShowCurrentPassword(!showCurrentPassword)
+                              }
+                              className="cursor-pointer"
+                            >
+                              <RenderIf condition={!showCurrentPassword}>
+                                <IconEyeOff className="h-4 w-4" />
+                              </RenderIf>
 
-          <Button
-            variant="secondary"
-            className="rounded-[100px] bg-blue-400 w-fit font-semibold tracking-[-2%] cursor-pointer"
-          >
-            Update Password
-          </Button>
+                              <RenderIf condition={showCurrentPassword}>
+                                <IconEye className="h-4 w-4" />
+                              </RenderIf>
+                            </button>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="newPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <FloatingInput
+                            label="New Password"
+                            type={showNewPassword ? "text" : "password"}
+                            className="pr-10"
+                            {...field}
+                          />
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                            <button
+                              onClick={() =>
+                                setShowNewPassword(!showNewPassword)
+                              }
+                              className="cursor-pointer"
+                            >
+                              <RenderIf condition={!showNewPassword}>
+                                <IconEyeOff className="h-4 w-4" />
+                              </RenderIf>
+
+                              <RenderIf condition={showNewPassword}>
+                                <IconEye className="h-4 w-4" />
+                              </RenderIf>
+                            </button>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <FloatingInput
+                            label="Confirm Password"
+                            type={showConfirmPassword ? "text" : "password"}
+                            className="pr-10"
+                            {...field}
+                          />
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                            <button
+                              onClick={() =>
+                                setShowConfirmPassword(!showConfirmPassword)
+                              }
+                              className="cursor-pointer"
+                            >
+                              <RenderIf condition={!showConfirmPassword}>
+                                <IconEyeOff className="h-4 w-4" />
+                              </RenderIf>
+
+                              <RenderIf condition={showConfirmPassword}>
+                                <IconEye className="h-4 w-4" />
+                              </RenderIf>
+                            </button>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Button variant="secondary" className="w-fit rounded-[100px]">
+                Update Password
+              </Button>
+            </form>
+          </Form>
 
           <div className="border-b border-divider w-full"></div>
 
@@ -147,7 +273,7 @@ const Profile = () => {
 
             <Button
               variant="ghost"
-              className="underline font-semibold text-status-danger w-fit p-0 cursor-pointer"
+              className="text-sm text-status-danger underline font-semibold tracking-[0%]"
               onClick={() => setOpenDeleteAccountModal(true)}
             >
               Delete Account
