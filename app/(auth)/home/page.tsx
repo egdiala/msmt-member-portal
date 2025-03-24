@@ -14,15 +14,11 @@ import {
 } from "@/components/custom";
 import { Button } from "@/components/ui";
 import { COMPLETE_PROFILE } from "@/lib/routes";
+import { DASHBOARD_STATS_DATA } from "@/lib/mock";
 
 const Dashboard = () => {
   const router = useRouter();
 
-  const dashboardStats = [
-    { id: 1, title: "Completed Appointments", value: 53 },
-    { id: 2, title: "Upcoming Appointments", value: 53 },
-    { id: 3, title: "Average Booking/Week", value: 3 },
-  ];
   return (
     <div className="w-full grid gap-y-4 md:gap-y-8">
       <div className="border border-status-danger p-3 md:p-6 bg-status-light-red rounded-lg w-full">
@@ -54,7 +50,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {dashboardStats.map((stat, index) => (
+        {DASHBOARD_STATS_DATA.map((stat, index) => (
           <div
             key={stat.id}
             className={index === 0 ? "col-span-2 lg:col-span-1" : "col-span-1"}
