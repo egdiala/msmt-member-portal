@@ -85,7 +85,9 @@ export const UpcomingAppointmentCard = () => {
           </Button>
         </Link>
 
-        <Button>Join Session</Button>
+        <Link href="/session">
+          <Button>Join Session</Button>
+        </Link>
       </div>
     </div>
   );
