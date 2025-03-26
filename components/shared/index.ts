@@ -6,3 +6,4 @@ export * from "./pagination";
 export * from "./searchbar";
 export * from "./table";
 export * from "./select";
+export * from "./floating-input";

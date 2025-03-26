@@ -17,7 +17,7 @@ export const Searchbar = ({
   onClear,
 }: ISearchbar) => {
   return (
-    <div className="bg-input-field flex items-center gap-x-2 min-w-full md:min-w-[259px] rounded-sm relative">
+    <div className="bg-input-field flex items-center gap-x-2 min-w-full md:min-w-65 rounded-sm relative">
       <IconSearch className="stroke-text-tertiary pl-2" />
 
       <div className="flex items-center w-full gap-x-1 pr-2">

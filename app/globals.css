@@ -44,7 +44,15 @@
   --color-button-secondary: var(--button-secondary);
   --color-input-field: var(--input-field);
   --color-blue-400: var(--blue-400);
+  --color-actions-amber: var(--actions-amber);
+  --color-actions-green: var(--actions-green);
+  --color-divider: var(--divider);
   --color-primary: var(--primary);
+  --color-portal: var(--portal-bkg);
+  --color-text-bg-3: var(--text-bg-3);
+  --color-status-danger: var(--status-danger);
+  --color-status-light-red: var(--status-light-red);
+  --color-text-bg-1: var(--text-bg-1);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -54,6 +62,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --shadow-modal-shadow: var(--modal-shadow);
+  --breakpoint-3xl: 1430px;
 }
 
 :root {
@@ -65,12 +74,20 @@
   --grey-400: #F2F3F5;
   --text-1: #00050A;
   --text-2: #354959;
+  --text-bg-1: #021C2F;
+  --text-bg-3: #0B3D72;
   --text-tertiary: #808D97;
   --button-primary: #007BFF;
   --button-secondary: #001933;
   --input-field: #F6F8F9;
   --blue-400: #F2F8FF;
+  --actions-amber: #DF9900;
+  --actions-green: #0AA571;
+  --divider: #DADCDD;
   --modal-shadow: 0px 10px 153px -32px #00000033;
+  --portal-bkg: #F3F5F9;
+  --status-danger: #DD2418;
+  --status-light-red: #FFF5F5;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
