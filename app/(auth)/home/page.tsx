@@ -22,7 +22,7 @@ const Dashboard = () => {
   return (
     <div className="w-full grid gap-y-4 md:gap-y-8">
       <div className="border border-status-danger p-3 md:p-6 bg-status-light-red rounded-lg w-full">
-        <div className="flex gap-3 items-start md:items-center flex-col md:flex-row ">
+        <div className="flex gap-3 items-start lg:items-center flex-col lg:flex-row ">
           <div className="flex gap-2 md:gap-3">
             <div className="md:pt-1">
               <IconTriangleAlert className="stroke-status-danger size-4" />

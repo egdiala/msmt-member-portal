@@ -48,7 +48,9 @@ const DashboardLayout = ({
           </div>
         </div>
 
-        <div className="pt-22 md:pt-[123px] w-full">{children}</div>
+        <div className="pt-22 md:pt-[125px] xl:pt-[123px] w-full">
+          {children}
+        </div>
       </div>
 
       <DashboardMobileMenu
