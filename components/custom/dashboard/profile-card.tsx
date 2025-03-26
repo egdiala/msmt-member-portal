@@ -13,7 +13,7 @@ export const ProfileCard = () => {
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
   return (
-    <div className="col-span-1 xl:col-span-3 grid gap-y-3 rounded-2xl bg-white py-7 px-6">
+    <div className="col-span-1 xl:col-span-3 grid gap-y-3 rounded-2xl bg-white p-4 md:py-7 md:px-6">
       <div className="grid gap-y-2 content-start">
         <Image
           alt="man"

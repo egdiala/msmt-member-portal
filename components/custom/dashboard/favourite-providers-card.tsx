@@ -11,7 +11,7 @@ import { PROVIDERS } from "@/lib/routes";
 
 export const FavouriteProvidersCard = () => {
   return (
-    <div className="col-span-1 xl:col-span-4 content-start grid gap-y-4 rounded-2xl bg-white py-6 px-6">
+    <div className="col-span-1 xl:col-span-4 content-start grid gap-y-4 rounded-2xl bg-white p-4 md:py-6 md:px-6">
       <h3 className="font-semibold text-sm text-text-2">Favourite Providers</h3>
 
       <div className="grid gap-y-1">
