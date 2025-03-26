@@ -11,7 +11,7 @@ import { PROVIDERS } from "@/lib/routes";
 
 export const FavouriteProvidersCard = () => {
   return (
-    <div className="col-span-1 xl:col-span-4 content-start h-[349px] grid gap-y-4 rounded-2xl bg-white py-[24.48px] px-6">
+    <div className="col-span-1 xl:col-span-4 content-start grid gap-y-4 rounded-2xl bg-white py-6 px-6">
       <h3 className="font-semibold text-sm text-text-2">Favourite Providers</h3>
 
       <div className="grid gap-y-1">
@@ -31,7 +31,7 @@ export const FavouriteProvidersCard = () => {
                   <h3 className="font-medium text-sm text-text-1">
                     {provider.name}
                   </h3>
-                  <p className="text-text-tertiary text-xs tracking-[-2%]">
+                  <p className="text-text-tertiary text-xs">
                     {provider.occupation}
                   </p>
                 </div>

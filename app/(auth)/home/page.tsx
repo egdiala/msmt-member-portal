@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { IconTriangleAlert } from "@/components/icons";
-import { useRouter } from "next/navigation";
 import {
   BookAppointmentCard,
   DashboardStatCard,
@@ -13,12 +13,10 @@ import {
   NotificationsCard,
 } from "@/components/custom";
 import { Button } from "@/components/ui";
-import { COMPLETE_PROFILE } from "@/lib/routes";
 import { DASHBOARD_STATS_DATA } from "@/lib/mock";
+import { COMPLETE_PROFILE } from "@/lib/routes";
 
 const Dashboard = () => {
-  const router = useRouter();
-
   return (
     <div className="w-full grid gap-y-4 md:gap-y-8">
       <div className="border border-status-danger p-3 md:p-6 bg-status-light-red rounded-lg w-full">
@@ -41,10 +39,10 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="ml-6 md:ml-0">
-            <Button onClick={() => router.push(COMPLETE_PROFILE)}>
-              Complete Profile
-            </Button>
+          <div className="ml-6 lg:ml-0">
+            <Link href={COMPLETE_PROFILE}>
+              <Button>Complete Profile</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -71,7 +69,7 @@ const Dashboard = () => {
         <FamilyAndFriendsCard />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-12 gap-[21px]">
+      <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-12 gap-5">
         <ProfileCard />
         <FavouriteProvidersCard />
         <NotificationsCard />

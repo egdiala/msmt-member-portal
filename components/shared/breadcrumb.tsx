@@ -21,7 +21,7 @@ export function BreadcrumbCmp({ breadcrumbItems }: IBreadcrumbCmp) {
             <BreadcrumbItem>
               <BreadcrumbLink
                 href={item.href ?? undefined}
-                className="text-text-1 flex items-center gap-1 tracking-[0%] leading-[140%]"
+                className="text-text-1 flex items-center gap-1"
               >
                 <RenderIf condition={index === 0}>
                   <IconArrowLeft className="stroke-text-2" />

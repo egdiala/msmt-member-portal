@@ -42,11 +42,9 @@ export const UpdateProfileDetailsModal = ({
     <Modal
       isOpen={isOpen}
       handleClose={handleClose}
-      className="max-w-[578px] grid gap-y-6"
+      className="max-w-144 grid gap-y-6"
     >
-      <h2 className="font-bold text-lg md:text-2xl tracking-[0%]">
-        Profile Details
-      </h2>
+      <h2 className="font-bold text-lg md:text-2xl">Profile Details</h2>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-y-6">
@@ -152,17 +150,12 @@ export const UpdateProfileDetailsModal = ({
             />
           </div>
 
-          <div className="flex justify-end gap-x-4 tracking-[-2%] pt-10">
-            <Button
-              variant="secondary"
-              className="rounded-[100px]"
-              onClick={handleClose}
-              type="button"
-            >
+          <div className="flex justify-end gap-x-4 pt-10">
+            <Button variant="secondary" onClick={handleClose} type="button">
               Cancel
             </Button>
 
-            <Button className="rounded-[100px]">Update</Button>
+            <Button>Update</Button>
           </div>
         </form>
       </Form>

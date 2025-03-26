@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { IconBell, IconHamMenu } from "@/components/icons";
 import { DashboardMobileMenu } from "@/components/custom";
 import { DASHBOARD, NOTIFICATIONS } from "@/lib/routes";
@@ -14,29 +14,25 @@ const DashboardLayout = ({
   children: React.ReactNode;
 }>) => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
-  const router = useRouter();
   return (
     <div className="w-full bg-portal">
-      <div className="mx-auto min-h-screen items-center w-full max-w-screen-2xl grid gap-y-6 md:gap-y-8 content-start px-2 md:px-7 xl:px-[50px] pb-[50px]">
+      <div className="mx-auto min-h-screen items-center w-full max-w-screen-2xl grid gap-y-6 md:gap-y-8 content-start px-2 md:px-7 xl:px-12 pb-12">
         <div className="flex items-center justify-center fixed top-0 left-0 right-0 bg-portal z-30">
-          <div className="w-full flex items-center justify-between max-w-[1500px] py-4 md:pt-[50px] md:pb-[32px] px-2 md:px-7 xl:px-[50px]">
-            <button
-              className="cursor-pointer"
-              onClick={() => router.push(DASHBOARD)}
-            >
+          <div className="w-full flex items-center justify-between max-w-screen-2xl py-4 md:pt-12 md:pb-8 px-2 md:px-7 xl:px-12">
+            <Link className="cursor-pointer" href={DASHBOARD}>
               <Image src={MSMT_LOGO} width={40.12} height={40.12} alt="logo" />
-            </button>
+            </Link>
 
             <div className="flex items-center gap-x-6">
-              <button
+              <Link
                 className="bg-white p-2 rounded-full relative cursor-pointer"
-                onClick={() => router.push(NOTIFICATIONS)}
+                href={NOTIFICATIONS}
               >
                 <IconBell className="stroke-text-bg-1" />
-                <div className="py-0.5 px-1 bg-status-danger rounded-[92.49px] absolute -top-[7px] -right-[7px] tracking-[-2%] font-medium text-white text-xs">
+                <div className="py-0.5 px-1 bg-status-danger rounded-full absolute -top-1.5 -right-1.5 font-medium text-white text-xs">
                   9+
                 </div>
-              </button>
+              </Link>
 
               <button
                 onClick={() => setOpenMobileMenu(true)}
@@ -48,9 +44,7 @@ const DashboardLayout = ({
           </div>
         </div>
 
-        <div className="pt-22 md:pt-[125px] xl:pt-[123px] w-full">
-          {children}
-        </div>
+        <div className="pt-22 md:pt-32 xl:pt-31 w-full">{children}</div>
       </div>
 
       <DashboardMobileMenu

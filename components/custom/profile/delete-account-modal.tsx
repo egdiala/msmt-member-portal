@@ -14,11 +14,9 @@ export const DeleteAccountModal = ({
       isOpen={isOpen}
       handleClose={handleClose}
       showCloseButton={false}
-      className="w-full md:w-[400px] grid gap-y-2"
+      className="w-full md:w-100 grid gap-y-2"
     >
-      <h2 className="font-bold text-lg md:text-2xl tracking-[0%]">
-        Delete Your Account?
-      </h2>
+      <h2 className="font-bold text-lg md:text-2xl">Delete Your Account?</h2>
 
       <div className="grid gap-y-6">
         <p className="text-text-1 text-sm">

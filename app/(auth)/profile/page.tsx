@@ -82,9 +82,7 @@ const Profile = () => {
                 <h2 className="text-text-1 font-bold text-xl md:text-2xl">
                   James John
                 </h2>
-                <p className="text-text-2 text-sm tracking-[0%]">
-                  example@email.com
-                </p>
+                <p className="text-text-2 text-sm">example@email.com</p>
               </div>
             </div>
 
@@ -98,7 +96,7 @@ const Profile = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {personalInfo.map((info) => (
-              <div key={info.id} className="tracking-[0%]">
+              <div key={info.id}>
                 <h4 className="text-text-2 text-sm">{info.key}</h4>
                 <p className="text-sm font-medium">{info.value}</p>
               </div>
@@ -108,7 +106,7 @@ const Profile = () => {
 
         <div className="border border-divider rounded-lg p-4 md:py-4 md:px-6 w-full grid gap-y-5">
           <div className="flex justify-between items-center">
-            <h2 className="font-bold tracking-[0%] text-text-1 text-sm md:text-base">
+            <h2 className="font-bold text-text-1 text-sm md:text-base">
               Contact Person
             </h2>
 
@@ -122,7 +120,7 @@ const Profile = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
             {contactPerson.map((info) => (
-              <div key={info.id} className="tracking-[0%]">
+              <div key={info.id}>
                 <h4 className="text-text-2 text-sm">{info.key}</h4>
                 <p className="text-sm font-medium">{info.value}</p>
               </div>
@@ -131,7 +129,7 @@ const Profile = () => {
         </div>
 
         <div className="border border-divider rounded-lg p-4 md:py-4 md:px-6 w-full grid gap-y-5">
-          <h2 className="font-bold tracking-[0%] text-text-1 text-sm md:text-base">
+          <h2 className="font-bold text-text-1 text-sm md:text-base">
             Security
           </h2>
 
@@ -250,7 +248,7 @@ const Profile = () => {
                 />
               </div>
 
-              <Button variant="secondary" className="w-fit rounded-[100px]">
+              <Button variant="secondary" className="w-fit">
                 Update Password
               </Button>
             </form>
@@ -260,17 +258,17 @@ const Profile = () => {
 
           <div className="bg-blue-400 rounded-lg p-2 flex justify-between items-center flex-col gap-3 lg:flex-row">
             <div className="grid gap-y-0.5 ml-2">
-              <h2 className="font-bold tracking-[0%] text-text-1 text-sm md:text-base">
+              <h2 className="font-bold text-text-1 text-sm md:text-base">
                 Delete Account
               </h2>
-              <p className="text-xs md:text-sm text-text-2 tracking-[-2%]">
-                This would remove your details from MSMT and irreversible.{" "}
+              <p className="text-xs md:text-sm text-text-2">
+                This would remove your details from MSMT and irreversible.
               </p>
             </div>
 
             <Button
               variant="ghost"
-              className="text-sm text-status-danger underline font-semibold tracking-[0%] p-0 mr-1"
+              className="text-sm text-status-danger underline font-semibold p-0 mr-1"
               onClick={() => setOpenDeleteAccountModal(true)}
             >
               Delete Account

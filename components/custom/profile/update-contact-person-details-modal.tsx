@@ -40,9 +40,9 @@ export const UpdateContactPersonDetailsModal = ({
     <Modal
       isOpen={isOpen}
       handleClose={handleClose}
-      className="max-w-[578px] grid gap-y-6"
+      className="max-w-144 grid gap-y-6"
     >
-      <h2 className="font-bold text-lg md:text-2xl tracking-[0%]">
+      <h2 className="font-bold text-lg md:text-2xl">
         Update Contact Person Details
       </h2>
 
@@ -155,12 +155,12 @@ export const UpdateContactPersonDetailsModal = ({
             />
           </div>
 
-          <div className="flex justify-end gap-x-4 tracking-[-2%] pt-10">
+          <div className="flex justify-end gap-x-4 pt-10">
             <Button variant="secondary" type="button" onClick={handleClose}>
               Cancel
             </Button>
 
-            <Button className="rounded-[100px]">Update</Button>
+            <Button>Update</Button>
           </div>
         </form>
       </Form>

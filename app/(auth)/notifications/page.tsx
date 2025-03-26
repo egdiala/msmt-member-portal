@@ -21,7 +21,7 @@ const Notifications = () => {
     return {
       id: val.id,
       date_and_time_added: (
-        <div className="flex items-center gap-x-[11.76px] pr-[90px]">
+        <div className="flex items-center gap-x-3 pr-23">
           <div
             className={cn(
               "size-2 rounded-full",
@@ -63,7 +63,7 @@ const Notifications = () => {
           {NOTIFICATION_DATA.map((val) => (
             <div
               key={val.id}
-              className="rounded-sm bg-input-field py-4 px-3 grid gap-y-[5px]"
+              className="rounded-sm bg-input-field py-4 px-3 grid gap-y-1.5"
             >
               <div className="flex items-center justify-between">
                 <p className="font-medium text-xs text-text-1">
@@ -77,9 +77,7 @@ const Notifications = () => {
                 ></div>
               </div>
               <div className="border-b border-divider"></div>
-              <p className="text-xs tracking-[-2%] text-text-2">
-                {val.message}
-              </p>
+              <p className="text-xs text-text-2">{val.message}</p>
             </div>
           ))}
         </div>

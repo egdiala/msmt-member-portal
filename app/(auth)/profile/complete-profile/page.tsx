@@ -48,11 +48,11 @@ const CompleteProfile = () => {
 
       <div className="grid gap-y-5 w-full md:justify-center">
         <div className="flex items-center justify-center flex-col">
-          <div className="border border-text-tertiary rounded-full size-[100px] bg-white"></div>
+          <div className="border border-text-tertiary rounded-full size-25 bg-white"></div>
 
           <Button
             variant="ghost"
-            className="p-0 gap-x-1 underline text-button-primary font-medium tracking-[-2%] cursor-pointer"
+            className="p-0 gap-x-1 underline text-button-primary font-medium cursor-pointer"
           >
             <IconCamera className="stroke-text-tertiary size-4" />
             Upload Profile Picture
@@ -64,7 +64,7 @@ const CompleteProfile = () => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="w-full grid gap-y-8"
           >
-            <div className="bg-white rounded-2xl p-3 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-4 w-full md:w-[650px]">
+            <div className="bg-white rounded-2xl p-3 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-4 w-full md:w-162">
               <FormField
                 control={form.control}
                 name="preferredName"

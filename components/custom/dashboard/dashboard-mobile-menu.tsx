@@ -44,7 +44,7 @@ export const DashboardMobileMenu = ({
             </button>
           </div>
 
-          <div className="py-[25px] px-4 grid gap-y-4">
+          <div className="py-6 px-4 grid gap-y-4">
             {NAV_ITEMS.map((nav_item) => (
               <Link
                 key={nav_item.id}
@@ -56,7 +56,7 @@ export const DashboardMobileMenu = ({
               </Link>
             ))}
 
-            <Button className="rounded-[100px]">Book An Appointment</Button>
+            <Button>Book An Appointment</Button>
           </div>
         </DrawerPrimitive.Content>
       </DrawerPortal>

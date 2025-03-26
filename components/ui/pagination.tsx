@@ -74,7 +74,7 @@ function PaginationPrevious({
       aria-label="Go to previous page"
       size="default"
       className={cn(
-        "gap-1 p-1.5 bg-blue-400 rounded-[100px] disabled:bg-grey-4",
+        "gap-1 p-1.5 bg-blue-400 rounded-full disabled:bg-grey-4",
         className
       )}
       {...props}
@@ -94,7 +94,7 @@ function PaginationNext({
       aria-label="Go to next page"
       size="default"
       className={cn(
-        "gap-1 p-1.5 bg-blue-400 rounded-[100px] disabled:bg-grey-4",
+        "gap-1 p-1.5 bg-blue-400 rounded-full disabled:bg-grey-4",
         className
       )}
       {...props}

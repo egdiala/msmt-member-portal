@@ -13,7 +13,7 @@ export const ProfileCard = () => {
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
   return (
-    <div className="col-span-1 xl:col-span-3 h-[349px] grid gap-y-3 rounded-2xl bg-white py-[28.5px] px-6">
+    <div className="col-span-1 xl:col-span-3 grid gap-y-3 rounded-2xl bg-white py-7 px-6">
       <div className="grid gap-y-2 content-start">
         <Image
           alt="man"
@@ -25,16 +25,12 @@ export const ProfileCard = () => {
 
         <div className="grid gap-y-0.5">
           <h2 className="text-text-2 font-semibold">James John</h2>
-          <p className="text-text-tertiary text-xs tracking-[-2%]">
-            example@email.com
-          </p>
+          <p className="text-text-tertiary text-xs">example@email.com</p>
         </div>
       </div>
 
       <div className="grid gap-y-1">
-        <h4 className="text-text-2 text-xs tracking-[-2%]">
-          Your organisation(s)
-        </h4>
+        <h4 className="text-text-2 text-xs">Your organisation(s)</h4>
 
         <div className="flex items-center gap-2 flex-wrap">
           {PROFILE_ORGANISATIONS_DATA.map((organisation) => (
@@ -45,13 +41,11 @@ export const ProfileCard = () => {
               <Image
                 src={organisation.icon}
                 alt="organisation-icon"
-                className="size-6 bg-[#FFFFFF20] object-cover rounded-[2.98px]"
+                className="size-6 bg-[#FFFFFF20] object-cover rounded-xs"
                 width={24}
                 height={24}
               />
-              <p className="text-xs text-text-2 tracking-[-2%]">
-                {organisation.name}
-              </p>
+              <p className="text-xs text-text-2">{organisation.name}</p>
             </div>
           ))}
         </div>

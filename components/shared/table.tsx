@@ -28,7 +28,7 @@ export const TableCmp = ({ data, headers, onClickRow }: ITableCmp) => {
                   : index === headers.length - 1
                   ? "rounded-r-sm"
                   : "",
-                "font-medium text-text-1 text-sm h-9 py-[7px]"
+                "font-medium text-text-1 text-sm h-9 py-2"
               )}
             >
               {header.value}
