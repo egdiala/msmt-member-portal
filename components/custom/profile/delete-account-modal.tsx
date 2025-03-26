@@ -27,14 +27,10 @@ export const DeleteAccountModal = ({
         </p>
 
         <div className="grid grid-cols-2 gap-x-4">
-          <Button
-            variant="secondary"
-            className="rounded-[100px]"
-            onClick={handleClose}
-          >
+          <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button className="rounded-[100px]">Delete Account</Button>
+          <Button>Delete Account</Button>
         </div>
       </div>
     </Modal>

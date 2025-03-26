@@ -17,9 +17,9 @@ const DashboardLayout = ({
   const router = useRouter();
   return (
     <div className="w-full bg-portal">
-      <div className="mx-auto min-h-screen items-center w-full max-w-[1500px] grid gap-y-6 md:gap-y-8 content-start px-2 md:px-[50px] pb-[50px]">
+      <div className="mx-auto min-h-screen items-center w-full max-w-screen-2xl grid gap-y-6 md:gap-y-8 content-start px-2 md:px-7 xl:px-[50px] pb-[50px]">
         <div className="flex items-center justify-center fixed top-0 left-0 right-0 bg-portal z-30">
-          <div className="w-full flex items-center justify-between max-w-[1500px] py-4 md:pt-[50px] md:pb-[32px] px-2 md:px-[50px]">
+          <div className="w-full flex items-center justify-between max-w-[1500px] py-4 md:pt-[50px] md:pb-[32px] px-2 md:px-7 xl:px-[50px]">
             <button
               className="cursor-pointer"
               onClick={() => router.push(DASHBOARD)}

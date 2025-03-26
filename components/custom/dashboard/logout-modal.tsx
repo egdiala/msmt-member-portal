@@ -22,11 +22,7 @@ export const LogoutModal = ({ handleClose, isOpen }: ILogoutModal) => {
         </p>
 
         <div className="grid grid-cols-2 gap-x-4">
-          <Button
-            variant="secondary"
-            className="rounded-[100px]"
-            onClick={handleClose}
-          >
+          <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
           <Button>Log out</Button>

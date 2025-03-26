@@ -64,14 +64,14 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col justify-center xl:justify-normal md:flex-row gap-5 items-center flex-wrap 3xl:flex-nowrap">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-13 gap-5">
         <BookAppointmentCard />
         <UpcomingAppointmentCard />
         <WalletBalanceCard />
         <FamilyAndFriendsCard />
       </div>
 
-      <div className="flex flex-col justify-center xl:justify-normal md:flex-row gap-[21px] items-center flex-wrap 3xl:flex-nowrap">
+      <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-12 gap-[21px]">
         <ProfileCard />
         <FavouriteProvidersCard />
         <NotificationsCard />

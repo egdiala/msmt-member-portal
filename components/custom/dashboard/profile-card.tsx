@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { IconExternalLink, IconLogOut } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { PROFILE_ORGANISATIONS_DATA } from "@/lib/mock";
@@ -10,11 +10,10 @@ import { PROFILE } from "@/lib/routes";
 import { LogoutModal } from "./logout-modal";
 
 export const ProfileCard = () => {
-  const router = useRouter();
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
   return (
-    <div className="w-full md:w-[48%] xl:w-[32%] 3xl:!w-[375px] h-[349px] max-w-full md:max-w-[48%] xl:max-w-[32%] 3xl:!max-w-[375px] grid gap-y-3 rounded-2xl bg-white py-[28.5px] px-6">
+    <div className="col-span-1 xl:col-span-3 h-[349px] grid gap-y-3 rounded-2xl bg-white py-[28.5px] px-6">
       <div className="grid gap-y-2 content-start">
         <Image
           alt="man"
@@ -59,14 +58,12 @@ export const ProfileCard = () => {
       </div>
 
       <div className="pt-4 flex items-center justify-between">
-        <Button
-          variant="secondary"
-          className="rounded-[100px] text-button-primary gap-x-1"
-          onClick={() => router.push(PROFILE)}
-        >
-          Profile
-          <IconExternalLink className="stroke-button-primary" />
-        </Button>
+        <Link href={PROFILE}>
+          <Button variant="secondary" className="text-button-primary gap-x-1">
+            Profile
+            <IconExternalLink className="stroke-button-primary" />
+          </Button>
+        </Link>
 
         <Button
           variant="outline"

@@ -156,12 +156,7 @@ export const UpdateContactPersonDetailsModal = ({
           </div>
 
           <div className="flex justify-end gap-x-4 tracking-[-2%] pt-10">
-            <Button
-              variant="secondary"
-              type="button"
-              className="rounded-[100px]"
-              onClick={handleClose}
-            >
+            <Button variant="secondary" type="button" onClick={handleClose}>
               Cancel
             </Button>
 

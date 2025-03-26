@@ -8,10 +8,11 @@ import {
   IconStarFull,
 } from "@/components/icons";
 import { Button } from "@/components/ui";
+import { APPOINTMENTS } from "@/lib/routes";
 
 export const UpcomingAppointmentCard = () => {
   return (
-    <div className="grid gap-y-4 order-1 md:order-2 w-full md:w-[48%] xl:w-[32%] 3xl:!w-[371px] h-[370px] max-w-full md:max-w-[48%] xl:max-w-[32%] 3xl:!max-w-[371px] bg-white rounded-2xl p-3 md:p-6">
+    <div className="grid gap-y-4 order-1 md:order-2 col-span-1 xl:col-span-4 bg-white rounded-2xl p-3 md:p-6">
       <h3 className="text-text-2 text-sm font-semibold">
         Upcoming appointment
       </h3>
@@ -83,13 +84,12 @@ export const UpcomingAppointmentCard = () => {
       </div>
 
       <div className="flex justify-between pt-5">
-        <Button
-          variant="secondary"
-          className="rounded-[100px] text-button-primary gap-x-1"
-        >
-          All Appointments
-          <IconExternalLink className="stroke-button-primary" />
-        </Button>
+        <Link href={APPOINTMENTS}>
+          <Button variant="secondary" className="text-button-primary gap-x-1">
+            All Appointments
+            <IconExternalLink className="stroke-button-primary" />
+          </Button>
+        </Link>
 
         <Button className="rounded-[100px]">Join Session</Button>
       </div>

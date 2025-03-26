@@ -1,22 +1,26 @@
 "use client";
 
+import Link from "next/link";
 import { Cell, Pie, PieChart } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
-import { CHART_CONFIG, COLORS } from "@/lib/constants";
 import { IconExternalLink } from "@/components/icons";
 import { Button } from "@/components/ui";
-import { FAMILY_AND_FRIENDS_DATA } from "@/lib/mock";
+import { CHART_CONFIG, COLORS } from "@/lib/constants";
 import { getPieChartCx, useScreenSize } from "@/lib/hooks";
+import { FAMILY_AND_FRIENDS_DATA } from "@/lib/mock";
+import { FAMILY_AND_FRIENDS } from "@/lib/routes";
 
 export const FamilyAndFriendsCard = () => {
   const { width } = useScreenSize();
 
   return (
-    <div className="order-4 bg-white w-full md:w-[48%] 3xl:!w-[301px] content-start grid gap-y-[29px] max-w-full md:max-w-[48%] 3xl:!max-w-[301px] h-[370px] rounded-2xl px-4 py-6">
-      <Button className="bg-blue-400 text-button-primary font-semibold rounded-[100px] w-fit">
-        Family & Friends
-        <IconExternalLink className="stroke-button-primary" />
-      </Button>
+    <div className="bg-white order-4 col-span-1 xl:col-span-3 content-start grid gap-y-[29px] h-[370px] rounded-2xl px-4 py-6">
+      <Link href={FAMILY_AND_FRIENDS}>
+        <Button className="rounded-[100px] w-fit gap-x-1">
+          Family & Friends
+          <IconExternalLink className="stroke-white" />
+        </Button>
+      </Link>
 
       <div className="flex flex-col items-center gap-y-[29px] h-[238.76px]">
         <ChartContainer config={CHART_CONFIG} className="w-[70%] h-[70%]">

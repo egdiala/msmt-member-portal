@@ -90,7 +90,6 @@ const Profile = () => {
 
             <Button
               variant="secondary"
-              className="rounded-[100px]"
               onClick={() => setOpenUpdateProfileDetailsModal(true)}
             >
               <IconPen className="stroke-button-secondary" /> Edit
@@ -115,7 +114,6 @@ const Profile = () => {
 
             <Button
               variant="secondary"
-              className="rounded-[100px]"
               onClick={() => setOpenUpdateContactPersonDetailsModal(true)}
             >
               <IconPen className="stroke-button-secondary" /> Edit
@@ -260,8 +258,8 @@ const Profile = () => {
 
           <div className="border-b border-divider w-full"></div>
 
-          <div className="bg-blue-400 rounded-lg p-2 flex justify-between flex-col gap-3 lg:flex-row">
-            <div className="grid gap-y-0.5">
+          <div className="bg-blue-400 rounded-lg p-2 flex justify-between items-center flex-col gap-3 lg:flex-row">
+            <div className="grid gap-y-0.5 ml-2">
               <h2 className="font-bold tracking-[0%] text-text-1 text-sm md:text-base">
                 Delete Account
               </h2>
@@ -272,7 +270,7 @@ const Profile = () => {
 
             <Button
               variant="ghost"
-              className="text-sm text-status-danger underline font-semibold tracking-[0%]"
+              className="text-sm text-status-danger underline font-semibold tracking-[0%] p-0 mr-1"
               onClick={() => setOpenDeleteAccountModal(true)}
             >
               Delete Account
