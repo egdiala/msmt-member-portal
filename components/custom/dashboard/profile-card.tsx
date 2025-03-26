@@ -67,7 +67,7 @@ export const ProfileCard = () => {
 
         <Button
           variant="outline"
-          className="rounded-[100px] text-button-primary"
+          className="text-button-primary hover:text-button-primary"
           onClick={() => setOpenLogoutModal(true)}
         >
           <IconLogOut className="stroke-button-primary" />

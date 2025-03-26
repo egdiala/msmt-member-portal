@@ -24,15 +24,3 @@ export const useScreenSize = () => {
 
   return screenSize;
 };
-
-export const getPieChartCx = (width: any) => {
-  return width <= 500
-    ? 110
-    : width <= 700
-    ? 160
-    : width <= 900
-    ? 95
-    : width <= 1200
-    ? 130
-    : 85;
-};
