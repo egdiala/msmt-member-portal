@@ -14,7 +14,7 @@ export const FavouriteProvidersCard = () => {
     <div className="col-span-1 xl:col-span-4 content-start grid gap-y-4 rounded-2xl bg-white p-4 md:py-6 md:px-6">
       <h3 className="font-semibold text-sm text-text-2">Favourite Providers</h3>
 
-      <div className="grid gap-y-1">
+      <div className="grid gap-y-1 content-start">
         {FAVOURITE_PROVIDERS_DATA.map((provider, index) => (
           <Fragment key={provider.id}>
             <div className="py-3 flex justify-between items-center">

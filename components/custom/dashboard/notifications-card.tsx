@@ -12,7 +12,7 @@ export const NotificationsCard = () => {
     <div className="col-span-1 md:col-span-2 xl:col-span-5 grid gap-y-4 rounded-2xl bg-white py-6 px-4 md:px-6">
       <h3 className="font-semibold text-sm text-text-2">Notifications</h3>
 
-      <div className="grid w-full gap-y-2">
+      <div className="grid w-full gap-y-2 content-start">
         {NOTIFICATION_DATA.slice(0, 2).map((val) => (
           <div
             key={val.id}
