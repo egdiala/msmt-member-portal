@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import {
+  FundWalletModal,
   TransactionMobileCard,
   TransactionStatCard,
 } from "@/components/custom";
@@ -44,7 +46,7 @@ const Wallet = () => {
       ),
       description: transaction.description,
       amount: <p>₦{transaction.amount}</p>,
-      type: transaction.type,
+      type: <p className="capitalize">{transaction.type}</p>,
       status: (
         <p
           className={cn(
@@ -57,6 +59,8 @@ const Wallet = () => {
       ),
     };
   });
+
+  const [openFundWalletModal, setOpenFundWalletModal] = useState(false);
 
   return (
     <div className="w-full grid gap-y-3 md:gap-y-4">
@@ -97,7 +101,10 @@ const Wallet = () => {
               <IconListFilter className="stroke-brand-btn-secondary" />
             </Button>
 
-            <Button className="gap-x-1">
+            <Button
+              className="gap-x-1"
+              onClick={() => setOpenFundWalletModal(true)}
+            >
               <IconHandCoins className="stroke-white hidden md:inline-flex" />
               <IconPlus className="stroke-white md:hidden" />
               Fund Wallet
@@ -119,6 +126,11 @@ const Wallet = () => {
           totalPages={"30"}
         />
       </div>
+
+      <FundWalletModal
+        isOpen={openFundWalletModal}
+        handleClose={() => setOpenFundWalletModal(false)}
+      />
     </div>
   );
 };

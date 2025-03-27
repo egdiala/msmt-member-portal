@@ -9,7 +9,6 @@ export default {
         },
         button: {
           primary: "#007BFF",
-          secondary: "#F2F8FF",
         },
         brand: {
           1: "#00050A",

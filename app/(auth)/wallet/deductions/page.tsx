@@ -39,7 +39,7 @@ const Deductions = () => {
       ),
       description: deduction.description,
       amount: <p>₦{deduction.amount}</p>,
-      type: deduction.type,
+      type: <p className="capitalize">{deduction.type}</p>,
       status: (
         <p
           className={cn(
