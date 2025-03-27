@@ -7,7 +7,6 @@ import { Button } from "@/components/ui";
 import { RenderIf } from "@/components/shared";
 import { IconExternalLink } from "@/components/icons";
 import { FAVOURITE_PROVIDERS_DATA } from "@/lib/mock";
-import { PROVIDERS } from "@/lib/routes";
 
 export const FavouriteProvidersCard = () => {
   return (
@@ -52,7 +51,7 @@ export const FavouriteProvidersCard = () => {
         ))}
       </div>
 
-      <Link href={PROVIDERS}>
+      <Link href="/providers">
         <Button
           variant="secondary"
           className="text-button-primary gap-x-1 w-fit"

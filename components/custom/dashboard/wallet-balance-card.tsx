@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { IconExternalLink, IconMedicalSavings } from "@/components/icons";
 import { Button } from "@/components/ui";
-import { WALLET } from "@/lib/routes";
 
 export const WalletBalanceCard = () => {
   return (
@@ -9,7 +8,7 @@ export const WalletBalanceCard = () => {
       <div className="grid gap-y-1">
         <h5 className="text-sm text-white">Wallet balance</h5>
         <p className="text-2xl text-white">₦235,402,853</p>
-        <Link href={WALLET}>
+        <Link href="/wallet">
           <Button
             variant="secondary"
             className="mt-2 w-fit text-button-primary gap-x-1"

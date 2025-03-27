@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui";
 import { FloatingInput, SelectCmp } from "@/components/shared";
-import { DASHBOARD } from "@/lib/routes";
 import { profileDetailsSchema } from "@/lib/validations";
 
 const CompleteProfile = () => {
@@ -173,7 +172,7 @@ const CompleteProfile = () => {
             <div className="flex justify-center gap-8 flex-col-reverse md:flex-row w-full">
               <Button
                 variant="secondary"
-                onClick={() => router.push(DASHBOARD)}
+                onClick={() => router.push("/home")}
                 type="button"
               >
                 Cancel

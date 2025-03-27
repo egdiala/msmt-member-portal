@@ -6,7 +6,6 @@ import Image from "next/image";
 import { IconExternalLink, IconLogOut } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { PROFILE_ORGANISATIONS_DATA } from "@/lib/mock";
-import { PROFILE } from "@/lib/routes";
 import { LogoutModal } from "./logout-modal";
 
 export const ProfileCard = () => {
@@ -52,7 +51,7 @@ export const ProfileCard = () => {
       </div>
 
       <div className="pt-4 flex items-center justify-between">
-        <Link href={PROFILE}>
+        <Link href="/profile">
           <Button variant="secondary" className="text-button-primary gap-x-1">
             Profile
             <IconExternalLink className="stroke-button-primary" />
