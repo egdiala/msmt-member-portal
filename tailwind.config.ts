@@ -35,6 +35,12 @@ export default {
           "300": "#808D97",
           "400": "#F2F3F5",
         },
+        green: {
+          DEFAULT: "#F6FBF5",
+        },
+        red: {
+          light: "#FFF4F4",
+        },
       },
     },
   },
