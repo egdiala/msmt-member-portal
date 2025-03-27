@@ -34,3 +34,21 @@ export const WALLET_TABLE_HEADERS = [
   { key: "type", value: "Type" },
   { key: "status", value: "Status" },
 ];
+
+export const TRANSACTIONS_FILTER_DATE_OPTIONS = [
+  { id: "date-1", name: "Today", value: "today" },
+  { id: "date-2", name: "This Month", value: "this-month" },
+  { id: "date-3", name: "All Time", value: "all-time" },
+  { id: "date-4", name: "Custom Range", value: "custom-range" },
+];
+
+export const TRANSACTIONS_FILTER_TYPE_OPTIONS = [
+  { id: "type-1", name: "Debit", value: "debit" },
+  { id: "type-2", name: "Credit", value: "credit" },
+];
+
+export const TRANSACTIONS_FILTER_STATUS_OPTIONS = [
+  { id: "status-1", name: "Upcoming", value: "upcoming" },
+  { id: "status-2", name: "Pending", value: "pending" },
+  { id: "status-3", name: "Completed", value: "completed" },
+];

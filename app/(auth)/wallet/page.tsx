@@ -2,16 +2,12 @@
 
 import { useState } from "react";
 import {
+  FilterTransactionsPopover,
   FundWalletModal,
   TransactionMobileCard,
   TransactionStatCard,
 } from "@/components/custom";
-import {
-  IconDownload,
-  IconHandCoins,
-  IconListFilter,
-  IconPlus,
-} from "@/components/icons";
+import { IconDownload, IconHandCoins, IconPlus } from "@/components/icons";
 import {
   BreadcrumbCmp,
   PaginationCmp,
@@ -94,12 +90,7 @@ const Wallet = () => {
               <IconDownload className="stroke-brand-btn-secondary" />
             </Button>
 
-            <Button
-              variant="secondary"
-              className="px-2 md:px-3 py-2 shadow-none"
-            >
-              <IconListFilter className="stroke-brand-btn-secondary" />
-            </Button>
+            <FilterTransactionsPopover />
 
             <Button
               className="gap-x-1"

@@ -1,6 +1,6 @@
 "use client";
 
-import { IconDownload, IconListFilter } from "@/components/icons";
+import { IconDownload } from "@/components/icons";
 import {
   BreadcrumbCmp,
   PaginationCmp,
@@ -8,13 +8,14 @@ import {
   TableCmp,
 } from "@/components/shared";
 import {
+  FilterTransactionsPopover,
   TransactionMobileCard,
   TransactionStatCard,
 } from "@/components/custom";
 import { Button } from "@/components/ui";
+import { WALLET_TABLE_HEADERS } from "@/lib/constants";
 import { DEDUCTION_TRANSACTIONS_DATA } from "@/lib/mock";
 import { cn } from "@/lib/utils";
-import { WALLET_TABLE_HEADERS } from "@/lib/constants";
 
 const Deductions = () => {
   const walletStats = [
@@ -85,12 +86,7 @@ const Deductions = () => {
               <IconDownload className="stroke-brand-btn-secondary" />
             </Button>
 
-            <Button
-              variant="secondary"
-              className="px-2 md:px-3 py-2 shadow-none"
-            >
-              <IconListFilter className="stroke-brand-btn-secondary" />
-            </Button>
+            <FilterTransactionsPopover isDeduction />
           </div>
         </div>
 
