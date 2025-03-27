@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui";
-import { PROVIDERS } from "@/lib/routes";
 import Link from "next/link";
 
 export const BookAppointmentCard = () => {
@@ -12,7 +11,7 @@ export const BookAppointmentCard = () => {
             Providers available for you
           </p>
         </div>
-        <Link href={PROVIDERS}>
+        <Link href="/providers">
           <Button className="w-full">Book an Appointment</Button>
         </Link>
       </div>

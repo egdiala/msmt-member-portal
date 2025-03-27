@@ -4,7 +4,6 @@ import Link from "next/link";
 import { IconExternalLink } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { NOTIFICATION_DATA } from "@/lib/mock";
-import { NOTIFICATIONS } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 export const NotificationsCard = () => {
@@ -37,7 +36,7 @@ export const NotificationsCard = () => {
         ))}
       </div>
 
-      <Link href={NOTIFICATIONS}>
+      <Link href="/notifications">
         <Button
           variant="secondary"
           className="text-button-primary gap-x-1 w-fit"

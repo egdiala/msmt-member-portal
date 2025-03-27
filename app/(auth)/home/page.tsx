@@ -14,7 +14,6 @@ import {
 } from "@/components/custom";
 import { Button } from "@/components/ui";
 import { DASHBOARD_STATS_DATA } from "@/lib/mock";
-import { COMPLETE_PROFILE } from "@/lib/routes";
 
 const Dashboard = () => {
   return (
@@ -40,7 +39,7 @@ const Dashboard = () => {
           </div>
 
           <div className="ml-6 lg:ml-0">
-            <Link href={COMPLETE_PROFILE}>
+            <Link href="/complete-profile">
               <Button>Complete Profile</Button>
             </Link>
           </div>

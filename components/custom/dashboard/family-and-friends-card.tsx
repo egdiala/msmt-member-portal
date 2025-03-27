@@ -7,12 +7,11 @@ import { IconExternalLink } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { CHART_CONFIG, COLORS } from "@/lib/constants";
 import { FAMILY_AND_FRIENDS_DATA } from "@/lib/mock";
-import { FAMILY_AND_FRIENDS } from "@/lib/routes";
 
 export const FamilyAndFriendsCard = () => {
   return (
     <div className="bg-white order-4 col-span-1 xl:col-span-3 content-start grid gap-y-7 w-full rounded-2xl px-4 pt-6 pb-10 xl:pb-6">
-      <Link href={FAMILY_AND_FRIENDS}>
+      <Link href="/family-and-friends">
         <Button className="w-fit gap-x-1">
           Family & Friends
           <IconExternalLink className="stroke-white" />

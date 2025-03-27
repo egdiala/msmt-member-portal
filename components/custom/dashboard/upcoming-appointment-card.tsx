@@ -8,7 +8,6 @@ import {
   IconStarFull,
 } from "@/components/icons";
 import { Button } from "@/components/ui";
-import { APPOINTMENTS } from "@/lib/routes";
 
 export const UpcomingAppointmentCard = () => {
   return (
@@ -70,7 +69,7 @@ export const UpcomingAppointmentCard = () => {
 
           <p className="font-medium text-xs text-button-primary">
             Provider has started the Session.
-            <Link href="/join-session" className="underline">
+            <Link href="/session" className="underline">
               Join now
             </Link>
           </p>
@@ -78,7 +77,7 @@ export const UpcomingAppointmentCard = () => {
       </div>
 
       <div className="flex justify-between lg:pt-5">
-        <Link href={APPOINTMENTS}>
+        <Link href="/appointments">
           <Button variant="secondary" className="text-button-primary gap-x-1">
             All Appointments
             <IconExternalLink className="stroke-button-primary" />

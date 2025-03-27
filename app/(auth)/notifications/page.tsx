@@ -8,7 +8,6 @@ import {
   TableCmp,
 } from "@/components/shared";
 import { NOTIFICATION_DATA } from "@/lib/mock";
-import { DASHBOARD } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 const Notifications = () => {
@@ -41,7 +40,7 @@ const Notifications = () => {
     <div className="grid gap-y-4">
       <BreadcrumbCmp
         breadcrumbItems={[
-          { id: 1, name: "Home", href: DASHBOARD },
+          { id: 1, name: "Home", href: "/home" },
           { id: 2, name: "Notifications" },
         ]}
       />
