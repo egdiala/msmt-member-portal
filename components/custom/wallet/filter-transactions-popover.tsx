@@ -9,8 +9,6 @@ import {
   Drawer,
   DrawerPortal,
   RadioGroup,
-  RadioGroupItem,
-  Label,
   Input,
   DrawerClose,
   DrawerTitle,
@@ -21,6 +19,7 @@ import {
   TRANSACTIONS_FILTER_TYPE_OPTIONS,
 } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { RadioButton } from "@/components/shared";
 
 const FilterContent = ({
   handleCloseFilter,
@@ -45,25 +44,11 @@ const FilterContent = ({
               onValueChange={(e) => setSelectedDateOption(e)}
             >
               {TRANSACTIONS_FILTER_DATE_OPTIONS.map((option) => (
-                <div
+                <RadioButton
                   key={option.id}
-                  className={cn(
-                    "flex items-center space-x-2 p-1 md:px-2 md:py-2.5 cursor-pointer",
-                    selectedDateOption === option.value ? "bg-blue-400" : ""
-                  )}
-                >
-                  <RadioGroupItem
-                    value={option.value}
-                    id={option.id}
-                    className="cursor-pointer"
-                  />
-                  <Label
-                    htmlFor={option.id}
-                    className="text-sm text-brand-1 capitalize font-normal cursor-pointer"
-                  >
-                    {option.name}
-                  </Label>
-                </div>
+                  isActive={selectedDateOption === option.value}
+                  option={option}
+                />
               ))}
             </RadioGroup>
           </div>
@@ -85,25 +70,11 @@ const FilterContent = ({
               onValueChange={(e) => setSelectedTypeOption(e)}
             >
               {TRANSACTIONS_FILTER_TYPE_OPTIONS.map((type) => (
-                <div
+                <RadioButton
                   key={type.id}
-                  className={cn(
-                    "flex items-center space-x-2 px-2 py-2.5 cursor-pointer",
-                    selectedTypeOption === type.value ? "bg-blue-400" : ""
-                  )}
-                >
-                  <RadioGroupItem
-                    value={type.value}
-                    id={type.id}
-                    className="cursor-pointer"
-                  />
-                  <Label
-                    htmlFor={type.id}
-                    className="text-sm text-brand-1 capitalize font-normal cursor-pointer"
-                  >
-                    {type.name}
-                  </Label>
-                </div>
+                  isActive={selectedTypeOption === type.value}
+                  option={type}
+                />
               ))}
             </RadioGroup>
           </div>
@@ -118,25 +89,11 @@ const FilterContent = ({
               onValueChange={(e) => setSelectedStatusOption(e)}
             >
               {TRANSACTIONS_FILTER_STATUS_OPTIONS.map((status) => (
-                <div
+                <RadioButton
                   key={status.id}
-                  className={cn(
-                    "flex items-center space-x-2 px-2 py-2.5 cursor-pointer",
-                    selectedStatusOption === status.value ? "bg-blue-400" : ""
-                  )}
-                >
-                  <RadioGroupItem
-                    value={status.value}
-                    id={status.id}
-                    className="cursor-pointer"
-                  />
-                  <Label
-                    htmlFor={status.id}
-                    className="text-sm text-brand-1 capitalize font-normal cursor-pointer"
-                  >
-                    {status.name}
-                  </Label>
-                </div>
+                  isActive={selectedStatusOption === status.value}
+                  option={status}
+                />
               ))}
             </RadioGroup>
           </div>
