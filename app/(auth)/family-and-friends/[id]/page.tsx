@@ -29,7 +29,7 @@ import { FAMILY_AND_FRIENDS_APPOINTMENTS_DATA } from "@/lib/mock";
 import { FAMILY_AND_FRIENDS_APPOINTMENTS_TABLE_HEADERS } from "@/lib/constants";
 
 const SingleFamilyOrFriend = () => {
-  const userStatus: string = "inactive";
+  const userStatus: string = "active";
 
   const userInfo = [
     { id: 1, title: "Phone", value: "0801 234 5678" },
