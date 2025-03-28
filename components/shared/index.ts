@@ -7,3 +7,4 @@ export * from "./searchbar";
 export * from "./table";
 export * from "./select";
 export * from "./floating-input";
+export * from "./radio-button";

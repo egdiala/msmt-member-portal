@@ -7,15 +7,11 @@ import {
   Searchbar,
   TableCmp,
 } from "@/components/shared";
+import { NOTIFICATION_TABLE_HEADERS } from "@/lib/constants";
 import { NOTIFICATION_DATA } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 
 const Notifications = () => {
-  const headers = [
-    { key: "date_and_time_added", value: "Date & Time Added" },
-    { key: "message", value: "Message" },
-  ];
-
   const tableData = NOTIFICATION_DATA.map((val) => {
     return {
       id: val.id,
@@ -32,7 +28,7 @@ const Notifications = () => {
           </p>
         </div>
       ),
-      message: val.message,
+      message: <p className="whitespace-pre-wrap">{val.message}</p>,
     };
   });
 
@@ -49,14 +45,11 @@ const Notifications = () => {
         <h2 className="font-bold text-text-1">Notifications</h2>
 
         <div className="flex justify-between items-center">
-          <div>
-            <Searchbar value={""} onChange={() => {}} placeholder={"Search"} />
-          </div>
-
+          <Searchbar value={""} onChange={() => {}} placeholder={"Search"} />
           <IconDownload className="size-4 stroke-button-secondary" />
         </div>
 
-        <TableCmp data={tableData} headers={headers} />
+        <TableCmp data={tableData} headers={NOTIFICATION_TABLE_HEADERS} />
 
         <div className="grid md:hidden w-full gap-y-2">
           {NOTIFICATION_DATA.map((val) => (

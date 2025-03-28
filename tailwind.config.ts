@@ -9,7 +9,6 @@ export default {
         },
         button: {
           primary: "#007BFF",
-          secondary: "#F2F8FF",
         },
         brand: {
           1: "#00050A",
@@ -28,12 +27,19 @@ export default {
           "700": "#3A414E",
           "800": "#252A31",
           "900": "#181B20",
+          action: "#0073C4",
           DEFAULT: "#FFFFFF",
         },
         grey: {
           "200": "#354959",
           "300": "#808D97",
           "400": "#F2F3F5",
+        },
+        green: {
+          DEFAULT: "#F6FBF5",
+        },
+        red: {
+          light: "#FFF4F4",
         },
       },
     },

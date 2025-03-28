@@ -105,3 +105,15 @@ export const contactPersonDetailsSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   relationship: z.string().min(2, "Relationship must be at least 2 characters"),
 });
+
+export const addMemberSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  relationship: z.string().min(2, "Relationship must be at least 2 characters"),
+  isAbove18: z.boolean(),
+});
+
+export const removeMemberSchema = z.object({
+  reason: z.string().min(2, "Reason must be at least 2 characters"),
+});

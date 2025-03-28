@@ -138,7 +138,7 @@ const Profile = () => {
               onSubmit={form.handleSubmit(onSubmit)}
               className="grid gap-y-5"
             >
-              <div className="grid gap-4 grid-cols-2">
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="currentPassword"
