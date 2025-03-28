@@ -52,3 +52,24 @@ export const TRANSACTIONS_FILTER_STATUS_OPTIONS = [
   { id: "status-2", name: "Pending", value: "pending" },
   { id: "status-3", name: "Completed", value: "completed" },
 ];
+
+export const FAMILY_AND_FRIENDS_TABLE_HEADERS = [
+  { key: "date_and_time", value: "Date & Time" },
+  { key: "name", value: "Name" },
+  { key: "email", value: "Email address" },
+  { key: "relationship", value: "Relationship" },
+];
+
+export const FAMILY_AND_FRIENDS_APPOINTMENTS_TABLE_HEADERS = [
+  { key: "date_and_time", value: "Date & Time" },
+  { key: "consultant", value: "Consultant" },
+  { key: "booked_by", value: "Booked By" },
+  { key: "status", value: "Status" },
+];
+
+export const APPLICATIONS_FILTER_STATUS_OPTIONS = [
+  { id: "status-1", name: "Upcoming", value: "upcoming" },
+  { id: "status-2", name: "Pending", value: "pending" },
+  { id: "status-3", name: "Completed", value: "completed" },
+  { id: "status-4", name: "Canceled", value: "canceled" },
+];

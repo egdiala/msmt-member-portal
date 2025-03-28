@@ -67,7 +67,7 @@ const Wallet = () => {
         ]}
       />
 
-      <div className="bg-white rounded-lg md:rounded-2xl p-1 md:p-6 grid grid-cols-3 gap-1 md:gap-4">
+      <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4">
         {walletStats.map((stat) => (
           <TransactionStatCard
             key={stat.id}

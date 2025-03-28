@@ -15,8 +15,7 @@ import {
 } from "@/components/ui";
 import {
   TRANSACTIONS_FILTER_DATE_OPTIONS,
-  TRANSACTIONS_FILTER_STATUS_OPTIONS,
-  TRANSACTIONS_FILTER_TYPE_OPTIONS,
+  APPLICATIONS_FILTER_STATUS_OPTIONS,
 } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { RadioButton } from "@/components/shared";
@@ -27,14 +26,13 @@ const FilterContent = ({
   handleCloseFilter: () => void;
 }) => {
   const [selectedDateOption, setSelectedDateOption] = useState("all-time");
-  const [selectedTypeOption, setSelectedTypeOption] = useState("");
   const [selectedStatusOption, setSelectedStatusOption] = useState("");
 
   return (
     <div className="p-6 grid gap-y-5 w-full">
       <h3 className="font-bold text-xl text-brand-1">Filter</h3>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-8">
         <div className="grid gap-y-1">
           <h5 className="uppercase text-xs text-brand-2">Date</h5>
 
@@ -62,25 +60,6 @@ const FilterContent = ({
         </div>
 
         <div className="grid gap-y-1 content-start">
-          <h5 className="uppercase text-xs text-brand-2">Type</h5>
-
-          <div className="grid gap-y-1">
-            <RadioGroup
-              defaultValue={selectedTypeOption}
-              onValueChange={(e) => setSelectedTypeOption(e)}
-            >
-              {TRANSACTIONS_FILTER_TYPE_OPTIONS.map((type) => (
-                <RadioButton
-                  key={type.id}
-                  isActive={selectedTypeOption === type.value}
-                  option={type}
-                />
-              ))}
-            </RadioGroup>
-          </div>
-        </div>
-
-        <div className="grid gap-y-1 content-start">
           <h5 className="uppercase text-xs text-brand-2">Status</h5>
 
           <div className="grid gap-y-1">
@@ -88,7 +67,7 @@ const FilterContent = ({
               defaultValue={selectedStatusOption}
               onValueChange={(e) => setSelectedStatusOption(e)}
             >
-              {TRANSACTIONS_FILTER_STATUS_OPTIONS.map((status) => (
+              {APPLICATIONS_FILTER_STATUS_OPTIONS.map((status) => (
                 <RadioButton
                   key={status.id}
                   isActive={selectedStatusOption === status.value}
@@ -110,11 +89,7 @@ const FilterContent = ({
   );
 };
 
-export const FilterTransactionsPopover = ({
-  isDeduction = false,
-}: {
-  isDeduction?: boolean;
-}) => {
+export const FilterAppointmentsPopover = () => {
   const [openPopover, setOpenPopover] = useState(false);
   const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
   return (
@@ -134,12 +109,7 @@ export const FilterTransactionsPopover = ({
           </PopoverTrigger>
           <PopoverContent
             sideOffset={10}
-            className={cn(
-              "w-144 relative border-none shadow-modal-shadow bg-white hidden md:flex p-0",
-              isDeduction
-                ? "right-13 xl:right-18"
-                : "right-40 lg:right-48 xl:right-54"
-            )}
+            className="md:w-100 xl:w-144 relative right-45 xl:right-66 border-none shadow-modal-shadow bg-white hidden md:flex p-0"
           >
             <FilterContent handleCloseFilter={() => setOpenPopover(false)} />
           </PopoverContent>

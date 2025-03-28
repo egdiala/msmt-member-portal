@@ -27,6 +27,7 @@ export default {
           "700": "#3A414E",
           "800": "#252A31",
           "900": "#181B20",
+          action: "#0073C4",
           DEFAULT: "#FFFFFF",
         },
         grey: {

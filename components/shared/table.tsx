@@ -16,7 +16,7 @@ interface ITableCmp {
 
 export const TableCmp = ({ data, headers, onClickRow }: ITableCmp) => {
   return (
-    <div className="w-full hidden md:inline">
+    <div className="w-full hidden md:inline overflow-x-scroll">
       <Table className="w-full">
         <TableHeader>
           <TableRow>
