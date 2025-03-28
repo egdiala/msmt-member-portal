@@ -40,12 +40,14 @@ const FilterContent = ({
           <h5 className="uppercase text-xs text-brand-2">Date</h5>
 
           <div className="grid gap-y-1">
-            <RadioGroup defaultValue={selectedDateOption}>
+            <RadioGroup
+              defaultValue={selectedDateOption}
+              onValueChange={(e) => setSelectedDateOption(e)}
+            >
               {TRANSACTIONS_FILTER_DATE_OPTIONS.map((option) => (
-                <button
+                <div
                   key={option.id}
                   className="flex items-center space-x-2 p-1 md:px-2 md:py-2.5"
-                  onClick={() => setSelectedDateOption(option.value)}
                 >
                   <RadioGroupItem value={option.value} id={option.id} />
                   <Label
@@ -54,7 +56,7 @@ const FilterContent = ({
                   >
                     {option.name}
                   </Label>
-                </button>
+                </div>
               ))}
             </RadioGroup>
           </div>
@@ -71,12 +73,14 @@ const FilterContent = ({
           <h5 className="uppercase text-xs text-brand-2">Type</h5>
 
           <div className="grid gap-y-1">
-            <RadioGroup defaultValue={selectedTypeOption}>
+            <RadioGroup
+              defaultValue={selectedTypeOption}
+              onValueChange={(e) => setSelectedTypeOption(e)}
+            >
               {TRANSACTIONS_FILTER_TYPE_OPTIONS.map((type) => (
-                <button
+                <div
                   key={type.id}
                   className="flex items-center space-x-2 px-2 py-2.5"
-                  onClick={() => setSelectedTypeOption(type.value)}
                 >
                   <RadioGroupItem value={type.value} id={type.id} />
                   <Label
@@ -85,7 +89,7 @@ const FilterContent = ({
                   >
                     {type.name}
                   </Label>
-                </button>
+                </div>
               ))}
             </RadioGroup>
           </div>
@@ -95,12 +99,14 @@ const FilterContent = ({
           <h5 className="uppercase text-xs text-brand-2">Status</h5>
 
           <div className="grid gap-y-1">
-            <RadioGroup defaultValue={selectedStatusOption}>
+            <RadioGroup
+              defaultValue={selectedStatusOption}
+              onValueChange={(e) => setSelectedStatusOption(e)}
+            >
               {TRANSACTIONS_FILTER_STATUS_OPTIONS.map((status) => (
-                <button
+                <div
                   key={status.id}
                   className="flex items-center space-x-2 px-2 py-2.5"
-                  onClick={() => setSelectedStatusOption(status.value)}
                 >
                   <RadioGroupItem value={status.value} id={status.id} />
                   <Label
@@ -109,7 +115,7 @@ const FilterContent = ({
                   >
                     {status.name}
                   </Label>
-                </button>
+                </div>
               ))}
             </RadioGroup>
           </div>
