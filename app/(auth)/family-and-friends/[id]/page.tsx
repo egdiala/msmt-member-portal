@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import {
   IconCalendarCheck2,
@@ -19,16 +20,21 @@ import { Button, Badge } from "@/components/ui";
 import {
   FilterAppointmentsPopover,
   AppointmentsMobileCard,
+  EditMemberModal,
+  ActivateMemberModal,
+  RemoveMemberModal,
 } from "@/components/custom";
 import { cn } from "@/lib/utils";
 import { FAMILY_AND_FRIENDS_APPOINTMENTS_DATA } from "@/lib/mock";
 import { FAMILY_AND_FRIENDS_APPOINTMENTS_TABLE_HEADERS } from "@/lib/constants";
 
 const SingleFamilyOrFriend = () => {
+  const userStatus: string = "inactive";
+
   const userInfo = [
     { id: 1, title: "Phone", value: "0801 234 5678" },
     { id: 2, title: "Gender", value: "Male" },
-    { id: 3, title: "Status", value: "active" },
+    { id: 3, title: "Status", value: userStatus },
   ];
 
   const appointmentStats = [
@@ -78,6 +84,10 @@ const SingleFamilyOrFriend = () => {
     };
   });
 
+  const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
+  const [openRemoveMemberModal, setOpenRemoveMemberModal] = useState(false);
+  const [openActivateMemberModal, setOpenActivateMemberModal] = useState(false);
+
   return (
     <div className="w-full grid gap-y-4">
       <BreadcrumbCmp
@@ -118,15 +128,15 @@ const SingleFamilyOrFriend = () => {
                   <RenderIf condition={info.title === "Status"}>
                     <Badge
                       className={cn(
-                        "text-white text-sm font-medium",
+                        "text-white text-sm font-medium capitalize",
                         info.value === "active"
                           ? "bg-actions-green"
                           : info.value === "deactivated"
                           ? "bg-red-500"
-                          : "bg-grey-400"
+                          : "bg-grey-300"
                       )}
                     >
-                      Active
+                      {info.value}
                     </Badge>
                   </RenderIf>
                 </div>
@@ -136,8 +146,30 @@ const SingleFamilyOrFriend = () => {
             <div className="border-b border-divider"></div>
 
             <div className="flex items-center gap-x-4">
-              <Button variant="secondary">Edit Profile</Button>
-              <Button variant="secondary">Remove Member</Button>
+              <Button
+                variant="secondary"
+                onClick={() => setOpenEditProfileModal(true)}
+              >
+                Edit Profile
+              </Button>
+
+              <RenderIf condition={userStatus === "active"}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setOpenRemoveMemberModal(true)}
+                >
+                  Remove Member
+                </Button>
+              </RenderIf>
+
+              <RenderIf condition={userStatus === "inactive"}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setOpenActivateMemberModal(true)}
+                >
+                  Activate Member
+                </Button>
+              </RenderIf>
             </div>
           </div>
 
@@ -238,6 +270,21 @@ const SingleFamilyOrFriend = () => {
           </div>
         </div>
       </div>
+
+      <EditMemberModal
+        handleClose={() => setOpenEditProfileModal(false)}
+        isOpen={openEditProfileModal}
+      />
+
+      <RemoveMemberModal
+        handleClose={() => setOpenRemoveMemberModal(false)}
+        isOpen={openRemoveMemberModal}
+      />
+
+      <ActivateMemberModal
+        isOpen={openActivateMemberModal}
+        handleClose={() => setOpenActivateMemberModal(false)}
+      />
     </div>
   );
 };

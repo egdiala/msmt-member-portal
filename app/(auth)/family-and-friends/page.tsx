@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   TransactionStatCard,
   FamilyAndFriendsMobileCard,
-  AddMember,
+  AddMemberModal,
 } from "@/components/custom";
 import { IconDownload, IconPlus } from "@/components/icons";
 import {
@@ -110,7 +110,7 @@ const FamilyAndFriends = () => {
         />
       </div>
 
-      <AddMember
+      <AddMemberModal
         isOpen={openAddMemberModal}
         handleClose={() => setOpenAddMemberModal(false)}
       />

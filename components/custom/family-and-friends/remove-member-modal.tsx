@@ -17,7 +17,10 @@ interface IRemoveMemberModal {
   handleClose: () => void;
   isOpen: boolean;
 }
-export const RemoveMember = ({ isOpen, handleClose }: IRemoveMemberModal) => {
+export const RemoveMemberModal = ({
+  isOpen,
+  handleClose,
+}: IRemoveMemberModal) => {
   const form = useForm<z.infer<typeof removeMemberSchema>>({
     resolver: zodResolver(removeMemberSchema),
     defaultValues: {

@@ -18,7 +18,7 @@ interface IAddMemberModal {
   handleClose: () => void;
   isOpen: boolean;
 }
-export const AddMember = ({ isOpen, handleClose }: IAddMemberModal) => {
+export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
   const form = useForm<z.infer<typeof addMemberSchema>>({
     resolver: zodResolver(addMemberSchema),
     defaultValues: {
