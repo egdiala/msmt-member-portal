@@ -13,7 +13,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
       <h3 className="font-bold text-2xl">Fund Wallet</h3>
 
       <div className="relative">
-        <Input placeholder="Amount to Buy" />
+        <Input placeholder="Amount to Buy" className="pr-8" />
         <IconDollarSign className="stroke-grey-300 size-4 absolute right-2 top-4" />
       </div>
 

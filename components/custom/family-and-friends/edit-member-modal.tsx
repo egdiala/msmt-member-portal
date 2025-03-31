@@ -38,7 +38,7 @@ export const EditMemberModal = ({ isOpen, handleClose }: IEditMemberModal) => {
     <Modal
       isOpen={isOpen}
       handleClose={handleClose}
-      className="max-w-85 md:max-w-144 grid gap-y-6"
+      className="gap-y-6"
     >
       <h2 className="font-bold text-2xl text-brand-1">Edit Member</h2>
 

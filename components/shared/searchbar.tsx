@@ -22,11 +22,11 @@ export const Searchbar = ({
   return (
     <div
       className={cn(
-        "bg-input-field flex items-center gap-x-2 min-w-20 md:min-w-65 rounded-sm relative",
+        "bg-input-field flex items-center gap-x-2 pl-2 min-w-20 md:min-w-65 rounded-sm relative",
         className
       )}
     >
-      <IconSearch className="stroke-text-tertiary pl-2" />
+      <IconSearch className="stroke-text-tertiary" />
 
       <div className="flex items-center w-full gap-x-1 pr-2">
         <Input
