@@ -37,11 +37,7 @@ export const UpdateContactPersonDetailsModal = ({
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="max-w-144 grid gap-y-6"
-    >
+    <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
       <h2 className="font-bold text-lg md:text-2xl">
         Update Contact Person Details
       </h2>

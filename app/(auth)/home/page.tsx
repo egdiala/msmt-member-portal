@@ -39,7 +39,7 @@ const Dashboard = () => {
           </div>
 
           <div className="ml-6 lg:ml-0">
-            <Link href="/complete-profile">
+            <Link href="/profile/complete-profile">
               <Button>Complete Profile</Button>
             </Link>
           </div>
