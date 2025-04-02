@@ -12,7 +12,7 @@ export const ProfileCard = () => {
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
   return (
-    <div className="col-span-1 xl:col-span-3 grid gap-y-3 rounded-2xl bg-white p-4 md:py-7 md:px-6">
+    <div className="col-span-1 xl:col-span-3 flex flex-col gap-y-3 rounded-2xl bg-white p-4 md:p-6">
       <div className="grid gap-y-2 content-start">
         <Image
           alt="man"
@@ -28,7 +28,7 @@ export const ProfileCard = () => {
         </div>
       </div>
 
-      <div className="grid gap-y-1">
+      <div className="flex flex-col gap-y-1 flex-1">
         <h4 className="text-text-2 text-xs">Your organisation(s)</h4>
 
         <div className="flex items-center gap-2 flex-wrap">

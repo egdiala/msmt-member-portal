@@ -8,15 +8,12 @@ export const WalletBalanceCard = () => {
       <div className="grid gap-y-1">
         <h5 className="text-sm text-white">Wallet balance</h5>
         <p className="text-2xl text-white">₦235,402,853</p>
-        <Link href="/wallet">
-          <Button
-            variant="secondary"
-            className="mt-2 w-fit text-button-primary gap-x-1"
-          >
-            Wallet
-            <IconExternalLink className="stroke-button-primary size-4" />
-          </Button>
-        </Link>
+          <Button asChild variant="secondary" className="mt-2 w-fit text-button-primary gap-x-1">
+            <Link href="/wallet">
+              Wallet
+              <IconExternalLink className="stroke-button-primary size-4" />
+            </Link>
+        </Button>
       </div>
 
       <div className="flex justify-end -mr-6">

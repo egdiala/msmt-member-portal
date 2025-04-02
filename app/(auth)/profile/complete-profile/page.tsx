@@ -1,7 +1,6 @@
 "use client";
 
 import type * as z from "zod";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconCamera, IconPhone, IconUserRound } from "@/components/icons";
@@ -15,9 +14,9 @@ import {
 } from "@/components/ui";
 import { FloatingInput, SelectCmp } from "@/components/shared";
 import { profileDetailsSchema } from "@/lib/validations";
+import Link from "next/link";
 
 const CompleteProfile = () => {
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof profileDetailsSchema>>({
     resolver: zodResolver(profileDetailsSchema),
@@ -170,12 +169,8 @@ const CompleteProfile = () => {
             </div>
 
             <div className="flex justify-center gap-8 flex-col-reverse md:flex-row w-full">
-              <Button
-                variant="secondary"
-                onClick={() => router.push("/home")}
-                type="button"
-              >
-                Cancel
+              <Button asChild variant="secondary">
+                <Link href="/home">Cancel</Link>
               </Button>
 
               <Button>Complete Profile</Button>
