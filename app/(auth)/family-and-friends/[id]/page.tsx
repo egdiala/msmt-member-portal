@@ -187,7 +187,7 @@ const SingleFamilyOrFriend = () => {
               ))}
             </div>
 
-            <div className="pt-4 md:pt-0 flex items-center justify-between gap-3 flex-row">
+            <div className="pt-4 md:pt-0 flex items-end md:items-center justify-between gap-3 flex-col md:flex-row">
               <Searchbar
                 value={""}
                 onChange={() => {}}

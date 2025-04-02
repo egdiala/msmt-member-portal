@@ -57,6 +57,7 @@ const Wallet = () => {
   });
 
   const [openFundWalletModal, setOpenFundWalletModal] = useState(false);
+  const [search, setSearch] = useState("");
 
   return (
     <div className="w-full grid gap-y-3 md:gap-y-4">
@@ -82,8 +83,13 @@ const Wallet = () => {
       <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 grid gap-y-4 md:gap-y-5">
         <h3 className="font-bold text-brand-1">Transactions</h3>
 
-        <div className="flex items-center justify-between gap-3 flex-row">
-          <Searchbar value={""} onChange={() => {}} placeholder={"Search"} />
+        <div className="flex items-end md:items-center justify-between gap-3 flex-col md:flex-row">
+          <Searchbar
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={"Search"}
+            onClear={() => {}}
+          />
 
           <div className="flex items-center gap-x-4">
             <Button variant="outline" className="py-2 px-2 md:px-3">

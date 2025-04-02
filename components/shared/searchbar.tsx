@@ -22,27 +22,27 @@ export const Searchbar = ({
   return (
     <div
       className={cn(
-        "bg-input-field flex items-center gap-x-2 pl-2 min-w-20 md:min-w-65 rounded-sm relative",
+        "bg-input-field flex items-center min-w-full md:min-w-65 rounded-sm relative",
         className
       )}
     >
-      <IconSearch className="stroke-text-tertiary" />
+      <IconSearch className="stroke-text-tertiary absolute top-3 left-2 size-4" />
 
-      <div className="flex items-center w-full gap-x-1 pr-2">
+      <div className="w-full">
         <Input
           onChange={onChange}
           value={value}
           placeholder={placeholder}
-          className="w-full border-none focus-visible:ring-offset-0 focus-visible:ring-0 px-0 shadow-none h-10 py-1.5 placeholder:text-brand-3 text-text-tertiary text-sm"
+          className="w-full pl-8 border-none focus-visible:ring-offset-0 focus-visible:ring-0 pr-8 shadow-none h-10 py-1.5 placeholder:text-brand-3 text-text-tertiary text-sm"
         />
 
         <RenderIf condition={!!onClear && value !== ""}>
           <Button
             variant="ghost"
-            className="cursor-pointer !px-0"
+            className="cursor-pointer !p-0 absolute top-0.5 right-2"
             onClick={onClear}
           >
-            <IconClose className="stroke-text-tertiary" />
+            <IconClose className="stroke-text-tertiary size-4" />
           </Button>
         </RenderIf>
       </div>

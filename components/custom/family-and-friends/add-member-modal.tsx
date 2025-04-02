@@ -35,11 +35,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="max-w-85 md:max-w-144 grid gap-y-6"
-    >
+    <Modal isOpen={isOpen} handleClose={handleClose} className="gap-y-6">
       <h2 className="font-bold text-2xl text-brand-1">Add Member</h2>
 
       <Form {...form}>

@@ -70,7 +70,7 @@ const FamilyAndFriends = () => {
       <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 grid gap-y-4 md:gap-y-5">
         <h3 className="font-bold text-brand-1">Family & Friends</h3>
 
-        <div className="flex items-center justify-between gap-3 flex-row">
+        <div className="flex items-end md:items-center justify-between gap-3 flex-col md:flex-row">
           <Searchbar value={""} onChange={() => {}} placeholder={"Search"} />
 
           <div className="flex items-center gap-x-4">
