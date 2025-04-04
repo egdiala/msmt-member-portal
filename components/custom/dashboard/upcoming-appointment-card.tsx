@@ -11,7 +11,7 @@ import { Button } from "@/components/ui";
 
 export const UpcomingAppointmentCard = () => {
   return (
-    <div className="grid gap-y-4 order-1 md:order-2 col-span-1 xl:col-span-4 bg-white rounded-2xl p-3 md:p-6">
+    <div className="max-w-full grid gap-y-4 order-1 md:order-2 col-span-1 xl:col-span-4 bg-white rounded-2xl p-3 md:p-6 w-full">
       <h3 className="text-text-2 text-sm font-semibold">
         Upcoming appointment
       </h3>
