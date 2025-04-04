@@ -19,10 +19,13 @@ export const TableCmp = ({ data, headers, onClickRow }: ITableCmp) => {
               <TableHead
                 key={header.key}
                 className={cn(
-                  index === 0 ? "rounded-l-sm" : index === headers.length - 1 ? "rounded-r-sm" : "",
-                  "font-medium text-text-1 text-sm h-9 py-2",
+                  index === 0
+                    ? "rounded-l-sm"
+                    : index === headers.length - 1
+                    ? "rounded-r-sm"
+                    : "",
+                  "font-medium text-text-1 text-sm h-9 py-2"
                 )}
-           
               >
                 {header.value}
               </TableHead>
@@ -32,7 +35,7 @@ export const TableCmp = ({ data, headers, onClickRow }: ITableCmp) => {
 
         <TableBody>
           <TableRow>
-            <TableCell colSpan={headers.length} className="h-2 p-0"></TableCell>
+            <TableCell className="h-2 p-0"></TableCell>
           </TableRow>
         </TableBody>
 
@@ -42,19 +45,20 @@ export const TableCmp = ({ data, headers, onClickRow }: ITableCmp) => {
               key={datum.id}
               onClick={() => {
                 if (onClickRow) {
-                  onClickRow(datum)
+                  onClickRow(datum);
                 }
               }}
               className={onClickRow ? "cursor-pointer" : "cursor-default"}
             >
               {headers.map((header) => (
-                <TableCell key={`${datum[header.key]}-${datum.id}`}>{datum[header.key]}</TableCell>
+                <TableCell key={`${header.key}-${datum.id}`}>
+                  {datum[header.key]}
+                </TableCell>
               ))}
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </div>
-  )
-}
-
+  );
+};
