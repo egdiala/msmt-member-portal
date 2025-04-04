@@ -105,3 +105,14 @@ export const contactPersonDetailsSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   relationship: z.string().min(2, "Relationship must be at least 2 characters"),
 });
+
+export const ratingFormSchema = z.object({
+  sessionRating: z.enum(["great", "neutral", "not-great"], {
+    required_error: "Please select how your session was",
+  }),
+  heListens: z.boolean().optional(),
+  feelBetter: z.boolean().optional(),
+  starRating: z.number().min(1, "Please rate with at least 1 star").max(5),
+  feedback: z.string().optional(),
+})
+
