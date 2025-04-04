@@ -1,22 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { usePathname } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppointmentSearch } from "./appointment-search";
 import { AppliedFilters } from "./applied-filters";
 import { TableCmp } from "@/components/shared";
 import { AppointmentListMobile } from "./appointments-list-mobile";
-import { PaginationCmp } from "@/components/shared";
+import { PaginationCmp, BreadcrumbCmp } from "@/components/shared";
 import { UpcomingAppointmentCard } from "../upcoming-appointment-card";
 import { getStatusBadge } from "./get-status-badge";
-// import { AppointmentDetails } from "./appointment-details";
 import { Appointment } from "@/types/appointment";
+import { capitalizeFirstLetter } from "@/lib/hooks";
 
 export function AppointmentContainer() {
   const [selectedAppointment, setSelectedAppointment] =
@@ -26,6 +21,7 @@ export function AppointmentContainer() {
     name: "",
   });
   const [currentPage, setCurrentPage] = useState(1);
+  const pathname = usePathname();
 
   const appointments: Appointment[] = [
     {
@@ -142,52 +138,58 @@ export function AppointmentContainer() {
   };
 
   return (
-    <div className="w-full grid lg:grid-cols-3 gap-x-6">
-      <Card className="p-3 md:p-6 shadow-none border-none lg:col-span-2">
-        <CardHeader className="gap-4 md:gap-5 pb-0">
-          <CardTitle className="text-brand-1 font-bold text-base">
-            Appointments
-          </CardTitle>
-          <AppointmentSearch
-            onSearch={handleSearch}
-            onFilter={handleApplyFilters}
-          
-          />
+    <div className="grid gap-y-4">
+      <BreadcrumbCmp
+        breadcrumbItems={[
+          { id: 1, name: "Home", href: "/home" },
+          { id: 2, name: capitalizeFirstLetter(pathname.split("/")[1]) },
+        ]}
+      />
 
-          <AppliedFilters
-            filters={appliedFilters}
-            onClearFilter={handleClearFilter}
-            onClearAll={handleClearAllFilters}
-           
-          />
-        </CardHeader>
-        <CardContent className="w-full">
-          <TableCmp
-            data={appointments.map((apt) => ({
-              ...apt,
-              date: `${apt.date} • ${apt.time}`,
-              status: getStatusBadge(apt.status),
-            }))}
-            headers={headers}
-          />
+      <div className="w-full grid gap-y-4 lg:grid-cols-3 gap-x-6">
+        <Card className="p-3 md:p-6 shadow-none border-none lg:col-span-2">
+          <CardHeader className="gap-4 md:gap-5 pb-0">
+            <CardTitle className="text-brand-1 font-bold text-base">
+              Appointments
+            </CardTitle>
+            <AppointmentSearch
+              onSearch={handleSearch}
+              onFilter={handleApplyFilters}
+            />
 
-          {/* Mobile list view */}
-          <AppointmentListMobile
-            appointments={appointments}
-            onAppointmentClick={handleAppointmentClick}
-          />
+            <AppliedFilters
+              filters={appliedFilters}
+              onClearFilter={handleClearFilter}
+              onClearAll={handleClearAllFilters}
+            />
+          </CardHeader>
+          <CardContent className="w-full">
+            <TableCmp
+              data={appointments.map((apt) => ({
+                ...apt,
+                date: `${apt.date} • ${apt.time}`,
+                status: getStatusBadge(apt.status),
+              }))}
+              headers={headers}
+            />
 
-          {/* Pagination */}
-          <PaginationCmp
-            currentPage={currentPage}
-            totalPages={30}
-            onPageChange={setCurrentPage}
-          
-          />
-        </CardContent>
-      </Card>
-      <div className="h-fit w-full lg:w-fit col-span-1">
-        <UpcomingAppointmentCard />
+            {/* Mobile list view */}
+            <AppointmentListMobile
+              appointments={appointments}
+              onAppointmentClick={handleAppointmentClick}
+            />
+
+            {/* Pagination */}
+            <PaginationCmp
+              currentPage={currentPage}
+              totalPages={30}
+              onPageChange={setCurrentPage}
+            />
+          </CardContent>
+        </Card>
+        <div className="h-fit w-full lg:w-fit col-span-1">
+          <UpcomingAppointmentCard />
+        </div>
       </div>
     </div>
   );

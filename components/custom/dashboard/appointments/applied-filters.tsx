@@ -24,9 +24,9 @@ export function AppliedFilters({
     <div
       className={`flex justify-between md:justify-start gap-2 flex-wrap items-center text-sm ${className}`}
     >
-      <div className="flex items-center gap-x-2">
-        <span className="text-gray-500 mr-2">Filters applied:</span>
-        <div className="flex items-center flex-wrap gap-x-2">
+      <div className="flex flex-col md:flex-row md:items-center gap-2">
+        <span className="text-brand-3 text-nowrap">Filters applied:</span>
+        <div className="flex items-center flex-wrap gap-2">
           {Object.entries(filters).map(([key, value]) => {
             if (!value) return null;
             return (
