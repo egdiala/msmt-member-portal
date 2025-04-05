@@ -12,15 +12,15 @@ import { UpcomingAppointmentCard } from "../upcoming-appointment-card";
 import { getStatusBadge } from "./get-status-badge";
 import { Appointment } from "@/types/appointment";
 import { capitalizeFirstLetter } from "@/lib/hooks";
+import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
 
 export function AppointmentContainer() {
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({
-    name: "",
-  });
+  const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [openCancelModal, setOpenCancelModal] = useState(false);
   const pathname = usePathname();
 
   const appointments: Appointment[] = [
@@ -188,9 +188,10 @@ export function AppointmentContainer() {
           </CardContent>
         </Card>
         <div className="h-fit w-full lg:w-fit col-span-1">
-          <UpcomingAppointmentCard />
+          <UpcomingAppointmentCard onCancel={()=>setOpenCancelModal(true)}/>
         </div>
       </div>
+      <CancelAppointmentDialog onCancel={()=>{}} open={openCancelModal} onOpenChange={()=>setOpenCancelModal}/>
     </div>
   );
 }

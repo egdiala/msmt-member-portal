@@ -2,8 +2,6 @@
 @config "../tailwind.config.ts";
 @plugin "tailwindcss-animate";
 
-
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -45,6 +43,7 @@
   --color-input-field: var(--input-field);
   --color-blue-400: var(--blue-400);
   --color-actions-amber: var(--actions-amber);
+  --color-actions-blue: var(--actions-blue);
   --color-actions-green: var(--actions-green);
   --color-divider: var(--divider);
   --color-primary: var(--primary);
@@ -71,23 +70,24 @@
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
-  --grey-400: #F2F3F5;
-  --text-1: #00050A;
+  --grey-400: #f2f3f5;
+  --text-1: #00050a;
   --text-2: #354959;
-  --text-bg-1: #021C2F;
-  --text-bg-3: #0B3D72;
-  --text-tertiary: #808D97;
-  --button-primary: #007BFF;
+  --text-bg-1: #021c2f;
+  --text-bg-3: #0b3d72;
+  --text-tertiary: #808d97;
+  --button-primary: #007bff;
   --button-secondary: #001933;
-  --input-field: #F6F8F9;
-  --blue-400: #F2F8FF;
-  --actions-amber: #DF9900;
-  --actions-green: #0AA571;
-  --divider: #DADCDD;
+  --input-field: #f6f8f9;
+  --blue-400: #f2f8ff;
+  --actions-amber: #df9900;
+  --actions-green: #0aa571;
+  --actions-blue: #0073c4;
+  --divider: #dadcdd;
   --modal-shadow: 0px 10px 153px -32px #00000033;
-  --portal-bkg: #F3F5F9;
-  --status-danger: #DD2418;
-  --status-light-red: #FFF5F5;
+  --portal-bkg: #f3f5f9;
+  --status-danger: #dd2418;
+  --status-light-red: #fff5f5;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);

@@ -1,31 +1,49 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+"use client";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
 
 interface CancelAppointmentDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onCancel?: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onCancel?: () => void;
 }
 
-export function CancelAppointmentDialog({ open, onOpenChange, onCancel }: CancelAppointmentDialogProps) {
+export function CancelAppointmentDialog({
+  open,
+  onOpenChange,
+  onCancel,
+}: CancelAppointmentDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogTitle>Cancel Appointment ?</DialogTitle>
-        <DialogDescription>
-          This action would cancel appoint and You would need to reschedule appointment again to see a provider
-        </DialogDescription>
+      <DialogContent className="sm:max-w-[400px] gap-6">
+        <DialogHeader className="gap-2">
+          <DialogTitle className="text-xl md:text-2xl font-bold text-brand-1">Cancel Appointment ?</DialogTitle>
+          <DialogDescription className=" text-sm text-brand-1">
+            This action would cancel appoint and You would need to reschedule
+            appointment again to see a provider
+          </DialogDescription>
+        </DialogHeader>
 
-        <DialogFooter className="sm:justify-between">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="justify-between gap-4">
+          <Button
+            variant="secondary"
+            className="flex-1"
+            onClick={() => onOpenChange(false)}
+          >
             Cancel
           </Button>
           <Button
-            className="bg-blue-500 hover:bg-blue-600"
+            className="flex-1"
             onClick={() => {
-              if (onCancel) onCancel()
-              onOpenChange(false)
+              if (onCancel) onCancel();
+              onOpenChange(false);
             }}
           >
             Cancel Appointment
@@ -33,6 +51,5 @@ export function CancelAppointmentDialog({ open, onOpenChange, onCancel }: Cancel
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

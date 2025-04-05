@@ -1,4 +1,8 @@
+'use client";';
+
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { RenderIf } from "@/components/shared";
 import Link from "next/link";
 import {
   IconCalendarCheck2,
@@ -9,7 +13,13 @@ import {
 } from "@/components/icons";
 import { Button } from "@/components/ui";
 
-export const UpcomingAppointmentCard = () => {
+export const UpcomingAppointmentCard = ({
+  onCancel,
+}: {
+  onCancel?: () => void;
+}) => {
+  const pathname = usePathname();
+  const isAppointmentPage = pathname.includes("/appointments");
   return (
     <div className="max-w-full grid gap-y-4 order-1 md:order-2 col-span-1 xl:col-span-4 bg-white rounded-2xl p-3 md:p-6 w-full">
       <h3 className="text-text-2 text-sm font-semibold">
@@ -77,16 +87,30 @@ export const UpcomingAppointmentCard = () => {
       </div>
 
       <div className="flex justify-between lg:pt-5">
-        <Link href="/appointments">
-          <Button variant="secondary" className="text-button-primary gap-x-1">
-            All Appointments
-            <IconExternalLink className="stroke-button-primary" />
-          </Button>
-        </Link>
+        <RenderIf condition={!isAppointmentPage}>
+          <Link href="/appointments">
+            <Button variant="secondary" className="text-button-primary gap-x-1">
+              All Appointments
+              <IconExternalLink className="stroke-button-primary" />
+            </Button>
+          </Link>
 
-        <Link href="/session">
-          <Button>Join Session</Button>
-        </Link>
+          <Link href="/session">
+            <Button>Join Session</Button>
+          </Link>
+        </RenderIf>
+        <RenderIf condition={isAppointmentPage}>
+          <Button
+            onClick={() => onCancel?.()}
+            variant={"outline"}
+            className="py-2 px-4"
+          >
+            Cancel
+          </Button>
+          <Link href="/session">
+            <Button className="py-2 px-4">Join Session</Button>
+          </Link>
+        </RenderIf>
       </div>
     </div>
   );
