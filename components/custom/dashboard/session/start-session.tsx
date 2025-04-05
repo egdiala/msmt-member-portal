@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
+import { useMeeting } from "@/contexts/MeetingContext";
 
 interface SessionCardProps {
   organization: {
@@ -17,15 +18,11 @@ interface SessionCardProps {
     time: string;
     duration: string;
   };
-
-
 }
 
-export function StartSession({
-  organization,
-  provider,
-}: SessionCardProps) {
-  const router = useRouter()
+export function StartSession({ organization, provider }: SessionCardProps) {
+  const router = useRouter();
+  const { joinMeeting } = useMeeting();
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
       <div className="text-center">
@@ -35,21 +32,29 @@ export function StartSession({
         </p>
       </div>
 
-    
-        {/* Organization */}
+      {/* Organization */}
 
-        <div className="grid md:gap-4 gap-8">
+      <div className="grid md:gap-4 gap-8">
         <OrganizationCard organization={organization} />
         <ProviderCard session={provider} />
-        </div>
-    
+      </div>
 
       {/* Action Buttons */}
       <div className="mt-8 flex justify-center items-center gap-4 md:gap-5">
-        <Button variant="secondary" className="text-brand-3 py-3 px-4 h-12 flex-1 md:flex-none" onClick={()=>router.push('/home')}>
+        <Button
+          variant="secondary"
+          className="text-brand-3 py-3 px-4 h-12 flex-1 md:flex-none"
+          onClick={() => router.push("/home")}
+        >
           Go to Home
         </Button>
-        <Button className="h-12 flex-1 md:flex-none py-3 px-4"  onClick={()=> router.push('/session')}>
+        <Button
+          className="h-12 flex-1 md:flex-none py-3 px-4"
+          onClick={() => {
+            router.push("/session");
+            joinMeeting();
+          }}
+        >
           Join Session
         </Button>
       </div>

@@ -2,7 +2,7 @@
 
 import { capitalizeFirstLetter } from "@/lib/hooks";
 import { usePathname } from "next/navigation";
-import { BreadcrumbCmp, RenderIf } from "@/components/shared";
+import { BreadcrumbCmp } from "@/components/shared";
 import Image from "next/image";
 import {
   IconStarFull,
@@ -19,7 +19,7 @@ const getAppointmentData = () => {
     psychologist: {
       name: "Jide Kosoko",
       title: "Psychologist",
-      avatar: "/placeholder.svg?height=60&width=60",
+      avatar: "/assets/user-dummy.png",
     },
     date: "Wed, 12th May, 2025",
     time: "01:53am - 02:53am (1hr)",

@@ -159,3 +159,44 @@
     @apply bg-background text-foreground;
   }
 }
+
+.video-container {
+  @apply relative w-full h-full overflow-hidden bg-slate-100 rounded-lg;
+}
+
+.video-controls {
+  @apply absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-2 bg-white/90 rounded-full p-2 shadow-md;
+}
+
+.control-button {
+  @apply flex items-center justify-center w-10 h-10 rounded-full transition-all;
+}
+
+.control-button.active {
+  @apply bg-red-500 text-white;
+}
+
+.control-button.inactive {
+  @apply bg-slate-200 text-slate-700 hover:bg-slate-300;
+}
+
+.avatar-container {
+  @apply relative rounded-lg overflow-hidden border-2 flex items-center justify-center;
+}
+
+.avatar-container.active-speaker {
+  @apply border-blue-500;
+}
+
+.participant-info {
+  @apply absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded-md text-sm;
+}
+
+.timer {
+  @apply absolute bottom-4 right-4 bg-black/50 text-white px-2 py-1 rounded-md text-sm;
+}
+
+.pip-video {
+  @apply absolute top-4 right-4 rounded-lg overflow-hidden border-2 border-white shadow-lg;
+}
+
