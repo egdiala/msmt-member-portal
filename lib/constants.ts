@@ -73,3 +73,12 @@ export const APPLICATIONS_FILTER_STATUS_OPTIONS = [
   { id: "status-3", name: "Completed", value: "completed" },
   { id: "status-4", name: "Canceled", value: "canceled" },
 ];
+
+export const PROVIDERS_TABLE_HEADERS = [
+  { key: "date_and_time", value: "Date & Time Added" },
+  { key: "name", value: "Name" },
+  { key: "specialty", value: "Specialty" },
+  { key: "rating", value: "Rating" },
+  { key: "type", value: "Type" },
+  { key: "charge_from", value: "Charge From" },
+];
