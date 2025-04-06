@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { MeetingProvider, useMeeting } from "@/contexts/MeetingContext";
+import {  useMeeting } from "@/contexts/MeetingContext";
 import MeetingRoom from "./meeting-room";
 import { StartSession } from "../start-session";
 import { useIsMobile } from "@/hooks/use-mobile";

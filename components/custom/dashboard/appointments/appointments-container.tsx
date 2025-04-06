@@ -19,7 +19,7 @@ export function AppointmentContainer() {
     useState<Appointment | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState('1');
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const pathname = usePathname();
 
@@ -176,22 +176,27 @@ export function AppointmentContainer() {
             {/* Mobile list view */}
             <AppointmentListMobile
               appointments={appointments}
+              className="mb-4"
               onAppointmentClick={handleAppointmentClick}
             />
 
             {/* Pagination */}
             <PaginationCmp
               currentPage={currentPage}
-              totalPages={30}
-              onPageChange={setCurrentPage}
+              totalPages={'3'}
+              onInputPage={(page) => setCurrentPage(page)}
             />
           </CardContent>
         </Card>
         <div className="h-fit w-full lg:w-fit col-span-1">
-          <UpcomingAppointmentCard onCancel={()=>setOpenCancelModal(true)}/>
+          <UpcomingAppointmentCard onCancel={() => setOpenCancelModal(true)} />
         </div>
       </div>
-      <CancelAppointmentDialog onCancel={()=>{}} open={openCancelModal} onOpenChange={()=>setOpenCancelModal}/>
+      <CancelAppointmentDialog
+        onCancel={() => {}}
+        open={openCancelModal}
+        onOpenChange={() => setOpenCancelModal}
+      />
     </div>
   );
 }

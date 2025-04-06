@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
-import { useMeeting } from "@/contexts/MeetingContext";
+
 
 interface SessionCardProps {
   organization: {
@@ -22,7 +22,7 @@ interface SessionCardProps {
 
 export function StartSession({ organization, provider }: SessionCardProps) {
   const router = useRouter();
-  const { joinMeeting } = useMeeting();
+
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
       <div className="text-center">
@@ -51,8 +51,7 @@ export function StartSession({ organization, provider }: SessionCardProps) {
         <Button
           className="h-12 flex-1 md:flex-none py-3 px-4"
           onClick={() => {
-            router.push("/session");
-            joinMeeting();
+          router.push('/start-session')
           }}
         >
           Join Session

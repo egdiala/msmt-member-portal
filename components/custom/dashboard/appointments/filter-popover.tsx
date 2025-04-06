@@ -33,7 +33,7 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className="w-fit">
         <Button variant="secondary" size="sm" className="rounded-full h-8 w-8 md:w-10">
           <IconListFilter className="h-4 w-4 stroke-brand-bkg-1" />
         </Button>

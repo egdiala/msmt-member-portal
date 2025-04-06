@@ -1,4 +1,3 @@
-'use client';
 import React from "react";
 import { 
   Dialog, 
@@ -9,14 +8,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScreenShare, Image, FileText, Presentation } from "lucide-react";
-import { useMeeting } from "@videosdk.live/react-sdk";
+import { useVideoSDKMeeting } from "@/hooks/use-videosdk";
 
 interface ShareModalProps {
   onClose: () => void;
 }
 
 const ShareModal = ({ onClose }: ShareModalProps) => {
-  const { enableScreenShare } = useMeeting();
+  const meeting = useVideoSDKMeeting();
   
   const shareOptions = [
     { title: "Your Entire Screen", icon: <ScreenShare className="h-6 w-6" /> },
@@ -27,7 +26,9 @@ const ShareModal = ({ onClose }: ShareModalProps) => {
 
   const handleShareSelect = (option: string) => {
     // Use VideoSDK to share content
-    enableScreenShare();
+    if (meeting && meeting.enableScreenShare) {
+      meeting.enableScreenShare();
+    }
     console.log(`Selected share option: ${option}`);
     onClose();
   };

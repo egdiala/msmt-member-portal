@@ -31,7 +31,7 @@ export function CancelAppointmentDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="justify-between gap-4">
+        <DialogFooter className=" justify-between gap-4">
           <Button
             variant="secondary"
             className="flex-1"
