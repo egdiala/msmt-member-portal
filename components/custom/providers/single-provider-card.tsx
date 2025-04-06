@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   IconHospital,
   IconStarFull,
@@ -16,12 +17,16 @@ interface ISingleProviderCard {
   title: string;
   rating: string;
   rate: string;
+  isOrganisation?: boolean;
 }
 export const SingleProviderCard = (provider: ISingleProviderCard) => {
+  const { id } = useParams();
   return (
     <Link
       href={
-        provider.type?.toLowerCase() === "individual"
+        provider.isOrganisation
+          ? `/providers/organisation/${id}/single/${provider.id}`
+          : provider.type?.toLowerCase() === "individual"
           ? `/providers/individual/${provider.id}`
           : `/providers/organisation/${provider.id}`
       }

@@ -130,7 +130,7 @@ const Providers = () => {
 
             <Button
               variant="outline"
-              className="w-fit h-fit py-2 px-3 rounded-2xl"
+              className="hidden md:inline-flex w-fit h-fit py-2 px-3 rounded-2xl"
               onClick={() => setShowGridView(!showGridView)}
             >
               <RenderIf condition={showGridView}>
@@ -145,6 +145,19 @@ const Providers = () => {
 
           <RenderIf condition={!showGridView}>
             <TableCmp data={tableData} headers={PROVIDERS_TABLE_HEADERS} />
+
+            <div
+              className={cn(
+                "grid md:hidden gap-4 md:gap-6",
+                showFilterButtonOnly
+                  ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                  : "grid-cols-2 lg:grid-cols-3"
+              )}
+            >
+              {PROVIDERS_LIST.map((provider) => (
+                <SingleProviderCard key={provider.id} {...provider} />
+              ))}
+            </div>
           </RenderIf>
 
           <RenderIf condition={showGridView}>

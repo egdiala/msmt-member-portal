@@ -1,3 +1,5 @@
+"use client";
+
 import {
   IconAudioLines,
   IconPlus,
@@ -6,8 +8,11 @@ import {
 } from "@/components/icons";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
+import { useParams } from "next/navigation";
 
-const SingleIndividualProvider = () => {
+const SingleOrganisationIndividualProvider = () => {
+  const { id } = useParams();
+
   const providerInfo = [
     {
       id: 1,
@@ -49,7 +54,12 @@ const SingleIndividualProvider = () => {
       <BreadcrumbCmp
         breadcrumbItems={[
           { id: 1, name: "Providers", href: "/providers" },
-          { id: 2, name: "Jide Kosoko" },
+          {
+            id: 2,
+            name: "Leadway Health",
+            href: `/providers/organisation/${id}`,
+          },
+          { id: 3, name: "Jide Kosoko" },
         ]}
       />
 
@@ -167,4 +177,4 @@ const SingleIndividualProvider = () => {
   );
 };
 
-export default SingleIndividualProvider;
+export default SingleOrganisationIndividualProvider;
