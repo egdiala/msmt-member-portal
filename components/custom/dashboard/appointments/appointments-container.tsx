@@ -15,9 +15,9 @@ import { capitalizeFirstLetter } from "@/lib/hooks";
 import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
 
 export function AppointmentContainer() {
-  const [selectedAppointment, setSelectedAppointment] =
+  const [, setSelectedAppointment] =
     useState<Appointment | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [, setSearchQuery] = useState("");
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
   const [currentPage, setCurrentPage] = useState('1');
   const [openCancelModal, setOpenCancelModal] = useState(false);
