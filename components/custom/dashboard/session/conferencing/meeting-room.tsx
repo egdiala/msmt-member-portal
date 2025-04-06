@@ -9,7 +9,7 @@ import { useVideoSDKMeeting } from "@/hooks/use-videosdk";
 const MeetingRoom = () => {
   const {
     isAudioMode,
-    meetingId,
+    // meetingId,
     _setIsMeetingJoined,
     _setLocalParticipantId,
   } = useAppMeeting();
