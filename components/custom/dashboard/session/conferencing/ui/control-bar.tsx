@@ -24,9 +24,11 @@ export default function ControlBar({
 }: ControlBarProps) {
   return (
     <div className="flex flex-col gap-y-2 w-full">
-      <div className="flex justify-end  w-full md:hidden">
+     <RenderIf condition={isVideoMode}>
+     <div className="flex justify-end  w-full md:hidden">
         <SessionTimerAlert />
       </div>
+     </RenderIf>
       <div className={cn("flex items-center justify-between", className)}>
         <button
           className={cn(
@@ -68,7 +70,7 @@ export default function ControlBar({
         <Timer
           className={cn(isVideoMode ? "flex md:hidden" : "flex")}
         />
-        <RenderIf condition={isVideoMode === false}>
+        <RenderIf condition={isVideoMode}>
           <div className="md:flex hidden">
             <SessionTimerAlert />
           </div>

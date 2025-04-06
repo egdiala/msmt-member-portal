@@ -38,7 +38,7 @@ export default function AudioView({ isMobile }: AudioViewProps) {
         />
       </div>
 
-      <ControlBar isVideoMode={false} className="absolute bottom-10 md:bottom-20 left-2 right-2 md:left-10 md:right-10" />
+      <ControlBar isVideoMode={false} className="absolute bottom-4 md:bottom-20 left-2 right-2 md:left-10 md:right-10" />
     </div>
   );
 }
