@@ -31,7 +31,7 @@ export default function VideoView({ isMobile }: VideoViewProps) {
           <UserThumbnail isMobile={isMobile} />
 
           <div className="absolute bottom-4 left-0 px-2 md:px-4 right-0 flex justify-center gap-4 w-full">
-            <ControlBar isVideoMode={true} className="w-full" />
+            <ControlBar isVideoMode={true} className="w-full items-center md:items-end " />
           </div>
         </div>
       </div>

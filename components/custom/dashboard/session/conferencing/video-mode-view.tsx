@@ -5,8 +5,6 @@ import VideoControls from "./video-controls";
 import SessionTimer from "./session-timer";
 import ShareModal from "./share-modal";
 import { useMeeting as useAppMeeting } from "@/contexts/MeetingContext";
-import { useMeeting, useParticipant } from "@videosdk.live/react-sdk";
-import { useIsMobile } from "@/hooks/use-mobile";
 import {
   useVideoSDKMeeting,
   useVideoSDKParticipant,

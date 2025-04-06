@@ -7,7 +7,7 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ScreenShare, Image, FileText, Presentation } from "lucide-react";
+import { ScreenShare, Image as ImageIcon, FileText, Presentation } from "lucide-react";
 import { useVideoSDKMeeting } from "@/hooks/use-videosdk";
 
 interface ShareModalProps {
@@ -21,7 +21,7 @@ const ShareModal = ({ onClose }: ShareModalProps) => {
     { title: "Your Entire Screen", icon: <ScreenShare className="h-6 w-6" /> },
     { title: "Application Window", icon: <Presentation className="h-6 w-6" /> },
     { title: "Browser Tab", icon: <FileText className="h-6 w-6" /> },
-    { title: "Image/Document", icon: <Image className="h-6 w-6" /> }
+    { title: "Image/Document", icon: <ImageIcon  className="h-6 w-6" /> }
   ];
 
   const handleShareSelect = (option: string) => {

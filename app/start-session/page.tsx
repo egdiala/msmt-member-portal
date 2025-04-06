@@ -7,11 +7,11 @@ import VideoView from "@/components/custom/dashboard/session/conferencing/ui/vid
 
 export default function AudioSession() {
   const isMobile = useIsMobile();
-  const [view, setView] = useState<"audio" | "video">("audio");
+  const [view, ] = useState<"audio" | "video">("audio");
 
   return (
     <div>
-      {view === "video" ? (
+      {view === "audio" ? (
         <AudioView isMobile={isMobile} />
       ) : (
         <VideoView isMobile={isMobile} />

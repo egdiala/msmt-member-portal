@@ -28,7 +28,7 @@ export function StartSession({ organization, provider }: SessionCardProps) {
       <div className="text-center">
         <h1 className="text-2xl font-bold text-brand-1">Welcome</h1>
         <p className="text-sm text-brand-2">
-          You're about to join a session with the below details
+          You&apos;re about to join a session with the below details
         </p>
       </div>
 

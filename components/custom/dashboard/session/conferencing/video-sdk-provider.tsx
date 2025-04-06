@@ -3,7 +3,7 @@
 import React, { useState, useEffect, ReactNode } from "react";
 
 const authToken = "YOUR_VIDEOSDK_AUTH_TOKEN";
-const apiKey = "YOUR_VIDEOSDK_API_KEY";
+// const apiKey = "YOUR_VIDEOSDK_API_KEY";
 interface VideoSDKProviderProps {
   children: ReactNode;
   meetingId: string;

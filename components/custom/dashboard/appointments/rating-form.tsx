@@ -112,7 +112,7 @@ export function RatingDialog({
                           id="great"
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          // className="sr-only peer"
+                          className="sr-only peer"
                         />
                       </FormControl>
                       <label
@@ -135,7 +135,7 @@ export function RatingDialog({
                           id="neutral"
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          // className="sr-only peer"
+                          className="sr-only peer"
                         />
                       </FormControl>
                       <label
@@ -224,7 +224,7 @@ export function RatingDialog({
             <FormField
               control={form.control}
               name="starRating"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="space-y-3">
                   <div>
                     <h3 className="text-base font-medium">Rate {personName}</h3>

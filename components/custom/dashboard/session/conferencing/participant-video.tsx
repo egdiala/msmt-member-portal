@@ -1,7 +1,8 @@
-'use client';
+"use client";
+import Image from "next/image";
 import React, { useEffect, useRef } from "react";
 import ParticipantInfo from "./participant-info";
-import {  MicOff } from "lucide-react";
+import { MicOff } from "lucide-react";
 
 interface ParticipantVideoProps {
   name: string;
@@ -25,7 +26,7 @@ const ParticipantVideo = ({
   className = "",
 }: ParticipantVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  
+
   // Connect the media stream to the video element when available
   useEffect(() => {
     if (stream && videoRef.current) {
@@ -34,9 +35,13 @@ const ParticipantVideo = ({
   }, [stream]);
 
   return (
-    <div className={`avatar-container ${isMainVideo ? "w-full h-full" : "pip-video w-1/4 max-w-[150px]"} ${className}`}>
+    <div
+      className={`avatar-container ${
+        isMainVideo ? "w-full h-full" : "pip-video w-1/4 max-w-[150px]"
+      } ${className}`}
+    >
       {stream ? (
-        <video 
+        <video
           ref={videoRef}
           autoPlay
           playsInline
@@ -44,11 +49,14 @@ const ParticipantVideo = ({
           className="w-full h-full object-cover"
         />
       ) : (
-        videoUrl && <img 
-          src={videoUrl} 
-          alt={`${name} video`} 
-          className="w-full h-full object-cover"
-        />
+        videoUrl && (
+          <Image
+            src={videoUrl}
+            fill
+            alt={`${name} video`}
+            className="w-full h-full object-cover"
+          />
+        )
       )}
       <ParticipantInfo name={name} role={role}>
         {isMuted && (
