@@ -25,9 +25,9 @@ export default function ParticipantCard({
   return (
     <div className={cn("relative rounded-lg overflow-hidden", isProvider && "border-2 border-blue-400", className)}>
       <Image src={imageUrl || "/placeholder.svg"} alt={name} width={width} height={height} className="object-cover" />
-      <div className="absolute bottom-3 left-3 bg-white rounded-full px-2 py-1 flex items-center gap-1 text-xs">
-        {isMuted ? <IconMicOff className="w-3 h-3 stroke-red-500" /> : <Mic className="w-3 h-3" />}
-        <span>{name}</span>
+      <div className="absolute bottom-4 md:bottom-5 left-3 bg-blue-400 rounded-lg h-10 px-2 py-1 flex items-center gap-1 text-xs">
+        {isMuted ? <IconMicOff className="w-5 h-5 md:w-6 md:h-6 stroke-status-danger" /> : <Mic className="w-6 h-6 text-brand-2" />}
+        <span className="text-brand-2 text-sm md:text-lg font-medium">{name}</span>
       </div>
     </div>
   )
