@@ -47,8 +47,7 @@ const SingleOrganisationProvider = () => {
 
   const cardStats = [
     { id: 1, title: "Completed appointment", value: "152" },
-    { id: 2, title: "Charge", value: "45" },
-    { id: 3, title: "Providers", value: "21" },
+    { id: 2, title: "Providers", value: "21" },
   ];
 
   const [showGridView, setShowGridView] = useState(true);
@@ -131,7 +130,7 @@ const SingleOrganisationProvider = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {cardStats.map((stat) => (
             <div
               key={stat.id}

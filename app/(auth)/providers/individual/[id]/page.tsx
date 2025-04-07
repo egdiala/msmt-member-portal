@@ -1,3 +1,6 @@
+"use client";
+
+import Link from "next/link";
 import {
   IconAudioLines,
   IconPlus,
@@ -80,9 +83,11 @@ const SingleIndividualProvider = () => {
                 Mark as Favourite
               </Button>
 
-              <Button className="hidden md:inline-flex">
-                <IconPlus className="stroke-white" />
-                Book An Appointment
+              <Button asChild className="hidden md:inline-flex">
+                <Link href="/providers/book-appointment">
+                  <IconPlus className="stroke-white" />
+                  Book An Appointment
+                </Link>
               </Button>
             </div>
           </div>

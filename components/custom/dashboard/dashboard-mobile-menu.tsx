@@ -56,7 +56,9 @@ export const DashboardMobileMenu = ({
               </Link>
             ))}
 
-            <Button>Book An Appointment</Button>
+            <Button asChild>
+              <Link href="/providers">Book An Appointment</Link>
+            </Button>
           </div>
         </DrawerPrimitive.Content>
       </DrawerPortal>
