@@ -36,7 +36,7 @@ export const SingleProviderCard = (provider: ISingleProviderCard) => {
         <Avatar className="rounded-sm w-full h-20 md:h-32">
           <AvatarImage
             src={provider.img}
-            className="w-full object-cover hover:scale-150"
+            className="w-full object-cover hover:scale-150 transition-transform transform duration-200"
             alt="provider"
           />
         </Avatar>
