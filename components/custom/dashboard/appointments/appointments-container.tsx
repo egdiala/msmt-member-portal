@@ -198,7 +198,7 @@ export function AppointmentContainer() {
       <CancelAppointmentDialog
         onCancel={() => {}}
         open={openCancelModal}
-        onOpenChange={() => setOpenCancelModal}
+        onOpenChange={setOpenCancelModal}
       />
     </div>
   );
