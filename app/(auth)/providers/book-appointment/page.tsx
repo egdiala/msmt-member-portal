@@ -8,7 +8,7 @@ import {
 import { RenderIf } from "@/components/shared";
 
 const BookAppointment = () => {
-  const [step, setStep] = useState<number | string>(2);
+  const [step, setStep] = useState<number | string>(1);
 
   return (
     <div className="absolute top-0 bottom-0 left-0 right-0 bg-portal z-50 h-screen overflow-y-scroll">

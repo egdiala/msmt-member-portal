@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   IconAudioLines,
   IconPlus,
@@ -8,7 +10,6 @@ import {
 } from "@/components/icons";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
-import { useParams } from "next/navigation";
 
 const SingleOrganisationIndividualProvider = () => {
   const { id } = useParams();
@@ -90,9 +91,11 @@ const SingleOrganisationIndividualProvider = () => {
                 Mark as Favourite
               </Button>
 
-              <Button className="hidden md:inline-flex">
-                <IconPlus className="stroke-white" />
-                Book An Appointment
+              <Button asChild className="hidden md:inline-flex">
+                <Link href="/providers/book-appointment">
+                  <IconPlus className="stroke-white" />
+                  Book An Appointment
+                </Link>
               </Button>
             </div>
           </div>
