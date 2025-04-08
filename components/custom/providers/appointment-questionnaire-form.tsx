@@ -109,9 +109,9 @@ export const FillAppointmentQuestionnaireForm = ({
           </div>
 
           <div className="grid gap-y-5">
-            <div className="bg-white rounded-2xl p-6 grid gap-y-4">
+            <div className="bg-white rounded-2xl p-3 md:p-6 grid gap-y-4">
               <div className="flex justify-between items-center">
-                <p className="font-medium text-sm text-brand-1">
+                <p className="font-medium text-xs md:text-sm text-brand-1">
                   Are you in a safe place?
                 </p>
 
@@ -149,7 +149,7 @@ export const FillAppointmentQuestionnaireForm = ({
               <div className="border-t border-divider"></div>
 
               <div className="flex justify-between items-center">
-                <p className="font-medium text-sm text-brand-1">
+                <p className="font-medium text-xs md:text-sm text-brand-1 basis-3/6 md:basis-1/2">
                   Are you alone with someone?
                 </p>
 
@@ -187,7 +187,7 @@ export const FillAppointmentQuestionnaireForm = ({
               <div className="border-t border-divider"></div>
 
               <div className="flex justify-between items-center">
-                <p className="font-medium text-sm text-brand-1">
+                <p className="font-medium text-xs md:text-sm text-brand-1 basis-3/6 md:basis-1/2">
                   Are you experiencing any fear or worry?
                 </p>
 
@@ -225,7 +225,7 @@ export const FillAppointmentQuestionnaireForm = ({
               <div className="border-t border-divider"></div>
 
               <div className="flex justify-between items-center">
-                <p className="font-medium text-sm text-brand-1">
+                <p className="font-medium text-xs md:text-sm text-brand-1 basis-3/6 md:basis-1/2">
                   Have you ever been in counselling or therapy before?
                 </p>
 
@@ -263,7 +263,7 @@ export const FillAppointmentQuestionnaireForm = ({
               <div className="border-t border-divider"></div>
 
               <div className="flex justify-between items-center">
-                <p className="font-medium text-sm text-brand-1 basis-3/5">
+                <p className="font-medium text-xs md:text-sm text-brand-1 basis-3/6 md:basis-3/5">
                   Are you currently experiencing overwhelming sadness, grief, or
                   having emotional struggles?
                 </p>
@@ -345,7 +345,7 @@ export const FillAppointmentQuestionnaireForm = ({
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 grid gap-y-5">
+            <div className="bg-white rounded-2xl p-3 md:p-6 grid gap-y-5">
               <h3 className="font-bold text-brand-1">
                 How would you rate your current:
               </h3>
@@ -463,7 +463,7 @@ export const FillAppointmentQuestionnaireForm = ({
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 grid gap-y-5">
+            <div className="bg-white rounded-2xl p-3 md:p-6 grid gap-y-5">
               <div className="grid gap-y-2">
                 <p className="font-medium text-sm text-brand-1">
                   Employment status
@@ -617,11 +617,15 @@ export const FillAppointmentQuestionnaireForm = ({
           </div>
 
           <div className="grid grid-cols-2 md:flex md:items-center md:justify-end gap-x-5">
-            <Button variant="secondary" onClick={() => setStep(1)}>
-              Go Back
+            <Button
+              className="shadow-none"
+              variant="secondary"
+              onClick={() => setStep(1)}
+            >
+              Cancel
             </Button>
 
-            <Button onClick={() => setStep("gateway")}>Complete Booking</Button>
+            <Button>Complete Booking</Button>
           </div>
         </form>
       </Form>

@@ -8,7 +8,7 @@ interface IThirdPartyPaymentGate {
 }
 export const ThirdPartyPaymentGate = ({ setStep }: IThirdPartyPaymentGate) => {
   return (
-    <div className="min-h-full flex flex-col justify-center items-center gap-y-8">
+    <div className="min-h-[80vh] md:min-h-full flex flex-col justify-center items-center gap-y-8">
       <h3 className="text-3xl font-bold">3RD Party Payment Gate</h3>
 
       <div className="grid grid-cols-2 md:flex md:items-center justify-center gap-x-5">
