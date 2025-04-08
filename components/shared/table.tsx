@@ -1,23 +1,18 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui";
-import { cn } from "@/lib/utils";
+"use client"
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui"
+import { cn } from "@/lib/utils"
 
 interface ITableCmp {
-  data: Record<string, any>[];
-  headers: { key: string; value: string }[];
-  onClickRow?: (row: any) => void;
+  data: Record<string, any>[]
+  headers: { key: string; value: string }[]
+  onClickRow?: (row: any) => void
 }
 
 export const TableCmp = ({ data, headers, onClickRow }: ITableCmp) => {
   return (
-    <div className="w-full hidden md:inline overflow-x-scroll">
-      <Table className="w-full">
+    <div className="w-full overflow-x-auto">
+      <Table className="hidden md:table w-full table-auto">
         <TableHeader>
           <TableRow>
             {headers.map((header, index) => (
