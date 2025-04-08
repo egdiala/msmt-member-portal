@@ -33,7 +33,13 @@ export default function VerifyEmail() {
   })
   const [timeLeft, setTimeLeft] = useState(31);
 
-  const emailToVerify = localStorage.getItem("email_to_verify")
+  const [emailToVerify, setEmailToVerify] = useState("")
+
+  useEffect(() => {
+    if (window !== undefined) {
+      setEmailToVerify(localStorage.getItem("email_to_verify") as string)
+    }
+  },[])
 
   const form = useForm<z.infer<typeof verifyEmailSchema>>({
     resolver: zodResolver(verifyEmailSchema),
