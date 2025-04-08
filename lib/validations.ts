@@ -29,9 +29,9 @@ export const verifyEmailSchema = z.object({
 });
 
 export const signUpSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  dateOfBirth: z
+  first_name: z.string().min(2, "First name must be at least 2 characters"),
+  last_name: z.string().min(2, "Last name must be at least 2 characters"),
+  dob: z
     .date({
       required_error: "Date of birth is required",
     })
