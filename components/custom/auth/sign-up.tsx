@@ -36,10 +36,15 @@ import { AnimatePresence, motion } from "motion/react"
 import { useInitRegister } from "@/services/hooks/mutations/use-auth";
 import useMeasure from "react-use-measure";
 import { Loader } from "@/components/shared/loader";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
+  const router = useRouter()
   const [ref, bounds] = useMeasure()
-  const { mutate, isPending } = useInitRegister();
+  const { mutate, isPending } = useInitRegister(() => {
+    localStorage.setItem("email_to_verify", form.getValues("email"))
+    router.push("/verify-email")
+  });
   
   const [showPassword, setShowPassword] = useState(false);
   type SignUpFormValues = z.infer<typeof signUpSchema>;

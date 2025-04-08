@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/components/query-provider";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 const alliance = localFont({
   src: [
@@ -89,6 +90,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(alliance.className, "antialiased")}>
         <QueryProvider>{children}</QueryProvider>
+        <Toaster />
       </body>
     </html>
   );

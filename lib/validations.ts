@@ -23,8 +23,8 @@ export const setNewPasswordSchema = z.object({
 export const verifyEmailSchema = z.object({
   otp: z
     .string()
-    .min(6, { message: "Please enter the complete verification code" })
-    .max(6, { message: "Verification code must be 6 digits" })
+    .min(5, { message: "Please enter the complete verification code" })
+    .max(5, { message: "Verification code must be 5 digits" })
     .regex(/^\d+$/, { message: "Verification code must contain only numbers" }),
 });
 
