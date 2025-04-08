@@ -77,16 +77,20 @@ export const UpcomingAppointmentCard = () => {
       </div>
 
       <div className="flex justify-between lg:pt-5">
-        <Link href="/appointments">
-          <Button variant="secondary" className="text-button-primary gap-x-1">
+        <Button
+          asChild
+          variant="secondary"
+          className="text-button-primary gap-x-1"
+        >
+          <Link href="/appointments">
             All Appointments
             <IconExternalLink className="stroke-button-primary" />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
 
-        <Link href="/session">
-          <Button>Join Session</Button>
-        </Link>
+        <Button asChild>
+          <Link href="/session">Join Session</Link>
+        </Button>
       </div>
     </div>
   );

@@ -109,7 +109,7 @@ export const SetScheduleStep = ({
             </div>
 
             <Link
-              href=""
+              href="/providers"
               className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm"
             >
               Change

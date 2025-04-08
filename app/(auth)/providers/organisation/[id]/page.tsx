@@ -10,7 +10,10 @@ import {
   TableCmp,
 } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
-import { SingleProviderCard } from "@/components/custom";
+import {
+  FilterOrganisationsProvidersPopover,
+  SingleProviderCard,
+} from "@/components/custom";
 import { PROVIDERS_UNDER_ORGANISATION_LIST } from "@/lib/mock";
 import { PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
 
@@ -151,19 +154,23 @@ const SingleOrganisationProvider = () => {
         <div className="flex flex-col md:flex-row gap-3 items-end md:items-center justify-between">
           <Searchbar value="" onChange={() => {}} placeholder="Search" />
 
-          <Button
-            variant="outline"
-            className="hidden md:inline-flex w-fit h-fit py-2 px-3 rounded-2xl"
-            onClick={() => setShowGridView(!showGridView)}
-          >
-            <RenderIf condition={showGridView}>
-              <IconList2 className="stroke-brand-btn-secondary size-4" />
-            </RenderIf>
+          <div className="flex items-center gap-x-2">
+            <Button
+              variant="outline"
+              className="hidden md:inline-flex w-fit h-fit py-2 px-3 rounded-2xl"
+              onClick={() => setShowGridView(!showGridView)}
+            >
+              <RenderIf condition={showGridView}>
+                <IconList2 className="stroke-brand-btn-secondary size-4" />
+              </RenderIf>
 
-            <RenderIf condition={!showGridView}>
-              <IconList className="stroke-brand-btn-secondary size-4" />
-            </RenderIf>
-          </Button>
+              <RenderIf condition={!showGridView}>
+                <IconList className="stroke-brand-btn-secondary size-4" />
+              </RenderIf>
+            </Button>
+
+            <FilterOrganisationsProvidersPopover />
+          </div>
         </div>
 
         <RenderIf condition={!showGridView}>
