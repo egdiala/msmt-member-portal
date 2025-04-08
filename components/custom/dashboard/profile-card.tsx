@@ -51,12 +51,16 @@ export const ProfileCard = () => {
       </div>
 
       <div className="pt-4 flex items-center justify-between">
-        <Link href="/profile">
-          <Button variant="secondary" className="text-button-primary gap-x-1">
+        <Button
+          asChild
+          variant="secondary"
+          className="text-button-primary gap-x-1"
+        >
+          <Link href="/profile">
             Profile
             <IconExternalLink className="stroke-button-primary" />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
 
         <Button
           variant="outline"

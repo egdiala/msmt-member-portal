@@ -11,9 +11,9 @@ export const BookAppointmentCard = () => {
             Providers available for you
           </p>
         </div>
-        <Link href="/providers">
-          <Button className="w-full">Book an Appointment</Button>
-        </Link>
+        <Button asChild className="w-full">
+          <Link href="/providers">Book an Appointment</Link>
+        </Button>
       </div>
     </div>
   );

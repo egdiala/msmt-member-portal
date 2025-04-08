@@ -20,3 +20,4 @@ export * from "./calendar";
 export * from "./card";
 export * from "./chart";
 export * from "./drawer";
+export * from "./checkbox";

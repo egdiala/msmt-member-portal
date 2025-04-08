@@ -117,3 +117,19 @@ export const addMemberSchema = z.object({
 export const removeMemberSchema = z.object({
   reason: z.string().min(2, "Reason must be at least 2 characters"),
 });
+
+export const appointmentQuestionnaireSchema = z.object({
+  safePlace: z.string(),
+  aloneWithSomeone: z.string(),
+  experiencingFear: z.string(),
+  everBeenInCounselling: z.string(),
+  experiencingSadness: z.string(),
+  reasonForSeekingHelp: z.array(z.string()),
+  currentPhysicalHealthRate: z.string(),
+  currentEatingHabits: z.string(),
+  currentSleepingHabits: z.string(),
+  employmentStatus: z.string(),
+  alcoholIntakeFrequency: z.string(),
+  eatingHabits: z.string(),
+  sleepingHabits: z.string(),
+});
