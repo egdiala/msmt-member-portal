@@ -107,9 +107,9 @@ export const UpcomingAppointmentCard = ({
           >
             Cancel
           </Button>
-          <Link href="/session">
-            <Button className="py-2 px-4">Join Session</Button>
-          </Link>
+          <Button asChild className="py-2 px-4">
+            <Link href="/session">Join Session</Link>
+          </Button>
         </RenderIf>
       </div>
     </div>
