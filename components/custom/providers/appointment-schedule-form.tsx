@@ -108,12 +108,12 @@ export const SetScheduleStep = ({
               </div>
             </div>
 
-            <Link
-              href="/providers"
-              className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm"
+            <button
+              onClick={() => navigate.push("/providers")}
+              className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
             >
               Change
-            </Link>
+            </button>
           </div>
 
           <RenderIf condition={!!isOrganisation}>
@@ -179,6 +179,7 @@ export const SetScheduleStep = ({
                 ) : (
                   <method.icon className="stroke-brand-3 size-3.5" />
                 )}
+
                 <p
                   className={cn(
                     "text-sm",
@@ -298,7 +299,7 @@ export const SetScheduleStep = ({
                 }
                 key={preference.id}
                 className={cn(
-                  "flex items-center gap-x-2 px-3 py-1 border rounded-full",
+                  "flex items-center gap-x-2 px-3 py-1 border rounded-full cursor-pointer",
                   preference.name === selectedCommunicationPreference
                     ? "bg-blue-400 border-button-primary"
                     : "border-divider bg-white"

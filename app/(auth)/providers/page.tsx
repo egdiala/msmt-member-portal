@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   IconCalendar,
   IconClose,
@@ -29,6 +30,7 @@ const Providers = () => {
   const tableData = PROVIDERS_LIST.map((provider) => {
     return {
       id: provider.id,
+      datum: provider,
       date_and_time: (
         <p className="text-brand-2">
           {provider.date} • {provider.time}
@@ -41,6 +43,8 @@ const Providers = () => {
       charge_from: <p className="capitalize">{provider.rate}</p>,
     };
   });
+
+  const router = useRouter();
 
   return (
     <div className="grid gap-y-4">
@@ -144,7 +148,17 @@ const Providers = () => {
           </div>
 
           <RenderIf condition={!showGridView}>
-            <TableCmp data={tableData} headers={PROVIDERS_TABLE_HEADERS} />
+            <TableCmp
+              data={tableData}
+              headers={PROVIDERS_TABLE_HEADERS}
+              onClickRow={(row) => {
+                if (row.datum.type.toLowerCase() === "organisation") {
+                  router.push(`/providers/organisation/${row.id}`);
+                } else if (row.datum.type.toLowerCase() === "individual") {
+                  router.push(`/providers/individual/${row.id}`);
+                }
+              }}
+            />
 
             <div
               className={cn(

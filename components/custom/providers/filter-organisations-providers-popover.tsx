@@ -1,6 +1,12 @@
 import { Fragment, useState } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
-import { IconClose, IconListFilter } from "@/components/icons";
+import {
+  IconAudioLines,
+  IconCalendar,
+  IconClose,
+  IconListFilter,
+  IconVideo,
+} from "@/components/icons";
 import {
   Button,
   Popover,
@@ -10,7 +16,14 @@ import {
   DrawerPortal,
   DrawerClose,
   DrawerTitle,
+  RadioGroup,
 } from "@/components/ui";
+import {
+  FloatingInput,
+  RadioButton,
+  RenderIf,
+  SelectCmp,
+} from "@/components/shared";
 import { cn } from "@/lib/utils";
 
 const FilterContent = ({
@@ -18,19 +31,110 @@ const FilterContent = ({
 }: {
   handleCloseFilter: () => void;
 }) => {
+  const communicationPreferences = ["Video", "Audio"];
+  const [selectedCommunicationPreference, setSelectedCommunicationPreference] =
+    useState("Video");
+
+  const providerTypes = ["Pyschology", "Psychiatrist"];
+  const [selectedProviderType, setSelectedProviderTypes] =
+    useState("Psychology");
+
   return (
-    <div className="p-6 grid gap-y-5 w-full">
+    <div className="p-6 grid gap-y-5 w-full rounded-2xl">
       <h3 className="font-bold text-xl text-brand-1">Filter</h3>
 
       <div className="grid gap-y-8">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div className="grid gap-y-2">
+          <h4 className="font-semibold text-sm text-brand-1">Services</h4>
+          <SelectCmp selectItems={[]} placeholder="Select Service" />
+        </div>
+
+        <div className="grid gap-y-2">
+          <h4 className="font-semibold text-sm text-brand-1">Provider Type</h4>
+          <RadioGroup className="flex items-center gap-2 flex-wrap">
+            {providerTypes.map((type) => (
+              <button key={type} onClick={() => setSelectedProviderTypes(type)}>
+                <RadioButton
+                  isActive={selectedProviderType === type}
+                  option={{
+                    id: type,
+                    value: type,
+                    name: type,
+                  }}
+                  className={cn(
+                    "border rounded-full md:py-2 md:px-3",
+                    selectedProviderType === type
+                      ? "border-button-primary text-button-primary"
+                      : "border-divider"
+                  )}
+                />
+              </button>
+            ))}
+          </RadioGroup>
+        </div>
+
+        <div className="grid gap-y-2">
+          <h4 className="font-semibold text-sm text-brand-1">Date</h4>
+          <div className="relative">
+            <FloatingInput label="Available on" className="pr-10" />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+              <IconCalendar className="h-4 w-4" />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-y-2">
+          <h4 className="font-semibold text-sm text-brand-1">
+            Communication Preference
+          </h4>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {communicationPreferences.map((preference) => (
+              <Button
+                key={preference}
+                variant="outline"
+                className={cn(
+                  "w-fit",
+                  selectedCommunicationPreference === preference
+                    ? "text-button-primary hover:text-button-primary border-button-primary bg-blue-400"
+                    : "text-brand-2 hover:text-brand-2 border-divider bg-white"
+                )}
+                onClick={() => setSelectedCommunicationPreference(preference)}
+                type="button"
+              >
+                <RenderIf condition={preference === "Video"}>
+                  <IconVideo
+                    className={
+                      selectedCommunicationPreference === preference
+                        ? "stroke-button-primary"
+                        : "stroke-brand-3"
+                    }
+                  />
+                </RenderIf>
+
+                <RenderIf condition={preference === "Audio"}>
+                  <IconAudioLines
+                    className={
+                      selectedCommunicationPreference === "Audio"
+                        ? "stroke-button-primary"
+                        : "stroke-brand-3"
+                    }
+                  />
+                </RenderIf>
+
+                {preference}
+              </Button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="md:pt-8 flex justify-end items-center gap-x-4">
-        <Button variant="secondary" onClick={handleCloseFilter}>
+      <div className="pt-8 grid grid-cols-2 gap-x-4">
+        <Button
+          variant="outline"
+          className="border-blue-400 shadow-none"
+          onClick={handleCloseFilter}
+        >
           Close
         </Button>
         <Button>Apply</Button>

@@ -37,7 +37,11 @@ export const FavouriteProvidersCard = () => {
               </div>
 
               <Link
-                href={`/providers/${provider.id}`}
+                href={`/providers${
+                  provider.type.toLowerCase() === "organisation"
+                    ? "/organisation"
+                    : "/individual"
+                }/${provider.id}`}
                 className="underline text-button-primary text-xs"
               >
                 View
@@ -51,12 +55,16 @@ export const FavouriteProvidersCard = () => {
         ))}
       </div>
 
-        <Button asChild variant="secondary" className="text-button-primary gap-x-1 w-fit">
-          <Link href="/providers">
-            Favourite Providers
-            <IconExternalLink className="stroke-button-primary" />
-          </Link>
-        </Button>
+      <Button
+        asChild
+        variant="secondary"
+        className="text-button-primary gap-x-1 w-fit"
+      >
+        <Link href="/providers">
+          Favourite Providers
+          <IconExternalLink className="stroke-button-primary" />
+        </Link>
+      </Button>
     </div>
   );
 };
