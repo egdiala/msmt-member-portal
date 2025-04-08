@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppointmentSearch } from "./appointment-search";
 import { AppliedFilters } from "./applied-filters";
@@ -19,9 +19,10 @@ export function AppointmentContainer() {
     useState<Appointment | null>(null);
   const [, setSearchQuery] = useState("");
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
-  const [currentPage, setCurrentPage] = useState('1');
+  const [currentPage, setCurrentPage] = useState("1");
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const appointments: Appointment[] = [
     {
@@ -117,6 +118,7 @@ export function AppointmentContainer() {
 
   const handleAppointmentClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
+    router.push(`/appointments/1`);
   };
 
   const handleSearch = (query: string) => {
@@ -170,6 +172,7 @@ export function AppointmentContainer() {
                 date: `${apt.date} • ${apt.time}`,
                 status: getStatusBadge(apt.status),
               }))}
+              onClickRow={handleAppointmentClick}
               headers={headers}
             />
 
@@ -183,7 +186,7 @@ export function AppointmentContainer() {
             {/* Pagination */}
             <PaginationCmp
               currentPage={currentPage}
-              totalPages={'3'}
+              totalPages={"3"}
               onInputPage={(page) => setCurrentPage(page)}
             />
           </CardContent>
