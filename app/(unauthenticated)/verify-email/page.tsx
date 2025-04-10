@@ -1,5 +1,14 @@
 import VerifyEmail from "@/components/custom/auth/verify-email";
 
 export default function VerifyEmailPage() {
-  return <VerifyEmail />;
+  return (
+    <div className="max-w-sm lg:max-w-md mx-auto px-2">
+      <div className="space-y-8">
+        <div className="space-y-2 text-center">
+          <h1 className="text-lg lg:text-2xl font-bold">Verify your Email</h1>
+        </div>
+        <VerifyEmail />
+      </div>
+    </div>
+  )
 }

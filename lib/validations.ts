@@ -23,15 +23,15 @@ export const setNewPasswordSchema = z.object({
 export const verifyEmailSchema = z.object({
   otp: z
     .string()
-    .min(6, { message: "Please enter the complete verification code" })
-    .max(6, { message: "Verification code must be 6 digits" })
+    .min(5, { message: "Please enter the complete verification code" })
+    .max(5, { message: "Verification code must be 5 digits" })
     .regex(/^\d+$/, { message: "Verification code must contain only numbers" }),
 });
 
 export const signUpSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  dateOfBirth: z
+  first_name: z.string().min(2, "First name must be at least 2 characters"),
+  last_name: z.string().min(2, "Last name must be at least 2 characters"),
+  dob: z
     .date({
       required_error: "Date of birth is required",
     })

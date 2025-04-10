@@ -21,7 +21,8 @@ InputOTPGroup.displayName = "InputOTPGroup"
 // first:rounded-l-md first:border-l last:rounded-r-md
 
 const InputOTPSlot = React.forwardRef<React.ElementRef<"div">, SlotProps & React.ComponentPropsWithoutRef<"div">>(
-  ({ char, hasFakeCaret, isActive, className, ...props }, ref) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ({ char, hasFakeCaret, isActive, className, placeholderChar, ...props }, ref) => {
     return (
       <div
         ref={ref}
