@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { Modal } from "@/components/shared";
 
@@ -6,6 +7,13 @@ interface ILogoutModal {
   isOpen: boolean;
 }
 export const LogoutModal = ({ handleClose, isOpen }: ILogoutModal) => {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    router.push("/sign-in");
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -25,7 +33,8 @@ export const LogoutModal = ({ handleClose, isOpen }: ILogoutModal) => {
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button>Log out</Button>
+
+          <Button onClick={handleLogout}>Log out</Button>
         </div>
       </div>
     </Modal>

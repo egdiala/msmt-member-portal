@@ -4,11 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { RenderIf } from "@/components/shared";
 import { SiteHeader } from "@/components/shared/auth-header";
-import { isAuthenticated } from "@/lib/utils";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const isLoggedIn = isAuthenticated();
+  const isLoggedIn = localStorage.getItem("token");
 
   useEffect(() => {
     if (isLoggedIn) {

@@ -28,7 +28,7 @@ export const useCompleteRegister = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: completeRegister,
     onSuccess: (res: LoginResponse) => {
-      console.log(res);
+      localStorage.setItem("user", JSON.stringify(res));
       toast.success("Successful! Login to access your account");
       fn?.("/home");
     },

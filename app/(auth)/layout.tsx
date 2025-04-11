@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { IconBell, IconHamMenu } from "@/components/icons";
 import { DashboardMobileMenu } from "@/components/custom";
 import { RenderIf } from "@/components/shared";
-import { isAuthenticated } from "@/lib/utils";
 import MSMT_LOGO from "../../public/msmt-logo.svg";
 
 const DashboardLayout = ({
@@ -16,19 +15,19 @@ const DashboardLayout = ({
   children: React.ReactNode;
 }>) => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
-  const isLoggedIn = isAuthenticated();
+  const isLoggedIn = localStorage.getItem("token");
 
   const router = useRouter();
 
   useEffect(() => {
     if (!isLoggedIn) {
       localStorage.clear();
-      router.replace("/");
+      router.replace("/sign-in");
     }
   }, [isLoggedIn, router]);
 
   return (
-    <RenderIf condition={isLoggedIn}>
+    <RenderIf condition={isLoggedIn !== null}>
       <div className="w-full bg-portal">
         <div className="mx-auto min-h-screen items-center w-full max-w-screen-2xl grid gap-y-6 md:gap-y-8 content-start px-2 md:px-7 xl:px-12 pb-12">
           <div className="flex items-center justify-center fixed top-0 left-0 right-0 bg-portal z-30">
