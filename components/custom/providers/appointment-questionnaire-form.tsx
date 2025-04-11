@@ -322,15 +322,15 @@ export const FillAppointmentQuestionnaireForm = ({
                           {helpOptions.map((option) => (
                             <div
                               key={option}
-                              className="flex items-center gap-x-2 rounded-full border border-divider px-3 py-2"
+                              className="flex items-center gap-x-2 rounded-full border border-divider px-3 py-2 cursor-pointer"
+                              onClick={() =>
+                                handleChangeSeekHelpArray({
+                                  val: option,
+                                  arrayVals: field.value,
+                                })
+                              }
                             >
                               <Checkbox
-                                onCheckedChange={() =>
-                                  handleChangeSeekHelpArray({
-                                    val: option,
-                                    arrayVals: field.value,
-                                  })
-                                }
                                 checked={field.value.includes(option)}
                               />
                               <p className="text-brand-2 text-sm">{option}</p>
