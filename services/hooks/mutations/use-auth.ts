@@ -57,11 +57,10 @@ export const useForgotPassword = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: forgotPassword,
     onSuccess: (res: any) => {
-      console.log(res);
       toast.success(
         "An OTP has been sent to your email! Please use it to continue the process."
       );
-      fn?.("/verify-email");
+      fn?.("/verify-email?isResetPassword=true");
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.msg || "Something went wrong");
@@ -73,11 +72,10 @@ export const useConfirmOtp = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: confirmOtp,
     onSuccess: (res: any) => {
-      console.log(res);
       toast.success(
         "Successfully confirmed OTP! Please enter your new password."
       );
-      fn?.("/reset-password");
+      fn?.("/set-password");
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.msg || "Something went wrong");
@@ -88,8 +86,7 @@ export const useConfirmOtp = (fn?: (v: string) => void) => {
 export const useResetPassword = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: resetPassword,
-    onSuccess: (res: any) => {
-      console.log(res);
+    onSuccess: () => {
       toast.success("Successful! Please login to continue.");
       fn?.("/login");
     },
@@ -99,15 +96,13 @@ export const useResetPassword = (fn?: (v: string) => void) => {
   });
 };
 
-export const useResendOtp = (fn?: (v: string) => void) => {
+export const useResendOtp = () => {
   return useMutation({
     mutationFn: resendOtp,
-    onSuccess: (res: any) => {
-      console.log(res);
+    onSuccess: () => {
       toast.success(
-        "An OTP has been sent to your email! Please use it to continue the process."
+        "A new OTP has been sent to your email! Please use it to continue the process."
       );
-      fn?.("/reset-password");
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.msg || "Something went wrong");
