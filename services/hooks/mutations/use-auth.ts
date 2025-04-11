@@ -56,7 +56,7 @@ export const useLogin = (
 export const useForgotPassword = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: forgotPassword,
-    onSuccess: (res: any) => {
+    onSuccess: () => {
       toast.success(
         "An OTP has been sent to your email! Please use it to continue the process."
       );
@@ -71,7 +71,7 @@ export const useForgotPassword = (fn?: (v: string) => void) => {
 export const useConfirmOtp = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: confirmOtp,
-    onSuccess: (res: any) => {
+    onSuccess: () => {
       toast.success(
         "Successfully confirmed OTP! Please enter your new password."
       );
