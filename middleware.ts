@@ -2,42 +2,81 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Routes that don't require authentication
-const publicRoutes = ["/sign-in", "/register", "/reset-password"];
+const publicRoutes = ["/sign-in", "/sign-up", "/reset-password", "/set-password", "/verify-email"];
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  // Clone the request URL for modifications
+  const url = request.nextUrl.clone();
+  const { pathname } = url;
   
-  // Get the token from the cookie
-  const token = request.cookies.get("authToken")?.value;
-  const isAuthenticated = !!token;
+  // Debug info
+  console.log(`[Middleware] Path: ${pathname}`);
+  console.log(`[Middleware] Cookies:`, request.cookies.getAll());
   
-  // If user is authenticated and tries to access an unauthenticated route,
-  // rewrite to home page instead of redirecting to preserve browser history
-  if (isAuthenticated && publicRoutes.some(route => pathname.startsWith(route))) {
-    // Create a new URL for the /home path
-    const homeUrl = new URL("/home", request.url);
+  // Check authentication status via cookie
+  const isAuthenticated = request.cookies.has("authToken");
+  console.log(`[Middleware] isAuthenticated:`, isAuthenticated);
+  
+  try {
+    // CASE 1: Authenticated user trying to access public routes (sign-in, etc.)
+    if (isAuthenticated && publicRoutes.some(route => pathname.startsWith(route))) {
+      console.log(`[Middleware] Authenticated user trying to access public route`);
+      
+      // Get referer (where the user came from)
+      const referer = request.headers.get("referer");
+      console.log(`[Middleware] Referer:`, referer);
+      
+      // Create response redirecting to home
+      const response = NextResponse.redirect(new URL("/home", url.origin));
+      
+      // Add referer to a cookie so it can be read on the client side
+      if (referer) {
+        try {
+          const refererUrl = new URL(referer);
+          const refererPath = refererUrl.pathname;
+          
+          // Only store internal paths that aren't the current path
+          if (refererPath !== pathname && refererPath.startsWith("/")) {
+            response.cookies.set("refererPath", refererPath, {
+              path: "/",
+              maxAge: 60, // Short-lived - 60 seconds
+              httpOnly: false, // Make accessible to client
+              sameSite: "lax"
+            });
+          }
+        } catch (e) {
+          console.error("[Middleware] Error parsing referer:", e);
+        }
+      }
+      
+      return response;
+    }
     
-    // Add a response header to instruct the client to replace the history entry
-    const response = NextResponse.redirect(homeUrl);
-    response.headers.set("X-Middleware-Rewrite", "true");
-    response.headers.set("X-History-Replace", "true");
+    // CASE 2: Unauthenticated user trying to access protected routes
+    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+    const isNextInternal = pathname.startsWith("/_next") || pathname.includes(".");
     
-    // Return the response with headers indicating this should replace history
-    return response;
+    if (!isAuthenticated && !isPublicRoute && !isNextInternal) {
+      console.log(`[Middleware] Unauthenticated user trying to access protected route`);
+      
+      // Store the current URL as a query param for possible redirect after login
+      url.pathname = "/sign-in";
+      url.searchParams.set("callbackUrl", pathname);
+      
+      return NextResponse.redirect(url);
+    }
+    
+    // Otherwise, continue with the request
+    console.log(`[Middleware] Continuing with request`);
+    return NextResponse.next();
+  } catch (error) {
+    console.error(`[Middleware] Error:`, error);
+    // In case of error, allow the request to proceed to avoid blocking navigation
+    return NextResponse.next();
   }
-  
-  // If user is not authenticated and tries to access a protected route, redirect to sign-in
-  if (!isAuthenticated && 
-      !publicRoutes.some(route => pathname.startsWith(route)) && 
-      !pathname.startsWith("/_next") && 
-      !pathname.includes(".")) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
-  }
-  
-  return NextResponse.next();
 }
 
 export const config = {
-  // Match all routes except for static files, api routes, and _next (Next.js internal)
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$).*)"],
+  // Match all routes except for api routes
+  matcher: ["/((?!api).*)"],
 }; 

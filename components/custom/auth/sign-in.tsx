@@ -29,7 +29,7 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { mutate, isPending } = useLogin((href) => {
-    router.replace(href);
+    router.push(href);
   });
 
   const form = useForm<z.infer<typeof signInSchema>>({

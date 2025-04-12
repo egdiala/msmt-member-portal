@@ -11,8 +11,17 @@ export const LogoutModal = ({ handleClose, isOpen }: ILogoutModal) => {
   const router = useRouter();
 
   const handleLogout = () => {
+    // Clear localStorage
     localStorage.clear();
+    
+    // Clear auth cookie - multiple methods to ensure it's cleared
+    document.cookie = "authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     Cookies.remove("authToken", { path: "/" });
+    
+    console.log("Logout: Cookies cleared");
+    console.log("Cookies after logout:", document.cookie);
+    
+    // Redirect to sign-in
     router.push("/sign-in");
   };
 
