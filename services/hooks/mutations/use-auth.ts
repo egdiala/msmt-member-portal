@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 import {
   completeRegister,
   confirmOtp,
@@ -27,8 +28,9 @@ export const useInitRegister = (fn?: () => void) => {
 export const useCompleteRegister = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: completeRegister,
-    onSuccess: (res: LoginResponse) => {
-      localStorage.setItem("user", JSON.stringify(res));
+    onSuccess: ({ token, ...user}: LoginResponse) => {
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", JSON.stringify(token));
       toast.success("Successful! Login to access your account");
       fn?.("/home");
     },
@@ -39,13 +41,25 @@ export const useCompleteRegister = (fn?: (v: string) => void) => {
 };
 
 export const useLogin = (
-  fn?: ({ href, res }: { href: string; res: LoginResponse }) => void
+  fn?: (href: string) => void
 ) => {
   return useMutation({
     mutationFn: login,
     onSuccess: (res: LoginResponse) => {
+      // Store in localStorage for backward compatibility
+      localStorage.setItem("user", JSON.stringify(res));
+      localStorage.setItem("token", res.token);
+      
+      // Set auth cookie for middleware
+      Cookies.set("authToken", res.token, { 
+        expires: 30, // 30 days
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+      });
+      
       toast.success("Login was successful!");
-      fn?.({ href: "/home", res });
+      fn?.("/home");
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.msg || "Something went wrong");

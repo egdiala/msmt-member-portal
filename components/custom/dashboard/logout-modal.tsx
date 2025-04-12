@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { Modal } from "@/components/shared";
+import Cookies from "js-cookie";
 
 interface ILogoutModal {
   handleClose: () => void;
@@ -11,6 +12,7 @@ export const LogoutModal = ({ handleClose, isOpen }: ILogoutModal) => {
 
   const handleLogout = () => {
     localStorage.clear();
+    Cookies.remove("authToken", { path: "/" });
     router.push("/sign-in");
   };
 

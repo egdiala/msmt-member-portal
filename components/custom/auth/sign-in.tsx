@@ -28,10 +28,8 @@ export default function SignIn() {
   const [ref, bounds] = useMeasure();
   const [showPassword, setShowPassword] = useState(false);
 
-  const { mutate, isPending } = useLogin(({ href, res }) => {
-    localStorage.setItem("user", JSON.stringify(res));
-    localStorage.setItem("token", res.token);
-    router.push(href);
+  const { mutate, isPending } = useLogin((href) => {
+    router.replace(href);
   });
 
   const form = useForm<z.infer<typeof signInSchema>>({

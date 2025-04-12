@@ -15,12 +15,12 @@ export const completeRegister = async (data: CompleteRegisterType) => {
     "members/auths/complete-register",
     data
   );
-  return res.data;
+  return res.data.data;
 };
 
 export const login = async (data: LoginType) => {
   const res = await axiosUserService.post("members/auths/login", data);
-  return res.data;
+  return res.data.data;
 };
 
 export const forgotPassword = async (data: Partial<LoginType>) => {
