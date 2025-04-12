@@ -257,7 +257,7 @@ export default function SignUp() {
 
         <motion.div
           layout
-          className="grid grid-cols-2 lg:flex justify-center space-x-6"
+          className="flex justify-center space-x-6"
         >
           <Button type="button" variant="secondary" className="rounded-full">
             Cancel
