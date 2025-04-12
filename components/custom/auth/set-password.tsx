@@ -37,6 +37,7 @@ export default function SetNewPassword() {
 
   const form = useForm<z.infer<typeof setNewPasswordSchema>>({
     resolver: zodResolver(setNewPasswordSchema),
+    mode: "onChange",
     defaultValues: {
       password: "",
     },
@@ -89,7 +90,7 @@ export default function SetNewPassword() {
                       <div className="relative">
                         <FloatingInput
                           label="Password"
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           autoComplete="current-password"
                           className=" pr-10"
                           {...field}
@@ -160,7 +161,7 @@ export default function SetNewPassword() {
           </motion.div>
 
           <motion.div layout className="flex items-center justify-center">
-            <Button type="submit" className="w-fit">
+            <Button type="submit" className="w-30">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span
                   transition={{ type: "spring", duration: 0.3, bounce: 0 }}

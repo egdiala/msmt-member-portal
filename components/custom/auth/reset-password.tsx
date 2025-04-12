@@ -34,6 +34,7 @@ export default function ResetPassword() {
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
+    mode: "onChange",
     defaultValues: {
       email: "",
     },

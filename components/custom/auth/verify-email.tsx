@@ -62,6 +62,7 @@ export default function VerifyEmail() {
 
   const form = useForm<z.infer<typeof verifyEmailSchema>>({
     resolver: zodResolver(verifyEmailSchema),
+    mode: "onChange",
     defaultValues: {
       otp: "",
     },

@@ -11,14 +11,19 @@ export const resetPasswordSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
 });
 
-export const setNewPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-  confirm_password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-});
+export const setNewPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" }),
+    confirm_password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" }),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords don't match",
+    path: ["confirm_password"],
+  });
 
 export const verifyEmailSchema = z.object({
   otp: z
@@ -114,8 +119,7 @@ export const ratingFormSchema = z.object({
   feelBetter: z.boolean().optional(),
   starRating: z.number().min(1, "Please rate with at least 1 star").max(5),
   feedback: z.string().optional(),
-})
-
+});
 
 export const addMemberSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
