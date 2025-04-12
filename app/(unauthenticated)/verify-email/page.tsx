@@ -1,4 +1,5 @@
 import VerifyEmail from "@/components/custom/auth/verify-email";
+import { Suspense } from "react";
 
 export default function VerifyEmailPage() {
   return (
@@ -7,7 +8,9 @@ export default function VerifyEmailPage() {
         <div className="space-y-2 text-center">
           <h1 className="text-lg lg:text-2xl font-bold">Verify your Email</h1>
         </div>
-        <VerifyEmail />
+        <Suspense>
+          <VerifyEmail />
+        </Suspense>
       </div>
     </div>
   )
