@@ -79,9 +79,11 @@ export default function VerifyEmail() {
   }, [timeLeft]);
 
   async function onSubmit(values: z.infer<typeof verifyEmailSchema>) {
-    isResetPassword
-      ? confirmOtp({ ...values, email: emailToVerify })
-      : mutate({ ...values, email: emailToVerify });
+    if (isResetPassword) {
+      confirmOtp({ ...values, email: emailToVerify })
+    } else {
+      mutate({ ...values, email: emailToVerify });
+    }
   }
 
   const buttonCopy = {
