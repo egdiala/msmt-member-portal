@@ -89,15 +89,15 @@ export const metadata: Metadata = {
     telephone: false,
   },
   creator: "MSMT",
-  metadataBase: new URL("https://msmt-member-portal-pi.vercel.app/"),
+  metadataBase: new URL("https://msmt-members-portal.vercel.app/"),
   openGraph: {
     title: "MSMT Patient Dashboard",
     description: "Empowering your mental health journey - Access top-tier mental health care from certified psychiatrists and psychologists—all from the comfort of your home.",
-    url: "https://msmt-member-portal-pi.vercel.app/",
+    url: "https://msmt-members-portal.vercel.app/",
     siteName: "MSMT Patient Dashboard",
     images: [
       {
-        url: "https://msmt-member-portal-pi.vercel.app/meta-img.png",
+        url: "https://msmt-members-portal.vercel.app/meta-img.png",
         width: 1200,
         height: 628,
       },
