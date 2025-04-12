@@ -10,7 +10,7 @@ import type * as z from "zod";
 import { AnimatePresence, motion } from "motion/react";
 import useMeasure from "react-use-measure";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { setNewPasswordSchema } from "@/lib/validations";
 import { useResetPassword } from "@/services/hooks/mutations/use-auth";
 import { Loader } from "@/components/shared/loader";
@@ -101,6 +101,7 @@ export default function SetNewPassword() {
                         name={field.name}
                       />
                     </FormControl>
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
