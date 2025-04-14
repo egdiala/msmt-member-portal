@@ -155,3 +155,7 @@ export const appointmentQuestionnaireSchema = z.object({
   eatingHabits: z.string(),
   sleepingHabits: z.string(),
 });
+
+export const fundWalletSchema = z.object({
+  amount: z.coerce.number().int().gte(5000),
+});
