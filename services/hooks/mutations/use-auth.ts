@@ -10,6 +10,7 @@ import {
   resendOtp,
   resetPassword,
 } from "@/services/api/auth";
+import { axiosInit } from "@/services/axios-init";
 import { LoginResponse } from "@/types/auth";
 
 export const useInitRegister = (fn?: () => void) => {
@@ -45,6 +46,8 @@ export const useCompleteRegister = (fn?: (v: string) => void) => {
         sameSite: "lax",
       });
 
+      axiosInit(token);
+
       toast.success("Successful! Login to access your account");
       fn?.("/home");
     },
@@ -74,6 +77,8 @@ export const useLogin = (fn?: (href: string) => void) => {
         path: "/",
         sameSite: "lax",
       });
+
+      axiosInit(res.token);
 
       toast.success("Login was successful!");
       fn?.("/home");

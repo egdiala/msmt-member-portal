@@ -28,7 +28,7 @@ interface IFundWalletModal {
 }
 
 export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
-  let initialRes = {
+  const initialRes = {
     transaction_id: "",
     amount: 0,
     paystack_key: "",
