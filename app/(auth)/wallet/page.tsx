@@ -21,9 +21,7 @@ import { cn } from "@/lib/utils";
 import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 
 const Wallet = () => {
-  const { data: walletTransactions } = useGetWalletTransactions({
-    component: "count",
-  });
+  const { data: walletTransactions } = useGetWalletTransactions({});
   console.log({ walletTransactions });
 
   const walletStats = [
