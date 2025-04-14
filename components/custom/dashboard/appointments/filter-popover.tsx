@@ -38,12 +38,12 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
           <IconListFilter className="h-4 w-4 stroke-brand-bkg-1" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[350px] md:w-[400px] p-0 text-brand-1">
+      <PopoverContent className="w-[calc(100vw-2.5rem)] md:w-[400px] transform origin-top-right p-0 text-brand-1" side="top" align="end" sideOffset={10}>
         <div className="p-4 pb-0">
           <h2 className="font-bold text-xl mb-1">Filter</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 w-full">
           <div className="grid gap-1 h-fit">
             <h3 className="text-xs font-medium uppercase text-brand-2">DATE</h3>
             <RadioGroup
@@ -70,17 +70,17 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
             </RadioGroup>
 
             {dateFilter === "custom" && (
-              <div className="mt-2 space-y-2">
+              <div className="grid w-full mt-2 gap-y-2">
                 <Input
                   placeholder="From"
-                  className="bg-slate-50"
+                  className="bg-slate-50 min-w-[intrinsic]"
                   value={fromDate}
                   type="date"
                   onChange={(e) => setFromDate(e.target.value)}
                 />
                 <Input
                   placeholder="To"
-                  className="bg-slate-50"
+                  className="bg-slate-50 min-w-[intrinsic]"
                   value={toDate}
                    type="date"
                   onChange={(e) => setToDate(e.target.value)}
