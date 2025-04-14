@@ -18,8 +18,14 @@ import { Button } from "@/components/ui";
 import { WALLET_TABLE_HEADERS } from "@/lib/constants";
 import { TRANSACTIONS_DATA } from "@/lib/mock";
 import { cn } from "@/lib/utils";
+import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 
 const Wallet = () => {
+  const { data: walletTransactions } = useGetWalletTransactions({
+    component: "count",
+  });
+  console.log({ walletTransactions });
+
   const walletStats = [
     { id: 1, title: "Unit Balance", value: "235,402,853", bg: "bg-grey-400" },
     { id: 2, title: "Total Credit", value: "502,853", bg: "bg-green" },

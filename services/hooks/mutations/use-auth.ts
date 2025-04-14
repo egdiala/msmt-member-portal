@@ -28,9 +28,23 @@ export const useInitRegister = (fn?: () => void) => {
 export const useCompleteRegister = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: completeRegister,
-    onSuccess: ({ token, ...user}: LoginResponse) => {
+    onSuccess: ({ token, ...user }: LoginResponse) => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(token));
+
+      // Set auth cookie for middleware with proper cookie settings
+      // This should work in both development and production
+      document.cookie = `authToken=${token}; path=/; max-age=${
+        30 * 24 * 60 * 60
+      }; SameSite=Lax`;
+
+      // Also set with js-cookie as a backup method
+      Cookies.set("authToken", token, {
+        expires: 30, // 30 days
+        path: "/",
+        sameSite: "lax",
+      });
+
       toast.success("Successful! Login to access your account");
       fn?.("/home");
     },
@@ -40,27 +54,27 @@ export const useCompleteRegister = (fn?: (v: string) => void) => {
   });
 };
 
-export const useLogin = (
-  fn?: (href: string) => void
-) => {
+export const useLogin = (fn?: (href: string) => void) => {
   return useMutation({
     mutationFn: login,
     onSuccess: (res: LoginResponse) => {
       // Store in localStorage for backward compatibility
       localStorage.setItem("user", JSON.stringify(res));
       localStorage.setItem("token", res.token);
-      
+
       // Set auth cookie for middleware with proper cookie settings
       // This should work in both development and production
-      document.cookie = `authToken=${res.token}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
-      
+      document.cookie = `authToken=${res.token}; path=/; max-age=${
+        30 * 24 * 60 * 60
+      }; SameSite=Lax`;
+
       // Also set with js-cookie as a backup method
-      Cookies.set("authToken", res.token, { 
+      Cookies.set("authToken", res.token, {
         expires: 30, // 30 days
-        path: '/',
-        sameSite: 'lax'
+        path: "/",
+        sameSite: "lax",
       });
-      
+
       toast.success("Login was successful!");
       fn?.("/home");
     },
