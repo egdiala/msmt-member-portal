@@ -5,14 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
 import PasswordInput from "@/components/shared/password-input";
-import { IconEmail, IconCaseSensitive, IconCalendar } from "@/components/icons";
+import { IconEmail, IconCaseSensitive } from "@/components/icons";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
@@ -31,8 +25,6 @@ import { useInitRegister } from "@/services/hooks/mutations/use-auth";
 import useMeasure from "react-use-measure";
 import { Loader } from "@/components/shared/loader";
 import { useRouter } from "next/navigation";
-import { Scroll } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { DatePickerField } from "@/components/shared/date-picker-field";
 
 export default function SignUp() {
