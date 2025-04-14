@@ -53,8 +53,8 @@ export const getAdminData = () => {
 
 export const createQueryString = (queryObject: Record<string, any>): string => {
   const queryString = Object.entries(queryObject)
-    // eslint-disable-next-line no-unused-vars
     .filter(
+      // eslint-disable-next-line
       ([_, value]) => value !== undefined && value !== null && value !== ""
     )
     .map(
