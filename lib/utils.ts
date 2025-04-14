@@ -14,13 +14,13 @@ export const getTokenExpiration = () => {
   if (typeof window === "undefined") {
     return null;
   }
-  
+
   const token = localStorage.getItem("token");
-  
+
   if (!token) {
     return null;
   }
-  
+
   try {
     const decryptedToken = JSON.parse(atob(token.split(".")[1]));
     const expirationDate = new Date(decryptedToken?.exp * 1000);
@@ -28,36 +28,19 @@ export const getTokenExpiration = () => {
     const isExpired = expirationDate < now;
 
     // Calculate time remaining in minutes
-    const timeRemaining = isExpired ? 0 : Math.floor((expirationDate.getTime() - now.getTime()) / (1000 * 60));
-    
+    const timeRemaining = isExpired
+      ? 0
+      : Math.floor((expirationDate.getTime() - now.getTime()) / (1000 * 60));
+
     return {
       expirationDate,
       isExpired,
-      timeRemaining
+      timeRemaining,
     };
   } catch (error) {
     console.error("Error decoding token:", error);
     return null;
   }
-};
-
-export const isAuthenticated = (): boolean => {
-  let isExpired = true;
-
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      return false;
-    }
-
-    const decryptedToken = JSON.parse(atob(token.split(".")[1]));
-    const expirationDate = new Date(decryptedToken?.exp * 1000);
-    isExpired = expirationDate < new Date();
-    return !isExpired;
-  }
-
-  return isExpired;
 };
 
 export const getAdminData = () => {
@@ -66,4 +49,18 @@ export const getAdminData = () => {
   ) as LoginResponse;
 
   return user;
+};
+
+export const createQueryString = (queryObject: Record<string, any>): string => {
+  const queryString = Object.entries(queryObject)
+    // eslint-disable-next-line no-unused-vars
+    .filter(
+      ([_, value]) => value !== undefined && value !== null && value !== ""
+    )
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
+    )
+    .join("&");
+  return queryString ? `?${queryString}` : "";
 };
