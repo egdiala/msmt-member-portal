@@ -32,20 +32,23 @@ import {
 import { FloatingInput } from "@/components/shared/floating-input";
 import { signUpSchema } from "@/lib/validations";
 import { Switch } from "@/components/ui/switch";
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, motion } from "motion/react";
 import { useInitRegister } from "@/services/hooks/mutations/use-auth";
 import useMeasure from "react-use-measure";
 import { Loader } from "@/components/shared/loader";
 import { useRouter } from "next/navigation";
+import { Scroll } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { DatePickerField } from "@/components/shared/date-picker-field";
 
 export default function SignUp() {
-  const router = useRouter()
-  const [ref, bounds] = useMeasure()
+  const router = useRouter();
+  const [ref, bounds] = useMeasure();
   const { mutate, isPending } = useInitRegister(() => {
-    localStorage.setItem("email_to_verify", form.getValues("email"))
-    router.push("/verify-email")
+    localStorage.setItem("email_to_verify", form.getValues("email"));
+    router.push("/verify-email");
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
   type SignUpFormValues = z.infer<typeof signUpSchema>;
 
@@ -56,28 +59,45 @@ export default function SignUp() {
       first_name: "",
       last_name: "",
       email: "",
-      dob: undefined, 
+      dob: undefined,
       password: "",
       terms: false,
     },
   });
 
-  function onSubmit({ first_name, last_name, dob, password, email}: z.infer<typeof signUpSchema>) {
-    mutate({ first_name, last_name, email, password, dob: format(dob, "yyyy-MM-dd") })
+  function onSubmit({
+    first_name,
+    last_name,
+    dob,
+    password,
+    email,
+  }: z.infer<typeof signUpSchema>) {
+    mutate({
+      first_name,
+      last_name,
+      email,
+      password,
+      dob: format(dob, "yyyy-MM-dd"),
+    });
   }
 
   const buttonCopy = {
     idle: "Sign Up",
-    loading: <Loader className="spinner size-4" />
+    loading: <Loader className="spinner size-4" />,
   };
 
-  const buttonState = useMemo(() => { return isPending ? "loading" : "idle" },[isPending])
+  const buttonState = useMemo(() => {
+    return isPending ? "loading" : "idle";
+  }, [isPending]);
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <motion.div animate={{ height: bounds.height }}>
-          <div ref={ref} className="space-y-4 bg-white rounded-xl px-3 py-4 lg:p-6">
+          <div
+            ref={ref}
+            className="space-y-4 bg-white rounded-xl px-3 py-4 lg:p-6"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -126,55 +146,11 @@ export default function SignUp() {
                 name="dob"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <div className="relative cursor-pointer">
-                            <FloatingInput
-                              label="Date of Birth"
-                              readOnly
-                              value={
-                                field.value ? format(field.value, "PPP") : ""
-                              }
-                              className="pr-8 cursor-pointer"
-                              onClick={(e) => e.currentTarget.focus()}
-                            />
-                            <IconCalendar className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 stroke-brand-3 pointer-events-none" />
-                          </div>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        side="bottom"
-                        align="start"
-                        className="w-auto p-0 z-50"
-                        sideOffset={5}
-                        alignOffset={0}
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => {
-                            const today = new Date();
-                            const eighteenYearsAgo = new Date(
-                              today.getFullYear() - 18,
-                              today.getMonth(),
-                              today.getDate()
-                            );
-                            return (
-                              date > eighteenYearsAgo || date > new Date()
-                            );
-                          }}
-                          initialFocus
-                          className="border-none p-3"
-                          captionLayout="buttons"
-                          fromYear={1920}
-                          toYear={new Date().getFullYear() - 18}
-                          defaultMonth={new Date(2000, 0)}
-                          showOutsideDays={false}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <DatePickerField
+                      value={field.value}
+                      onChange={field.onChange}
+                      label="Date of Birth"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -265,15 +241,18 @@ export default function SignUp() {
           </div>
         </motion.div>
 
-        <motion.div layout className="grid grid-cols-2 lg:flex justify-center space-x-6">
-          <Button
-            type="button"
-            variant="secondary"
-            className="rounded-full"
-          >
+        <motion.div
+          layout
+          className="grid grid-cols-2 lg:flex justify-center space-x-6"
+        >
+          <Button type="button" variant="secondary" className="rounded-full">
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending} className="rounded-full w-21">
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="rounded-full w-21"
+          >
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.span
                 transition={{ type: "spring", duration: 0.3, bounce: 0 }}
