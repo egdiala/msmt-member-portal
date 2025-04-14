@@ -76,9 +76,35 @@ const alliance = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "MSMT Patient Dashboard",
+  title: {
+    template: "%s - MSMT Patient Dashboard",
+    default: "MSMT Patient Dashboard",
+  },
   description:
     "Empowering your mental health journey - Access top-tier mental health care from certified psychiatrists and psychologists—all from the comfort of your home.",
+  icons: { icon: "/icon.ico" },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  creator: "MSMT",
+  metadataBase: new URL("https://msmt-members-portal.vercel.app/"),
+  openGraph: {
+    title: "MSMT Patient Dashboard",
+    description: "Empowering your mental health journey - Access top-tier mental health care from certified psychiatrists and psychologists—all from the comfort of your home.",
+    url: "https://msmt-members-portal.vercel.app/",
+    siteName: "MSMT Patient Dashboard",
+    images: [
+      {
+        url: "https://msmt-members-portal.vercel.app/meta-img.png",
+        width: 1200,
+        height: 628,
+      },
+    ],
+    locale: "en-US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

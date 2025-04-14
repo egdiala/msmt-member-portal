@@ -1,17 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
-
-import {
-  IconEmail,
-  IconCaseSensitive,
-  IconCalendar,
-  IconEye,
-  IconEyeOff,
-} from "@/components/icons";
+import PasswordInput from "@/components/shared/password-input";
+import { IconEmail, IconCaseSensitive, IconCalendar } from "@/components/icons";
 
 import {
   Popover,
@@ -49,7 +43,6 @@ export default function SignUp() {
     router.push("/verify-email");
   });
 
-  const [showPassword, setShowPassword] = useState(false);
   type SignUpFormValues = z.infer<typeof signUpSchema>;
 
   const form = useForm<SignUpFormValues>({
@@ -184,32 +177,14 @@ export default function SignUp() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="relative">
-                      <FloatingInput
-                        label="Password"
-                        type={showPassword ? "text" : "password"}
-                        className="pr-8"
-                        {...field}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <IconEyeOff className="h-5 w-5 stroke-brand-3" />
-                        ) : (
-                          <IconEye className="h-5 w-5 stroke-brand-3" />
-                        )}
-                        <span className="sr-only">
-                          {showPassword ? "Hide password" : "Show password"}
-                        </span>
-                      </Button>
-                    </div>
+                    <PasswordInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      id={field.name}
+                      name={field.name}
+                      labelTitle="Password"
+                    />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -243,7 +218,7 @@ export default function SignUp() {
 
         <motion.div
           layout
-          className="grid grid-cols-2 lg:flex justify-center space-x-6"
+          className="flex justify-center space-x-6"
         >
           <Button type="button" variant="secondary" className="rounded-full">
             Cancel
