@@ -28,16 +28,19 @@ interface IFundWalletModal {
 }
 
 export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
-  const onClose = () => {
-    form.reset();
-    handleClose();
-  };
-
-  const [res, setRes] = useState({
+  let initialRes = {
     transaction_id: "",
     amount: 0,
     paystack_key: "",
-  });
+  };
+
+  const [res, setRes] = useState(initialRes);
+
+  const onClose = () => {
+    form.reset();
+    setRes(initialRes);
+    handleClose();
+  };
 
   const config = {
     reference: new Date().getTime().toString(),
