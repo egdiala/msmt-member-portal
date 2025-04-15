@@ -12,34 +12,78 @@ import {
 } from "@/components/ui";
 import { profileDetailsSchema } from "@/lib/validations";
 import { FloatingInput, SelectCmp, Modal } from "../../shared";
+import { UpdateProfileType } from "@/types/profile";
+import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;
   isOpen: boolean;
+  data: Partial<UpdateProfileType>;
 }
 export const UpdateProfileDetailsModal = ({
   handleClose,
   isOpen,
+  data,
 }: IUpdateProfileDetailsModal) => {
+  const { data: requestVariables } = useMultipleRequestVariables([
+    "religion-list",
+    "marital-status",
+    "country-list",
+    "preferred-lan",
+  ]);
+  const { mutate: updateProfile, isPending } = useUpdateProfile(() =>
+    handleClose()
+  );
+
+  const variableList = (requestVariable: string[]) => {
+    return requestVariable?.map((item: string, index: number) => ({
+      value: item,
+      id: index,
+    }));
+  };
+
+  console.log(data, requestVariables, "DATA")
+
+  const countryList = requestVariables?.["country-list"]?.map(
+    (item: { name: string }, index: number) => ({
+      value: item?.name,
+      id: index,
+    })
+  );
+
   const form = useForm<z.infer<typeof profileDetailsSchema>>({
     resolver: zodResolver(profileDetailsSchema),
     defaultValues: {
       preferredName: "",
-      phoneNumber: "",
-      religion: "",
-      gender: "",
-      maritalStatus: "",
-      country: "",
-      preferredLanguage: "",
+      phoneNumber: data?.phone_number || "",
+      religion: data?.religion || "",
+      gender: data?.gender || "",
+      maritalStatus: data?.marital_status || "",
+      country: data?.origin_country || "",
+      preferredLanguage: data?.preferred_lan || "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
+    await updateProfile({
+      preferred_lan: values.preferredLanguage,
+      phone_number: values.phoneNumber,
+      religion: values.religion,
+      gender: values.gender.toLowerCase(),
+      marital_status: values.maritalStatus,
+      origin_country: values.country,
+    });
     console.log(values);
   }
 
   return (
-    <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
+    <Modal
+      key={data ? "loaded" : "loading"}
+      isOpen={isOpen}
+      handleClose={handleClose}
+      className="grid gap-y-6"
+    >
       <h2 className="font-bold text-lg md:text-2xl">Profile Details</h2>
 
       <Form {...form}>
@@ -94,9 +138,11 @@ export const UpdateProfileDetailsModal = ({
               name="religion"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[
+                    ...variableList(requestVariables?.["religion-list"]),
+                  ]}
                   placeholder={"Religion"}
-                  {...field}
+                  field={field}
                 />
               )}
             />
@@ -105,7 +151,14 @@ export const UpdateProfileDetailsModal = ({
               control={form.control}
               name="gender"
               render={({ field }) => (
-                <SelectCmp selectItems={[]} placeholder={"Gender"} {...field} />
+                <SelectCmp
+                  selectItems={[
+                    { value: "male", id: 1 },
+                    { value: "female", id: 2 },
+                  ]}
+                  placeholder={"Gender"}
+                  field={field}
+                />
               )}
             />
 
@@ -114,9 +167,11 @@ export const UpdateProfileDetailsModal = ({
               name="maritalStatus"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[
+                    ...variableList(requestVariables?.["marital-status"]),
+                  ]}
                   placeholder={"Marital Status"}
-                  {...field}
+                  field={field}
                 />
               )}
             />
@@ -126,9 +181,9 @@ export const UpdateProfileDetailsModal = ({
               name="country"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[...countryList]}
                   placeholder={"Country"}
-                  {...field}
+                  field={field}
                 />
               )}
             />
@@ -138,9 +193,11 @@ export const UpdateProfileDetailsModal = ({
               name="preferredLanguage"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[
+                    ...variableList(requestVariables?.["preferred-lan"]),
+                  ]}
                   placeholder={"Preferred Language"}
-                  {...field}
+                  field={field}
                 />
               )}
             />
@@ -151,7 +208,13 @@ export const UpdateProfileDetailsModal = ({
               Cancel
             </Button>
 
-            <Button>Update</Button>
+            <Button
+              type="submit"
+              disabled={!form.formState.isValid || isPending}
+              className="cursor-pointer"
+            >
+              {isPending ? "Submitting" : "Update"}
+            </Button>
           </div>
         </form>
       </Form>

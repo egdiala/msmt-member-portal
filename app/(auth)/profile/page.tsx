@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconEye, IconEyeOff, IconPen } from "@/components/icons";
 import {
@@ -23,20 +24,29 @@ import { FloatingInput, RenderIf } from "@/components/shared";
 import { profileSecuritySchema } from "@/lib/validations";
 
 const Profile = () => {
+  const { data } = useGetProfile();
   const personalInfo = [
-    { id: 1, key: "Phone number", value: "0801 234 5678" },
-    { id: 2, key: "Religion", value: "Christianity" },
-    { id: 3, key: "Gender", value: "Male" },
-    { id: 4, key: "Marital Status", value: "Single" },
-    { id: 5, key: "Country", value: "Nigeria" },
-    { id: 6, key: "Preferred Language", value: "English" },
+    { id: 1, key: "Phone number", value: data?.phone_number || "_" },
+    { id: 2, key: "Religion", value: data?.religion || "_" },
+    { id: 3, key: "Gender", value: data?.gender || "_" },
+    { id: 4, key: "Marital Status", value: data?.marital_status || "_" },
+    { id: 5, key: "Country", value: data?.origin_country || "_" },
+    { id: 6, key: "Preferred Language", value: data?.preferred_lan || "_" },
   ];
 
   const contactPerson = [
-    { id: 1, key: "Full name", value: "James Dada" },
-    { id: 2, key: "Phone number", value: "0801 234 5678" },
-    { id: 3, key: "Email", value: "example@email.com" },
-    { id: 4, key: "Relationship", value: "Mother" },
+    { id: 1, key: "Full name", value: data?.contact_person?.name || "-" },
+    {
+      id: 2,
+      key: "Phone number",
+      value: data?.contact_person?.phone_number || "_",
+    },
+    { id: 3, key: "Email", value: data?.contact_person?.email || "_" },
+    {
+      id: 4,
+      key: "Relationship",
+      value: data?.contact_person?.relationship || "_",
+    },
   ];
 
   const [openUpdateProfileDetailsModal, setOpenUpdateProfileDetailsModal] =
@@ -80,9 +90,9 @@ const Profile = () => {
 
               <div className="grid gap-y-0.5">
                 <h2 className="text-text-1 font-bold text-xl md:text-2xl">
-                  James John
+                  {data?.first_name} {data?.last_name}
                 </h2>
-                <p className="text-text-2 text-sm">example@email.com</p>
+                <p className="text-text-2 text-sm">{data?.email}</p>
               </div>
             </div>
 
@@ -280,9 +290,12 @@ const Profile = () => {
       <UpdateProfileDetailsModal
         handleClose={() => setOpenUpdateProfileDetailsModal(false)}
         isOpen={openUpdateProfileDetailsModal}
+        data={data!}
+    
       />
 
       <UpdateContactPersonDetailsModal
+        data={data!}
         handleClose={() => setOpenUpdateContactPersonDetailsModal(false)}
         isOpen={openUpdateContactPersonDetailsModal}
       />

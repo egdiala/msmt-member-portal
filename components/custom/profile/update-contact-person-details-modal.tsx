@@ -12,23 +12,26 @@ import {
 import { IconEmail, IconPhone, IconUserRound } from "@/components/icons";
 import { contactPersonDetailsSchema } from "@/lib/validations";
 import { FloatingInput, Modal } from "../../shared";
+import { UpdateProfileType } from "@/types/profile";
 
 interface IUpdateContactPersonDetailsModal {
   handleClose: () => void;
   isOpen: boolean;
+  data: Partial<UpdateProfileType>;
 }
 export const UpdateContactPersonDetailsModal = ({
   handleClose,
   isOpen,
+  data,
 }: IUpdateContactPersonDetailsModal) => {
   const form = useForm<z.infer<typeof contactPersonDetailsSchema>>({
     resolver: zodResolver(contactPersonDetailsSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      email: "",
-      relationship: "",
+      firstName: data?.contact_person?.name?.split(" ")[0] || "",
+      lastName: data?.contact_person?.name?.split(" ")[1] || " ",
+      phoneNumber: data?.contact_person?.phone_number || "",
+      email: data?.contact_person?.email || "",
+      relationship: data?.contact_person?.relationship || "",
     },
   });
 
@@ -37,7 +40,12 @@ export const UpdateContactPersonDetailsModal = ({
   }
 
   return (
-    <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
+    <Modal
+      isOpen={isOpen}
+      handleClose={handleClose}
+      className="grid gap-y-6"
+      key={data ? "loaded" : "loading"}
+    >
       <h2 className="font-bold text-lg md:text-2xl">
         Update Contact Person Details
       </h2>

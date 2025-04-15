@@ -1,5 +1,6 @@
-import * as React from "react";
+"use client";
 
+import * as React from "react";
 import {
   Select,
   SelectContent,
@@ -9,29 +10,47 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import type { ControllerRenderProps, FieldValues, FieldPath } from "react-hook-form";
 
-interface ISelectCmp {
-  selectItems: { id: number; value: string }[];
+interface SelectItemType {
+  id: number;
+  value: string;
+  disabled?: boolean;
+}
+
+interface SelectCmpProps<T extends FieldValues> {
+  field: ControllerRenderProps<T, FieldPath<T>>;
+  selectItems: SelectItemType[];
   placeholder: string;
   className?: string;
+  disabled?: boolean;
 }
-export const SelectCmp = ({
+
+export function SelectCmp<T extends FieldValues>({
+  field,
   selectItems,
   placeholder,
   className,
-}: ISelectCmp) => {
+  disabled = false,
+}: SelectCmpProps<T>) {
   return (
-    <Select>
+    <Select
+      value={field.value}
+      onValueChange={field.onChange}
+      disabled={disabled}
+    >
       <SelectTrigger className={cn("w-full", className)}>
-        <SelectValue
-          placeholder={placeholder}
-          className="placeholder:text-text-2"
-        />
+        <SelectValue placeholder={placeholder} className="placeholder:text-text-2" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {selectItems.map((item) => (
-            <SelectItem key={item.id} value={item.value} className="capitalize">
+            <SelectItem 
+              key={item.id} 
+              value={item.value}
+              disabled={item.disabled}
+              className="capitalize"
+            >
               {item.value}
             </SelectItem>
           ))}
@@ -39,4 +58,4 @@ export const SelectCmp = ({
       </SelectContent>
     </Select>
   );
-};
+}
