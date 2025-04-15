@@ -44,7 +44,7 @@ export function SelectCmp<T extends FieldValues>({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {selectItems.map((item) => (
+          {selectItems?.map((item) => (
             <SelectItem 
               key={item.id} 
               value={item.value}

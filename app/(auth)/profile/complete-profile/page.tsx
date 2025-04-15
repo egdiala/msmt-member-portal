@@ -1,6 +1,6 @@
 "use client";
-
 import type * as z from "zod";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconCamera, IconPhone, IconUserRound } from "@/components/icons";
@@ -15,23 +15,53 @@ import {
 import { FloatingInput, SelectCmp } from "@/components/shared";
 import { profileDetailsSchema } from "@/lib/validations";
 import Link from "next/link";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
+import { useGetDefinedVariables } from "@/hooks/use-get-variables";
+import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
 
 const CompleteProfile = () => {
+  const { data } = useGetProfile();
+  const { requestVariables, variableList, countryList } =
+    useGetDefinedVariables();
+  const { mutate: updateProfile, isPending } = useUpdateProfile();
 
   const form = useForm<z.infer<typeof profileDetailsSchema>>({
     resolver: zodResolver(profileDetailsSchema),
     defaultValues: {
       preferredName: "",
-      phoneNumber: "",
-      religion: "",
-      gender: "",
-      maritalStatus: "",
-      country: "",
-      preferredLanguage: "",
+      phoneNumber: data?.phone_number || "",
+      religion: data?.religion || "",
+      gender: data?.gender || "",
+      maritalStatus: data?.marital_status || "",
+      country: data?.origin_country || "",
+      preferredLanguage: data?.preferred_lan || "",
     },
   });
+  const { reset } = form;
+
+  useMemo(() => {
+    if (data) {
+      reset({
+        preferredName: "",
+        phoneNumber: data?.phone_number || "",
+        religion: data?.religion || "",
+        gender: data?.gender || "",
+        maritalStatus: data?.marital_status || "",
+        country: data?.origin_country || "",
+        preferredLanguage: data?.preferred_lan || "",
+      });
+    }
+  }, [data, requestVariables, reset]);
 
   async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
+    await updateProfile({
+      preferred_lan: values.preferredLanguage,
+      phone_number: values.phoneNumber,
+      religion: values.religion,
+      gender: values.gender.toLowerCase(),
+      marital_status: values.maritalStatus,
+      origin_country: values.country,
+    });
     console.log(values);
   }
 
@@ -112,9 +142,11 @@ const CompleteProfile = () => {
                 name="religion"
                 render={({ field }) => (
                   <SelectCmp
-                    selectItems={[]}
+                    selectItems={variableList(
+                      requestVariables?.["religion-list"]
+                    )}
                     placeholder={"Religion"}
-                    {...field}
+                    field={field}
                   />
                 )}
               />
@@ -124,9 +156,12 @@ const CompleteProfile = () => {
                 name="gender"
                 render={({ field }) => (
                   <SelectCmp
-                    selectItems={[]}
+                    selectItems={[
+                      { value: "male", id: 1 },
+                      { value: "female", id: 2 },
+                    ]}
                     placeholder={"Gender"}
-                    {...field}
+                    field={field}
                   />
                 )}
               />
@@ -136,9 +171,11 @@ const CompleteProfile = () => {
                 name="maritalStatus"
                 render={({ field }) => (
                   <SelectCmp
-                    selectItems={[]}
+                    selectItems={variableList(
+                      requestVariables?.["marital-status"]
+                    )}
                     placeholder={"Marital Status"}
-                    {...field}
+                    field={field}
                   />
                 )}
               />
@@ -148,9 +185,9 @@ const CompleteProfile = () => {
                 name="country"
                 render={({ field }) => (
                   <SelectCmp
-                    selectItems={[]}
+                    selectItems={countryList}
                     placeholder={"Country"}
-                    {...field}
+                    field={field}
                   />
                 )}
               />
@@ -160,9 +197,11 @@ const CompleteProfile = () => {
                 name="preferredLanguage"
                 render={({ field }) => (
                   <SelectCmp
-                    selectItems={[]}
+                    selectItems={variableList(
+                      requestVariables?.["preferred-lan"]
+                    )}
                     placeholder={"Preferred Language"}
-                    {...field}
+                    field={field}
                   />
                 )}
               />
@@ -173,7 +212,9 @@ const CompleteProfile = () => {
                 <Link href="/home">Cancel</Link>
               </Button>
 
-              <Button>Complete Profile</Button>
+              <Button type="submit">
+                {isPending ? "Submitting" : "Complete Profile"}
+              </Button>
             </div>
           </form>
         </Form>

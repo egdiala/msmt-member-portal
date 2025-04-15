@@ -1,6 +1,7 @@
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useGetDefinedVariables } from "@/hooks/use-get-variables";
 import { IconPhone, IconUserRound } from "@/components/icons";
 import {
   Button,
@@ -14,7 +15,6 @@ import { profileDetailsSchema } from "@/lib/validations";
 import { FloatingInput, SelectCmp, Modal } from "../../shared";
 import { UpdateProfileType } from "@/types/profile";
 import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
-import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;
@@ -26,31 +26,12 @@ export const UpdateProfileDetailsModal = ({
   isOpen,
   data,
 }: IUpdateProfileDetailsModal) => {
-  const { data: requestVariables } = useMultipleRequestVariables([
-    "religion-list",
-    "marital-status",
-    "country-list",
-    "preferred-lan",
-  ]);
   const { mutate: updateProfile, isPending } = useUpdateProfile(() =>
     handleClose()
   );
 
-  const variableList = (requestVariable: string[]) => {
-    return requestVariable?.map((item: string, index: number) => ({
-      value: item,
-      id: index,
-    }));
-  };
-
-  console.log(data, requestVariables, "DATA")
-
-  const countryList = requestVariables?.["country-list"]?.map(
-    (item: { name: string }, index: number) => ({
-      value: item?.name,
-      id: index,
-    })
-  );
+  const { requestVariables, variableList, countryList } =
+    useGetDefinedVariables();
 
   const form = useForm<z.infer<typeof profileDetailsSchema>>({
     resolver: zodResolver(profileDetailsSchema),
@@ -138,9 +119,7 @@ export const UpdateProfileDetailsModal = ({
               name="religion"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[
-                    ...variableList(requestVariables?.["religion-list"]),
-                  ]}
+                  selectItems={variableList(requestVariables?.["religion-list"])}
                   placeholder={"Religion"}
                   field={field}
                 />
@@ -167,9 +146,7 @@ export const UpdateProfileDetailsModal = ({
               name="maritalStatus"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[
-                    ...variableList(requestVariables?.["marital-status"]),
-                  ]}
+                  selectItems={variableList(requestVariables?.["marital-status"])}
                   placeholder={"Marital Status"}
                   field={field}
                 />
