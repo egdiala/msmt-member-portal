@@ -116,7 +116,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                 <SelectCmp
                   selectItems={[]}
                   placeholder={"Relationship"}
-                  {...field}
+                  field={field}
                 />
               )}
             />
