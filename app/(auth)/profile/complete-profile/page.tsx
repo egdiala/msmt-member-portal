@@ -1,6 +1,6 @@
 "use client";
 import type * as z from "zod";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconCamera, IconPhone, IconUserRound } from "@/components/icons";
@@ -39,7 +39,7 @@ const CompleteProfile = () => {
   });
   const { reset } = form;
 
-  useMemo(() => {
+  useEffect(() => {
     if (data) {
       reset({
         preferredName: "",
@@ -51,7 +51,7 @@ const CompleteProfile = () => {
         preferredLanguage: data?.preferred_lan || "",
       });
     }
-  }, [data, requestVariables, reset]);
+  }, [data, reset]);
 
   async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
     await updateProfile({

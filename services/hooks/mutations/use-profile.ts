@@ -1,13 +1,15 @@
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { updateProfile} from "@/services/api/profile";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { InvalidateQueryFilters } from "@tanstack/react-query";
+import { updateProfile } from "@/services/api/profile";
 
 export const useUpdateProfile = (onSuccess?: () => void) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateProfile,
     onSuccess: (res) => {
-      console.log(res);
       toast.success(res?.message || "Profile updated successfully");
+      queryClient.invalidateQueries(["get-profile"] as InvalidateQueryFilters);
       onSuccess?.();
     },
     onError: (err: any) => {
@@ -15,5 +17,3 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     },
   });
 };
-
-
