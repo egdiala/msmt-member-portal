@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "motion/react";
@@ -42,22 +44,30 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
     handleClose();
   };
 
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const email = JSON.parse(localStorage.getItem("user") as string)?.email;
+      setUserEmail(email);
+    }
+  }, []);
+
   const config = {
     reference: new Date().getTime().toString(),
-    email: JSON.parse(localStorage.getItem("user") as string)?.email,
+    email: userEmail,
     amount: res?.amount,
     publicKey: res?.paystack_key,
   };
 
   const initializePayment = usePaystackPayment(config);
-  const { mutate: completeWalletFunding } = useCompleteFundWallet(() => {
-    onClose();
-  });
 
-  const { mutate, isPending } = useInitFundWallet((res) => {
+  const { mutate: completeWalletFunding } = useCompleteFundWallet(onClose);
+
+  const { mutate, isPending } = useInitFundWallet(() => {
     setRes(res);
 
-    if (res) {
+    if (res && typeof window !== undefined) {
       initializePayment({
         onSuccess: () => {
           completeWalletFunding({ transaction_id: res?.transaction_id });

@@ -13,3 +13,15 @@ export const axiosBookingService: AxiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+axiosBookingService.interceptors.request.use(function (config) {
+  const token = localStorage.getItem("token");
+  config.headers.Authorization = token ? `Bearer ${token}` : "";
+  return config;
+});
+
+axiosUserService.interceptors.request.use(function (config) {
+  const token = localStorage.getItem("token");
+  config.headers.Authorization = token ? `Bearer ${token}` : "";
+  return config;
+});

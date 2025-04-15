@@ -5,3 +5,5 @@ export * from "./remove-member-modal";
 export * from "./filter-appointments-popover";
 export * from "./appointments-mobile-card";
 export * from "./activate-member-modal";
+export * from "./family-and-friends-table";
+export * from "./single-family-or-friend-content";

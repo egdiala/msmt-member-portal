@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import type * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IconPhone, IconUserRound } from "@/components/icons";
+import { IconCamera, IconPhone, IconUserRound } from "@/components/icons";
+import { FloatingInput, SelectCmp } from "@/components/shared";
 import {
   Button,
   Form,
@@ -13,16 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui";
 import { profileDetailsSchema } from "@/lib/validations";
-import { FloatingInput, SelectCmp, Modal } from "../../shared";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface IUpdateProfileDetailsModal {
-  handleClose: () => void;
-  isOpen: boolean;
-}
-export const UpdateProfileDetailsModal = ({
-  handleClose,
-  isOpen,
-}: IUpdateProfileDetailsModal) => {
+export const CompleteProfileForm = () => {
   const form = useForm<z.infer<typeof profileDetailsSchema>>({
     resolver: zodResolver(profileDetailsSchema),
     defaultValues: {
@@ -39,14 +33,26 @@ export const UpdateProfileDetailsModal = ({
   async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
     console.log(values);
   }
-
   return (
-    <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
-      <h2 className="font-bold text-lg md:text-2xl">Profile Details</h2>
+    <div className="grid gap-y-5 w-full md:justify-center">
+      <div className="flex items-center justify-center flex-col">
+        <div className="border border-text-tertiary rounded-full size-25 bg-white"></div>
+
+        <Button
+          variant="ghost"
+          className="p-0 gap-x-1 underline text-button-primary font-medium cursor-pointer"
+        >
+          <IconCamera className="stroke-text-tertiary size-4" />
+          Upload Profile Picture
+        </Button>
+      </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-y-6">
-          <div className="grid gap-y-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full grid gap-y-8"
+        >
+          <div className="bg-white rounded-2xl p-3 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-4 w-full md:w-162">
             <FormField
               control={form.control}
               name="preferredName"
@@ -148,15 +154,15 @@ export const UpdateProfileDetailsModal = ({
             />
           </div>
 
-          <div className="flex justify-end gap-x-4 pt-10">
-            <Button variant="secondary" onClick={handleClose} type="button">
-              Cancel
+          <div className="flex justify-center gap-8 flex-col-reverse md:flex-row w-full">
+            <Button asChild variant="secondary">
+              <Link href="/home">Cancel</Link>
             </Button>
 
-            <Button>Update</Button>
+            <Button>Complete Profile</Button>
           </div>
         </form>
       </Form>
-    </Modal>
+    </div>
   );
 };

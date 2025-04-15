@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, useState } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { IconClose, IconListFilter } from "@/components/icons";
@@ -13,13 +15,13 @@ import {
   DrawerClose,
   DrawerTitle,
 } from "@/components/ui";
+import { RadioButton } from "@/components/shared";
 import {
   TRANSACTIONS_FILTER_DATE_OPTIONS,
   TRANSACTIONS_FILTER_STATUS_OPTIONS,
   TRANSACTIONS_FILTER_TYPE_OPTIONS,
 } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { RadioButton } from "@/components/shared";
 
 const FilterContent = ({
   handleCloseFilter,

@@ -1,3 +1,5 @@
+"use client";
+
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,14 +38,14 @@ export const RemoveMemberModal = ({
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="gap-y-6"
-    >
+    <Modal isOpen={isOpen} handleClose={handleClose} className="gap-y-6">
       <DialogHeader className="grid gap-y-2 text-brand-1">
-        <DialogTitle className="text-left font-bold text-2xl">Remove Member</DialogTitle>
-        <DialogDescription className="text-left text-sm">This action would remove [member name] from this platform</DialogDescription>
+        <DialogTitle className="text-left font-bold text-2xl">
+          Remove Member
+        </DialogTitle>
+        <DialogDescription className="text-left text-sm">
+          This action would remove [member name] from this platform
+        </DialogDescription>
       </DialogHeader>
 
       <Form {...form}>

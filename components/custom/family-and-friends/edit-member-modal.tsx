@@ -1,3 +1,5 @@
+"use client";
+
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,11 +37,7 @@ export const EditMemberModal = ({ isOpen, handleClose }: IEditMemberModal) => {
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="gap-y-6"
-    >
+    <Modal isOpen={isOpen} handleClose={handleClose} className="gap-y-6">
       <h2 className="font-bold text-2xl text-brand-1">Edit Member</h2>
 
       <Form {...form}>
