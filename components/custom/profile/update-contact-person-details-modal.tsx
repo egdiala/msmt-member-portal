@@ -13,6 +13,8 @@ import { IconEmail, IconPhone, IconUserRound } from "@/components/icons";
 import { contactPersonDetailsSchema } from "@/lib/validations";
 import { FloatingInput, Modal } from "../../shared";
 import { UpdateProfileType } from "@/types/profile";
+import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
+import { capitalizeFirstLetter } from "@/lib/hooks";
 
 interface IUpdateContactPersonDetailsModal {
   handleClose: () => void;
@@ -24,6 +26,9 @@ export const UpdateContactPersonDetailsModal = ({
   isOpen,
   data,
 }: IUpdateContactPersonDetailsModal) => {
+  const { mutate: updateProfile, isPending } = useUpdateProfile(() =>
+    handleClose()
+  );
   const form = useForm<z.infer<typeof contactPersonDetailsSchema>>({
     resolver: zodResolver(contactPersonDetailsSchema),
     defaultValues: {
@@ -36,6 +41,16 @@ export const UpdateContactPersonDetailsModal = ({
   });
 
   async function onSubmit(values: z.infer<typeof contactPersonDetailsSchema>) {
+    await updateProfile({
+      contact_person: {
+        name: `${capitalizeFirstLetter(
+          values.firstName
+        )} ${capitalizeFirstLetter(values.lastName)}`,
+        phone_number: values.phoneNumber,
+        email: values.email,
+        relationship: values.relationship,
+      },
+    });
     console.log(values);
   }
 
@@ -164,7 +179,7 @@ export const UpdateContactPersonDetailsModal = ({
               Cancel
             </Button>
 
-            <Button>Update</Button>
+            <Button type="submit">{isPending ? "Submitting" : "Update"}</Button>
           </div>
         </form>
       </Form>

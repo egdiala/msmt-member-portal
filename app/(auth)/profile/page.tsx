@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -15,6 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
+import Cookies from "js-cookie";
 import {
   DeleteAccountModal,
   UpdateContactPersonDetailsModal,
@@ -22,6 +24,7 @@ import {
 } from "@/components/custom";
 import { FloatingInput, RenderIf } from "@/components/shared";
 import { profileSecuritySchema } from "@/lib/validations";
+import { useChangePassword } from "@/services/hooks/mutations/use-auth";
 
 const Profile = () => {
   const { data } = useGetProfile();
@@ -48,6 +51,19 @@ const Profile = () => {
       value: data?.contact_person?.relationship || "_",
     },
   ];
+  const router = useRouter();
+
+  function clearAllCookies() {
+    const cookies = Cookies.get();
+    Object.keys(cookies).forEach((cookieName) => {
+      Cookies.remove(cookieName);
+      Cookies.remove(cookieName, { path: "/" });
+      Cookies.remove(cookieName, {
+        path: "",
+        domain: window.location.hostname,
+      });
+    });
+  }
 
   const [openUpdateProfileDetailsModal, setOpenUpdateProfileDetailsModal] =
     useState(false);
@@ -56,7 +72,10 @@ const Profile = () => {
     setOpenUpdateContactPersonDetailsModal,
   ] = useState(false);
   const [openDeleteAccountModal, setOpenDeleteAccountModal] = useState(false);
-
+  const { mutate, isPending } = useChangePassword(() => {
+    clearAllCookies();
+    router.push("/sign-in");
+  });
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -71,6 +90,10 @@ const Profile = () => {
   });
 
   async function onSubmit(values: z.infer<typeof profileSecuritySchema>) {
+    await mutate({
+      old_password: values.currentPassword,
+      new_password: values.newPassword,
+    });
     console.log(values);
   }
 
@@ -132,7 +155,7 @@ const Profile = () => {
             {contactPerson.map((info) => (
               <div key={info.id}>
                 <h4 className="text-text-2 text-sm">{info.key}</h4>
-                <p className="text-sm font-medium capitalize">{info.value}</p>
+                <p className="text-sm font-medium ">{info.value}</p>
               </div>
             ))}
           </div>
@@ -258,8 +281,8 @@ const Profile = () => {
                 />
               </div>
 
-              <Button variant="secondary" className="w-fit">
-                Update Password
+              <Button type="submit" variant="secondary" className="w-fit">
+                {isPending ? "Submitting" : "Update Password"}
               </Button>
             </form>
           </Form>
@@ -291,10 +314,12 @@ const Profile = () => {
         handleClose={() => setOpenUpdateProfileDetailsModal(false)}
         isOpen={openUpdateProfileDetailsModal}
         data={data!}
+        key={data ? "loaded" : "loading"}
       />
 
       <UpdateContactPersonDetailsModal
         data={data!}
+        key={data ? "loaded1" : "loading1"}
         handleClose={() => setOpenUpdateContactPersonDetailsModal(false)}
         isOpen={openUpdateContactPersonDetailsModal}
       />

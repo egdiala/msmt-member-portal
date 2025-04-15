@@ -52,6 +52,7 @@ export type LoginType = {
   password: string;
 };
 
-
-
-
+export interface ChangePasswordType {
+  new_password: string;
+  old_password: string;
+}
