@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import {
   IconCalendarCheck2,
   IconClock,
@@ -20,6 +21,8 @@ import { Badge, Button } from "@/components/ui";
 import { FAMILY_AND_FRIENDS_APPOINTMENTS_DATA } from "@/lib/mock";
 import { FAMILY_AND_FRIENDS_APPOINTMENTS_TABLE_HEADERS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-and-friends";
+import { FetchedSingleFamilyOrFriendType } from "@/types/family-and-friends";
 import { FilterAppointmentsPopover } from "./filter-appointments-popover";
 import { AppointmentsMobileCard } from "./appointments-mobile-card";
 import { EditMemberModal } from "./edit-member-modal";
@@ -27,12 +30,22 @@ import { RemoveMemberModal } from "./remove-member-modal";
 import { ActivateMemberModal } from "./activate-member-modal";
 
 export const SingleFamilyOrFriendContent = () => {
-  const userStatus: string = "active";
+  const { id } = useParams();
+  const { data: user } =
+    useGetSingleFamilyOrFriend<FetchedSingleFamilyOrFriendType>({
+      familyfriend_id: id as string,
+    });
+
+  const userStatus: string = user?.status === 1 ? "Active" : "Suspended";
 
   const userInfo = [
     { id: 1, title: "Phone", value: "0801 234 5678" },
     { id: 2, title: "Gender", value: "Male" },
-    { id: 3, title: "Status", value: userStatus },
+    {
+      id: 3,
+      title: "Status",
+      value: userStatus,
+    },
   ];
 
   const appointmentStats = [
@@ -109,8 +122,10 @@ export const SingleFamilyOrFriendContent = () => {
               />
 
               <div className="grid gap-y-0.5">
-                <h4 className="text-2xl font-bold text-brand-1">James Dada</h4>
-                <p className="text-sm text-brand-2">example@email.com</p>
+                <h4 className="text-2xl font-bold text-brand-1">
+                  {user?.first_name} {user?.last_name}
+                </h4>
+                <p className="text-sm text-brand-2">{user?.email}</p>
               </div>
             </div>
 
@@ -127,9 +142,9 @@ export const SingleFamilyOrFriendContent = () => {
                     <Badge
                       className={cn(
                         "text-white text-sm font-medium capitalize",
-                        info.value === "active"
+                        info.value === "Active"
                           ? "bg-actions-green"
-                          : info.value === "deactivated"
+                          : info.value === "Suspended"
                           ? "bg-red-500"
                           : "bg-grey-300"
                       )}
