@@ -1,4 +1,5 @@
 "use client";
+
 import type * as z from "zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -22,14 +23,15 @@ import {
   useUpdateProfile,
   useUploadAvatar,
 } from "@/services/hooks/mutations/use-profile";
+import { useRouter } from "next/navigation";
 
 const CompleteProfile = () => {
+  const router = useRouter()
   const { data } = useGetProfile();
-  const { mutate: uploadAvatar, isPending: isLoading } = useUploadAvatar();
-  const { requestVariables, variableList, countryList } =
-    useGetDefinedVariables();
+  const { mutateAsync: uploadAvatar, isPending: isLoading } = useUploadAvatar();
+  const { requestVariables, variableList, countryList } = useGetDefinedVariables();
 
-  const { mutate: updateProfile, isPending } = useUpdateProfile();
+  const { mutateAsync: updateProfile, isPending } = useUpdateProfile(() => router.push("/home"));
 
   const form = useForm<z.infer<typeof profileDetailsSchema>>({
     resolver: zodResolver(profileDetailsSchema),
@@ -80,8 +82,6 @@ const CompleteProfile = () => {
     } catch (error) {
       console.error("Error updating profile:", error);
     }
-
-    console.log(values);
   }
 
   return (

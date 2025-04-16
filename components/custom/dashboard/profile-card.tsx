@@ -16,9 +16,9 @@ export const ProfileCard = ({data}: {data: UserProfileType}) => {
     <div className="col-span-1 xl:col-span-3 flex flex-col gap-y-3 rounded-2xl bg-white p-4 md:p-6">
       <div className="grid gap-y-2 content-start">
         <Image
-          alt="man"
+          alt={`${data?.first_name} ${data?.last_name}`}
           className="h-25 object-cover rounded-xl"
-          src="https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src={data?.avatar}
           width={100}
           height={100}
         />

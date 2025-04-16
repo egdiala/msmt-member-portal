@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { hostname: "plus.unsplash.com" },
       { hostname: "images.unsplash.com" },
+      { hostname: "msmtavatarstorage.blob.core.windows.net" },
     ],
   },
   // basePath: '/home',
