@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "motion/react";
-import { usePaystackPayment } from "react-paystack";
+import PaystackPop from "@paystack/inline-js";
 import useMeasure from "react-use-measure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconDollarSign } from "@/components/icons";
@@ -30,17 +30,8 @@ interface IFundWalletModal {
 }
 
 export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
-  const initialRes = {
-    transaction_id: "",
-    amount: 0,
-    paystack_key: "",
-  };
-
-  const [res, setRes] = useState(initialRes);
-
   const onClose = () => {
     form.reset();
-    setRes(initialRes);
     handleClose();
   };
 
@@ -53,27 +44,18 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
     }
   }, []);
 
-  const config = {
-    reference: new Date().getTime().toString(),
-    email: userEmail,
-    amount: res?.amount,
-    publicKey: res?.paystack_key,
-  };
-
-  const initializePayment = usePaystackPayment(config);
-
   const { mutate: completeWalletFunding } = useCompleteFundWallet(onClose);
+  const paystackInstance = new PaystackPop();
 
-  const { mutate, isPending } = useInitFundWallet(() => {
-    setRes(res);
-
-    if (res && typeof window !== undefined) {
-      initializePayment({
-        onSuccess: () => {
-          completeWalletFunding({ transaction_id: res?.transaction_id });
-        },
-      });
-    }
+  const { mutate, isPending } = useInitFundWallet((res) => {
+    paystackInstance.newTransaction({
+      key: res?.paystack_key,
+      email: userEmail,
+      amount: res?.amount,
+      onSuccess: () => {
+        completeWalletFunding({ transaction_id: res?.transaction_id });
+      },
+    });
   });
 
   const form = useForm<z.infer<typeof fundWalletSchema>>({
