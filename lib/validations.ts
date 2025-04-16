@@ -211,5 +211,5 @@ export const appointmentQuestionnaireSchema = z.object({
 });
 
 export const disableProfileSchema = z.object({
-  password: z.string(),
+  password: z.string().min(1, { message: 'Password is required' }),
 });
