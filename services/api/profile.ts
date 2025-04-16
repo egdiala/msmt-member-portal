@@ -6,6 +6,18 @@ export const updateProfile = async (data: UpdateProfileType) => {
   return res.data;
 };
 
+export const uploadProfileAvatar = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await axiosUserService.post('/members/files/profile-avatar', formData, {
+        headers: {
+            'Content-Type': 'application/form-data',
+            'Accept': 'application/form-data',
+        },
+    });
+    return res.data;
+  };
+
 export const getProfile = async (): Promise<{
   data: UserProfileType;
   status: string;

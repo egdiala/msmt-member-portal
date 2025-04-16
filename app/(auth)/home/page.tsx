@@ -13,9 +13,11 @@ import {
   NotificationsCard,
 } from "@/components/custom";
 import { Button } from "@/components/ui";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { DASHBOARD_STATS_DATA } from "@/lib/mock";
 
 const Dashboard = () => {
+    const { data: profileData } = useGetProfile();
   return (
     <div className="w-full grid gap-y-4 md:gap-y-8">
       <div className="border border-status-danger p-3 md:p-6 bg-status-light-red rounded-lg w-full">
@@ -69,7 +71,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-12 gap-5">
-        <ProfileCard />
+        <ProfileCard data={profileData!}/>
         <FavouriteProvidersCard />
         <NotificationsCard />
       </div>

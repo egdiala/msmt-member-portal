@@ -36,7 +36,7 @@ export const UpdateProfileDetailsModal = ({
   const form = useForm<z.infer<typeof profileDetailsSchema>>({
     resolver: zodResolver(profileDetailsSchema),
     defaultValues: {
-      preferredName: "",
+      preferredName: data?.nickname || "",
       phoneNumber: data?.phone_number || "",
       religion: data?.religion || "",
       gender: data?.gender || "",
@@ -49,13 +49,13 @@ export const UpdateProfileDetailsModal = ({
   async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
     await updateProfile({
       preferred_lan: values.preferredLanguage,
+      nickname: values.preferredName,
       phone_number: values.phoneNumber,
       religion: values.religion,
-      gender: values.gender.toLowerCase(),
+      gender: values.gender?.toLowerCase(),
       marital_status: values.maritalStatus,
       origin_country: values.country,
     });
-    console.log(values);
   }
 
   return (
@@ -119,9 +119,11 @@ export const UpdateProfileDetailsModal = ({
               name="religion"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={variableList(requestVariables?.["religion-list"])}
+                  selectItems={variableList(
+                    requestVariables?.["religion-list"]
+                  )}
                   placeholder={"Religion"}
-                  field={field}
+                  {...field}
                 />
               )}
             />
@@ -136,7 +138,7 @@ export const UpdateProfileDetailsModal = ({
                     { value: "female", id: 2 },
                   ]}
                   placeholder={"Gender"}
-                  field={field}
+                  {...field}
                 />
               )}
             />
@@ -146,9 +148,11 @@ export const UpdateProfileDetailsModal = ({
               name="maritalStatus"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={variableList(requestVariables?.["marital-status"])}
+                  selectItems={variableList(
+                    requestVariables?.["marital-status"]
+                  )}
                   placeholder={"Marital Status"}
-                  field={field}
+                  {...field}
                 />
               )}
             />
@@ -160,7 +164,7 @@ export const UpdateProfileDetailsModal = ({
                 <SelectCmp
                   selectItems={[...countryList]}
                   placeholder={"Country"}
-                  field={field}
+                  {...field}
                 />
               )}
             />
@@ -174,7 +178,7 @@ export const UpdateProfileDetailsModal = ({
                     ...variableList(requestVariables?.["preferred-lan"]),
                   ]}
                   placeholder={"Preferred Language"}
-                  field={field}
+                  {...field}
                 />
               )}
             />

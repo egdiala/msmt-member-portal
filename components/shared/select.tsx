@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { ControllerRenderProps, FieldValues, FieldPath } from "react-hook-form";
+import type { SelectProps } from "@radix-ui/react-select";
 
 interface SelectItemType {
   id: number;
@@ -18,35 +18,40 @@ interface SelectItemType {
   disabled?: boolean;
 }
 
-interface SelectCmpProps<T extends FieldValues> {
-  field: ControllerRenderProps<T, FieldPath<T>>;
+interface SelectCmpProps extends SelectProps {
   selectItems: SelectItemType[];
   placeholder: string;
   className?: string;
-  disabled?: boolean;
+  onChange?: (value: string) => void; 
 }
 
-export function SelectCmp<T extends FieldValues>({
-  field,
+export function SelectCmp({
   selectItems,
   placeholder,
   className,
-  disabled = false,
-}: SelectCmpProps<T>) {
+  value,
+  disabled,
+  onChange,
+  ...rest
+}: SelectCmpProps) {
   return (
     <Select
-      value={field.value}
-      onValueChange={field.onChange}
+      value={value}
+      onValueChange={(value) => onChange?.(value)}
       disabled={disabled}
+      {...rest}
     >
       <SelectTrigger className={cn("w-full", className)}>
-        <SelectValue placeholder={placeholder} className="placeholder:text-text-2" />
+        <SelectValue
+          placeholder={placeholder}
+          className="placeholder:text-text-2"
+        />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {selectItems?.map((item) => (
-            <SelectItem 
-              key={item.id} 
+            <SelectItem
+              key={item.id}
               value={item.value}
               disabled={item.disabled}
               className="capitalize"

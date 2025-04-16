@@ -7,8 +7,9 @@ import { IconExternalLink, IconLogOut } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { PROFILE_ORGANISATIONS_DATA } from "@/lib/mock";
 import { LogoutModal } from "./logout-modal";
+import { UserProfileType } from "@/types/profile";
 
-export const ProfileCard = () => {
+export const ProfileCard = ({data}: {data: UserProfileType}) => {
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
   return (
@@ -23,8 +24,8 @@ export const ProfileCard = () => {
         />
 
         <div className="grid gap-y-0.5">
-          <h2 className="text-text-2 font-semibold">James John</h2>
-          <p className="text-text-tertiary text-xs">example@email.com</p>
+          <h2 className="text-text-2 font-semibold">{data?.first_name} {data?.last_name}</h2>
+          <p className="text-text-tertiary text-xs">{data?.email}</p>
         </div>
       </div>
 
