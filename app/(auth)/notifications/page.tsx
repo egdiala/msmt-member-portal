@@ -1,25 +1,21 @@
 "use client";
 
-import { IconDownload } from "@/components/icons";
-import {
-  BreadcrumbCmp,
-  PaginationCmp,
-  Searchbar,
-  TableCmp,
-} from "@/components/shared";
-import { NOTIFICATION_TABLE_HEADERS } from "@/lib/constants";
-import { NOTIFICATION_DATA } from "@/lib/mock";
-import { useGetAllNotifications } from "@/services/hooks/queries/useNotifications";
 import { cn } from "@/lib/utils";
+import { NOTIFICATION_DATA } from "@/lib/mock";
+import { IconDownload } from "@/components/icons";
+import { NotificationsCount } from "@/types/notification";
+import { NOTIFICATION_TABLE_HEADERS } from "@/lib/constants";
+import { useGetAllNotifications } from "@/services/hooks/queries/useNotifications";
+import { BreadcrumbCmp, PaginationCmp, RenderIf, Searchbar, TableCmp } from "@/components/shared";
+import { useMemo, useState } from "react";
 
 const Notifications = () => {
-  const { data: notifications } = useGetAllNotifications({
-    page: "1",
-    item_per_page: "10",
-  });
-  console.log(notifications, "NOTIFICATIONS");
-  const tableData = NOTIFICATION_DATA.map((val) => {
-    return {
+  const [page, setPage] = useState(1);
+  const { data: notifications } = useGetAllNotifications<any[]>({ page: page.toString(), item_per_page: "10" });
+  const { data: notificationsCount } = useGetAllNotifications<NotificationsCount>({ component: "count" });
+
+  const tableData = useMemo(() => {
+    return notifications?.map((val) => ({
       id: val.id,
       date_and_time_added: (
         <div className="flex items-center gap-x-3 pr-23">
@@ -35,8 +31,8 @@ const Notifications = () => {
         </div>
       ),
       message: <p className="whitespace-pre-wrap">{val.message}</p>,
-    };
-  });
+    })) || []
+  },[notifications]);
 
   return (
     <div className="grid gap-y-4">
@@ -79,12 +75,14 @@ const Notifications = () => {
             </div>
           ))}
         </div>
-
-        <PaginationCmp
-          onInputPage={() => {}}
-          currentPage={"24"}
-          totalPages={"30"}
-        />
+        
+        <RenderIf condition={!!(notificationsCount?.total && notificationsCount?.total > 0)}>
+          <PaginationCmp
+            onInputPage={(v) => {setPage(Number(v))}}
+            currentPage={page.toString()}
+            totalPages={(notificationsCount?.total || 1).toString()}
+          />
+        </RenderIf>
       </div>
     </div>
   );

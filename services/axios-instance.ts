@@ -13,3 +13,12 @@ export const axiosBookingService: AxiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+    
+if (typeof window !== "undefined") {
+  const token = localStorage.getItem("token");
+  if (token) {
+    axiosBookingService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axiosUserService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
+}

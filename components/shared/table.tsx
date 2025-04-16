@@ -34,12 +34,6 @@ export const TableCmp = ({ data, headers, onClickRow }: ITableCmp) => {
         </TableHeader>
 
         <TableBody>
-          <TableRow>
-            <TableCell className="h-2 p-0"></TableCell>
-          </TableRow>
-        </TableBody>
-
-        <TableBody>
           {data.map((datum) => (
             <TableRow
               key={datum.id}

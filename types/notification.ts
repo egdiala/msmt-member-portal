@@ -4,3 +4,7 @@ export type NotificationQueryType = {
   page?: string;
   component?: string;
 };
+
+export interface NotificationsCount {
+  total: number;
+}

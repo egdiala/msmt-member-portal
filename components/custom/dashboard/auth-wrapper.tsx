@@ -18,6 +18,7 @@ export function AuthWrapper({ children }: AuthWrapperProps) {
   // Auto logout if JWT token expires
   useAutoLogout();
 
+
   return (
     <div className="w-full bg-portal">
       <div className="mx-auto min-h-screen items-center w-full max-w-screen-2xl grid gap-y-6 md:gap-y-8 content-start px-2 md:px-7 xl:px-12 pb-12">

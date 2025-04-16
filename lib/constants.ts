@@ -17,7 +17,7 @@ export const CHART_CONFIG = {
     color: "#DD2418",
   },
   mobile: {
-    label: "Femal",
+    label: "Female",
     color: "#0AA571",
   },
 } satisfies ChartConfig;

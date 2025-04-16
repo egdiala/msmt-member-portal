@@ -11,6 +11,7 @@ import {
   resetPassword,
 } from "@/services/api/auth";
 import { LoginResponse } from "@/types/auth";
+import { axiosInit } from "@/services/axios-init";
 
 export const useInitRegister = (fn?: () => void) => {
   return useMutation({
@@ -31,6 +32,8 @@ export const useCompleteRegister = (fn?: (v: string) => void) => {
     onSuccess: ({ token, ...user}: LoginResponse) => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(token));
+
+      axiosInit(token)
       toast.success("Successful! Login to access your account");
       fn?.("/home");
     },
@@ -49,6 +52,8 @@ export const useLogin = (
       // Store in localStorage for backward compatibility
       localStorage.setItem("user", JSON.stringify(res));
       localStorage.setItem("token", res.token);
+
+      axiosInit(res.token)
       
       // Set auth cookie for middleware with proper cookie settings
       // This should work in both development and production
