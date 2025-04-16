@@ -51,7 +51,6 @@ export const UpdateContactPersonDetailsModal = ({
         relationship: values.relationship,
       },
     });
-    console.log(values);
   }
 
   return (
@@ -59,7 +58,6 @@ export const UpdateContactPersonDetailsModal = ({
       isOpen={isOpen}
       handleClose={handleClose}
       className="grid gap-y-6"
-      key={data ? "loaded" : "loading"}
     >
       <h2 className="font-bold text-lg md:text-2xl">
         Update Contact Person Details

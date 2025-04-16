@@ -209,3 +209,7 @@ export const appointmentQuestionnaireSchema = z.object({
   eatingHabits: z.string(),
   sleepingHabits: z.string(),
 });
+
+export const disableProfileSchema = z.object({
+  password: z.string(),
+});

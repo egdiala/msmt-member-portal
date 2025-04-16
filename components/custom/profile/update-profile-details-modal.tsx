@@ -60,7 +60,6 @@ export const UpdateProfileDetailsModal = ({
 
   return (
     <Modal
-      key={data ? "loaded" : "loading"}
       isOpen={isOpen}
       handleClose={handleClose}
       className="grid gap-y-6"

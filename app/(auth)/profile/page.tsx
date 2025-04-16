@@ -16,12 +16,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
-import Cookies from "js-cookie";
 import {
   DeleteAccountModal,
   UpdateContactPersonDetailsModal,
   UpdateProfileDetailsModal,
 } from "@/components/custom";
+import { clearAllCookies } from "@/lib/cookies";
 import { FloatingInput, RenderIf } from "@/components/shared";
 import { profileSecuritySchema } from "@/lib/validations";
 import { useChangePassword } from "@/services/hooks/mutations/use-auth";
@@ -53,18 +53,6 @@ const Profile = () => {
   ];
   const router = useRouter();
 
-  function clearAllCookies() {
-    const cookies = Cookies.get();
-    Object.keys(cookies).forEach((cookieName) => {
-      Cookies.remove(cookieName);
-      Cookies.remove(cookieName, { path: "/" });
-      Cookies.remove(cookieName, {
-        path: "",
-        domain: window.location.hostname,
-      });
-    });
-  }
-
   const [openUpdateProfileDetailsModal, setOpenUpdateProfileDetailsModal] =
     useState(false);
   const [
@@ -94,7 +82,6 @@ const Profile = () => {
       old_password: values.currentPassword,
       new_password: values.newPassword,
     });
-    console.log(values);
   }
 
   return (
