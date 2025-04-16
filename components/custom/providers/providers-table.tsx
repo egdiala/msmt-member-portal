@@ -121,7 +121,7 @@ export const ProvidersTable = () => {
         </RenderIf>
 
         <div className="flex flex-col md:flex-row gap-3 items-end md:items-center justify-between">
-          <Searchbar value="" onChange={() => {}} placeholder="Search" />
+          <Searchbar onChange={() => {}} placeholder="Search" />
 
           <Button
             variant="outline"

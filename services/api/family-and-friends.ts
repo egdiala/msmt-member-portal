@@ -37,11 +37,12 @@ export const addFamilyAndFriends = async (data: AddFamilyAndFriendsType) => {
 
 export const updateFamilyAndFriendsStatus = async ({
   status,
+  reason,
   familyfriend_id,
 }: UpdateFamilyAndFriendsStatus) => {
   const res = await axiosUserService.patch(
     `${FAMILY_AND_FRIENDS_BASE_URL}/${familyfriend_id}`,
-    { status }
+    { status, reason }
   );
   return res.data;
 };

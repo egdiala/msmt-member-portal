@@ -133,13 +133,10 @@ export const addMemberSchema = z.object({
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   relationship: z.string().min(2, "Relationship must be at least 2 characters"),
-  isAbove18: z.boolean().refine((val) => val === true, {
-    message: "You must be above 18 years old to proceed",
-  }),
 });
 
-export const removeMemberSchema = z.object({
-  reason: z.string().min(2, "Reason must be at least 2 characters"),
+export const suspendMemberSchema = z.object({
+  reason: z.string().min(2, "Reason must be atleast 2 characters"),
 });
 
 export const appointmentQuestionnaireSchema = z.object({

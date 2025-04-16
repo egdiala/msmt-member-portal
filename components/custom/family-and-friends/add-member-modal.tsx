@@ -14,7 +14,6 @@ import {
   FormField,
   FormItem,
   FormMessage,
-  Switch,
 } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
 import { addMemberSchema } from "@/lib/validations";
@@ -41,7 +40,6 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
       last_name: "",
       email: "",
       relationship: "",
-      isAbove18: false,
     },
   });
 
@@ -159,27 +157,6 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                         placeholder={"Relationship"}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="isAbove18"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="flex justify-between border border-grey-400 bg-input-field rounded-sm px-3 py-2">
-                        <p className="text-xs font-medium text-brand-1">
-                          This member is above 18 years of age
-                        </p>
-
-                        <Switch
-                          onCheckedChange={field.onChange}
-                          checked={field.value}
-                        />
-                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

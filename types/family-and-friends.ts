@@ -1,7 +1,7 @@
 export interface FetchFamilyAndFriendsQuery {
   item_per_page?: string;
   page?: string;
-  component?: "count" | "count-status" | "count-stats" | "stats";
+  component?: "count" | "count-relationship";
   q?: string;
   familyfriend_id?: string;
 }
@@ -15,6 +15,7 @@ export type AddFamilyAndFriendsType = {
 
 export type UpdateFamilyAndFriendsStatus = {
   status: string;
+  reason: string;
   familyfriend_id: string;
 };
 
@@ -37,6 +38,12 @@ export interface FetchedFamilyAndFriendCountType {
   total: number;
 }
 
+export interface FetchedFamilyAndFriendStats {
+  total_family: number;
+  total_friend: number;
+  _id: string | null;
+}
+
 export interface FetchedSingleFamilyOrFriendType {
   user_id: string;
   first_name: string;
@@ -49,4 +56,6 @@ export interface FetchedSingleFamilyOrFriendType {
   familyfriend_id: string;
   total_appointment: number;
   total_spent: number;
+  gender: string;
+  phone: string;
 }

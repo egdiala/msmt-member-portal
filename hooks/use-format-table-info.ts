@@ -1,36 +1,17 @@
-import { format, isToday } from "date-fns";
+import { format, isToday, parseISO } from "date-fns";
 
 export const useFormatTableDate = (date: string) => {
-  const utcDate = new Date(date);
+  const parsedDate = parseISO(date); // parse the ISO string
 
-  // Get UTC values instead of local
-  const utcHours = utcDate.getUTCHours();
-  const utcMinutes = utcDate.getUTCMinutes();
+  let formattedDate;
 
-  // Create a new "fake" Date object in local time with UTC time values
-  const adjustedDate = new Date(
-    utcDate.getUTCFullYear(),
-    utcDate.getUTCMonth(),
-    utcDate.getUTCDate(),
-    utcHours,
-    utcMinutes
-  );
+  if (isToday(parsedDate)) {
+    formattedDate = `Today • ${format(parsedDate, "h:mmaaa")}`;
+  } else {
+    formattedDate = format(parsedDate, "MMM d • h:mmaaa"); // fallback format
+  }
 
-  // Format it now without timezone shifts
-  const time = format(adjustedDate, "h:mmaaa").toLowerCase();
-  const isTodayUTC = isToday(
-    new Date(
-      Date.UTC(
-        utcDate.getUTCFullYear(),
-        utcDate.getUTCMonth(),
-        utcDate.getUTCDate()
-      )
-    )
-  );
-
-  return isTodayUTC
-    ? `Today • ${time}`
-    : `${format(adjustedDate, "MMM d")} • ${time}`;
+  return formattedDate;
 };
 
 export const useGetTableTotalPages = ({
