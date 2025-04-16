@@ -14,13 +14,13 @@ export const getTokenExpiration = () => {
   if (typeof window === "undefined") {
     return null;
   }
-  
+
   const token = localStorage.getItem("token");
-  
+
   if (!token) {
     return null;
   }
-  
+
   try {
     const decryptedToken = JSON.parse(atob(token.split(".")[1]));
     const expirationDate = new Date(decryptedToken?.exp * 1000);
@@ -28,12 +28,14 @@ export const getTokenExpiration = () => {
     const isExpired = expirationDate < now;
 
     // Calculate time remaining in minutes
-    const timeRemaining = isExpired ? 0 : Math.floor((expirationDate.getTime() - now.getTime()) / (1000 * 60));
-    
+    const timeRemaining = isExpired
+      ? 0
+      : Math.floor((expirationDate.getTime() - now.getTime()) / (1000 * 60));
+
     return {
       expirationDate,
       isExpired,
-      timeRemaining
+      timeRemaining,
     };
   } catch (error) {
     console.error("Error decoding token:", error);
@@ -67,3 +69,29 @@ export const getAdminData = () => {
 
   return user;
 };
+
+/* =====================
+ * FORMAT QUERY OBJECTS TO STRING FOR URL
+ * ===================== */
+
+function objectToQuery(obj: Record<string, any>) {
+  if (!obj) {
+    throw Error("objectToQuery expects an object");
+  }
+  return Object.entries(obj).reduce((query, cur) => {
+    const [key, value] = cur;
+    if (Array.isArray(value)) {
+      query.append(key, `[${value}]`);
+    } else if (value !== "") {
+      query.set(key, value);
+    }
+    return query;
+  }, new URLSearchParams());
+}
+
+export function getQueryToString(query: Record<string, any>) {
+  if (!query) {
+    return objectToQuery({}).toString();
+  }
+  return objectToQuery(query).toString();
+}

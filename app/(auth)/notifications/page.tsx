@@ -9,9 +9,15 @@ import {
 } from "@/components/shared";
 import { NOTIFICATION_TABLE_HEADERS } from "@/lib/constants";
 import { NOTIFICATION_DATA } from "@/lib/mock";
+import { useGetAllNotifications } from "@/services/hooks/queries/useNotifications";
 import { cn } from "@/lib/utils";
 
 const Notifications = () => {
+  const { data: notifications } = useGetAllNotifications({
+    page: "1",
+    item_per_page: "10",
+  });
+  console.log(notifications, "NOTIFICATIONS");
   const tableData = NOTIFICATION_DATA.map((val) => {
     return {
       id: val.id,
