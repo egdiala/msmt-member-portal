@@ -1,11 +1,12 @@
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { completeFundWallet, initFundWallet } from "@/services/api/wallet";
+import { InitFundWalletResponse } from "@/types/wallet";
 
-export const useInitFundWallet = (fn?: (res: any) => void) => {
+export const useInitFundWallet = (fn?: (res: InitFundWalletResponse) => void) => {
   return useMutation({
     mutationFn: initFundWallet,
-    onSuccess: (res: any) => {
+    onSuccess: (res: InitFundWalletResponse) => {
       toast.success("Successfully initiated fund wallet.");
       fn?.(res);
     },

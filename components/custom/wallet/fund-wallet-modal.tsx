@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "motion/react";
-import PaystackPop from "@paystack/inline-js";
 import useMeasure from "react-use-measure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconDollarSign } from "@/components/icons";
@@ -23,40 +22,66 @@ import {
   useInitFundWallet,
   useCompleteFundWallet,
 } from "@/services/hooks/mutations/use-wallet";
+import { HookConfig, InitializePayment } from "react-paystack/dist/types";
 
 interface IFundWalletModal {
   isOpen: boolean;
   handleClose: () => void;
 }
 
+async function loadPaystackHook() {
+    const customHook = await import('react-paystack');
+
+    return customHook;
+}
+
 export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
+  const [config, setConfig] = useState({
+      reference: "",
+      email: "",
+      amount: 0,
+      publicKey: "",
+    });
+  const [usePaystackPayment, setUseCustomHook] = useState<(hookConfig: HookConfig) => InitializePayment>(() => () => {});
+  
+  useEffect(() => {
+    loadPaystackHook().then(customHook => setUseCustomHook(() => customHook.usePaystackPayment));
+  }, []);
+  
   const onClose = () => {
     form.reset();
     handleClose();
   };
 
-  const [userEmail, setUserEmail] = useState("");
-
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const email = JSON.parse(localStorage.getItem("user") as string)?.email;
-      setUserEmail(email);
+      setConfig((prev) => ({ ...prev, email: JSON.parse(localStorage.getItem("user") as string)?.email || "" }));
     }
   }, []);
 
-  const { mutate: completeWalletFunding } = useCompleteFundWallet(onClose);
-  const paystackInstance = new PaystackPop();
+  const initializePayment = usePaystackPayment(config);
+  const { mutate: completeWalletFunding } = useCompleteFundWallet(() => {
+    onClose();
+  });
 
   const { mutate, isPending } = useInitFundWallet((res) => {
-    paystackInstance.newTransaction({
-      key: res?.paystack_key,
-      email: userEmail,
+    setConfig((prev) => ({
+      ...prev,
+      reference: res?.transaction_id,
       amount: res?.amount,
-      onSuccess: () => {
-        completeWalletFunding({ transaction_id: res?.transaction_id });
-      },
-    });
+      publicKey: res?.paystack_key,
+    }))
   });
+
+  useEffect(() => {
+    if (config?.reference) {
+      initializePayment({
+        onSuccess: () => {
+          completeWalletFunding({ transaction_id: config.reference });
+        },
+      });
+    }
+  }, [config?.reference]);
 
   const form = useForm<z.infer<typeof fundWalletSchema>>({
     resolver: zodResolver(fundWalletSchema),

@@ -13,3 +13,9 @@ export type InitFundWalletType = {
 export type CompleteFundWalletType = {
   transaction_id: string;
 };
+
+export interface InitFundWalletResponse {
+  transaction_id: string;
+  paystack_key: string;
+  amount: number;
+}
