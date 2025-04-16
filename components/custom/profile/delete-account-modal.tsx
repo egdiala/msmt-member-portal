@@ -81,7 +81,7 @@ export const DeleteAccountModal = ({
           />
 
           <div className="grid grid-cols-2 gap-x-4">
-            <Button variant="secondary" onClick={handleClose}>
+            <Button type="button" variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
             <Button type="submit">
