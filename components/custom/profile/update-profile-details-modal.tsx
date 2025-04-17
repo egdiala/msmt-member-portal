@@ -132,6 +132,7 @@ export const UpdateProfileDetailsModal = ({
                   selectItems={variableList(
                     requestVariables?.["religion-list"]
                   )}
+                  onSelect={field.onChange}
                   placeholder={"Religion"}
                   {...field}
                 />
