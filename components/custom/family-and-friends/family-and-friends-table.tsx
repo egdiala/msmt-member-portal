@@ -18,7 +18,7 @@ import {
   FetchedFamilyAndFriendType,
 } from "@/types/family-and-friends";
 import {
-  useFormatTableDate,
+  formatTableDate,
   useGetTableTotalPages,
 } from "@/hooks/use-format-table-info";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -78,7 +78,7 @@ export const FamilyAndFriendsTable = () => {
       id: person.familyfriend_id,
       date_and_time: (
         <p className="text-brand-2">
-          {person.createdAt ? useFormatTableDate(person.createdAt) : ""}
+          {person.createdAt ? formatTableDate(person.createdAt) : ""}
         </p>
       ),
       name: (
