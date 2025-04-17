@@ -4,9 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui";
 import { IconTriangleAlert } from "@/components/icons";
 import { DASHBOARD_STATS_DATA } from "@/lib/mock";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { DashboardStatCard } from "../dashboard/dashboard-stat-card";
 
 export const CompleteProfileHeader = () => {
+  const { data: profileData } = useGetProfile();
   return (
     <>
       <div className="border border-status-danger p-3 md:p-6 bg-status-light-red rounded-lg w-full">

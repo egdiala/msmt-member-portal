@@ -1,6 +1,5 @@
-"use client";
-
 import * as React from "react";
+
 import {
   Select,
   SelectContent,
@@ -10,22 +9,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { SelectProps } from "@radix-ui/react-select";
 
-interface SelectItemType {
-  id: number;
-  value: string;
-  disabled?: boolean;
-}
-
-interface SelectCmpProps extends SelectProps {
-  selectItems: SelectItemType[];
+interface ISelectCmp {
+  selectItems: { id: number; value: string }[];
   placeholder: string;
   className?: string;
   onSelect?: (val: string) => void;
 }
-
-export function SelectCmp({
+export const SelectCmp = ({
   selectItems,
   placeholder,
   className,
@@ -42,13 +33,8 @@ export function SelectCmp({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {selectItems?.map((item) => (
-            <SelectItem
-              key={item.id}
-              value={item.value}
-              disabled={item.disabled}
-              className="capitalize"
-            >
+          {selectItems.map((item) => (
+            <SelectItem key={item.id} value={item.value} className="capitalize">
               {item.value}
             </SelectItem>
           ))}
@@ -56,4 +42,4 @@ export function SelectCmp({
       </SelectContent>
     </Select>
   );
-}
+};

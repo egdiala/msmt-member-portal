@@ -11,32 +11,82 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
 } from "@/components/ui";
 import { profileDetailsSchema } from "@/lib/validations";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useGetDefinedVariables } from "@/hooks/use-get-variables";
+import {
+  useUpdateProfile,
+  useUploadAvatar,
+} from "@/services/hooks/mutations/use-profile";
+import { useRouter } from "next/navigation";
+import { UserProfileType } from "@/types/profile";
 
-export const CompleteProfileForm = () => {
+export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
+  const router = useRouter();
+  const { mutateAsync: uploadAvatar, isPending: isLoading } = useUploadAvatar();
+  const { requestVariables, variableList, countryList } =
+    useGetDefinedVariables();
+
+  const { mutateAsync: updateProfile, isPending } = useUpdateProfile(() =>
+    router.push("/home")
+  );
   const form = useForm<z.infer<typeof profileDetailsSchema>>({
     resolver: zodResolver(profileDetailsSchema),
     defaultValues: {
-      preferredName: "",
-      phoneNumber: "",
-      religion: "",
-      gender: "",
-      maritalStatus: "",
-      country: "",
-      preferredLanguage: "",
+      preferredName: data?.nickname || "",
+      avatar: (data?.avatar as unknown as File) || undefined,
+      phoneNumber: data?.phone_number || "",
+      religion: data?.religion || "",
+      gender: data?.gender || "",
+      maritalStatus: data?.marital_status || "",
+      country: data?.origin_country || "",
+      preferredLanguage: data?.preferred_lan || "",
     },
   });
-
+  const { watch } = form;
+  const avatarFile = watch("avatar");
   async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
-    console.log(values);
+    try {
+      if (values.avatar && values.avatar instanceof File) {
+        await uploadAvatar(values.avatar);
+      }
+
+      await updateProfile({
+        preferred_lan: values.preferredLanguage,
+        nickname: values.preferredName,
+        phone_number: values.phoneNumber,
+        religion: values.religion,
+        gender: values.gender?.toLowerCase(),
+        marital_status: values.maritalStatus,
+        origin_country: values.country,
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   }
   return (
     <div className="grid gap-y-5 w-full md:justify-center">
       <div className="flex items-center justify-center flex-col">
-        <div className="border border-text-tertiary rounded-full size-25 bg-white"></div>
+        <Avatar className="h-25 w-25 rounded-full">
+          <AvatarImage
+            src={
+              avatarFile instanceof File
+                ? URL.createObjectURL(avatarFile)
+                : avatarFile || "/placeholder.svg"
+            }
+            className="object-cover"
+            alt={`${data?.first_name} ${data?.last_name}`}
+          />
+          <AvatarFallback className="rounded-full text-brand-1 font-semibold text-lg md:text-xl bg-brand-btn-primary">
+            {data?.first_name.charAt(0)}
+            {data?.last_name.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
 
         <Button
           variant="ghost"
@@ -102,7 +152,9 @@ export const CompleteProfileForm = () => {
               name="religion"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[
+                    ...variableList(requestVariables?.["religion-list"]),
+                  ]}
                   placeholder={"Religion"}
                   {...field}
                 />
@@ -113,7 +165,14 @@ export const CompleteProfileForm = () => {
               control={form.control}
               name="gender"
               render={({ field }) => (
-                <SelectCmp selectItems={[]} placeholder={"Gender"} {...field} />
+                <SelectCmp
+                  selectItems={[
+                    { value: "male", id: 1 },
+                    { value: "female", id: 2 },
+                  ]}
+                  placeholder={"Gender"}
+                  {...field}
+                />
               )}
             />
 
@@ -122,7 +181,9 @@ export const CompleteProfileForm = () => {
               name="maritalStatus"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[
+                    ...variableList(requestVariables?.["marital-status"]),
+                  ]}
                   placeholder={"Marital Status"}
                   {...field}
                 />
@@ -134,7 +195,7 @@ export const CompleteProfileForm = () => {
               name="country"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[...countryList]}
                   placeholder={"Country"}
                   {...field}
                 />
@@ -146,7 +207,9 @@ export const CompleteProfileForm = () => {
               name="preferredLanguage"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[
+                    ...variableList(requestVariables?.["preferred-lan"]),
+                  ]}
                   placeholder={"Preferred Language"}
                   {...field}
                 />
@@ -155,11 +218,13 @@ export const CompleteProfileForm = () => {
           </div>
 
           <div className="flex justify-center gap-8 flex-col-reverse md:flex-row w-full">
-            <Button asChild variant="secondary">
+            <Button type="button" asChild variant="secondary">
               <Link href="/home">Cancel</Link>
             </Button>
 
-            <Button>Complete Profile</Button>
+            <Button type="submit">
+              {isPending || isLoading ? "Submitting" : "Complete Profile"}
+            </Button>
           </div>
         </form>
       </Form>

@@ -37,6 +37,7 @@ export const EditMemberModal = ({
     values: {
       first_name: memberDetail?.first_name,
       last_name: memberDetail?.last_name,
+      gender: "",
       email: memberDetail?.email,
       relationship: memberDetail?.relationship === "1" ? "Family" : "Friend",
     },

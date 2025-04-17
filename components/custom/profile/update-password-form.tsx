@@ -3,7 +3,9 @@
 import { useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { profileSecuritySchema } from "@/lib/validations";
+import { clearAllCookies } from "@/lib/cookies";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
@@ -15,11 +17,17 @@ import {
 } from "@/components/ui";
 import { IconEye, IconEyeOff } from "@/components/icons";
 import { FloatingInput, RenderIf } from "@/components/shared";
+import { useChangePassword } from "@/services/hooks/mutations/use-auth";
 
 export const UpdatePasswordForm = () => {
+  const router = useRouter();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { mutate, isPending } = useChangePassword(() => {
+    clearAllCookies();
+    router.push("/sign-in");
+  });
 
   const form = useForm<z.infer<typeof profileSecuritySchema>>({
     resolver: zodResolver(profileSecuritySchema),
@@ -31,7 +39,10 @@ export const UpdatePasswordForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof profileSecuritySchema>) {
-    console.log(values);
+    await mutate({
+      old_password: values.currentPassword,
+      new_password: values.newPassword,
+    });
   }
 
   return (
@@ -145,8 +156,8 @@ export const UpdatePasswordForm = () => {
           />
         </div>
 
-        <Button variant="secondary" className="w-fit">
-          Update Password
+        <Button type="submit" variant="secondary" className="w-fit">
+          {isPending ? "Submitting" : "Update Password"}
         </Button>
       </form>
     </Form>

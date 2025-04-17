@@ -5,15 +5,17 @@ import Image from "next/image";
 import { IconPen } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { UpdateProfileDetailsModal } from "./update-profile-details-modal";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 export const PersonalInfoDetailsSection = () => {
+  const { data } = useGetProfile();
   const personalInfo = [
-    { id: 1, key: "Phone number", value: "0801 234 5678" },
-    { id: 2, key: "Religion", value: "Christianity" },
-    { id: 3, key: "Gender", value: "Male" },
-    { id: 4, key: "Marital Status", value: "Single" },
-    { id: 5, key: "Country", value: "Nigeria" },
-    { id: 6, key: "Preferred Language", value: "English" },
+    { id: 1, key: "Phone number", value: data?.phone_number || "_" },
+    { id: 2, key: "Religion", value: data?.religion || "_" },
+    { id: 3, key: "Gender", value: data?.gender || "_" },
+    { id: 4, key: "Marital Status", value: data?.marital_status || "_" },
+    { id: 5, key: "Country", value: data?.origin_country || "_" },
+    { id: 6, key: "Preferred Language", value: data?.preferred_lan || "_" },
   ];
 
   const [openUpdateProfileDetailsModal, setOpenUpdateProfileDetailsModal] =
@@ -25,7 +27,7 @@ export const PersonalInfoDetailsSection = () => {
         <div className="grid gap-y-4">
           <Image
             alt="man"
-            src="https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={data?.avatar || "/placeholder.svg"}
             className="rounded-full h-20 object-cover"
             width={80}
             height={80}
@@ -33,9 +35,9 @@ export const PersonalInfoDetailsSection = () => {
 
           <div className="grid gap-y-0.5">
             <h2 className="text-text-1 font-bold text-xl md:text-2xl">
-              James John
+              {data?.first_name || "_"} {data?.last_name || "_"}
             </h2>
-            <p className="text-text-2 text-sm">example@email.com</p>
+            <p className="text-text-2 text-sm">{data?.email || "_"}</p>
           </div>
         </div>
 
@@ -57,6 +59,8 @@ export const PersonalInfoDetailsSection = () => {
       </div>
 
       <UpdateProfileDetailsModal
+        data={data!}
+        key={data ? "Data is Loading" : "Data Loaded"}
         handleClose={() => setOpenUpdateProfileDetailsModal(false)}
         isOpen={openUpdateProfileDetailsModal}
       />
