@@ -25,3 +25,12 @@ axiosUserService.interceptors.request.use(function (config) {
   config.headers.Authorization = token ? `Bearer ${token}` : "";
   return config;
 });
+
+    
+if (typeof window !== "undefined") {
+  const token = localStorage.getItem("token");
+  if (token) {
+    axiosBookingService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axiosUserService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
+}

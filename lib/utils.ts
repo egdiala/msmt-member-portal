@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { LoginResponse } from "@/types/auth";
+import { format, isToday, parseISO } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -63,4 +64,15 @@ export const createQueryString = (queryObject: Record<string, any>): string => {
     )
     .join("&");
   return queryString ? `?${queryString}` : "";
+};
+
+
+export const formatTableDate = (date: string) => {
+  const parsedDate = parseISO(date);
+
+  if (isToday(parsedDate)) {
+    return `Today • ${format(parsedDate, "h:mmaaa")}`;
+  }
+
+  return format(parsedDate, "MMM d • h:mmaaa");
 };
