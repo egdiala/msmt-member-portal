@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Cell, Pie, PieChart } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
@@ -9,8 +11,11 @@ import { FAMILY_AND_FRIENDS_DATA } from "@/lib/mock";
 export const FamilyAndFriendsCard = () => {
   return (
     <div className="bg-white order-4 col-span-1 xl:col-span-3 content-start grid gap-y-7 w-full rounded-2xl px-4 pt-6 pb-10 xl:pb-6">
-      
-      <Button asChild variant="secondary" className="text-button-primary gap-x-1 w-fit">
+      <Button
+        asChild
+        variant="secondary"
+        className="text-button-primary gap-x-1 w-fit"
+      >
         <Link href="/family-and-friends">
           Family & Friends
           <IconExternalLink className="stroke-button-primary" />
@@ -44,7 +49,7 @@ export const FamilyAndFriendsCard = () => {
               <div className="border-r-2 h-9 border-actions-green"></div>
 
               <div>
-                <p className="text-text-tertiary text-xs">Male</p>
+                <p className="text-text-tertiary text-xs">Family</p>
                 <p className="text-text-1 ">36</p>
               </div>
             </div>
@@ -53,7 +58,7 @@ export const FamilyAndFriendsCard = () => {
               <div className="border-r-2 h-9 border-status-danger"></div>
 
               <div>
-                <p className="text-text-tertiary text-xs">Female</p>
+                <p className="text-text-tertiary text-xs">Friend</p>
                 <p className="text-text-1">17</p>
               </div>
             </div>

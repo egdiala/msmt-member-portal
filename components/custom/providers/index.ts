@@ -4,3 +4,8 @@ export * from "./third-party-payment-gate";
 export * from "./appointment-questionnaire-form";
 export * from "./filter-organisations-providers-popover";
 export * from "./appointment-stepper";
+export * from "./providers-table";
+export * from "./single-organisation-provider";
+export * from "./single-organisation-individual-provider";
+export * from "./single-individual-provider";
+export * from "./book-appointment";
