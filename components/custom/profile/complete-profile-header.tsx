@@ -26,10 +26,10 @@ export const CompleteProfileHeader = () => {
                 Complete Your Profile for Full Access
               </h2>
               <p className="text-text-2 text-xs md:text-sm">
-                {`A complete profile helps you connect faster, build trust, and
-                        access all platform features—whether you're booking sessions,
-                        offering consultations, or managing clients. Update your details
-                        in just a few minutes!`}
+                A complete profile helps you connect faster, build trust, and
+                access all platform features—whether you&apos;re booking
+                sessions, offering consultations, or managing clients. Update
+                your details in just a few minutes!
               </p>
             </div>
           </div>
