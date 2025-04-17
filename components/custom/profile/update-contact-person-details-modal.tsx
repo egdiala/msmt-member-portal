@@ -14,32 +14,53 @@ import {
 import { IconEmail, IconPhone, IconUserRound } from "@/components/icons";
 import { contactPersonDetailsSchema } from "@/lib/validations";
 import { FloatingInput, Modal } from "../../shared";
+import { UpdateProfileType } from "@/types/profile";
+import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
+import { capitalizeFirstLetter } from "@/lib/hooks";
 
 interface IUpdateContactPersonDetailsModal {
   handleClose: () => void;
   isOpen: boolean;
+  data: Partial<UpdateProfileType>;
 }
 export const UpdateContactPersonDetailsModal = ({
   handleClose,
   isOpen,
+  data,
 }: IUpdateContactPersonDetailsModal) => {
+  const { mutate: updateProfile, isPending } = useUpdateProfile(() =>
+    handleClose()
+  );
   const form = useForm<z.infer<typeof contactPersonDetailsSchema>>({
     resolver: zodResolver(contactPersonDetailsSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      email: "",
-      relationship: "",
+      firstName: data?.contact_person?.name?.split(" ")[0] || "",
+      lastName: data?.contact_person?.name?.split(" ")[1] || " ",
+      phoneNumber: data?.contact_person?.phone_number || "",
+      email: data?.contact_person?.email || "",
+      relationship: data?.contact_person?.relationship || "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof contactPersonDetailsSchema>) {
-    console.log(values);
+    await updateProfile({
+      contact_person: {
+        name: `${capitalizeFirstLetter(
+          values.firstName
+        )} ${capitalizeFirstLetter(values.lastName)}`,
+        phone_number: values.phoneNumber,
+        email: values.email,
+        relationship: values.relationship,
+      },
+    });
   }
 
   return (
-    <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
+    <Modal
+      isOpen={isOpen}
+      handleClose={handleClose}
+      className="grid gap-y-6"
+    >
       <h2 className="font-bold text-lg md:text-2xl">
         Update Contact Person Details
       </h2>
@@ -158,7 +179,7 @@ export const UpdateContactPersonDetailsModal = ({
               Cancel
             </Button>
 
-            <Button>Update</Button>
+            <Button type="submit">{isPending ? "Submitting" : "Update"}</Button>
           </div>
         </form>
       </Form>

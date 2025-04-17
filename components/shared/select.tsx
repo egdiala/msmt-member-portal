@@ -33,7 +33,7 @@ export const SelectCmp = ({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {selectItems.map((item) => (
+          {selectItems?.map((item) => (
             <SelectItem key={item.id} value={item.value} className="capitalize">
               {item.value}
             </SelectItem>

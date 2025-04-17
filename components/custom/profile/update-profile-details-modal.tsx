@@ -3,6 +3,7 @@
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useGetDefinedVariables } from "@/hooks/use-get-variables";
 import { IconPhone, IconUserRound } from "@/components/icons";
 import {
   Button,
@@ -12,33 +13,65 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
-import { profileDetailsSchema } from "@/lib/validations";
+import { editProfileDetailsSchema } from "@/lib/validations";
 import { FloatingInput, SelectCmp, Modal } from "../../shared";
+import { UpdateProfileType } from "@/types/profile";
+import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
+import { AnimatePresence, motion } from "motion/react";
+import { Loader } from "@/components/shared/loader";
+import { useMemo } from "react";
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;
   isOpen: boolean;
+  data: Partial<UpdateProfileType>;
 }
 export const UpdateProfileDetailsModal = ({
   handleClose,
   isOpen,
+  data,
 }: IUpdateProfileDetailsModal) => {
-  const form = useForm<z.infer<typeof profileDetailsSchema>>({
-    resolver: zodResolver(profileDetailsSchema),
+  const { mutateAsync: updateProfile, isPending } = useUpdateProfile(() =>
+    handleClose()
+  );
+
+  const { requestVariables, variableList, countryList } =
+    useGetDefinedVariables();
+
+  const form = useForm<z.infer<typeof editProfileDetailsSchema>>({
+    resolver: zodResolver(editProfileDetailsSchema),
+    mode: "onChange",
     defaultValues: {
-      preferredName: "",
-      phoneNumber: "",
-      religion: "",
-      gender: "",
-      maritalStatus: "",
-      country: "",
-      preferredLanguage: "",
+      preferredName: data?.nickname || "",
+      phoneNumber: data?.phone_number || "",
+      religion: data?.religion || "",
+      gender: data?.gender || "",
+      maritalStatus: data?.marital_status || "",
+      country: data?.origin_country || "",
+      preferredLanguage: data?.preferred_lan || "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof editProfileDetailsSchema>) {
+    await updateProfile({
+      preferred_lan: values.preferredLanguage,
+      nickname: values.preferredName,
+      phone_number: values.phoneNumber,
+      religion: values.religion,
+      gender: values.gender?.toLowerCase(),
+      marital_status: values.maritalStatus,
+      origin_country: values.country,
+    });
   }
+
+  const buttonCopy = {
+    idle: "Update",
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isPending ? "loading" : "idle";
+  }, [isPending]);
 
   return (
     <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
@@ -96,7 +129,10 @@ export const UpdateProfileDetailsModal = ({
               name="religion"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={variableList(
+                    requestVariables?.["religion-list"]
+                  )}
+                  onSelect={field.onChange}
                   placeholder={"Religion"}
                   {...field}
                 />
@@ -107,7 +143,15 @@ export const UpdateProfileDetailsModal = ({
               control={form.control}
               name="gender"
               render={({ field }) => (
-                <SelectCmp selectItems={[]} placeholder={"Gender"} {...field} />
+                <SelectCmp
+                  selectItems={[
+                    { value: "male", id: 1 },
+                    { value: "female", id: 2 },
+                  ]}
+                  onSelect={field.onChange}
+                  placeholder={"Gender"}
+                  {...field}
+                />
               )}
             />
 
@@ -116,7 +160,10 @@ export const UpdateProfileDetailsModal = ({
               name="maritalStatus"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={variableList(
+                    requestVariables?.["marital-status"]
+                  )}
+                  onSelect={field.onChange}
                   placeholder={"Marital Status"}
                   {...field}
                 />
@@ -128,8 +175,9 @@ export const UpdateProfileDetailsModal = ({
               name="country"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[...countryList]}
                   placeholder={"Country"}
+                  onSelect={field.onChange}
                   {...field}
                 />
               )}
@@ -140,7 +188,10 @@ export const UpdateProfileDetailsModal = ({
               name="preferredLanguage"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[]}
+                  selectItems={[
+                    ...variableList(requestVariables?.["preferred-lan"]),
+                  ]}
+                  onSelect={field.onChange}
                   placeholder={"Preferred Language"}
                   {...field}
                 />
@@ -153,7 +204,23 @@ export const UpdateProfileDetailsModal = ({
               Cancel
             </Button>
 
-            <Button>Update</Button>
+            <Button
+              type="submit"
+              disabled={!form.formState.isDirty || !form.formState.isValid || isPending}
+              className="cursor-pointer w-21"
+            >
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                  initial={{ opacity: 0, y: -25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 25 }}
+                  key={buttonState}
+                >
+                  {buttonCopy[buttonState]}
+                </motion.span>
+              </AnimatePresence>
+            </Button>
           </div>
         </form>
       </Form>

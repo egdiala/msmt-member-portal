@@ -4,13 +4,22 @@ import { useState } from "react";
 import { IconPen } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { UpdateContactPersonDetailsModal } from "./update-contact-person-details-modal";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 export const ContactInfoDetailsSection = () => {
+  const { data } = useGetProfile();
   const contactPerson = [
-    { id: 1, key: "Full name", value: "James Dada" },
-    { id: 2, key: "Phone number", value: "0801 234 5678" },
-    { id: 3, key: "Email", value: "example@email.com" },
-    { id: 4, key: "Relationship", value: "Mother" },
+    {
+      id: 2,
+      key: "Phone number",
+      value: data?.contact_person?.phone_number || "_",
+    },
+    { id: 3, key: "Email", value: data?.contact_person?.email || "_" },
+    {
+      id: 4,
+      key: "Relationship",
+      value: data?.contact_person?.relationship || "_",
+    },
   ];
 
   const [
@@ -43,6 +52,8 @@ export const ContactInfoDetailsSection = () => {
       </div>
 
       <UpdateContactPersonDetailsModal
+        key={data ? "Update Contact loading" : "Update Contact loaded"}
+        data={data!}
         handleClose={() => setOpenUpdateContactPersonDetailsModal(false)}
         isOpen={openUpdateContactPersonDetailsModal}
       />

@@ -51,3 +51,8 @@ export type LoginType = {
   email: string;
   password: string;
 };
+
+export interface ChangePasswordType {
+  new_password: string;
+  old_password: string;
+}

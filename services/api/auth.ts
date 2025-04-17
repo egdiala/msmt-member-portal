@@ -1,5 +1,6 @@
 import { axiosUserService } from "@/services/axios-instance";
 import type {
+  ChangePasswordType,
   CompleteRegisterType,
   InitRegisterType,
   LoginType,
@@ -45,5 +46,11 @@ export const resetPassword = async (
 
 export const resendOtp = async (data: Partial<LoginType>) => {
   const res = await axiosUserService.post("members/auths/resend-otp", data);
+  return res.data;
+};
+
+
+export const changePassword = async (data: ChangePasswordType) => {
+  const res = await axiosUserService.put("members/accounts", data);
   return res.data;
 };
