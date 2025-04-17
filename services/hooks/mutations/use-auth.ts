@@ -12,7 +12,6 @@ import {
 } from "@/services/api/auth";
 import { axiosInit } from "@/services/axios-init";
 import { LoginResponse } from "@/types/auth";
-import { axiosInit } from "@/services/axios-init";
 
 export const useInitRegister = (fn?: () => void) => {
   return useMutation({
