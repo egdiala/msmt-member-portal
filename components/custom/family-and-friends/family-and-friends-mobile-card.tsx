@@ -1,24 +1,20 @@
 import Link from "next/link";
+import { FetchedFamilyAndFriendType } from "@/types/family-and-friends";
+import { useFormatTableDate } from "@/hooks/use-format-table-info";
 
-interface IFamilyAndFriendsMobileCard {
-  id: number;
-  date: string;
-  time: string;
-  name: string;
-  email: string;
-  relationship: string;
-}
 export const FamilyAndFriendsMobileCard = (
-  person: IFamilyAndFriendsMobileCard
+  person: FetchedFamilyAndFriendType
 ) => {
   return (
     <Link
-      key={person.id}
+      key={person.familyfriend_id}
       className="bg-input-field px-3 py-4 grid gap-y-2 rounded-sm"
-      href={`/family-and-friends/${person.id}`}
+      href={`/family-and-friends/${person.familyfriend_id}`}
     >
       <div className="flex items-center justify-between font-medium text-xs capitalize text-brand-1">
-        <h3>{person.name}</h3>
+        <h3 className="capitalize">
+          {person.first_name} {person.last_name}
+        </h3>
         <p>{person.relationship}</p>
       </div>
 
@@ -27,7 +23,7 @@ export const FamilyAndFriendsMobileCard = (
       <div className="grid gap-y-1 text-xs text-left">
         <p className="text-brand-2">{person.email}</p>
         <p className="text-brand-3">
-          Added: {person.date} • {person.time}
+          Added: {useFormatTableDate(person.createdAt)}
         </p>
       </div>
     </Link>

@@ -1,4 +1,4 @@
-'use client";';
+"use client";
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -88,18 +88,20 @@ export const UpcomingAppointmentCard = ({
 
       <div className="flex justify-between lg:pt-5">
         <RenderIf condition={!isAppointmentPage}>
-          
-            <Button asChild variant="secondary" className="text-button-primary gap-x-1">
+          <Button
+            asChild
+            variant="secondary"
+            className="text-button-primary gap-x-1"
+          >
             <Link href="/appointments">
               All Appointments
               <IconExternalLink className="stroke-button-primary" />
-              </Link>
-            </Button>
+            </Link>
+          </Button>
 
-
-            <Button asChild>
-            <Link href="/session">Join Session    </Link></Button>
-       
+          <Button asChild>
+            <Link href="/session">Join Session </Link>
+          </Button>
         </RenderIf>
         <RenderIf condition={isAppointmentPage}>
           <Button

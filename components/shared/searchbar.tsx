@@ -5,7 +5,6 @@ import { Button, Input } from "../ui";
 import { IconClose, IconSearch } from "../icons";
 
 interface ISearchbar {
-  value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
   onClear?: () => void;
@@ -13,7 +12,6 @@ interface ISearchbar {
 }
 
 export const Searchbar = ({
-  value,
   onChange,
   placeholder,
   onClear,
@@ -31,12 +29,11 @@ export const Searchbar = ({
       <div className="w-full">
         <Input
           onChange={onChange}
-          value={value}
           placeholder={placeholder}
           className="w-full pl-8 border-none focus-visible:ring-offset-0 focus-visible:ring-0 pr-8 shadow-none h-10 py-1.5 placeholder:text-brand-3 text-text-tertiary text-sm"
         />
 
-        <RenderIf condition={!!onClear && value !== ""}>
+        <RenderIf condition={!!onClear}>
           <Button
             variant="ghost"
             className="cursor-pointer !p-0 absolute top-0.5 right-2"

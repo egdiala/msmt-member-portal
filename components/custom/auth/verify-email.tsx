@@ -58,6 +58,7 @@ export default function VerifyEmail() {
           : (localStorage.getItem("email_to_verify") as string)
       );
     }
+    //eslint-disable-next-line
   }, []);
 
   const form = useForm<z.infer<typeof verifyEmailSchema>>({
@@ -80,7 +81,7 @@ export default function VerifyEmail() {
 
   async function onSubmit(values: z.infer<typeof verifyEmailSchema>) {
     if (isResetPassword) {
-      confirmOtp({ ...values, email: emailToVerify })
+      confirmOtp({ ...values, email: emailToVerify });
     } else {
       mutate({ ...values, email: emailToVerify });
     }

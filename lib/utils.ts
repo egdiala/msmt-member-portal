@@ -43,25 +43,6 @@ export const getTokenExpiration = () => {
   }
 };
 
-export const isAuthenticated = (): boolean => {
-  let isExpired = true;
-
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      return false;
-    }
-
-    const decryptedToken = JSON.parse(atob(token.split(".")[1]));
-    const expirationDate = new Date(decryptedToken?.exp * 1000);
-    isExpired = expirationDate < new Date();
-    return !isExpired;
-  }
-
-  return isExpired;
-};
-
 export const getAdminData = () => {
   const user = JSON.parse(
     localStorage.getItem("user") as string
@@ -70,28 +51,16 @@ export const getAdminData = () => {
   return user;
 };
 
-/* =====================
- * FORMAT QUERY OBJECTS TO STRING FOR URL
- * ===================== */
-
-function objectToQuery(obj: Record<string, any>) {
-  if (!obj) {
-    throw Error("objectToQuery expects an object");
-  }
-  return Object.entries(obj).reduce((query, cur) => {
-    const [key, value] = cur;
-    if (Array.isArray(value)) {
-      query.append(key, `[${value}]`);
-    } else if (value !== "") {
-      query.set(key, value);
-    }
-    return query;
-  }, new URLSearchParams());
-}
-
-export function getQueryToString(query: Record<string, any>) {
-  if (!query) {
-    return objectToQuery({}).toString();
-  }
-  return objectToQuery(query).toString();
-}
+export const createQueryString = (queryObject: Record<string, any>): string => {
+  const queryString = Object.entries(queryObject)
+    .filter(
+      // eslint-disable-next-line
+      ([_, value]) => value !== undefined && value !== null && value !== ""
+    )
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`
+    )
+    .join("&");
+  return queryString ? `?${queryString}` : "";
+};

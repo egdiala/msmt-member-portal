@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -34,6 +35,12 @@ const Notifications = () => {
     })) || []
   },[notifications]);
 
+=======
+import { NotificationTable } from "@/components/custom";
+import { BreadcrumbCmp } from "@/components/shared";
+
+const Notifications = () => {
+>>>>>>> 822a079cc9836df4f4702db354bca04139cc86e6
   return (
     <div className="grid gap-y-4">
       <BreadcrumbCmp
@@ -46,6 +53,7 @@ const Notifications = () => {
       <div className="bg-white rounded-2xl p-3 md:p-6 grid gap-y-4 md:gap-y-5">
         <h2 className="font-bold text-text-1">Notifications</h2>
 
+<<<<<<< HEAD
         <div className="flex justify-between items-center">
           <Searchbar value={""} onChange={() => {}} placeholder={"Search"} />
           <IconDownload className="size-4 stroke-button-secondary" />
@@ -83,6 +91,9 @@ const Notifications = () => {
             totalPages={(notificationsCount?.total || 1).toString()}
           />
         </RenderIf>
+=======
+        <NotificationTable />
+>>>>>>> 822a079cc9836df4f4702db354bca04139cc86e6
       </div>
     </div>
   );
