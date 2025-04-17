@@ -11,7 +11,6 @@ import {
   FormField,
   FormItem,
   FormMessage,
-  Switch,
 } from "@/components/ui";
 import { addMemberSchema } from "@/lib/validations";
 import { FloatingInput, Modal, SelectCmp } from "../../shared";
@@ -40,6 +39,7 @@ export const EditMemberModal = ({
       gender: "",
       email: memberDetail?.email,
       relationship: memberDetail?.relationship === "1" ? "Family" : "Friend",
+      gender: "",
     },
   });
 
