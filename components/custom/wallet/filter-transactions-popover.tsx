@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import {
   endOfMonth,
@@ -18,29 +18,42 @@ import {
   Drawer,
   DrawerPortal,
   RadioGroup,
-  Input,
   DrawerClose,
   DrawerTitle,
 } from "@/components/ui";
 import { RadioButton } from "@/components/shared";
 import {
-  TRANSACTIONS_FILTER_DATE_OPTIONS,
+  TRANSACTION_STATUS_ENUM,
+  TRANSACTION_TYPE_ENUM,
   TRANSACTIONS_FILTER_STATUS_OPTIONS,
   TRANSACTIONS_FILTER_TYPE_OPTIONS,
 } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { CalendarInput } from "./calendar-input";
 
 const FilterContent = ({
   handleCloseFilter,
   applyFilter,
+  setSelectedTypeOption,
+  setSelectedStatusOption,
+  selectedStatusOption,
+  selectedTypeOption,
+  dateFilters,
+  selected,
+  setSelected,
+  setCustomDate,
 }: {
   handleCloseFilter: () => void;
   applyFilter: () => void;
+  selectedTypeOption: string;
+  setSelectedTypeOption: Dispatch<SetStateAction<string>>;
+  selectedStatusOption: string;
+  setSelectedStatusOption: Dispatch<SetStateAction<string>>;
+  dateFilters: Record<string, any>;
+  selected: any;
+  setSelected: Dispatch<SetStateAction<any>>;
+  setCustomDate: (val: any) => void;
 }) => {
-  const [selectedDateOption, setSelectedDateOption] = useState("all-time");
-  const [selectedTypeOption, setSelectedTypeOption] = useState("");
-  const [selectedStatusOption, setSelectedStatusOption] = useState("");
-
   return (
     <div className="p-6 grid gap-y-5 w-full">
       <h3 className="font-bold text-xl text-brand-1">Filter</h3>
@@ -51,23 +64,41 @@ const FilterContent = ({
 
           <div className="grid gap-y-1">
             <RadioGroup
-              defaultValue={selectedDateOption}
-              onValueChange={(e) => setSelectedDateOption(e)}
+              defaultValue={selected.value}
+              onValueChange={(e) => setSelected({ value: e })}
             >
-              {TRANSACTIONS_FILTER_DATE_OPTIONS.map((option) => (
-                <RadioButton
-                  key={option.id}
-                  isActive={selectedDateOption === option.value}
-                  option={option}
-                />
-              ))}
+              {dateFilters?.map((option: any) => {
+                return (
+                  <RadioButton
+                    key={option.id}
+                    isActive={selected.value.label === option.value.label}
+                    option={option}
+                  />
+                );
+              })}
             </RadioGroup>
           </div>
 
-          {selectedDateOption === "custom-range" && (
+          {selected.value.label === "custom-range" && (
             <div className="grid gap-y-1">
-              <Input placeholder="From" />
-              <Input placeholder="To" />
+              <CalendarInput
+                value={selected.value.start}
+                onChange={(e) => {
+                  setCustomDate({ start: e, end: selected.value.end });
+                }}
+                label="From"
+              />
+
+              <CalendarInput
+                value={selected.value.end}
+                onChange={(e) => {
+                  setCustomDate({
+                    start: selected.value.start,
+                    end: e,
+                  });
+                }}
+                label="To"
+              />
             </div>
           )}
         </div>
@@ -128,10 +159,10 @@ export const FilterTransactionsPopover = ({
   isDeduction?: boolean;
   setFilters: Dispatch<
     SetStateAction<{
-      start_date: string;
-      end_date: string;
-      transaction_type: string;
-      status: string;
+      start_date?: string;
+      end_date?: string;
+      transaction_type?: string;
+      status?: string;
     }>
   >;
 }) => {
@@ -139,15 +170,15 @@ export const FilterTransactionsPopover = ({
   const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
 
   const today = startOfToday();
-  const [dateFilters, setDateFilters] = useState([
+  const [dateFilters, _] = useState([
     {
-      label: "Today",
-      name: "today",
-      value: { start: today, end: today },
+      id: 1,
+      name: "Today",
+      value: { start: today, end: today, label: "today" },
     },
     {
-      label: "This Month",
-      name: "current_month",
+      id: 2,
+      name: "This Month",
       value: {
         start: startOfMonth(
           parse(format(today, "yyyy-MM-dd"), "yyyy-MM-dd", new Date())
@@ -155,58 +186,52 @@ export const FilterTransactionsPopover = ({
         end: endOfMonth(
           parse(format(today, "yyyy-MM-dd"), "yyyy-MM-dd", new Date())
         ),
+        label: "this-month",
       },
     },
-    { label: "All Time", name: "all", value: { start: "", end: "" } },
-    { label: "Custom", name: "custom", value: { start: "", end: "" } },
+    {
+      id: 3,
+      name: "All Time",
+      value: { start: "", end: "", label: "all-time" },
+    },
+    {
+      id: 4,
+      name: "Custom",
+      value: { start: "", end: "", label: "custom-range" },
+    },
   ]);
 
   const [selected, setSelected] = useState(dateFilters[2]);
 
-  //eslint-disable-next-line
-  const [transactionTypeFilters, setTransactionTypeFilters] = useState("");
-  //eslint-disable-next-line
-  const [statusFilters, setStatusFilters] = useState("");
+  const [transactionTypeFilter, setTransactionTypeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
-  //eslint-disable-next-line
-  const setCustomDate = (dates: {
-    start: Date | string;
-    end: Date | string;
-  }) => {
-    const notCustom = dateFilters.filter(
-      (item) => item.name !== "custom"
-    ) as any;
-    setDateFilters([
-      ...notCustom,
-      {
-        label: "Custom",
-        name: "custom",
-        value: { start: dates.start, end: dates.end },
-      },
-    ]);
-  };
-
-  const applyFilter = (fn?: () => void) => {
-    setFilters({
-      start_date: selected.value.start
-        ? format(selected.value.start, "yyyy-MM-dd")
-        : "",
-      end_date: selected.value.end
-        ? format(selected.value.end, "yyyy-MM-dd")
-        : "",
-      transaction_type: transactionTypeFilters,
-      status: statusFilters,
+  const setCustomDate = (dates: { start: string; end: string }) => {
+    setSelected({
+      id: 4,
+      name: "Custom",
+      value: { start: dates.start, end: dates.end, label: "custom-range" },
     });
-    fn?.();
   };
 
-  useEffect(() => {
-    if (selected.name === "custom") {
-      setSelected(
-        dateFilters.filter((item) => item.name === "custom")?.at(0) as any
-      );
-    }
-  }, [dateFilters, selected.name]);
+  const applyFilter = () => {
+    setFilters({
+      ...(selected.value.start
+        ? { start_date: format(selected.value.start, "yyyy-MM-dd") }
+        : {}),
+      ...(selected.value.end
+        ? { end_date: format(selected.value.end, "yyyy-MM-dd") }
+        : {}),
+      ...(transactionTypeFilter
+        ? { transaction_type: TRANSACTION_TYPE_ENUM[transactionTypeFilter] }
+        : {}),
+      ...(statusFilter
+        ? { status: TRANSACTION_STATUS_ENUM[statusFilter] }
+        : {}),
+    });
+
+    setOpenPopover(false);
+  };
 
   return (
     <Fragment>
@@ -226,7 +251,7 @@ export const FilterTransactionsPopover = ({
           <PopoverContent
             sideOffset={10}
             className={cn(
-              "w-144 relative border-none shadow-modal-shadow bg-white hidden md:flex p-0",
+              "w-144 h-100 overflow-y-scroll pb-10 relative border-none shadow-modal-shadow bg-white hidden md:flex p-0",
               isDeduction
                 ? "right-13 xl:right-18"
                 : "right-40 lg:right-48 xl:right-54"
@@ -235,6 +260,14 @@ export const FilterTransactionsPopover = ({
             <FilterContent
               handleCloseFilter={() => setOpenPopover(false)}
               applyFilter={applyFilter}
+              selectedStatusOption={statusFilter}
+              setSelectedStatusOption={setStatusFilter}
+              selectedTypeOption={transactionTypeFilter}
+              setSelectedTypeOption={setTransactionTypeFilter}
+              dateFilters={dateFilters}
+              selected={selected}
+              setSelected={setSelected}
+              setCustomDate={setCustomDate}
             />
           </PopoverContent>
         </Popover>
@@ -276,6 +309,14 @@ export const FilterTransactionsPopover = ({
               <FilterContent
                 handleCloseFilter={() => setOpenMobileDrawer(false)}
                 applyFilter={applyFilter}
+                selectedStatusOption={statusFilter}
+                setSelectedStatusOption={setStatusFilter}
+                selectedTypeOption={transactionTypeFilter}
+                setSelectedTypeOption={setTransactionTypeFilter}
+                dateFilters={dateFilters}
+                selected={selected}
+                setSelected={setSelected}
+                setCustomDate={setCustomDate}
               />
             </DrawerPrimitive.Content>
           </DrawerPortal>

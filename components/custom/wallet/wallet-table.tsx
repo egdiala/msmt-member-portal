@@ -32,10 +32,13 @@ export const WalletTable = () => {
 
   const searchParams = useSearchParams();
 
+  const [filters, setFilters] = useState({});
+
   const { data: walletTransactions, isLoading: isLoadingWalletTransactions } =
     useGetWalletTransactions<FetchedWalletTransactionsType[]>({
       page: page?.toString(),
       item_per_page: itemsPerPage.toString(),
+      ...filters,
     });
 
   const { data: walletTransactionsCount } =
@@ -97,7 +100,7 @@ export const WalletTable = () => {
         <h3 className="font-bold text-brand-1">Transactions</h3>
 
         <div className="flex items-center gap-x-4">
-          <FilterTransactionsPopover setFilters={() => {}} />
+          <FilterTransactionsPopover setFilters={setFilters} />
 
           <Button
             className="gap-x-1"

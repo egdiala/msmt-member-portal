@@ -30,24 +30,28 @@ interface IFundWalletModal {
 }
 
 async function loadPaystackHook() {
-    const customHook = await import('react-paystack');
+  const customHook = await import("react-paystack");
 
-    return customHook;
+  return customHook;
 }
 
 export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
   const [config, setConfig] = useState({
-      reference: "",
-      email: "",
-      amount: 0,
-      publicKey: "",
-    });
-  const [usePaystackPayment, setUseCustomHook] = useState<(hookConfig: HookConfig) => InitializePayment>(() => () => {});
-  
+    reference: "",
+    email: "",
+    amount: 0,
+    publicKey: "",
+  });
+  const [usePaystackPayment, setUseCustomHook] = useState<
+    (hookConfig: HookConfig) => InitializePayment
+  >(() => () => {});
+
   useEffect(() => {
-    loadPaystackHook().then(customHook => setUseCustomHook(() => customHook.usePaystackPayment));
+    loadPaystackHook().then((customHook) =>
+      setUseCustomHook(() => customHook.usePaystackPayment)
+    );
   }, []);
-  
+
   const onClose = () => {
     form.reset();
     handleClose();
@@ -55,7 +59,10 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setConfig((prev) => ({ ...prev, email: JSON.parse(localStorage.getItem("user") as string)?.email || "" }));
+      setConfig((prev) => ({
+        ...prev,
+        email: JSON.parse(localStorage.getItem("user") as string)?.email || "",
+      }));
     }
   }, []);
 
@@ -70,7 +77,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
       reference: res?.transaction_id,
       amount: res?.amount,
       publicKey: res?.paystack_key,
-    }))
+    }));
   });
 
   useEffect(() => {
@@ -150,7 +157,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
             layout
             className="flex justify-end items-center md:pt-8 gap-x-4"
           >
-            <Button variant="secondary" type="button" onClick={handleClose}>
+            <Button variant="secondary" type="button" onClick={onClose}>
               Cancel
             </Button>
 
