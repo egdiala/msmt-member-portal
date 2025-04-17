@@ -61,11 +61,7 @@ export const UpdateProfileDetailsModal = ({
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="grid gap-y-6"
-    >
+    <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
       <h2 className="font-bold text-lg md:text-2xl">Profile Details</h2>
 
       <Form {...form}>
@@ -138,6 +134,7 @@ export const UpdateProfileDetailsModal = ({
                     { value: "male", id: 1 },
                     { value: "female", id: 2 },
                   ]}
+                  onSelect={field.onChange}
                   placeholder={"Gender"}
                   {...field}
                 />
@@ -152,6 +149,7 @@ export const UpdateProfileDetailsModal = ({
                   selectItems={variableList(
                     requestVariables?.["marital-status"]
                   )}
+                  onSelect={field.onChange}
                   placeholder={"Marital Status"}
                   {...field}
                 />
@@ -165,6 +163,7 @@ export const UpdateProfileDetailsModal = ({
                 <SelectCmp
                   selectItems={[...countryList]}
                   placeholder={"Country"}
+                  onSelect={field.onChange}
                   {...field}
                 />
               )}
@@ -178,6 +177,7 @@ export const UpdateProfileDetailsModal = ({
                   selectItems={[
                     ...variableList(requestVariables?.["preferred-lan"]),
                   ]}
+                  onSelect={field.onChange}
                   placeholder={"Preferred Language"}
                   {...field}
                 />
