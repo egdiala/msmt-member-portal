@@ -6,3 +6,12 @@ export const getNotifications = async (query: string) => {
   );
   return res.data;
 };
+
+
+export const markNotificationsAsRead = async () => {
+  const res = await axiosUserService.put(
+    `/members/accounts/notifications`
+  );
+  return res.data;
+};
+
