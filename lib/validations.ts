@@ -94,6 +94,34 @@ export const profileSecuritySchema = z
     path: ["confirmPassword"],
   });
 
+export const editProfileDetailsSchema = z.object({
+  preferredName: z
+    .string()
+    .min(2, "Preferred name must be at least 2 characters")
+    .optional(),
+  phoneNumber: z
+    .string()
+    .min(8, "Phone number must be at least 8 characters")
+    .optional(),
+  religion: z
+    .string()
+    .min(2, "Religion must be at least 2 characters")
+    .optional(),
+  gender: z.string().min(2, "Gender must be at least 2 characters").optional(),
+  maritalStatus: z
+    .string()
+    .min(2, "Marital status must be at least 2 characters")
+    .optional(),
+  country: z
+    .string()
+    .min(2, "Country must be at least 2 characters")
+    .optional(),
+  preferredLanguage: z
+    .string()
+    .min(2, "Preferred language must be at least 2 characters")
+    .optional(),
+});
+
 export const profileDetailsSchema = z.object({
   preferredName: z
     .string()

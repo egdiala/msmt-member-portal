@@ -13,10 +13,13 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
-import { profileDetailsSchema } from "@/lib/validations";
+import { editProfileDetailsSchema } from "@/lib/validations";
 import { FloatingInput, SelectCmp, Modal } from "../../shared";
 import { UpdateProfileType } from "@/types/profile";
 import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
+import { AnimatePresence, motion } from "motion/react";
+import { Loader } from "@/components/shared/loader";
+import { useMemo } from "react";
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;
@@ -28,15 +31,16 @@ export const UpdateProfileDetailsModal = ({
   isOpen,
   data,
 }: IUpdateProfileDetailsModal) => {
-  const { mutate: updateProfile, isPending } = useUpdateProfile(() =>
+  const { mutateAsync: updateProfile, isPending } = useUpdateProfile(() =>
     handleClose()
   );
 
   const { requestVariables, variableList, countryList } =
     useGetDefinedVariables();
 
-  const form = useForm<z.infer<typeof profileDetailsSchema>>({
-    resolver: zodResolver(profileDetailsSchema),
+  const form = useForm<z.infer<typeof editProfileDetailsSchema>>({
+    resolver: zodResolver(editProfileDetailsSchema),
+    mode: "onChange",
     defaultValues: {
       preferredName: data?.nickname || "",
       phoneNumber: data?.phone_number || "",
@@ -48,7 +52,7 @@ export const UpdateProfileDetailsModal = ({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof profileDetailsSchema>) {
+  async function onSubmit(values: z.infer<typeof editProfileDetailsSchema>) {
     await updateProfile({
       preferred_lan: values.preferredLanguage,
       nickname: values.preferredName,
@@ -59,6 +63,15 @@ export const UpdateProfileDetailsModal = ({
       origin_country: values.country,
     });
   }
+
+  const buttonCopy = {
+    idle: "Update",
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isPending ? "loading" : "idle";
+  }, [isPending]);
 
   return (
     <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
@@ -192,10 +205,20 @@ export const UpdateProfileDetailsModal = ({
 
             <Button
               type="submit"
-              disabled={!form.formState.isValid || isPending}
-              className="cursor-pointer"
+              disabled={!form.formState.isDirty || !form.formState.isValid || isPending}
+              className="cursor-pointer w-21"
             >
-              {isPending ? "Submitting" : "Update"}
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                  initial={{ opacity: 0, y: -25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 25 }}
+                  key={buttonState}
+                >
+                  {buttonCopy[buttonState]}
+                </motion.span>
+              </AnimatePresence>
             </Button>
           </div>
         </form>

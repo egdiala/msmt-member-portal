@@ -53,7 +53,7 @@ export const PersonalInfoDetailsSection = () => {
         {personalInfo.map((info) => (
           <div key={info.id}>
             <h4 className="text-text-2 text-sm">{info.key}</h4>
-            <p className="text-sm font-medium">{info.value}</p>
+            <p className="text-sm font-medium capitalize">{info.value}</p>
           </div>
         ))}
       </div>
