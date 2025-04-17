@@ -2,6 +2,8 @@ import { useQuery, useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { RequestVariableComponent, UserProfileType } from "@/types/profile";
 import { getProfile, getRequestsVariables } from "@/services/api/profile";
+import type { QueryResponseType } from "@/types/utils";
+
 export const useGetProfile = () => {
   return useQuery<QueryResponseType<UserProfileType>, Error, UserProfileType>({
     queryKey: ["get-profile"],

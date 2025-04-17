@@ -1,5 +1,6 @@
 import type { UpdateProfileType, UserProfileType } from "@/types/profile";
-import { axiosUserService } from "@/services/axios-instance";
+import { axiosRequestService, axiosUserService } from "@/services/axios-instance";
+import type { RequestVariablesType } from "@/types/utils";
 
 export const updateProfile = async (data: UpdateProfileType) => {
   const res = await axiosUserService.post("members/accounts", data);
@@ -35,15 +36,10 @@ export const getProfile = async (): Promise<{
   return res?.data;
 };
 
-export const getRequestsVariables = async (component: string) => {
-  const res = await axiosUserService.post(
+export const getRequestsVariables = async (component: RequestVariablesType) => {
+  const res = await axiosRequestService.post(
     "members/requests/variables",
     { component },
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_REQUEST_VARIABLES_TOKEN}`,
-      },
-    }
   );
   return res?.data;
 };

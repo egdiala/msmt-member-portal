@@ -14,6 +14,14 @@ export const axiosBookingService: AxiosInstance = axios.create({
   },
 });
 
+export const axiosRequestService: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_MSMT_USER_SERVICE_URL,
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${process.env.NEXT_PUBLIC_REQUEST_VARIABLES_TOKEN}`,
+  },
+});
+
 axiosBookingService.interceptors.request.use(function (config) {
   const token = localStorage.getItem("token");
   config.headers.Authorization = token ? `Bearer ${token}` : "";
