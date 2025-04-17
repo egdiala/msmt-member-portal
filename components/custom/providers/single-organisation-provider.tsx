@@ -151,7 +151,7 @@ export const SingleOrganisationProviderContent = () => {
         </RenderIf>
 
         <div className="flex flex-col md:flex-row gap-3 items-end md:items-center justify-between">
-          <Searchbar value="" onChange={() => {}} placeholder="Search" />
+          <Searchbar onChange={() => {}} placeholder="Search" />
 
           <div className="flex items-center gap-x-2">
             <Button

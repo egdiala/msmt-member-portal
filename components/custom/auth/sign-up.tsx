@@ -5,14 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
 import PasswordInput from "@/components/shared/password-input";
-import { IconEmail, IconCaseSensitive, IconCalendar } from "@/components/icons";
+import { IconEmail, IconCaseSensitive } from "@/components/icons";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +25,7 @@ import { useInitRegister } from "@/services/hooks/mutations/use-auth";
 import useMeasure from "react-use-measure";
 import { Loader } from "@/components/shared/loader";
 import { useRouter } from "next/navigation";
+import { DatePickerField } from "@/components/shared/date-picker-field";
 
 export default function SignUp() {
   const router = useRouter();
@@ -136,53 +131,11 @@ export default function SignUp() {
                 name="dob"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <div className="relative cursor-pointer">
-                            <FloatingInput
-                              label="Date of Birth"
-                              readOnly
-                              value={
-                                field.value ? format(field.value, "PPP") : ""
-                              }
-                              className="pr-8 cursor-pointer"
-                              onClick={(e) => e.currentTarget.focus()}
-                            />
-                            <IconCalendar className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 stroke-brand-3 pointer-events-none" />
-                          </div>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        side="bottom"
-                        align="start"
-                        className="w-auto p-0 z-50"
-                        sideOffset={5}
-                        alignOffset={0}
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => {
-                            const today = new Date();
-                            const eighteenYearsAgo = new Date(
-                              today.getFullYear() - 18,
-                              today.getMonth(),
-                              today.getDate()
-                            );
-                            return date > eighteenYearsAgo || date > new Date();
-                          }}
-                          initialFocus
-                          className="border-none p-3"
-                          captionLayout="buttons"
-                          fromYear={1920}
-                          toYear={new Date().getFullYear() - 18}
-                          defaultMonth={new Date(2000, 0)}
-                          showOutsideDays={false}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <DatePickerField
+                      value={field.value}
+                      onChange={field.onChange}
+                      label="Date of Birth"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

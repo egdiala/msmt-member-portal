@@ -16,6 +16,7 @@ export const WalletTable = () => {
   const { data: walletTransactions } = useGetWalletTransactions({});
   console.log({ walletTransactions });
 
+  //eslint-disable-next-line
   const [search, setSearch] = useState("");
   const [openFundWalletModal, setOpenFundWalletModal] = useState(false);
 
@@ -47,7 +48,6 @@ export const WalletTable = () => {
     <>
       <div className="flex items-end md:items-center justify-between gap-3 flex-col md:flex-row">
         <Searchbar
-          value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={"Search"}
           onClear={() => {}}

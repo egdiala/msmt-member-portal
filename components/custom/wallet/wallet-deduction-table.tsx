@@ -37,7 +37,7 @@ export const WalletDeductionsTable = () => {
   return (
     <>
       <div className="flex items-end md:items-center justify-between gap-3 flex-col md:flex-row">
-        <Searchbar value={""} onChange={() => {}} placeholder={"Search"} />
+        <Searchbar onChange={() => {}} placeholder={"Search"} />
 
         <div className="flex items-center gap-x-4">
           <Button variant="outline" className="py-2 px-2 md:px-3">

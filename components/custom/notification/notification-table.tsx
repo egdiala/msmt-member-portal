@@ -29,7 +29,7 @@ export const NotificationTable = () => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <Searchbar value={""} onChange={() => {}} placeholder={"Search"} />
+        <Searchbar onChange={() => {}} placeholder={"Search"} />
         <IconDownload className="size-4 stroke-button-secondary" />
       </div>
 

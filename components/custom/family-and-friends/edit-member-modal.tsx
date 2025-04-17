@@ -19,16 +19,26 @@ import { FloatingInput, Modal, SelectCmp } from "../../shared";
 interface IEditMemberModal {
   handleClose: () => void;
   isOpen: boolean;
+  memberDetail: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    relationship: string;
+  };
 }
-export const EditMemberModal = ({ isOpen, handleClose }: IEditMemberModal) => {
+export const EditMemberModal = ({
+  isOpen,
+  handleClose,
+  memberDetail,
+}: IEditMemberModal) => {
   const form = useForm<z.infer<typeof addMemberSchema>>({
     resolver: zodResolver(addMemberSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      relationship: "",
-      isAbove18: false,
+    mode: "onChange",
+    values: {
+      first_name: memberDetail?.first_name,
+      last_name: memberDetail?.last_name,
+      email: memberDetail?.email,
+      relationship: memberDetail?.relationship === "1" ? "Family" : "Friend",
     },
   });
 
@@ -46,7 +56,7 @@ export const EditMemberModal = ({ isOpen, handleClose }: IEditMemberModal) => {
             <div className="flex items-center gap-4 md:gap-6 flex-col md:flex-row w-full">
               <FormField
                 control={form.control}
-                name="firstName"
+                name="first_name"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormControl>
@@ -68,7 +78,7 @@ export const EditMemberModal = ({ isOpen, handleClose }: IEditMemberModal) => {
 
               <FormField
                 control={form.control}
-                name="lastName"
+                name="last_name"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormControl>
@@ -115,27 +125,20 @@ export const EditMemberModal = ({ isOpen, handleClose }: IEditMemberModal) => {
               control={form.control}
               name="relationship"
               render={({ field }) => (
-                <SelectCmp
-                  selectItems={[]}
-                  placeholder={"Relationship"}
-                  {...field}
-                />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="isAbove18"
-              render={({ field }) => (
-                <div className="flex justify-between border border-grey-400 bg-input-field rounded-sm px-3 py-2">
-                  <p className="text-xs font-medium text-brand-1">
-                    This member is above 18 years of age
-                  </p>
-                  <Switch
-                    id="airplane-mode"
-                    {...field}
-                    value={field.value.toString()}
-                  />
-                </div>
+                <FormItem>
+                  <FormControl>
+                    <SelectCmp
+                      onSelect={(val) => form.setValue("relationship", val)}
+                      selectItems={[
+                        { id: 1, value: "Family" },
+                        { id: 2, value: "Friend" },
+                      ]}
+                      placeholder={"Relationship"}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
             />
           </div>
