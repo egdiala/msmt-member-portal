@@ -45,12 +45,13 @@ export const TRANSACTIONS_FILTER_DATE_OPTIONS = [
 export const TRANSACTIONS_FILTER_TYPE_OPTIONS = [
   { id: "type-1", name: "Debit", value: "debit" },
   { id: "type-2", name: "Credit", value: "credit" },
+  { id: "type-3", name: "All", value: "" },
 ];
 
 export const TRANSACTIONS_FILTER_STATUS_OPTIONS = [
-  { id: "status-1", name: "Upcoming", value: "upcoming" },
-  { id: "status-2", name: "Pending", value: "pending" },
-  { id: "status-3", name: "Completed", value: "completed" },
+  { id: "status-1", name: "Failed", value: "failed" },
+  { id: "status-2", name: "Successful", value: "successful" },
+  { id: "status-3", name: "All", value: "" },
 ];
 
 export const FAMILY_AND_FRIENDS_TABLE_HEADERS = [
@@ -82,3 +83,13 @@ export const PROVIDERS_TABLE_HEADERS = [
   { key: "type", value: "Type" },
   { key: "charge_from", value: "Charge From" },
 ];
+
+export const TRANSACTION_STATUS_ENUM: Record<string, string> = {
+  successful: "1",
+  failed: "2",
+};
+
+export const TRANSACTION_TYPE_ENUM: Record<string, string> = {
+  credit: "1",
+  debit: "2",
+};
