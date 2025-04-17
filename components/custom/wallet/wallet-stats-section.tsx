@@ -16,22 +16,22 @@ export const WalletStatsSection = () => {
       id: 1,
       title: "Unit Balance",
       value: formatNumberWithCommas(
-        walletTransactionsStats?.total_balance ?? 0
+        walletTransactionsStats?.total_balance || 0
       ),
       bg: "bg-grey-400",
     },
     {
       id: 2,
       title: "Total Credit",
-      value: formatNumberWithCommas(walletTransactionsStats?.total_credit ?? 0),
+      value: formatNumberWithCommas(walletTransactionsStats?.total_credit || 0),
       bg: "bg-green",
     },
     {
       id: 3,
       title: "Total Deduction",
-      value: formatNumberWithCommas(walletTransactionsStats?.total_debit ?? 0),
+      value: formatNumberWithCommas(walletTransactionsStats?.total_debit || 0),
       bg: "bg-red-light",
-      href: "/wallet/deductions",
+      // href: "/wallet/deductions",
     },
   ];
 
@@ -43,7 +43,7 @@ export const WalletStatsSection = () => {
           title={stat.title}
           value={stat.value}
           className={stat.bg}
-          href={stat.href}
+          // href={stat.href}
         />
       ))}
     </div>
