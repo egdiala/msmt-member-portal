@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, useState } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { IconClose, IconListFilter } from "@/components/icons";

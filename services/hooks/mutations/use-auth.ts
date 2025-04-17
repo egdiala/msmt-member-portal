@@ -11,6 +11,7 @@ import {
   resendOtp,
   resetPassword,
 } from "@/services/api/auth";
+import { axiosInit } from "@/services/axios-init";
 import { LoginResponse } from "@/types/auth";
 
 export const useInitRegister = (fn?: () => void) => {
@@ -29,9 +30,25 @@ export const useInitRegister = (fn?: () => void) => {
 export const useCompleteRegister = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: completeRegister,
-    onSuccess: ({ token, ...user }: LoginResponse) => {
+    onSuccess: ({ token, ...user  }: LoginResponse) => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(token));
+
+      // Set auth cookie for middleware with proper cookie settings
+      // This should work in both development and production
+      document.cookie = `authToken=${token}; path=/; max-age=${
+        30 * 24 * 60 * 60
+      }; SameSite=Lax`;
+
+      // Also set with js-cookie as a backup method
+      Cookies.set("authToken", token, {
+        expires: 30, // 30 days
+        path: "/",
+        sameSite: "lax",
+      });
+
+      axiosInit(token);
+
       toast.success("Successful! Login to access your account");
       fn?.("/home");
     },
@@ -61,6 +78,8 @@ export const useLogin = (fn?: (href: string) => void) => {
         path: "/",
         sameSite: "lax",
       });
+
+      axiosInit(res.token);
 
       toast.success("Login was successful!");
       fn?.("/home");

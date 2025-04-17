@@ -21,7 +21,6 @@ export function AppointmentSearch({
       <div className="hidden md:flex items-center justify-between">
         <div className="relative w-[300px]">
           <Searchbar
-            value=""
             placeholder="Search"
             className="h-10 placeholder:text-sm text-sm placeholder:font-normal"
             onChange={(e) => onSearch(e.target.value)}
@@ -42,7 +41,6 @@ export function AppointmentSearch({
           <Search className="absolute left-2 top-2.5 h-3 w-3 text-brand-3" />
           <Searchbar
             placeholder="Search"
-            value=""
             className=" h-10 placeholder:text-sm text-sm"
             onChange={(e) => onSearch(e.target.value)}
           />

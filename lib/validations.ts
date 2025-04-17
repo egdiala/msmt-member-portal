@@ -183,15 +183,16 @@ export const ratingFormSchema = z.object({
 });
 
 export const addMemberSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  first_name: z.string().min(2, "First name must be at least 2 characters"),
+  last_name: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
+  phone_number: z.string().min(11, "Phone number must be at least 11 characters").optional(),
+  gender: z.string().min(2, "Gender must be at least 2 characters"),
   relationship: z.string().min(2, "Relationship must be at least 2 characters"),
-  isAbove18: z.boolean(),
 });
 
-export const removeMemberSchema = z.object({
-  reason: z.string().min(2, "Reason must be at least 2 characters"),
+export const suspendMemberSchema = z.object({
+  reason: z.string().min(2, "Reason must be atleast 2 characters"),
 });
 
 export const appointmentQuestionnaireSchema = z.object({
@@ -208,6 +209,10 @@ export const appointmentQuestionnaireSchema = z.object({
   alcoholIntakeFrequency: z.string(),
   eatingHabits: z.string(),
   sleepingHabits: z.string(),
+});
+
+export const fundWalletSchema = z.object({
+  amount: z.coerce.number().int().gte(5000),
 });
 
 export const disableProfileSchema = z.object({

@@ -22,25 +22,18 @@ interface SelectCmpProps extends SelectProps {
   selectItems: SelectItemType[];
   placeholder: string;
   className?: string;
-  onChange?: (value: string) => void; 
+  onSelect?: (val: string) => void;
 }
 
 export function SelectCmp({
   selectItems,
   placeholder,
   className,
-  value,
-  disabled,
-  onChange,
-  ...rest
-}: SelectCmpProps) {
+  onSelect,
+  ...props
+}: ISelectCmp) => {
   return (
-    <Select
-      value={value}
-      onValueChange={(value) => onChange?.(value)}
-      disabled={disabled}
-      {...rest}
-    >
+    <Select {...props} onValueChange={(val) => onSelect && onSelect(val)}>
       <SelectTrigger className={cn("w-full", className)}>
         <SelectValue
           placeholder={placeholder}
