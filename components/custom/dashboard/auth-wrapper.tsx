@@ -18,7 +18,8 @@ export function AuthWrapper({ children }: AuthWrapperProps) {
   const { data } = useGetAllNotifications<{ total: number }>({
     component: "count",
     page: "1",
-    item_per_page: "10",
+    item_per_page: Number.MAX_SAFE_INTEGER.toString(),
+    status: "0"
   });
 
   // Auto logout if JWT token expires
@@ -39,7 +40,7 @@ export function AuthWrapper({ children }: AuthWrapperProps) {
                 href="/notifications"
               >
                 <IconBell className="stroke-text-bg-1" />
-                <div className="py-0.5 px-1 bg-status-danger rounded-full absolute -top-1.5 -right-1.5 font-medium text-white text-xs">
+                <div className="py-0.5 px-1.5 bg-status-danger rounded-full absolute -top-1.5 -right-1.5 font-medium text-white text-xs">
                   {data?.total}
                 </div>
               </Link>
