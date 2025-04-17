@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FetchedFamilyAndFriendType } from "@/types/family-and-friends";
-import { useFormatTableDate } from "@/hooks/use-format-table-info";
+import { formatTableDate } from "@/hooks/use-format-table-info";
 
 export const FamilyAndFriendsMobileCard = (
   person: FetchedFamilyAndFriendType
@@ -23,7 +23,7 @@ export const FamilyAndFriendsMobileCard = (
       <div className="grid gap-y-1 text-xs text-left">
         <p className="text-brand-2">{person.email}</p>
         <p className="text-brand-3">
-          Added: {useFormatTableDate(person.createdAt)}
+          Added: {formatTableDate(person.createdAt)}
         </p>
       </div>
     </Link>

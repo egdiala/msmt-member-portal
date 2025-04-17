@@ -1,15 +1,35 @@
 "use client";
 
+import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
+import { FetchedWalletTransactionsStatsType } from "@/types/wallet";
 import { TransactionStatCard } from "./transaction-stat-card";
 
 export const WalletStatsSection = () => {
+  const { data: walletTransactionsStats } =
+    useGetWalletTransactions<FetchedWalletTransactionsStatsType>({
+      component: "count-status",
+    });
+
   const walletStats = [
-    { id: 1, title: "Unit Balance", value: "235,402,853", bg: "bg-grey-400" },
-    { id: 2, title: "Total Credit", value: "502,853", bg: "bg-green" },
+    {
+      id: 1,
+      title: "Unit Balance",
+      value: formatNumberWithCommas(
+        walletTransactionsStats?.total_balance ?? 0
+      ),
+      bg: "bg-grey-400",
+    },
+    {
+      id: 2,
+      title: "Total Credit",
+      value: formatNumberWithCommas(walletTransactionsStats?.total_credit ?? 0),
+      bg: "bg-green",
+    },
     {
       id: 3,
       title: "Total Deduction",
-      value: "2,853",
+      value: formatNumberWithCommas(walletTransactionsStats?.total_debit ?? 0),
       bg: "bg-red-light",
       href: "/wallet/deductions",
     },

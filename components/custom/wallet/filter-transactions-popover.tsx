@@ -1,7 +1,14 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
+import {
+  endOfMonth,
+  format,
+  parse,
+  startOfMonth,
+  startOfToday,
+} from "date-fns";
 import { IconClose, IconListFilter } from "@/components/icons";
 import {
   Button,
@@ -25,8 +32,10 @@ import { cn } from "@/lib/utils";
 
 const FilterContent = ({
   handleCloseFilter,
+  applyFilter,
 }: {
   handleCloseFilter: () => void;
+  applyFilter: () => void;
 }) => {
   const [selectedDateOption, setSelectedDateOption] = useState("all-time");
   const [selectedTypeOption, setSelectedTypeOption] = useState("");
@@ -106,7 +115,7 @@ const FilterContent = ({
         <Button variant="secondary" onClick={handleCloseFilter}>
           Close
         </Button>
-        <Button>Apply</Button>
+        <Button onClick={applyFilter}>Apply</Button>
       </div>
     </div>
   );
@@ -114,11 +123,91 @@ const FilterContent = ({
 
 export const FilterTransactionsPopover = ({
   isDeduction = false,
+  setFilters,
 }: {
   isDeduction?: boolean;
+  setFilters: Dispatch<
+    SetStateAction<{
+      start_date: string;
+      end_date: string;
+      transaction_type: string;
+      status: string;
+    }>
+  >;
 }) => {
   const [openPopover, setOpenPopover] = useState(false);
   const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
+
+  const today = startOfToday();
+  const [dateFilters, setDateFilters] = useState([
+    {
+      label: "Today",
+      name: "today",
+      value: { start: today, end: today },
+    },
+    {
+      label: "This Month",
+      name: "current_month",
+      value: {
+        start: startOfMonth(
+          parse(format(today, "yyyy-MM-dd"), "yyyy-MM-dd", new Date())
+        ),
+        end: endOfMonth(
+          parse(format(today, "yyyy-MM-dd"), "yyyy-MM-dd", new Date())
+        ),
+      },
+    },
+    { label: "All Time", name: "all", value: { start: "", end: "" } },
+    { label: "Custom", name: "custom", value: { start: "", end: "" } },
+  ]);
+
+  const [selected, setSelected] = useState(dateFilters[2]);
+
+  //eslint-disable-next-line
+  const [transactionTypeFilters, setTransactionTypeFilters] = useState("");
+  //eslint-disable-next-line
+  const [statusFilters, setStatusFilters] = useState("");
+
+  //eslint-disable-next-line
+  const setCustomDate = (dates: {
+    start: Date | string;
+    end: Date | string;
+  }) => {
+    const notCustom = dateFilters.filter(
+      (item) => item.name !== "custom"
+    ) as any;
+    setDateFilters([
+      ...notCustom,
+      {
+        label: "Custom",
+        name: "custom",
+        value: { start: dates.start, end: dates.end },
+      },
+    ]);
+  };
+
+  const applyFilter = (fn?: () => void) => {
+    setFilters({
+      start_date: selected.value.start
+        ? format(selected.value.start, "yyyy-MM-dd")
+        : "",
+      end_date: selected.value.end
+        ? format(selected.value.end, "yyyy-MM-dd")
+        : "",
+      transaction_type: transactionTypeFilters,
+      status: statusFilters,
+    });
+    fn?.();
+  };
+
+  useEffect(() => {
+    if (selected.name === "custom") {
+      setSelected(
+        dateFilters.filter((item) => item.name === "custom")?.at(0) as any
+      );
+    }
+  }, [dateFilters, selected.name]);
+
   return (
     <Fragment>
       <div className="hidden md:inline-flex">
@@ -143,7 +232,10 @@ export const FilterTransactionsPopover = ({
                 : "right-40 lg:right-48 xl:right-54"
             )}
           >
-            <FilterContent handleCloseFilter={() => setOpenPopover(false)} />
+            <FilterContent
+              handleCloseFilter={() => setOpenPopover(false)}
+              applyFilter={applyFilter}
+            />
           </PopoverContent>
         </Popover>
       </div>
@@ -183,6 +275,7 @@ export const FilterTransactionsPopover = ({
 
               <FilterContent
                 handleCloseFilter={() => setOpenMobileDrawer(false)}
+                applyFilter={applyFilter}
               />
             </DrawerPrimitive.Content>
           </DrawerPortal>

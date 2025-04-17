@@ -112,3 +112,4 @@ export * from "./icon-x";
 export * from "./icon-calendar-check-2";
 export * from "./icon-medical-savings";
 export * from "./icon-tick";
+export * from "./icon-empty-state";
