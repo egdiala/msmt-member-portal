@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { WalletStatsSection, WalletTable } from "@/components/custom";
 import { BreadcrumbCmp } from "@/components/shared";
 
@@ -13,11 +14,11 @@ const Wallet = () => {
 
       <WalletStatsSection />
 
-      <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 grid gap-y-4 md:gap-y-5">
-        <h3 className="font-bold text-brand-1">Transactions</h3>
-
-        <WalletTable />
-      </div>
+      <Suspense>
+        <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 grid gap-y-4 md:gap-y-5">
+          <WalletTable />
+        </div>
+      </Suspense>
     </div>
   );
 };

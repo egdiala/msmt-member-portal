@@ -1,6 +1,6 @@
 import { format, isToday, parseISO } from "date-fns";
 
-export const useFormatTableDate = (date: string) => {
+export const formatTableDate = (date: string) => {
   const parsedDate = parseISO(date); // parse the ISO string
 
   let formattedDate;

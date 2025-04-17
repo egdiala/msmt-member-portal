@@ -18,9 +18,9 @@ import {
   FetchedFamilyAndFriendType,
 } from "@/types/family-and-friends";
 import {
+  formatTableDate,
   useGetTableTotalPages,
 } from "@/hooks/use-format-table-info";
-import { formatTableDate } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import {
   getPaginationParams,

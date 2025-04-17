@@ -24,7 +24,11 @@ export const SingleFamilyOrFriendContent = () => {
 
   const userInfo = [
     { id: 1, title: "Phone", value: user?.phone_number || "N/A" },
-    { id: 2, title: "Gender", value: capitalizeFirstLetter(user?.gender || "") || "N/A" },
+    {
+      id: 2,
+      title: "Gender",
+      value: capitalizeFirstLetter(user?.gender || "") || "N/A",
+    },
     {
       id: 3,
       title: "Status",

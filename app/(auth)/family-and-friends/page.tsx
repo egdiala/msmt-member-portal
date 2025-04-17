@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { BreadcrumbCmp } from "@/components/shared";
 import { FamilyAndFriendsTable } from "@/components/custom";
 
@@ -10,8 +11,9 @@ const FamilyAndFriends = () => {
           { id: 2, name: "Family & Friends" },
         ]}
       />
-
-      <FamilyAndFriendsTable />
+      <Suspense>
+        <FamilyAndFriendsTable />
+      </Suspense>
     </div>
   );
 };

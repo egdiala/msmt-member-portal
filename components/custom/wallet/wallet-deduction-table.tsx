@@ -44,7 +44,7 @@ export const WalletDeductionsTable = () => {
             <IconDownload className="stroke-brand-btn-secondary" />
           </Button>
 
-          <FilterTransactionsPopover isDeduction />
+          <FilterTransactionsPopover isDeduction setFilters={() => {}} />
         </div>
       </div>
 
