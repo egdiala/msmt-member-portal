@@ -80,15 +80,19 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
     }));
   });
 
-  useEffect(() => {
-    if (config?.reference) {
-      initializePayment({
-        onSuccess: () => {
-          completeWalletFunding({ transaction_id: config.reference });
-        },
-      });
-    }
-  }, [config?.reference]);
+  useEffect(
+    () => {
+      if (config?.reference) {
+        initializePayment({
+          onSuccess: () => {
+            completeWalletFunding({ transaction_id: config.reference });
+          },
+        });
+      }
+    },
+    //eslint-disable-next-line
+    [config?.reference]
+  );
 
   const form = useForm<z.infer<typeof fundWalletSchema>>({
     resolver: zodResolver(fundWalletSchema),

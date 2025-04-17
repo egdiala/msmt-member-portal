@@ -170,6 +170,7 @@ export const FilterTransactionsPopover = ({
   const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
 
   const today = startOfToday();
+  //eslint-disable-next-line
   const [dateFilters, _] = useState([
     {
       id: 1,
