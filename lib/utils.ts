@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { LoginResponse } from "@/types/auth";
 import { UpdateProfileType } from "@/types/profile";
+import { format, isToday, parseISO } from "date-fns";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -65,9 +66,6 @@ export const createQueryString = (queryObject: Record<string, any>): string => {
   return queryString ? `?${queryString}` : "";
 };
 
-
-
-
 export function hasCompletedBasicProfile(data?: UpdateProfileType): boolean {
   if (!data) return false;
 
@@ -87,3 +85,13 @@ export function hasCompletedBasicProfile(data?: UpdateProfileType): boolean {
     Boolean(preferred_lan?.trim())
   );
 }
+
+export const formatTableDate = (date: string) => {
+  const parsedDate = parseISO(date);
+
+  if (isToday(parsedDate)) {
+    return `Today • ${format(parsedDate, "h:mmaaa")}`;
+  }
+
+  return format(parsedDate, "MMM d • h:mmaaa");
+};

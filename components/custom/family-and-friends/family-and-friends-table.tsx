@@ -37,6 +37,8 @@ export const FamilyAndFriendsTable = () => {
   const searchParams = useSearchParams();
   const { value, onChangeHandler } = useDebounce(400);
 
+
+
   const { data: familyAndFriends, isLoading } = useGetFamilyAndFriends<
     FetchedFamilyAndFriendType[]
   >({
@@ -78,7 +80,7 @@ export const FamilyAndFriendsTable = () => {
       id: person.familyfriend_id,
       date_and_time: (
         <p className="text-brand-2">
-          {person.createdAt ? formatTableDate(person.createdAt) : ""}
+          {person.createdAt ? formatTableDate(person?.createdAt) : ""}
         </p>
       ),
       name: (

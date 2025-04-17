@@ -7,6 +7,7 @@ import { IconBell, IconHamMenu } from "@/components/icons";
 import Image from "next/image";
 import Link from "next/link";
 import MSMT_LOGO from "../../../public/msmt-logo.svg";
+import { useGetAllNotifications } from "@/services/hooks/queries/use-notifications";
 
 interface AuthWrapperProps {
   children: ReactNode;
@@ -14,7 +15,13 @@ interface AuthWrapperProps {
 
 export function AuthWrapper({ children }: AuthWrapperProps) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
-  
+  const { data } = useGetAllNotifications<{ total: number }>({
+    component: "count",
+    page: "1",
+    item_per_page: Number.MAX_SAFE_INTEGER.toString(),
+    status: "0"
+  });
+
   // Auto logout if JWT token expires
   useAutoLogout();
 
@@ -24,12 +31,7 @@ export function AuthWrapper({ children }: AuthWrapperProps) {
         <div className="flex items-center justify-center fixed top-0 left-0 right-0 bg-portal z-30">
           <div className="w-full flex items-center justify-between max-w-screen-2xl py-4 md:pt-12 md:pb-8 px-2 md:px-7 xl:px-12">
             <Link className="cursor-pointer" href="/home">
-              <Image
-                src={MSMT_LOGO}
-                width={40.12}
-                height={40.12}
-                alt="logo"
-              />
+              <Image src={MSMT_LOGO} width={40.12} height={40.12} alt="logo" />
             </Link>
 
             <div className="flex items-center gap-x-6">
@@ -38,8 +40,8 @@ export function AuthWrapper({ children }: AuthWrapperProps) {
                 href="/notifications"
               >
                 <IconBell className="stroke-text-bg-1" />
-                <div className="py-0.5 px-1 bg-status-danger rounded-full absolute -top-1.5 -right-1.5 font-medium text-white text-xs">
-                  9+
+                <div className="py-0.5 px-1.5 bg-status-danger rounded-full absolute -top-1.5 -right-1.5 font-medium text-white text-xs">
+                  {data?.total}
                 </div>
               </Link>
 
@@ -62,4 +64,4 @@ export function AuthWrapper({ children }: AuthWrapperProps) {
       />
     </div>
   );
-} 
+}

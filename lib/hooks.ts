@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
+
 export const useScreenSize = () => {
   const [screenSize, setScreenSize] = useState({
     width: typeof window !== "undefined" ? window.innerWidth : 1,
@@ -29,6 +30,9 @@ export function capitalizeFirstLetter(str: string | undefined) {
   if (!str) return ''; 
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
+
 
 
 
