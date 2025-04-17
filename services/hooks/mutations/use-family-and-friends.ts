@@ -23,9 +23,12 @@ export const useAddFamilyOrFriend = (fn?: (res: any) => void) => {
 };
 
 export const useUpdateFamilyOrFriendStatus = (fn?: (res: any) => void) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: updateFamilyAndFriendsStatus,
     onSuccess: (res: any) => {
+      queryClient.invalidateQueries({ queryKey: ["get-single-family-or-friend"] });
       toast.success("Successfully updated status!");
       fn?.(res);
     },

@@ -11,6 +11,8 @@ export type AddFamilyAndFriendsType = {
   last_name: string;
   email: string;
   relationship: string; // 1=family | 2=friend
+  gender: string;
+  phone_number?: string;
 };
 
 export type UpdateFamilyAndFriendsStatus = {
@@ -57,5 +59,5 @@ export interface FetchedSingleFamilyOrFriendType {
   total_appointment: number;
   total_spent: number;
   gender: string;
-  phone: string;
+  phone_number: string;
 }

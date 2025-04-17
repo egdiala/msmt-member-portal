@@ -11,6 +11,7 @@ import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-
 import { FetchedSingleFamilyOrFriendType } from "@/types/family-and-friends";
 import { RemoveMemberModal } from "./remove-member-modal";
 import { ActivateMemberModal } from "./activate-member-modal";
+import { capitalizeFirstLetter } from "@/lib/hooks";
 
 export const SingleFamilyOrFriendContent = () => {
   const { id } = useParams();
@@ -22,8 +23,8 @@ export const SingleFamilyOrFriendContent = () => {
   const userStatus: string = user?.status === 1 ? "Active" : "Suspended";
 
   const userInfo = [
-    { id: 1, title: "Phone", value: user?.phone ?? "N/A" },
-    { id: 2, title: "Gender", value: user?.gender ?? "N/A" },
+    { id: 1, title: "Phone", value: user?.phone_number || "N/A" },
+    { id: 2, title: "Gender", value: capitalizeFirstLetter(user?.gender || "") || "N/A" },
     {
       id: 3,
       title: "Status",

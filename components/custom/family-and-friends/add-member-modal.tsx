@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "motion/react";
 import useMeasure from "react-use-measure";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconEmail, IconUserRound } from "@/components/icons";
+import { IconEmail, IconPhone, IconUserRound } from "@/components/icons";
 import {
   Button,
   Form,
@@ -38,6 +38,8 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
     defaultValues: {
       first_name: "",
       last_name: "",
+      phone_number: "",
+      gender: "",
       email: "",
       relationship: "",
     },
@@ -47,12 +49,16 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
     first_name,
     last_name,
     email,
+    gender,
+    phone_number,
     relationship,
   }: z.infer<typeof addMemberSchema>) {
     mutate({
       first_name,
       last_name,
       email,
+      gender: gender.toLowerCase(),
+      phone_number,
       relationship: relationship.toLowerCase() === "family" ? "1" : "2",
     });
   }
@@ -136,6 +142,49 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                           <IconEmail className="h-4 w-4" />
                         </div>
                       </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone_number"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <div className="relative">
+                        <FloatingInput
+                          label="Phone Number"
+                          className="pr-10"
+                          {...field}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                          <IconPhone className="h-4 w-4" />
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <SelectCmp
+                        onSelect={(val) => form.setValue("gender", val)}
+                        selectItems={[
+                          { id: 1, value: "Male" },
+                          { id: 2, value: "Female" },
+                        ]}
+                        placeholder={"Gender"}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

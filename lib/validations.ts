@@ -132,6 +132,8 @@ export const addMemberSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
+  phone_number: z.string().min(11, "Phone number must be at least 11 characters").optional(),
+  gender: z.string().min(2, "Gender must be at least 2 characters"),
   relationship: z.string().min(2, "Relationship must be at least 2 characters"),
 });
 
