@@ -6,12 +6,15 @@ import { IconTriangleAlert } from "@/components/icons";
 import { DASHBOARD_STATS_DATA } from "@/lib/mock";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { DashboardStatCard } from "../dashboard/dashboard-stat-card";
+import { RenderIf } from "@/components/shared";
+import { hasCompletedBasicProfile } from "@/lib/utils";
 
 export const CompleteProfileHeader = () => {
-  useGetProfile();
+  const { data: profileData, isPending  } = useGetProfile();
   return (
     <>
-      <div className="border border-status-danger p-3 md:p-6 bg-status-light-red rounded-lg w-full">
+    <RenderIf condition={!hasCompletedBasicProfile(profileData!) && !isPending}>
+    <div className="border border-status-danger p-3 md:p-6 bg-status-light-red rounded-lg w-full">
         <div className="flex gap-3 items-start lg:items-center flex-col lg:flex-row ">
           <div className="flex gap-2 md:gap-3">
             <div className="md:pt-1">
@@ -53,6 +56,7 @@ export const CompleteProfileHeader = () => {
           </div>
         ))}
       </div>
+    </RenderIf>
     </>
   );
 };

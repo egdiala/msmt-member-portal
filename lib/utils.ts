@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { LoginResponse } from "@/types/auth";
-
+import { UpdateProfileType } from "@/types/profile";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -64,3 +64,26 @@ export const createQueryString = (queryObject: Record<string, any>): string => {
     .join("&");
   return queryString ? `?${queryString}` : "";
 };
+
+
+
+
+export function hasCompletedBasicProfile(data?: UpdateProfileType): boolean {
+  if (!data) return false;
+
+  const {
+    phone_number,
+    gender,
+    marital_status,
+    origin_country,
+    preferred_lan,
+  } = data;
+
+  return (
+    Boolean(phone_number?.trim()) &&
+    Boolean(gender?.trim()) &&
+    Boolean(marital_status?.trim()) &&
+    Boolean(origin_country?.trim()) &&
+    Boolean(preferred_lan?.trim())
+  );
+}
