@@ -1,3 +1,4 @@
+'use client'
 import { CompleteProfileForm } from "@/components/custom";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 

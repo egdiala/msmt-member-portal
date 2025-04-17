@@ -152,9 +152,10 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               name="religion"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[
-                    ...variableList(requestVariables?.["religion-list"]),
-                  ]}
+                  selectItems={variableList(
+                    requestVariables?.["religion-list"]
+                  )}
+                  onSelect={field.onChange}
                   placeholder={"Religion"}
                   {...field}
                 />
@@ -170,6 +171,7 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
                     { value: "male", id: 1 },
                     { value: "female", id: 2 },
                   ]}
+                  onSelect={field.onChange}
                   placeholder={"Gender"}
                   {...field}
                 />
@@ -181,9 +183,10 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               name="maritalStatus"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[
-                    ...variableList(requestVariables?.["marital-status"]),
-                  ]}
+                  selectItems={variableList(
+                    requestVariables?.["marital-status"]
+                  )}
+                  onSelect={field.onChange}
                   placeholder={"Marital Status"}
                   {...field}
                 />
@@ -195,7 +198,8 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               name="country"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[...countryList]}
+                  selectItems={countryList}
+                  onSelect={field.onChange}
                   placeholder={"Country"}
                   {...field}
                 />
@@ -207,9 +211,10 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               name="preferredLanguage"
               render={({ field }) => (
                 <SelectCmp
-                  selectItems={[
-                    ...variableList(requestVariables?.["preferred-lan"]),
-                  ]}
+                  selectItems={variableList(
+                    requestVariables?.["preferred-lan"]
+                  )}
+                  onSelect={field.onChange}
                   placeholder={"Preferred Language"}
                   {...field}
                 />
