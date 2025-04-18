@@ -16,10 +16,14 @@ import { Loader } from "@/components/shared/loader";
 
 export const NotificationTable = () => {
   const { data, isPending } = useGetAllNotifications<{ total: number }>({
-    component: "count",
+    // component: "count",
     page: "1",
-    item_per_page: "10",
+    item_per_page: "1",
   });
+
+  console.log(data, "DATA")
+
+
   const { mutate, isPending: isUpdating } = useMarkNotificationAsRead();
   const tableData = ([] as any).map((val: any) => {
     return {
