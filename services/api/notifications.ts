@@ -3,7 +3,7 @@ import { NotificationList } from "@/types/notification";
 
 export const getNotifications = async (
   query: string
-): Promise<NotificationList> => {
+): Promise<{ data: NotificationList }> => {
   const res = await axiosUserService.get(
     `members/accounts/notifications${query}`
   );
