@@ -1,70 +1,106 @@
 "use client";
 
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import { Cell, Pie, PieChart } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 import { IconExternalLink } from "@/components/icons";
 import { Button } from "@/components/ui";
-import { CHART_CONFIG, COLORS } from "@/lib/constants";
-import { FAMILY_AND_FRIENDS_DATA } from "@/lib/mock";
+import { Skeleton } from "@/components/ui/skeleton";
+import { BLUR_VARIANTS, CHART_CONFIG, COLORS } from "@/lib/constants";
+import { useGetFamilyAndFriends } from "@/services/hooks/queries/use-family-and-friends";
+import { FetchedFamilyAndFriendStats } from "@/types/family-and-friends";
 
 export const FamilyAndFriendsCard = () => {
+  const { data, isPending } =
+    useGetFamilyAndFriends<FetchedFamilyAndFriendStats>({
+      component: "count-relationship",
+    });
+
+  const FAMILY_AND_FRIENDS_DATA = [
+    { name: "Group A", value: data?.total_friend ?? 0 },
+    { name: "Group B", value: data?.total_family ?? 0 },
+  ];
+
   return (
-    <div className="bg-white order-4 col-span-1 xl:col-span-3 content-start grid gap-y-7 w-full rounded-2xl px-4 pt-6 pb-10 xl:pb-6">
-      <Button
-        asChild
-        variant="secondary"
-        className="text-button-primary gap-x-1 w-fit"
-      >
-        <Link href="/family-and-friends">
-          Family & Friends
-          <IconExternalLink className="stroke-button-primary" />
-        </Link>
-      </Button>
+    <AnimatePresence mode="popLayout">
+      {isPending ? (
+        <motion.div
+          key="ff-card-skeleton-loader"
+          layoutId="ff-card"
+          className="order-3 col-span-1 xl:col-span-3"
+          variants={BLUR_VARIANTS}
+          animate="enter"
+          exit="exit"
+        >
+          <Skeleton className="h-full w-full rounded-2xl" />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="ff-card"
+          layoutId="ff-card"
+          className="bg-white order-4 col-span-1 xl:col-span-3 content-start grid gap-y-7 w-full rounded-2xl px-4 pt-6 pb-10 xl:pb-6"
+          variants={BLUR_VARIANTS}
+          initial="initial"
+          animate="enter"
+          exit="exit"
+        >
+          <Button
+            asChild
+            variant="secondary"
+            className="text-button-primary gap-x-1 w-fit"
+          >
+            <Link href="/family-and-friends">
+              Family & Friends
+              <IconExternalLink className="stroke-button-primary" />
+            </Link>
+          </Button>
 
-      <div className="w-full justify-center">
-        <div className="flex flex-col justify-between items-center gap-y-7 w-full relative">
-          <ChartContainer config={CHART_CONFIG} className="h-40 w-40">
-            <PieChart width={400} height={900}>
-              <Pie
-                data={FAMILY_AND_FRIENDS_DATA}
-                labelLine={false}
-                innerRadius={65}
-                outerRadius={70}
-                dataKey="value"
-                height={600}
-              >
-                {FAMILY_AND_FRIENDS_DATA.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-            </PieChart>
-          </ChartContainer>
+          <div className="w-full justify-center">
+            <div className="flex flex-col justify-between items-center gap-y-7 w-full relative">
+              <ChartContainer config={CHART_CONFIG} className="h-40 w-40">
+                <PieChart width={400} height={900}>
+                  <Pie
+                    data={FAMILY_AND_FRIENDS_DATA}
+                    labelLine={false}
+                    innerRadius={65}
+                    outerRadius={70}
+                    dataKey="value"
+                    height={600}
+                  >
+                    {FAMILY_AND_FRIENDS_DATA.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
 
-          <div className="px-15 xl:px-5 flex justify-between w-full py-0">
-            <div className="flex gap-x-2 items-center">
-              <div className="border-r-2 h-9 border-actions-green"></div>
+              <div className="px-15 xl:px-5 flex justify-between w-full py-0">
+                <div className="flex gap-x-2 items-center">
+                  <div className="border-r-2 h-9 border-actions-green"></div>
 
-              <div>
-                <p className="text-text-tertiary text-xs">Family</p>
-                <p className="text-text-1 ">36</p>
-              </div>
-            </div>
+                  <div>
+                    <p className="text-text-tertiary text-xs">Family</p>
+                    <p className="text-text-1 ">{data?.total_family ?? 0}</p>
+                  </div>
+                </div>
 
-            <div className="flex gap-x-2 items-center">
-              <div className="border-r-2 h-9 border-status-danger"></div>
+                <div className="flex gap-x-2 items-center">
+                  <div className="border-r-2 h-9 border-status-danger"></div>
 
-              <div>
-                <p className="text-text-tertiary text-xs">Friend</p>
-                <p className="text-text-1">17</p>
+                  <div>
+                    <p className="text-text-tertiary text-xs">Friend</p>
+                    <p className="text-text-1">{data?.total_friend ?? 0}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
