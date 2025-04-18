@@ -1,4 +1,5 @@
 import { RenderIf } from "./render-if";
+import { cn } from "@/lib/utils";
 import { IconEmptyState } from "../icons/icon-empty-state";
 
 interface IEmptyState {
@@ -8,7 +9,12 @@ interface IEmptyState {
 }
 export const EmptyState = ({ hasIcon, subtitle, title }: IEmptyState) => {
   return (
-    <div className="flex flex-col gap-y-1 items-center justify-center py-4">
+    <div
+      className={cn(
+        "flex flex-col gap-y-1 items-center justify-center",
+        hasIcon ? "py-4" : ""
+      )}
+    >
       <RenderIf condition={!!hasIcon}>
         <IconEmptyState />
       </RenderIf>

@@ -33,13 +33,13 @@ export const WalletBalanceCard = () => {
         <motion.div
           key="wallet-card"
           layoutId="wallet-card"
-          className="order-3 pt-6 px-6 col-span-1 xl:col-span-3 rounded-2xl bg-text-bg-3 flex flex-col justify-between gap-y-2.5 content-start"
+          className="order-3 pt-4 md:pt-6 px-6 col-span-1 xl:col-span-3 rounded-2xl bg-text-bg-3 flex flex-row md:flex-col justify-between gap-y-2.5 content-start"
           variants={BLUR_VARIANTS}
           initial="initial"
           animate="enter"
           exit="exit"
         >
-          <div className="grid gap-y-1">
+          <div className="grid gap-y-1 place-content-start">
             <h5 className="text-sm text-white">Wallet balance</h5>
             <p className="text-2xl text-white">
               ₦{formatNumberWithCommas(data?.total_balance ?? 0)}
@@ -57,7 +57,7 @@ export const WalletBalanceCard = () => {
           </div>
 
           <div className="flex justify-end -mr-6">
-            <IconMedicalSavings />
+            <IconMedicalSavings className="w-30 md:w-48 h-29 md:h-47" />
           </div>
         </motion.div>
       )}

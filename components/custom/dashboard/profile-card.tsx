@@ -29,7 +29,7 @@ export const ProfileCard = () => {
         <motion.div
           key="profile-card-skeleton-loader"
           layoutId="profile-card"
-          className="col-span-1 xl:col-span-3"
+          className="order-3 md:order-1 col-span-1 xl:col-span-3"
           variants={blurVariants}
           animate="enter"
           exit="exit"
@@ -40,19 +40,19 @@ export const ProfileCard = () => {
         <motion.div
           key="profile-card"
           layoutId="profile-card"
-          className="col-span-1 xl:col-span-3 flex flex-col gap-y-3 rounded-2xl bg-white p-4 md:p-6"
+          className="order-3 md:order-1 col-span-1 xl:col-span-3 flex flex-col gap-y-3 rounded-2xl bg-white p-4 md:p-6"
           variants={blurVariants}
           initial="initial"
           animate="enter"
           exit="exit"
         >
           <div className="grid gap-y-2 content-start">
-            <Avatar className="size-25">
+            <Avatar className="size-25 rounded-2xl">
               <AvatarImage
                 src={data?.avatar}
-                className="object-cover rounded-full w-full h-full border border-divider"
+                className="object-cover rounded-2xl w-full h-full border border-divider"
               />
-              <AvatarFallback className="text-3xl">
+              <AvatarFallback className="text-3xl rounded-2xl">
                 {data?.first_name[0]} {data?.last_name[0]}
               </AvatarFallback>
             </Avatar>

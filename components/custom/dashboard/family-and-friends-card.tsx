@@ -9,7 +9,10 @@ import { Button } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BLUR_VARIANTS, CHART_CONFIG, COLORS } from "@/lib/constants";
 import { useGetFamilyAndFriends } from "@/services/hooks/queries/use-family-and-friends";
-import { FetchedFamilyAndFriendStats } from "@/types/family-and-friends";
+import {
+  FetchedFamilyAndFriendCountType,
+  FetchedFamilyAndFriendStats,
+} from "@/types/family-and-friends";
 
 export const FamilyAndFriendsCard = () => {
   const { data, isPending } =
@@ -17,9 +20,20 @@ export const FamilyAndFriendsCard = () => {
       component: "count-relationship",
     });
 
-  const FAMILY_AND_FRIENDS_DATA = [
+  const { data: count } =
+    useGetFamilyAndFriends<FetchedFamilyAndFriendCountType>({
+      component: "count",
+    });
+
+  const familyAndFriendsChartData = [
     { name: "Group A", value: data?.total_friend ?? 0 },
     { name: "Group B", value: data?.total_family ?? 0 },
+  ];
+
+  const familyAndFriendsData = [
+    { id: 1, title: "Total", value: count?.total ?? 0 },
+    { id: 2, title: "Family", value: data?.total_family ?? 0 },
+    { id: 3, title: "Friends", value: data?.total_friend ?? 0 },
   ];
 
   return (
@@ -39,7 +53,7 @@ export const FamilyAndFriendsCard = () => {
         <motion.div
           key="ff-card"
           layoutId="ff-card"
-          className="bg-white order-4 col-span-1 xl:col-span-3 content-start grid gap-y-7 w-full rounded-2xl px-4 pt-6 pb-10 xl:pb-6"
+          className="bg-white order-4 col-span-1 xl:col-span-3 content-start flex flex-col-reverse md:flex-col gap-y-7 w-full rounded-2xl px-4 pt-4 md:pt-6 pb-4 md:pb-10 xl:pb-6"
           variants={BLUR_VARIANTS}
           initial="initial"
           animate="enter"
@@ -56,19 +70,19 @@ export const FamilyAndFriendsCard = () => {
             </Link>
           </Button>
 
-          <div className="w-full justify-center">
+          <div className="w-full hidden md:inline">
             <div className="flex flex-col justify-between items-center gap-y-7 w-full relative">
               <ChartContainer config={CHART_CONFIG} className="h-40 w-40">
                 <PieChart width={400} height={900}>
                   <Pie
-                    data={FAMILY_AND_FRIENDS_DATA}
+                    data={familyAndFriendsChartData}
                     labelLine={false}
                     innerRadius={65}
                     outerRadius={70}
                     dataKey="value"
                     height={600}
                   >
-                    {FAMILY_AND_FRIENDS_DATA.map((_, index) => (
+                    {familyAndFriendsChartData.map((_, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
@@ -98,6 +112,15 @@ export const FamilyAndFriendsCard = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="md:hidden flex justify-between items-center">
+            {familyAndFriendsData?.map((val) => (
+              <div key={val.id} className="grid gap-y-0.5">
+                <p className="text-brand-3 text-xs">{val.title}</p>
+                <h3 className="text-xl text-brand-1">{val.value}</h3>
+              </div>
+            ))}
           </div>
         </motion.div>
       )}
