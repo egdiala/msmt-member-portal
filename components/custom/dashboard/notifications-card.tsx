@@ -7,13 +7,13 @@ import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useGetAllNotifications } from "@/services/hooks/queries/use-notifications";
-import { FetchedNotification } from "@/types/notification";
+import { NotificationList } from "@/types/notification";
 import { AnimatePresence, motion } from "motion/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, formatRelative } from "date-fns";
 
 export const NotificationsCard = () => {
-  const { data, isPending } = useGetAllNotifications<FetchedNotification[]>({
+  const { data, isPending } = useGetAllNotifications({
     page: "1",
     status: "0",
     item_per_page: "3",
