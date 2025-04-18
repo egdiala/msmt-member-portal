@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { IconExternalLink, IconLogOut } from "@/components/icons";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
-import { PROFILE_ORGANISATIONS_DATA } from "@/lib/mock";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LogoutModal } from "./logout-modal";
@@ -14,6 +12,14 @@ import { LogoutModal } from "./logout-modal";
 export const ProfileCard = () => {
   const { data, isLoading } = useGetProfile();
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
+
+  const organizationsData = data?.org_data?.map((val) => {
+    return {
+      id: val?.org_id,
+      name: val?.name,
+      icon: val?.avatar,
+    };
+  });
 
   return (
     <AnimatePresence mode="popLayout">
@@ -61,18 +67,18 @@ export const ProfileCard = () => {
             <h4 className="text-text-2 text-xs">Your organisation(s)</h4>
 
             <div className="flex items-center gap-2 flex-wrap">
-              {PROFILE_ORGANISATIONS_DATA.map((organisation) => (
+              {organizationsData?.map((organisation) => (
                 <div
                   key={organisation.id}
                   className="py-1 px-2 flex items-center gap-x-1 border border-grey-400 rounded-sm"
                 >
-                  <Image
-                    src={organisation.icon}
-                    alt="organisation-icon"
-                    className="size-6 bg-[#FFFFFF20] object-cover rounded-xs"
-                    width={24}
-                    height={24}
-                  />
+                  <Avatar>
+                    <AvatarImage src={organisation?.icon} />
+                    <AvatarFallback className="text-sm">
+                      {organisation?.name?.split(" ")?.[0]?.[0]}
+                      {organisation?.name?.split(" ")?.[1]?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
                   <p className="text-xs text-text-2">{organisation.name}</p>
                 </div>
               ))}
