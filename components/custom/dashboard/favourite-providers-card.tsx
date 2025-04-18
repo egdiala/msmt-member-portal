@@ -59,7 +59,10 @@ export const FavouriteProvidersCard = () => {
         <div className="md:hidden flex gap-x-1 items-center pl-3">
           <div className="flex items-center">
             {FAVOURITE_PROVIDERS_DATA.map((provider) => (
-              <Avatar className="-ml-3 border border-white w-8 h-8">
+              <Avatar
+                className="-ml-3 border border-white w-8 h-8"
+                key={provider.id}
+              >
                 <AvatarImage
                   src={provider.img}
                   alt="provider"
