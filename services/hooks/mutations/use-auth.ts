@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import {
+  changePassword,
   completeRegister,
   confirmOtp,
   forgotPassword,
@@ -29,7 +30,7 @@ export const useInitRegister = (fn?: () => void) => {
 export const useCompleteRegister = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: completeRegister,
-    onSuccess: ({ token, ...user }: LoginResponse) => {
+    onSuccess: ({ token, ...user  }: LoginResponse) => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(token));
 
@@ -125,6 +126,19 @@ export const useResetPassword = (fn?: (v: string) => void) => {
     onSuccess: () => {
       toast.success("Successful! Please login to continue.");
       fn?.("/login");
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.msg || "Something went wrong");
+    },
+  });
+};
+
+export const useChangePassword = (onSuccess?: () => void) => {
+  return useMutation({
+    mutationFn: changePassword,
+    onSuccess: () => {
+      toast.success("Successful! Please login to continue.");
+      onSuccess?.();
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.msg || "Something went wrong");

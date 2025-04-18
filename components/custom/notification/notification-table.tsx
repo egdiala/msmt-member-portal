@@ -13,6 +13,8 @@ import { useGetAllNotifications } from "@/services/hooks/queries/use-notificatio
 import { Button } from "@/components/ui";
 import { useMarkNotificationAsRead } from "@/services/hooks/mutations/use-notification";
 import { Loader } from "@/components/shared/loader";
+import { FetchedNotification } from "@/types/notification";
+import { format, formatRelative } from "date-fns";
 
 export const NotificationTable = () => {
   const { data, isPending } = useGetAllNotifications<{ total: number }>({
@@ -20,28 +22,29 @@ export const NotificationTable = () => {
     page: "1",
     item_per_page: "1",
   });
-
-  console.log(data, "DATA")
-
+  const { data: notifications } = useGetAllNotifications<FetchedNotification[]>({
+    page: "1",
+    item_per_page: "3",
+  });
 
   const { mutate, isPending: isUpdating } = useMarkNotificationAsRead();
-  const tableData = ([] as any).map((val: any) => {
+  const tableData = notifications?.map((val) => {
     return {
-      id: val.id,
+      id: val.notification_id,
       date_and_time_added: (
-        <div className="flex items-center gap-x-3 pr-23">
+        <div key={val.notification_id} className="flex items-center gap-x-3 pr-23">
           <div
             className={cn(
               "size-2 rounded-full",
-              val.status === "read" ? "bg-none" : "bg-button-primary"
+              val.status === 1 ? "bg-none" : "bg-button-primary"
             )}
           ></div>
-          <p>
-            {val.date} • {val.time}
+          <p className="capitalize">
+            {formatRelative(val.createdAt, new Date()).split("at")[0]} • {format(val.createdAt, "p")}
           </p>
         </div>
       ),
-      message: <p className="whitespace-pre-wrap">{val.message}</p>,
+      message: <p key={val.notification_id} className="whitespace-pre-wrap">{val.body}</p>,
     };
   });
   return (
@@ -67,14 +70,14 @@ export const NotificationTable = () => {
 
       <TableCmp
         isLoading={isPending}
-        data={tableData}
+        data={tableData || []}
         headers={NOTIFICATION_TABLE_HEADERS}
         emptyStateTitleText={"Nothing here"}
         emptyStateSubtitleText={"No notifications found"}
       />
 
       <div className="grid md:hidden w-full gap-y-2">
-        {[].map((val: any) => (
+        {notifications?.map((val: any) => (
           <div
             key={val.id}
             className="rounded-sm bg-input-field py-4 px-3 grid gap-y-1.5"
@@ -99,7 +102,7 @@ export const NotificationTable = () => {
       <RenderIf condition={data?.total !== 0 && !isPending}>
         <PaginationCmp
           onInputPage={() => {}}
-          currentPage={"24"}
+          currentPage={"1"}
           totalPages={"30"}
         />
       </RenderIf>
