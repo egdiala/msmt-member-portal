@@ -13,7 +13,7 @@ export const FavouriteProvidersCard = () => {
     <div className="order-1 md:order-2 col-span-1 xl:col-span-4 content-start flex flex-col gap-y-4 rounded-2xl bg-white p-4 md:py-6 md:px-6">
       <h3 className="font-semibold text-sm text-text-2">Favourite Providers</h3>
 
-      <div className="flex justify-between md:justify-end flex-row md:flex-col gap-y-4">
+      <div className="flex justify-between md:justify-end flex-row md:flex-col gap-y-3 md:gap-y-4">
         <div className="flex-col gap-y-1 flex-1 hidden md:flex">
           {FAVOURITE_PROVIDERS_DATA.map((provider, index) => (
             <Fragment key={provider.id}>
@@ -56,7 +56,7 @@ export const FavouriteProvidersCard = () => {
           ))}
         </div>
 
-        <div className="md:hidden flex gap-x-1 items-center">
+        <div className="md:hidden flex gap-x-1 items-center pl-3">
           <div className="flex items-center">
             {FAVOURITE_PROVIDERS_DATA.map((provider) => (
               <Avatar className="-ml-3 border border-white w-8 h-8">

@@ -52,8 +52,9 @@ export const ProfileCard = () => {
                 src={data?.avatar}
                 className="object-cover rounded-2xl w-full h-full border border-divider"
               />
-              <AvatarFallback className="text-3xl rounded-2xl">
-                {data?.first_name[0]} {data?.last_name[0]}
+              <AvatarFallback className="text-5xl rounded-2xl">
+                {data?.first_name[0]}
+                {data?.last_name[0]}
               </AvatarFallback>
             </Avatar>
 

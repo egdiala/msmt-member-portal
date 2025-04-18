@@ -53,7 +53,7 @@ export const FamilyAndFriendsCard = () => {
         <motion.div
           key="ff-card"
           layoutId="ff-card"
-          className="bg-white order-4 col-span-1 xl:col-span-3 content-start flex flex-col-reverse md:flex-col gap-y-7 w-full rounded-2xl px-4 pt-4 md:pt-6 pb-4 md:pb-10 xl:pb-6"
+          className="bg-white order-4 col-span-1 xl:col-span-3 content-start flex flex-col-reverse md:flex-col gap-y-4 md:gap-y-7 w-full rounded-2xl px-4 pt-4 md:pt-6 pb-4 md:pb-10 xl:pb-6"
           variants={BLUR_VARIANTS}
           initial="initial"
           animate="enter"
@@ -72,25 +72,32 @@ export const FamilyAndFriendsCard = () => {
 
           <div className="w-full hidden md:inline">
             <div className="flex flex-col justify-between items-center gap-y-7 w-full relative">
-              <ChartContainer config={CHART_CONFIG} className="h-40 w-40">
-                <PieChart width={400} height={900}>
-                  <Pie
-                    data={familyAndFriendsChartData}
-                    labelLine={false}
-                    innerRadius={65}
-                    outerRadius={70}
-                    dataKey="value"
-                    height={600}
-                  >
-                    {familyAndFriendsChartData.map((_, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
+              <div className="flex w-full justify-center items-center relative">
+                <ChartContainer config={CHART_CONFIG} className="h-40 w-40">
+                  <PieChart width={400} height={900}>
+                    <Pie
+                      data={familyAndFriendsChartData}
+                      labelLine={false}
+                      innerRadius={65}
+                      outerRadius={70}
+                      dataKey="value"
+                      height={600}
+                    >
+                      {familyAndFriendsChartData.map((_, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ChartContainer>
+
+                <div className="absolute w-full flex flex-col justify-center items-center">
+                  <p className="text-xs text-brand-3">Total</p>
+                  <h4 className="text-xl text-brand-1">{count?.total ?? 0}</h4>
+                </div>
+              </div>
 
               <div className="px-15 xl:px-5 flex justify-between w-full py-0">
                 <div className="flex gap-x-2 items-center">
