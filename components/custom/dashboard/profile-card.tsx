@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LogoutModal } from "./logout-modal";
+import { RenderIf } from "@/components/shared";
+import { EmptyState } from "@/components/shared/empty-state";
 
 export const ProfileCard = () => {
   const { data, isLoading } = useGetProfile();
@@ -67,21 +69,33 @@ export const ProfileCard = () => {
             <h4 className="text-text-2 text-xs">Your organisation(s)</h4>
 
             <div className="flex items-center gap-2 flex-wrap">
-              {organizationsData?.map((organisation) => (
-                <div
-                  key={organisation.id}
-                  className="py-1 px-2 flex items-center gap-x-1 border border-grey-400 rounded-sm"
-                >
-                  <Avatar>
-                    <AvatarImage src={organisation?.icon} />
-                    <AvatarFallback className="text-sm">
-                      {organisation?.name?.split(" ")?.[0]?.[0]}
-                      {organisation?.name?.split(" ")?.[1]?.[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <p className="text-xs text-text-2">{organisation.name}</p>
+              <RenderIf condition={organizationsData!.length > 0}>
+                {organizationsData?.map((organisation) => (
+                  <div
+                    key={organisation.id}
+                    className="py-1 px-2 flex items-center gap-x-1 border border-grey-400 rounded-sm"
+                  >
+                    <Avatar>
+                      <AvatarImage src={organisation?.icon} />
+                      <AvatarFallback className="text-sm">
+                        {organisation?.name?.split(" ")?.[0]?.[0]}
+                        {organisation?.name?.split(" ")?.[1]?.[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <p className="text-xs text-text-2">{organisation.name}</p>
+                  </div>
+                ))}
+              </RenderIf>
+
+              <RenderIf condition={organizationsData!.length === 0}>
+                <div className="w-full flex justify-center items-center">
+                  <EmptyState
+                    title=""
+                    subtitle="Your organisations will appear here"
+                    hasIcon
+                  />
                 </div>
-              ))}
+              </RenderIf>
             </div>
           </div>
 
