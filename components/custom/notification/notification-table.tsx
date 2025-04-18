@@ -32,7 +32,7 @@ export const NotificationTable = () => {
     status: "0",
   });
 
-  const totalPages = Math.ceil(pages?.total! / itemsPerPage);
+  const totalPages = Math.ceil(pages?.total || 0 / itemsPerPage);
 
   const { mutate, isPending: isUpdating } = useMarkNotificationAsRead();
   const tableData = notifications?.map((val) => {
@@ -119,7 +119,7 @@ export const NotificationTable = () => {
         <PaginationCmp
           onInputPage={(page) => setPage(Number(page))}
           currentPage={page.toString()}
-          totalPages={totalPages?.toString()!}
+          totalPages={totalPages?.toString()}
         />
       </RenderIf>
     </>
