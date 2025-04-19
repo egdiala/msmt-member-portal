@@ -28,10 +28,6 @@ export const NotificationTable = () => {
     component: "count",
   });
 
-  const { data: status } = useGetAllNotifications({
-    status: "0",
-  });
-
   const totalPages = Math.ceil(pages?.total || 0 / itemsPerPage);
 
   const { mutate, isPending: isUpdating } = useMarkNotificationAsRead();
@@ -69,7 +65,7 @@ export const NotificationTable = () => {
         <div className="flex justify-end w-full">
           <Button
             onClick={() => mutate()}
-            disabled={!status?.length}
+            disabled={notifications?.every((val) => val.status === 1)}
             variant={"secondary"}
           >
             {isUpdating ? (
