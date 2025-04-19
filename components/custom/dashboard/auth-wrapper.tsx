@@ -15,7 +15,7 @@ interface AuthWrapperProps {
 
 export function AuthWrapper({ children }: AuthWrapperProps) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
-  const { data } = useGetAllNotifications<{ total: number }>({
+  const { data } = useGetAllNotifications({
     component: "count",
     page: "1",
     item_per_page: Number.MAX_SAFE_INTEGER.toString(),

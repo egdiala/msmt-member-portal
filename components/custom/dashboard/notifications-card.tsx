@@ -10,10 +10,13 @@ import { Button } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useGetAllNotifications } from "@/services/hooks/queries/use-notifications";
+import { AnimatePresence, motion } from "motion/react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format, formatRelative } from "date-fns";
 import { FetchedNotification } from "@/types/notification";
 
 export const NotificationsCard = () => {
-  const { data, isPending } = useGetAllNotifications<FetchedNotification[]>({
+  const { data, isPending } = useGetAllNotifications({
     page: "1",
     status: "0",
     item_per_page: "3",

@@ -5,20 +5,20 @@ export type NotificationQueryType = {
   component?: string;
 };
 
-export interface NotificationsCount {
-  total: number;
-}
+export type NotificationData = {
+  appointment_id: string;
+};
 
-export interface FetchedNotification {
-    user_id: string;
-    user_type: string;
-    subject: string;
-    body: string;
-    status: 0 | 1;
-    data: {
-        appointment_id: string;
-    };
-    createdAt: string | Date;
-    updatedAt: string | Date;
-    notification_id: string;
-}
+export type Notification = {
+  user_id: string;
+  user_type: "member" | string;
+  subject: string;
+  body: string;
+  status: number;
+  data: NotificationData;
+  createdAt: string;
+  updatedAt: string;
+  notification_id: string;
+};
+
+export type NotificationList = Notification[] & { total: number };
