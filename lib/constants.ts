@@ -13,11 +13,11 @@ export const COLORS = ["#DD2418", "#0AA571"];
 
 export const CHART_CONFIG = {
   desktop: {
-    label: "Male",
+    label: "Family",
     color: "#DD2418",
   },
   mobile: {
-    label: "Female",
+    label: "Friends",
     color: "#0AA571",
   },
 } satisfies ChartConfig;
@@ -92,4 +92,10 @@ export const TRANSACTION_STATUS_ENUM: Record<string, string> = {
 export const TRANSACTION_TYPE_ENUM: Record<string, string> = {
   credit: "1",
   debit: "2",
+};
+
+export const BLUR_VARIANTS = {
+  initial: { opacity: 0, filter: "blur(4px)" },
+  enter: { opacity: 1, filter: "blur(0px)" },
+  exit: { opacity: 0, filter: "blur(4px)" },
 };
