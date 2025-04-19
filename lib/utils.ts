@@ -53,6 +53,9 @@ export const getAdminData = () => {
 };
 
 export const createQueryString = (queryObject: Record<string, any>): string => {
+  if (!queryObject) {
+    throw Error("objectToQuery expects an object");
+  }
   const queryString = Object.entries(queryObject)
     .filter(
       // eslint-disable-next-line

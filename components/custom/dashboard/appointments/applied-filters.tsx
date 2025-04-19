@@ -38,7 +38,7 @@ export function AppliedFilters({
                 <span className="text-sm text-brand-2">
                   {capitalizeFirstLetter(key)}:
                 </span>{" "}
-                {capitalizeFirstLetter(value)}
+                {value}
                 <button
                   className="ml-1 text-brand-1 font-semibold "
                   onClick={() => onClearFilter(key)}
