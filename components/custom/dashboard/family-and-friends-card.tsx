@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { Cell, Pie, PieChart } from "recharts";
+import { Cell, Label, Pie, PieChart } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 import { IconExternalLink } from "@/components/icons";
 import { Button } from "@/components/ui";
@@ -89,14 +89,44 @@ export const FamilyAndFriendsCard = () => {
                           fill={COLORS[index % COLORS.length]}
                         />
                       ))}
+                        <Label
+                          content={({ viewBox }) => {
+                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                              return (
+                                <text
+                                  x={viewBox.cx}
+                                  y={viewBox.cy}
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                  className="grid"
+                                >
+                                  <tspan
+                                    x={viewBox.cx}
+                                    y={(viewBox.cy || 0) - 10}
+                                    className="text-xs fill-brand-3"
+                                  >
+                                    Total
+                                  </tspan>
+                                  <tspan
+                                    x={viewBox.cx}
+                                    y={(viewBox.cy || 0) + 14}
+                                    className="fill-brand-1 text-xl"
+                                  >
+                                    {(count?.total ?? 0).toLocaleString()}
+                                  </tspan>
+                                </text>
+                              )
+                            }
+                          }}
+                        />
                     </Pie>
                   </PieChart>
                 </ChartContainer>
 
-                <div className="absolute w-full flex flex-col justify-center items-center">
+                {/* <div className="absolute w-full flex flex-col justify-center items-center">
                   <p className="text-xs text-brand-3">Total</p>
                   <h4 className="text-xl text-brand-1">{count?.total ?? 0}</h4>
-                </div>
+                </div> */}
               </div>
 
               <div className="px-15 xl:px-5 flex justify-between w-full py-0">

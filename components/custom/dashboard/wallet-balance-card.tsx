@@ -42,7 +42,7 @@ export const WalletBalanceCard = () => {
           <div className="grid gap-y-1 place-content-start">
             <h5 className="text-sm text-white">Wallet balance</h5>
             <p className="text-2xl text-white">
-              ₦{formatNumberWithCommas(data?.total_balance ?? 0)}
+              {formatNumberWithCommas(data?.total_balance ?? 0)}
             </p>
             <Button
               asChild
