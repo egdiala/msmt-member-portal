@@ -13,7 +13,6 @@ interface ITransactionStatCard {
 const CardContent = ({
   title,
   value,
-  hideCurrency = false,
 }: {
   title: string;
   value: string;
@@ -23,7 +22,6 @@ const CardContent = ({
     <>
       <h4 className="text-sm text-brand-2">{title}</h4>
       <p className="text-2xl text-text-bg-1 font-medium md:font-normal">
-        <RenderIf condition={!hideCurrency}>₦</RenderIf>
         {value}
       </p>
     </>
