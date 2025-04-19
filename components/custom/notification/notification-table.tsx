@@ -28,7 +28,7 @@ export const NotificationTable = () => {
     component: "count",
   });
 
-  const totalPages = Math.ceil(pages?.total || 0 / itemsPerPage);
+  const totalPages = Math.ceil((pages?.total || 0) / itemsPerPage);
 
   const { mutate, isPending: isUpdating } = useMarkNotificationAsRead();
   const tableData = notifications?.map((val) => {
@@ -92,12 +92,13 @@ export const NotificationTable = () => {
       <div className="grid md:hidden w-full gap-y-2">
         {notifications?.map((val: any) => (
           <div
-            key={val.id}
+            key={val.notification_id}
             className="rounded-sm bg-input-field py-4 px-3 grid gap-y-1.5"
           >
             <div className="flex items-center justify-between">
-              <p className="font-medium text-xs text-text-1">
-                {val.date} • {val.time}
+              <p className="capitalize font-medium text-xs text-text-1">
+                {formatRelative(val.createdAt, new Date()).split("at")[0]} •{" "}
+                {format(val.createdAt, "p")}
               </p>
               <RenderIf condition={val.status === "0"}>
                 <div
@@ -106,7 +107,7 @@ export const NotificationTable = () => {
               </RenderIf>
             </div>
             <div className="border-b border-divider"></div>
-            <p className="text-xs text-text-2">{val.message}</p>
+            <p className="text-xs text-text-2">{val.body}</p>
           </div>
         ))}
       </div>
