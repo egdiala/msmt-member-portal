@@ -57,7 +57,7 @@ export const WalletTable = () => {
         </p>
       ),
       description: transaction.description,
-      amount: <p>₦{formatNumberWithCommas(transaction.amount ?? 0)}</p>,
+      amount: <p>{formatNumberWithCommas(transaction.amount ?? 0)}</p>,
       type: (
         <p className="capitalize">
           <RenderIf condition={transaction.transaction_type === 1}>
