@@ -1,15 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { getNotifications } from "@/services/api/notifications";
 import { createQueryString } from "@/lib/utils";
-import type { NotificationQueryType } from "@/types/notification";
+import type { NotificationList, NotificationQueryType } from "@/types/notification";
+import { QueryResponseType } from "@/types/utils";
 
-export const useGetAllNotifications = <T>(query: NotificationQueryType) => {
+export const useGetAllNotifications = (query: NotificationQueryType) => {
   const searchQuery =  createQueryString(query);
-  return useQuery({
+  return useQuery<QueryResponseType<NotificationList>, Error, NotificationList>({
     queryKey: ["get-notifications", query],
     queryFn: () => getNotifications(searchQuery),
     select: (res) => {
-      return res.data as T;
+      return res.data;
     },
     refetchOnWindowFocus: false,
     retry: false,
