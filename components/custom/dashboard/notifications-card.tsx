@@ -9,6 +9,7 @@ import { IconExternalLink } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { BLUR_VARIANTS } from "@/lib/constants";
 import { useGetAllNotifications } from "@/services/hooks/queries/use-notifications";
 
 export const NotificationsCard = () => {
@@ -25,7 +26,7 @@ export const NotificationsCard = () => {
           key="notifications-card-skeleton-loader"
           layoutId="notifications-card"
           className="order-2 md:order-3 col-span-1 md:col-span-2 xl:col-span-5"
-          variants={blurVariants}
+          variants={BLUR_VARIANTS}
           animate="enter"
           exit="exit"
         >
@@ -36,7 +37,7 @@ export const NotificationsCard = () => {
           key="notifications-card"
           layoutId="profile-card"
           className="order-2 md:order-3 col-span-1 md:col-span-2 xl:col-span-5 flex flex-col justify-between gap-y-10 md:gap-y-4 rounded-2xl bg-white py-6 px-4 md:px-6"
-          variants={blurVariants}
+          variants={BLUR_VARIANTS}
           initial="initial"
           animate="enter"
           exit="exit"
@@ -110,10 +111,4 @@ export const NotificationsCard = () => {
       )}
     </AnimatePresence>
   );
-};
-
-const blurVariants = {
-  initial: { opacity: 0, filter: "blur(4px)" },
-  enter: { opacity: 1, filter: "blur(0px)" },
-  exit: { opacity: 0, filter: "blur(4px)" },
 };

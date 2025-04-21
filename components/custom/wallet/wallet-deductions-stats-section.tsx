@@ -4,7 +4,7 @@ import { TransactionStatCard } from "./transaction-stat-card";
 
 export const WalletDeductionsStatsSection = () => {
   const walletStats = [
-    { id: 1, title: "Unit Balance", value: "235,402,853", bg: "bg-grey-400" },
+    { id: 1, title: "Total Balance", value: "235,402,853", bg: "bg-grey-400" },
     { id: 2, title: "Total Credit", value: "502,853", bg: "bg-green" },
     {
       id: 3,
