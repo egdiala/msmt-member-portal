@@ -17,26 +17,13 @@ interface ISingleProviderCard extends FetchedServiceProvidersType {
   key: string;
   isOrganisation?: boolean;
 }
-export const SingleProviderCard = (provider: ISingleProviderCard) => {
+export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const { id } = useParams();
 
   const ProviderSpecialtyInfo = () => {
     return (
       <p className="text-[8px] md:text-xs text-brand-2 capitalize">
-        <RenderIf
-          condition={
-            provider?.provider_data?.account_type?.toLowerCase() === "payer"
-          }
-        >
-          {provider?.provider_data?.industry}
-        </RenderIf>
-        <RenderIf
-          condition={
-            provider?.provider_data?.account_type?.toLowerCase() !== "payer"
-          }
-        >
-          {provider?.provider_data?.specialty}
-        </RenderIf>
+        {provider?.provider_data?.industry_name || provider?.provider_data?.specialty}
       </p>
     );
   };
@@ -110,20 +97,13 @@ export const SingleProviderCard = (provider: ISingleProviderCard) => {
           </RenderIf>
 
           <div className="flex items-center gap-x-0.5 text-xs text-brand-1">
-            <RenderIf
-              condition={
-                provider?.provider_data?.account_type?.toLowerCase() ===
-                "individual"
-              }
-            >
               <IconStarFull className="fill-actions-amber size-4" />
               {provider?.provider_data?.rating ?? 0}
-            </RenderIf>
           </div>
 
           <RenderIf condition={!provider.isOrganisation}>
             <p className="font-medium text-xs">
-              From {formatNumberWithCommas(provider?.charge_from)}/hr
+              From {formatNumberWithCommas(provider?.charge_from as number)}/hr
             </p>
           </RenderIf>
         </div>

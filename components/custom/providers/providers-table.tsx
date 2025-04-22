@@ -70,13 +70,10 @@ export const ProvidersTable = () => {
       name: <p className="capitalize">{provider?.provider_data?.name}</p>,
       specialty: (
         <p className="capitalize">
-          {provider?.provider_data?.specialty ?? "N/A"}
+          {provider?.provider_data?.specialty || provider?.provider_data?.industry_name}
         </p>
       ),
-      rating:
-        provider?.provider_data?.account_type === "payer"
-          ? provider?.provider_data?.rating ?? "0"
-          : "N/A",
+      rating: provider?.provider_data?.rating,
       type: (
         <p className="capitalize">
           {provider?.provider_data?.account_type === "payer"
@@ -192,10 +189,10 @@ export const ProvidersTable = () => {
             data={tableData ?? []}
             headers={PROVIDERS_TABLE_HEADERS}
             onClickRow={(row) => {
-              if (row.datum.type.toLowerCase() === "organisation") {
-                router.push(`/providers/organisation/${row.id}`);
-              } else if (row.datum.type.toLowerCase() === "individual") {
-                router.push(`/providers/individual/${row.id}`);
+              if (row.datum.provider_data.user_type.toLowerCase() === "org") {
+                router.push(`/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`);
+              } else if (row.datum.provider_data.user_type.toLowerCase() === "provider") {
+                router.push(`/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`);
               }
             }}
             isLoading={isLoading}

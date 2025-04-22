@@ -42,7 +42,8 @@ export const SingleOrganisationProviderContent = () => {
 
   const { data } = useGetServiceProviders<FetchOrganizationProvider>({
     user_id: id?.toString(),
-    user_type: "payer",
+    user_type: searchParams.get("type") as "provider" | "org",
+    account_service_type: searchParams.get("service_type") as "provider" | "payer"
   });
 
   const { data: providers, isLoading } = useGetOrganizationProviders<
@@ -230,12 +231,13 @@ export const SingleOrganisationProviderContent = () => {
                     avatar: provider?.user_data?.avatar,
                     user_type: "org",
                     account_type: "individual",
+                    account_service_type: "payer",
                     user_id: provider?.provider_id,
                     specialty: provider?.user_data?.specialty,
                     createdAt: provider?.createdAt,
                     rating: provider?.rating?.toString(),
                   }}
-                  user_type="individual"
+                  // user_type="individual"
                   charge_from={0}
                 />
               ))}
@@ -270,12 +272,13 @@ export const SingleOrganisationProviderContent = () => {
                       avatar: provider?.user_data?.avatar,
                       user_type: "org",
                       account_type: "individual",
+                      account_service_type: "payer",
                       user_id: provider?.provider_id,
                       specialty: provider?.user_data?.specialty,
                       createdAt: provider?.createdAt,
                       rating: provider?.rating?.toString(),
                     }}
-                    user_type="individual"
+                    // user_type="individual"
                     charge_from={0}
                   />
                 ))}

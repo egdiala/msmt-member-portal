@@ -5,7 +5,8 @@ export interface FetchServiceProvidersQuery {
   service_cat_id?: string; // for provider type
   service_offer_id?: string; // for service type
   user_id?: string;
-  user_type?: "provider" | "payer";
+  user_type?: "provider" | "org";
+  account_service_type?: "provider" | "payer";
   gender?: string;
   religion?: string;
   amount?: string;
@@ -40,18 +41,19 @@ export interface FetchProviderScheduleQuery {
 }
 
 export interface FetchedServiceProvidersType {
-  user_type: string;
   charge_from: number;
   provider_data: {
     name: string;
     avatar: string;
-    user_type: string;
-    account_type: string;
+    user_type: "org" | "provider";
+    account_type: "individual" | "payer";
+    account_service_type: "provider" | "payer";
     user_id: string;
     specialty?: string;
     createdAt: string;
     industry_id?: string;
     industry?: string;
+    industry_name?: string;
     rating?: string;
   };
 }
@@ -79,6 +81,35 @@ export interface FetchOrganizationProvider {
     name: string;
   }[];
   specialty?: string;
+}
+
+export interface FetchSingleProvider {
+  name: string;
+  avatar: string;
+  comm_mode: Array<"audio" | "video">;
+  user_id: string;
+  rating_data: {
+    _id: null;
+    rating: number;
+  };
+  completed_appointment: number;
+  charge_from: number;
+  service_data: Array<{
+    service_offer_id: string;
+    amount: number;
+    name: string;
+  }>;
+  specialty: string;
+  total_provider: number;
+  total_member: number;
+  rating: number;
+  total_certification: number;
+  total_publication: number;
+  service_start_year: number;
+  special_training_data: Array<{
+    name: string;
+    year: number;
+  }>;
 }
 
 export interface FetchedSingleOrganizationProviders {

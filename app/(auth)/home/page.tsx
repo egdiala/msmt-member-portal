@@ -22,7 +22,7 @@ const Dashboard = () => {
         <FamilyAndFriendsCard />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-12 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-5">
         <ProfileCard/>
         <FavouriteProvidersCard />
         <NotificationsCard />

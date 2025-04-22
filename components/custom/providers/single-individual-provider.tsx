@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import {
   IconAudioLines,
   IconPlus,
@@ -13,14 +13,16 @@ import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
-import { FetchOrganizationProvider } from "@/types/providers";
+import { FetchSingleProvider } from "@/types/providers";
 
 export const SingleIndividualProviderContent = () => {
   const { id } = useParams();
-  const { data, isLoading } = useGetServiceProviders<FetchOrganizationProvider>(
+  const searchParams = useSearchParams();
+  const { data, isLoading } = useGetServiceProviders<FetchSingleProvider>(
     {
       user_id: id?.toString(),
-      user_type: "provider",
+      user_type: searchParams.get("type") as "provider" | "org",
+      account_service_type: searchParams.get("service_type") as "provider" | "payer"
     }
   );
 
@@ -34,7 +36,7 @@ export const SingleIndividualProviderContent = () => {
     {
       id: 2,
       title: "Special Training",
-      value: "Psychotherapy (Cognitive Behavioural Therapy)",
+      value: data?.special_training_data.map((item) => item.name).join(", "),
     },
     {
       id: 3,
@@ -89,7 +91,7 @@ export const SingleIndividualProviderContent = () => {
                 <p className="text-brand-2 capitalize">{data?.specialty}</p>
                 <div className="flex items-center gap-x-1 text-sm text-brand-1">
                   <IconStarFull className="fill-actions-amber size-5" />
-                  4.5
+                  {data?.rating.toFixed(1)}
                 </div>
               </div>
 
@@ -127,7 +129,7 @@ export const SingleIndividualProviderContent = () => {
               {data?.service_data?.map((service) => (
                 <div
                   key={service?.service_offer_id}
-                  className="rounded-full bg-grey-400 px-4 py-2.5"
+                  className="rounded-full bg-grey-400 px-4 py-2.5 capitalize"
                 >
                   {service?.name}
                 </div>
