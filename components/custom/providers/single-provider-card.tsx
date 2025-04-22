@@ -19,6 +19,27 @@ interface ISingleProviderCard extends FetchedServiceProvidersType {
 }
 export const SingleProviderCard = (provider: ISingleProviderCard) => {
   const { id } = useParams();
+
+  const ProviderSpecialtyInfo = () => {
+    return (
+      <p className="text-[8px] md:text-xs text-brand-2 capitalize">
+        <RenderIf
+          condition={
+            provider?.provider_data?.account_type?.toLowerCase() === "payer"
+          }
+        >
+          {provider?.provider_data?.industry}
+        </RenderIf>
+        <RenderIf
+          condition={
+            provider?.provider_data?.account_type?.toLowerCase() !== "payer"
+          }
+        >
+          {provider?.provider_data?.specialty}
+        </RenderIf>
+      </p>
+    );
+  };
   return (
     <Link
       href={
@@ -78,25 +99,16 @@ export const SingleProviderCard = (provider: ISingleProviderCard) => {
           <h2 className="font-medium text-brand-1 text-[10px] md:text-base">
             {provider?.provider_data?.name}
           </h2>
-          <p className="text-[8px] md:text-xs text-brand-2 capitalize">
-            <RenderIf
-              condition={
-                provider?.provider_data?.account_type?.toLowerCase() === "payer"
-              }
-            >
-              {provider?.provider_data?.industry}
-            </RenderIf>
-            <RenderIf
-              condition={
-                provider?.provider_data?.account_type?.toLowerCase() !== "payer"
-              }
-            >
-              {provider?.provider_data?.specialty}
-            </RenderIf>
-          </p>
+          <RenderIf condition={!provider.isOrganisation}>
+            <ProviderSpecialtyInfo />
+          </RenderIf>
         </div>
 
         <div className="flex items-center justify-between">
+          <RenderIf condition={!!provider.isOrganisation}>
+            <ProviderSpecialtyInfo />
+          </RenderIf>
+
           <div className="flex items-center gap-x-0.5 text-xs text-brand-1">
             <RenderIf
               condition={
@@ -109,9 +121,11 @@ export const SingleProviderCard = (provider: ISingleProviderCard) => {
             </RenderIf>
           </div>
 
-          <p className="font-medium text-xs">
-            From {formatNumberWithCommas(provider?.charge_from)}/hr
-          </p>
+          <RenderIf condition={!provider.isOrganisation}>
+            <p className="font-medium text-xs">
+              From {formatNumberWithCommas(provider?.charge_from)}/hr
+            </p>
+          </RenderIf>
         </div>
       </div>
     </Link>

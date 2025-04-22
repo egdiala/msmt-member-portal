@@ -194,9 +194,10 @@ export const SingleOrganisationProviderContent = () => {
                   user_id: provider?.provider_id,
                   specialty: provider?.user_data?.specialty,
                   createdAt: provider?.createdAt,
+                  rating: provider?.rating?.toString(),
                 }}
                 user_type="individual"
-                charge_from={provider?.user_data?.charge_from}
+                charge_from={0}
               />
             ))}
           </div>
@@ -211,14 +212,15 @@ export const SingleOrganisationProviderContent = () => {
                 provider_data={{
                   name: provider?.user_data?.name,
                   avatar: provider?.user_data?.avatar,
-                  user_type: "individual",
-                  account_type: "",
+                  user_type: "org",
+                  account_type: "individual",
                   user_id: provider?.provider_id,
                   specialty: provider?.user_data?.specialty,
                   createdAt: provider?.createdAt,
+                  rating: provider?.rating?.toString(),
                 }}
                 user_type="individual"
-                charge_from={provider?.user_data?.charge_from}
+                charge_from={0}
               />
             ))}
           </div>
