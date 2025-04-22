@@ -17,6 +17,7 @@ export interface FetchServiceProvidersQuery {
 }
 
 export interface FetchOrganizationProvidersQuery {
+  q?: string;
   item_per_page?: string;
   page?: string;
   org_id: string;

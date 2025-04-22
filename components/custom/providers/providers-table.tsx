@@ -19,6 +19,7 @@ import {
 } from "@/components/shared";
 import { Button } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
+import { EmptyState } from "@/components/shared/empty-state";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { useDebounce } from "@/hooks/use-debounce";
 import {
@@ -226,25 +227,35 @@ export const ProvidersTable = () => {
           </RenderIf>
 
           <RenderIf condition={!isLoading}>
-            <div
-              className={cn(
-                "grid gap-4 md:gap-6",
-                showFilterButtonOnly
-                  ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                  : "grid-cols-2 lg:grid-cols-3"
-              )}
-            >
-              {data?.map((provider) => (
-                <SingleProviderCard
-                  key={provider?.provider_data?.user_id}
-                  {...provider}
-                />
-              ))}
-            </div>
+            <RenderIf condition={tableData?.length === 0}>
+              <EmptyState
+                title="Providers"
+                subtitle="There are no providers yet"
+                hasIcon
+              />
+            </RenderIf>
+
+            <RenderIf condition={tableData?.length !== 0}>
+              <div
+                className={cn(
+                  "grid gap-4 md:gap-6",
+                  showFilterButtonOnly
+                    ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                    : "grid-cols-2 lg:grid-cols-3"
+                )}
+              >
+                {data?.map((provider) => (
+                  <SingleProviderCard
+                    key={provider?.provider_data?.user_id}
+                    {...provider}
+                  />
+                ))}
+              </div>
+            </RenderIf>
           </RenderIf>
         </RenderIf>
 
-        <RenderIf condition={!isLoading}>
+        <RenderIf condition={!isLoading && tableData!.length > 0}>
           <PaginationCmp
             onInputPage={(val) => handlePageChange(parseInt(val))}
             currentPage={page?.toString()}
