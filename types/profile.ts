@@ -25,7 +25,7 @@ type DeletionData = {
   status: number;
 };
 
-export type RequestVariableComponent = 
+export type RequestVariableComponent =
   | "religion-list"
   | "marital-status"
   | "country-list"
@@ -60,4 +60,5 @@ export type UserProfileType = {
   updatedAt: string;
   user_id: string;
   org_data: any[];
+  funding_unitrate: number;
 };

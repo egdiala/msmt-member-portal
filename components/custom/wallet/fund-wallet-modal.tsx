@@ -5,8 +5,8 @@ import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "motion/react";
 import useMeasure from "react-use-measure";
+import { HookConfig, InitializePayment } from "react-paystack/dist/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconDollarSign } from "@/components/icons";
 import { FloatingInput, Modal } from "@/components/shared";
 import { Loader } from "@/components/shared/loader";
 import {
@@ -22,7 +22,7 @@ import {
   useInitFundWallet,
   useCompleteFundWallet,
 } from "@/services/hooks/mutations/use-wallet";
-import { HookConfig, InitializePayment } from "react-paystack/dist/types";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 interface IFundWalletModal {
   isOpen: boolean;
@@ -42,6 +42,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
     amount: 0,
     publicKey: "",
   });
+
   const [usePaystackPayment, setUseCustomHook] = useState<
     (hookConfig: HookConfig) => InitializePayment
   >(() => () => {});
@@ -70,6 +71,8 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
   const { mutate: completeWalletFunding } = useCompleteFundWallet(() => {
     onClose();
   });
+
+  const { data: userProfile } = useGetProfile();
 
   const { mutate, isPending } = useInitFundWallet((res) => {
     setConfig((prev) => ({
@@ -137,8 +140,8 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
                           className=" pr-8"
                           {...field}
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-grey-300 pointer-events-none">
-                          <IconDollarSign className="h-4 w-4" />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-grey-300 pointer-events-none">
+                          ₦
                         </div>
                       </div>
                     </FormControl>
@@ -148,10 +151,19 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
               />
 
               <div className="bg-blue-400 py-3 flex flex-col justify-center items-center gap-y-1 rounded-lg">
-                <p className="text-brand-2 text-xs">$1 = 2 units</p>
+                <p className="text-brand-2 text-xs">
+                  ₦1 = {userProfile?.funding_unitrate ?? 0} unit
+                  {userProfile
+                    ? userProfile?.funding_unitrate > 1
+                      ? "s"
+                      : ""
+                    : ""}
+                </p>
                 <div className="flex items-center gap-x-1">
-                  <p className="text-brand-2 text-xs">$12 will get you</p>
-                  <p className="font-medium text-sm text-brand-1">42 units</p>
+                  <p className="text-brand-2 text-xs">₦12 will get you</p>
+                  <p className="font-medium text-sm text-brand-1">
+                    {userProfile ? userProfile?.funding_unitrate * 12 : 0} units
+                  </p>
                 </div>
               </div>
             </div>
