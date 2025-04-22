@@ -34,6 +34,7 @@ export const useGetOrganizationProviders = <T>(
     queryFn: () => getOrganizationProviders(query),
     select: (res) => res?.data as T,
     retry: false,
+    enabled: !!query.org_id,
     throwOnError(error: any) {
       toast.error(error?.response?.data?.msg || "Something went wrong");
       return false;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { IconList, IconList2, IconStarFull } from "@/components/icons";
 import {
   BreadcrumbCmp,
@@ -9,63 +10,68 @@ import {
   Searchbar,
   TableCmp,
 } from "@/components/shared";
-import { Avatar, AvatarImage, Button } from "@/components/ui";
-import { PROVIDERS_UNDER_ORGANISATION_LIST } from "@/lib/mock";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
+import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
+import { formatTableDate } from "@/lib/utils";
+import {
+  useGetOrganizationProviders,
+  useGetServiceProviders,
+} from "@/services/hooks/queries/use-providers";
+import {
+  FetchedServiceProvidersCountType,
+  FetchedSingleOrganizationProviders,
+  FetchOrganizationProvider,
+} from "@/types/providers";
 import { FilterOrganisationsProvidersPopover } from "./filter-organisations-providers-popover";
 import { SingleProviderCard } from "./single-provider-card";
 
 export const SingleOrganisationProviderContent = () => {
-  const providerInfo = [
-    {
-      id: 1,
-      title: "About",
-      value:
-        "Has 0 years of professional experience with 3 publications and 3 certifications",
-    },
-    {
-      id: 2,
-      title: "Special Training",
-      value: "Psychotherapy (Cognitive Behavioural Therapy)",
-    },
-    {
-      id: 3,
-      title: "Diagnosis Preference",
-      value: "Mood problems and emotional distress",
-    },
-  ];
+  const { id } = useParams();
 
-  const services = [
-    "Couple counselling",
-    "Family counselling",
-    "Child/Adolescent counselling",
-    "Gambling addiction",
-    "Sex counselling",
-    "Psychological evaluation",
-    "Drug & Alcohol treatment",
-    "Adult individual counselling",
-  ];
+  const { data } = useGetServiceProviders<FetchOrganizationProvider>({
+    user_id: id?.toString(),
+    user_type: "payer",
+  });
+
+  const { data: providers } = useGetOrganizationProviders<
+    FetchedSingleOrganizationProviders[]
+  >({
+    org_id: id!.toString(),
+  });
+
+  const { data: providersCount } =
+    useGetOrganizationProviders<FetchedServiceProvidersCountType>({
+      org_id: id!.toString(),
+      component: "count",
+    });
 
   const cardStats = [
-    { id: 1, title: "Completed appointment", value: "152" },
-    { id: 2, title: "Providers", value: "21" },
+    {
+      id: 1,
+      title: "Completed appointment",
+      value: data?.completed_appointment ?? 0,
+    },
+    { id: 2, title: "Providers", value: providersCount?.total ?? 0 },
   ];
 
   const [showGridView, setShowGridView] = useState(true);
 
-  const tableData = PROVIDERS_UNDER_ORGANISATION_LIST.map((provider) => {
+  const tableData = providers?.map((provider) => {
     return {
-      id: provider.id,
+      id: provider.provider_id,
       date_and_time: (
-        <p className="text-brand-2">
-          {provider.date} • {provider.time}
+        <p className="text-brand-2">{formatTableDate(provider.createdAt)}</p>
+      ),
+      name: <p className="capitalize">{provider?.user_data?.name}</p>,
+      specialty: <p className="capitalize">{provider?.user_data?.specialty}</p>,
+      rating: provider?.rating,
+      type: <p className="capitalize">individual</p>,
+      charge_from: (
+        <p className="capitalize">
+          {formatNumberWithCommas(provider?.user_data?.charge_from ?? 0)}
         </p>
       ),
-      name: <p className="capitalize">{provider.name}</p>,
-      specialty: <p className="capitalize">{provider.title}</p>,
-      rating: provider.rating,
-      type: <p className="capitalize">{provider.type}</p>,
-      charge_from: <p className="capitalize">{provider.rate}</p>,
     };
   });
 
@@ -74,27 +80,28 @@ export const SingleOrganisationProviderContent = () => {
       <BreadcrumbCmp
         breadcrumbItems={[
           { id: 1, name: "Providers", href: "/providers" },
-          { id: 2, name: "Leadway Health" },
+          { id: 2, name: data?.name ?? "" },
         ]}
       />
 
       <div className="bg-white rounded-2xl p-3 md:p-4 grid gap-y-5">
         <div className="rounded-lg bg-blue-400 p-3 flex gap-3 flex-col md:flex-row">
           <Avatar className="w-full md:w-39 h-39 rounded-sm">
-            <AvatarImage
-              className="object-cover"
-              src="https://images.unsplash.com/photo-1496200186974-4293800e2c20?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            />
+            <AvatarImage className="object-cover" src={data?.avatar} />
+            <AvatarFallback className="text-5xl">
+              {data?.name?.split(" ")[0][0]}
+              {data?.name?.split(" ")[1][0]}
+            </AvatarFallback>
           </Avatar>
 
           <div className="grid gap-y-3 w-full">
             <div className="grid gap-y-1">
-              <h3 className="text-xl font-bold text-brand-1">Leadway Health</h3>
-              <p className="text-brand-2">Clinic</p>
-              <div className="flex items-center gap-x-1 text-sm text-brand-1">
+              <h3 className="text-xl font-bold text-brand-1">{data?.name}</h3>
+              <p className="text-brand-2">{data?.industry_data?.name}</p>
+              {/* <div className="flex items-center gap-x-1 text-sm text-brand-1">
                 <IconStarFull className="fill-actions-amber size-5" />
                 4.5
-              </div>
+              </div> */}
             </div>
 
             <div className="border-t border-divider"></div>
@@ -108,25 +115,24 @@ export const SingleOrganisationProviderContent = () => {
           </div>
         </div>
 
-        <div className="border border-divider rounded-lg px-4 md:px-5 py-4 grid gap-y-5">
-          {providerInfo.map((info) => (
-            <div key={info.id} className="grid gap-y-2">
-              <p className="text-sm text-brand-2">{info.title}</p>
-              <p className="text-brand-1">{info.value}</p>
-            </div>
-          ))}
+        <div className="border border-divider rounded-lg px-4 md:px-5 py-4 grid gap-y-2">
+          <p className="text-sm text-brand-2">About</p>
+          <p className="text-brand-1">
+            Has 0 years of professional experience with 3 publications and 3
+            certifications
+          </p>
         </div>
 
         <div className="border border-divider rounded-lg px-3 md:px-5 py-4 grid gap-y-2">
           <p className="text-brand-2 text-sm">Services</p>
 
           <div className="flex gap-4 flex-wrap">
-            {services.map((service) => (
+            {data?.service_data?.map((service) => (
               <div
-                key={service}
-                className="rounded-full bg-grey-400 px-4 py-2.5"
+                key={service?.service_offer_id}
+                className="rounded-full bg-grey-400 px-4 py-2.5 capitalize"
               >
-                {service}
+                {service?.name}
               </div>
             ))}
           </div>
@@ -173,14 +179,24 @@ export const SingleOrganisationProviderContent = () => {
         </div>
 
         <RenderIf condition={!showGridView}>
-          <TableCmp data={tableData} headers={PROVIDERS_TABLE_HEADERS} />
+          <TableCmp data={tableData ?? []} headers={PROVIDERS_TABLE_HEADERS} />
 
           <div className="grid md:hidden gap-4 md:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {PROVIDERS_UNDER_ORGANISATION_LIST.map((provider) => (
+            {providers?.map((provider) => (
               <SingleProviderCard
-                key={provider.id}
+                key={provider?.provider_id}
                 isOrganisation
-                {...provider}
+                provider_data={{
+                  name: provider?.user_data?.name,
+                  avatar: provider?.user_data?.avatar,
+                  user_type: "org",
+                  account_type: "individual",
+                  user_id: provider?.provider_id,
+                  specialty: provider?.user_data?.specialty,
+                  createdAt: provider?.createdAt,
+                }}
+                user_type="individual"
+                charge_from={provider?.user_data?.charge_from}
               />
             ))}
           </div>
@@ -188,11 +204,21 @@ export const SingleOrganisationProviderContent = () => {
 
         <RenderIf condition={showGridView}>
           <div className="grid gap-4 md:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {PROVIDERS_UNDER_ORGANISATION_LIST.map((provider) => (
+            {providers?.map((provider) => (
               <SingleProviderCard
-                key={provider.id}
+                key={provider?.provider_id}
                 isOrganisation
-                {...provider}
+                provider_data={{
+                  name: provider?.user_data?.name,
+                  avatar: provider?.user_data?.avatar,
+                  user_type: "individual",
+                  account_type: "",
+                  user_id: provider?.provider_id,
+                  specialty: provider?.user_data?.specialty,
+                  createdAt: provider?.createdAt,
+                }}
+                user_type="individual"
+                charge_from={provider?.user_data?.charge_from}
               />
             ))}
           </div>

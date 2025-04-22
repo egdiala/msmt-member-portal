@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { BreadcrumbCmp } from "@/components/shared";
 import { ProvidersTable } from "@/components/custom";
 
@@ -12,7 +13,9 @@ const Providers = () => {
       />
 
       <div className="flex md:gap-x-5">
-        <ProvidersTable />
+        <Suspense>
+          <ProvidersTable />
+        </Suspense>
       </div>
     </div>
   );

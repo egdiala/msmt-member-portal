@@ -34,7 +34,10 @@ export const SingleProviderCard = (provider: ISingleProviderCard) => {
       <div className="relative">
         <Avatar className="rounded-sm w-full h-20 md:h-32">
           <AvatarImage
-            src={provider?.provider_data?.avatar}
+            src={
+              provider?.provider_data?.avatar ||
+              "/assets/blank-profile-picture.png"
+            }
             className="w-full object-cover hover:scale-150 transition-transform transform duration-200"
             alt="provider"
           />
@@ -81,7 +84,7 @@ export const SingleProviderCard = (provider: ISingleProviderCard) => {
                 provider?.provider_data?.account_type?.toLowerCase() === "payer"
               }
             >
-              {provider?.industry_data?.name}
+              {provider?.provider_data?.industry}
             </RenderIf>
             <RenderIf
               condition={
