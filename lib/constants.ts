@@ -76,7 +76,6 @@ export const APPLICATIONS_FILTER_STATUS_OPTIONS = [
 ];
 
 export const PROVIDERS_TABLE_HEADERS = [
-  { key: "date_and_time", value: "Date & Time Added" },
   { key: "name", value: "Name" },
   { key: "specialty", value: "Specialty" },
   { key: "rating", value: "Rating" },

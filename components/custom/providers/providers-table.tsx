@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   IconCalendar,
   IconClose,
@@ -18,28 +18,76 @@ import {
   TableCmp,
 } from "@/components/shared";
 import { Button } from "@/components/ui";
+import { Loader } from "@/components/shared/loader";
+import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useDebounce } from "@/hooks/use-debounce";
+import {
+  getPaginationParams,
+  setPaginationParams,
+} from "@/hooks/use-pagination-params";
+import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
 import { cn } from "@/lib/utils";
-import { PROVIDERS_LIST } from "@/lib/mock";
 import { PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
+import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
+import {
+  FetchedServiceProvidersCountType,
+  FetchedServiceProvidersType,
+} from "@/types/providers";
 import { SingleProviderCard } from "./single-provider-card";
 
 export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
 
-  const tableData = PROVIDERS_LIST.map((provider) => {
+  const itemsPerPage = 10;
+  const [page, setPage] = useState(1);
+
+  const searchParams = useSearchParams();
+  const { value, onChangeHandler } = useDebounce(400);
+
+  const { data, isLoading } = useGetServiceProviders<
+    FetchedServiceProvidersType[]
+  >({ q: value?.toString() });
+
+  const handlePageChange = (page: number) => {
+    if (!isNaN(page)) {
+      setPage(page);
+      setPaginationParams(page, router, searchParams);
+    }
+  };
+
+  getPaginationParams(setPage);
+
+  const { data: count } =
+    useGetServiceProviders<FetchedServiceProvidersCountType>({
+      component: "count",
+    });
+
+  const tableData = data?.map((provider) => {
     return {
-      id: provider.id,
+      id: provider?.provider_data?.user_id,
       datum: provider,
-      date_and_time: (
-        <p className="text-brand-2">
-          {provider.date} • {provider.time}
+      name: <p className="capitalize">{provider?.provider_data?.name}</p>,
+      specialty: (
+        <p className="capitalize">
+          {provider?.provider_data?.specialty ?? "N/A"}
         </p>
       ),
-      name: <p className="capitalize">{provider.name}</p>,
-      specialty: <p className="capitalize">{provider.title}</p>,
-      rating: provider.rating,
-      type: <p className="capitalize">{provider.type}</p>,
-      charge_from: <p className="capitalize">{provider.rate}</p>,
+      rating:
+        provider?.provider_data?.account_type === "payer"
+          ? provider?.provider_data?.rating ?? "0"
+          : "N/A",
+      type: (
+        <p className="capitalize">
+          {provider?.provider_data?.account_type === "payer"
+            ? "Organization"
+            : provider?.provider_data?.account_type}
+        </p>
+      ),
+      charge_from: (
+        <p className="capitalize">
+          {formatNumberWithCommas(provider?.charge_from)}
+        </p>
+      ),
     };
   });
 
@@ -121,7 +169,7 @@ export const ProvidersTable = () => {
         </RenderIf>
 
         <div className="flex flex-col md:flex-row gap-3 items-end md:items-center justify-between">
-          <Searchbar onChange={() => {}} placeholder="Search" />
+          <Searchbar onChange={onChangeHandler} placeholder="Search" />
 
           <Button
             variant="outline"
@@ -140,7 +188,7 @@ export const ProvidersTable = () => {
 
         <RenderIf condition={!showGridView}>
           <TableCmp
-            data={tableData}
+            data={tableData ?? []}
             headers={PROVIDERS_TABLE_HEADERS}
             onClickRow={(row) => {
               if (row.datum.type.toLowerCase() === "organisation") {
@@ -149,6 +197,8 @@ export const ProvidersTable = () => {
                 router.push(`/providers/individual/${row.id}`);
               }
             }}
+            isLoading={isLoading}
+            emptyStateTitleText="There are no providers yet"
           />
 
           <div
@@ -159,32 +209,51 @@ export const ProvidersTable = () => {
                 : "grid-cols-2 lg:grid-cols-3"
             )}
           >
-            {PROVIDERS_LIST.map((provider) => (
-              <SingleProviderCard key={provider.id} {...provider} />
+            {data?.map((provider) => (
+              <SingleProviderCard
+                key={provider.provider_data?.user_id}
+                {...provider}
+              />
             ))}
           </div>
         </RenderIf>
 
         <RenderIf condition={showGridView}>
-          <div
-            className={cn(
-              "grid gap-4 md:gap-6",
-              showFilterButtonOnly
-                ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                : "grid-cols-2 lg:grid-cols-3"
-            )}
-          >
-            {PROVIDERS_LIST.map((provider) => (
-              <SingleProviderCard key={provider.id} {...provider} />
-            ))}
-          </div>
+          <RenderIf condition={isLoading}>
+            <div className="w-full h-full flex justify-center items-center">
+              <Loader />
+            </div>
+          </RenderIf>
+
+          <RenderIf condition={!isLoading}>
+            <div
+              className={cn(
+                "grid gap-4 md:gap-6",
+                showFilterButtonOnly
+                  ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                  : "grid-cols-2 lg:grid-cols-3"
+              )}
+            >
+              {data?.map((provider) => (
+                <SingleProviderCard
+                  key={provider?.provider_data?.user_id}
+                  {...provider}
+                />
+              ))}
+            </div>
+          </RenderIf>
         </RenderIf>
 
-        <PaginationCmp
-          onInputPage={() => {}}
-          currentPage={"1"}
-          totalPages={"30"}
-        />
+        <RenderIf condition={!isLoading}>
+          <PaginationCmp
+            onInputPage={(val) => handlePageChange(parseInt(val))}
+            currentPage={page?.toString()}
+            totalPages={useGetTableTotalPages({
+              totalDataCount: count?.total ?? 0,
+              itemsPerPage: itemsPerPage,
+            })}
+          />
+        </RenderIf>
       </div>
     </>
   );
