@@ -5,7 +5,7 @@ export interface FetchServiceProvidersQuery {
   service_cat_id?: string; // for provider type
   service_offer_id?: string; // for service type
   user_id?: string;
-  user_type?: "individual" | "payer";
+  user_type?: "provider" | "payer";
   gender?: string;
   religion?: string;
   amount?: string;
@@ -78,6 +78,7 @@ export interface FetchOrganizationProvider {
     amount: number;
     name: string;
   }[];
+  specialty?: string;
 }
 
 export interface FetchedSingleOrganizationProviders {
