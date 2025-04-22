@@ -164,7 +164,7 @@ export const ProvidersTable = () => {
         </RenderIf>
       </div>
 
-      <div className="bg-white w-full rounded-2xl py-4 px-3 md:p-6 grid gap-y-4 md:gap-y-5">
+      <div className="bg-white w-full rounded-2xl py-4 px-3 md:p-6 grid content-start gap-y-4 md:gap-y-5 h-fit">
         <RenderIf condition={showGridView}>
           <h3 className="font-bold text-brand-1">Providers</h3>
         </RenderIf>
