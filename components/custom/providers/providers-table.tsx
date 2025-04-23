@@ -39,6 +39,7 @@ import {
   FetchedServiceProvidersType,
 } from "@/types/providers";
 import { SingleProviderCard } from "./single-provider-card";
+import { FilterProvidersTable } from "./filter-providers-table";
 import { CalendarInput } from "../wallet/calendar-input";
 
 export const ProvidersTable = () => {
@@ -65,7 +66,9 @@ export const ProvidersTable = () => {
   const handleApplyFilter = () => {
     setFilters({
       ...(apptDate ? { appt_date: apptDate } : {}),
-      ...(apptDate ? { time_zone: new Date().getTimezoneOffset() } : {}),
+      ...(apptDate
+        ? { time_zone: new Date().getTimezoneOffset()?.toString() }
+        : {}),
       ...(providerType
         ? {
             user_type:
@@ -89,6 +92,17 @@ export const ProvidersTable = () => {
         ? { comm_mode: communicationPreference?.toLowerCase() }
         : {}),
     });
+  };
+
+  const handleClearAllFilters = () => {
+    setApptDate("");
+    setProviderType("");
+    setSpecificService("");
+    setPriceRange("");
+    setGender("");
+    setLanguage("");
+    setReligion("");
+    setCommunicationPreference("");
   };
 
   const removeFilter = (filterToRemove: string) => {
@@ -173,6 +187,132 @@ export const ProvidersTable = () => {
   const router = useRouter();
 
   const [showFilterButtonOnly, setShowFilterButtonOnly] = useState(true);
+  const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
+
+  const FilterContent = ({
+    handleApplyMobile,
+  }: {
+    handleApplyMobile?: () => void;
+  }) => {
+    return (
+      <>
+        <div className="grid gap-y-4 w-full">
+          <CalendarInput
+            value={apptDate === "" ? undefined : new Date(apptDate)}
+            onChange={(date: any) => {
+              setApptDate(format(date, "yyy-MM-dd"));
+            }}
+            label="Available date"
+          />
+
+          <SelectCmp
+            selectItems={[
+              { id: 1, value: "Provider" },
+              { id: 2, value: "Organization" },
+            ]}
+            value={providerType}
+            onSelect={(val) => setProviderType(val)}
+            placeholder={"Provider type"}
+          />
+
+          <SelectCmp
+            selectItems={requestVariables["service-offering"]?.map(
+              (val: { service_offer_id: string; name: string }) => {
+                return { id: val?.service_offer_id, value: val?.name };
+              }
+            )}
+            value={specificService}
+            onSelect={(val) => setSpecificService(val)}
+            placeholder={"Specific service"}
+          />
+
+          <SelectCmp
+            selectItems={[
+              { id: 1, value: "100-1000" },
+              { id: 2, value: "1000-5000" },
+              { id: 3, value: "5000-10000" },
+              { id: 4, value: "10000-20000" },
+              { id: 5, value: "20000-40000" },
+              { id: 6, value: "40000-60000" },
+              { id: 7, value: "60000-80000" },
+              { id: 8, value: "80000-100000" },
+            ]}
+            value={priceRange}
+            onSelect={(val) => setPriceRange(val)}
+            placeholder={"Price range"}
+          />
+
+          <SelectCmp
+            selectItems={[
+              { id: 1, value: "Male" },
+              { id: 2, value: "Female" },
+            ]}
+            value={gender}
+            onSelect={(val) => setGender(val)}
+            placeholder={"Gender"}
+          />
+
+          <SelectCmp
+            selectItems={requestVariables["preferred-lan"]?.map(
+              (val: string) => {
+                return {
+                  id: val,
+                  value: val,
+                };
+              }
+            )}
+            value={language}
+            onSelect={(val) => setLanguage(val)}
+            placeholder={"Language"}
+          />
+
+          <SelectCmp
+            selectItems={requestVariables["religion-list"]?.map(
+              (val: string) => {
+                return {
+                  id: val,
+                  value: val,
+                };
+              }
+            )}
+            value={religion}
+            onSelect={(val) => setReligion(val)}
+            placeholder={"Religion"}
+          />
+
+          <SelectCmp
+            selectItems={[
+              { id: 1, value: "Audio" },
+              { id: 2, value: "Video" },
+            ]}
+            value={communicationPreference}
+            onSelect={(val) => setCommunicationPreference(val)}
+            placeholder={"Communication preference"}
+          />
+        </div>
+
+        <div className="pt-8 gap-x-4 grid grid-cols-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowFilterButtonOnly(!showFilterButtonOnly)}
+          >
+            Close
+          </Button>
+          <Button
+            onClick={() => {
+              handleApplyFilter();
+
+              if (handleApplyMobile) {
+                handleApplyMobile();
+              }
+            }}
+          >
+            Apply
+          </Button>
+        </div>
+      </>
+    );
+  };
 
   return (
     <>
@@ -211,110 +351,7 @@ export const ProvidersTable = () => {
               </Button>
             </div>
 
-            <div className="grid gap-y-4 w-full">
-              <CalendarInput
-                value={apptDate === "" ? undefined : new Date(apptDate)}
-                onChange={(date: any) => {
-                  setApptDate(format(date, "yyy-MM-dd"));
-                }}
-                label="Available date"
-              />
-
-              <SelectCmp
-                selectItems={[
-                  { id: 1, value: "Provider" },
-                  { id: 2, value: "Organization" },
-                ]}
-                value={providerType}
-                onSelect={(val) => setProviderType(val)}
-                placeholder={"Provider type"}
-              />
-
-              <SelectCmp
-                selectItems={requestVariables["service-offering"]?.map(
-                  (val: { service_offer_id: string; name: string }) => {
-                    return { id: val?.service_offer_id, value: val?.name };
-                  }
-                )}
-                value={specificService}
-                onSelect={(val) => setSpecificService(val)}
-                placeholder={"Specific service"}
-              />
-
-              <SelectCmp
-                selectItems={[
-                  { id: 1, value: "100-1000" },
-                  { id: 2, value: "1000-5000" },
-                  { id: 3, value: "5000-10000" },
-                  { id: 4, value: "10000-20000" },
-                  { id: 5, value: "20000-40000" },
-                  { id: 6, value: "40000-60000" },
-                  { id: 7, value: "60000-80000" },
-                  { id: 8, value: "80000-100000" },
-                ]}
-                value={priceRange}
-                onSelect={(val) => setPriceRange(val)}
-                placeholder={"Price range"}
-              />
-
-              <SelectCmp
-                selectItems={[
-                  { id: 1, value: "Male" },
-                  { id: 2, value: "Female" },
-                ]}
-                value={gender}
-                onSelect={(val) => setGender(val)}
-                placeholder={"Gender"}
-              />
-
-              <SelectCmp
-                selectItems={requestVariables["preferred-lan"]?.map(
-                  (val: string) => {
-                    return {
-                      id: val,
-                      value: val,
-                    };
-                  }
-                )}
-                value={language}
-                onSelect={(val) => setLanguage(val)}
-                placeholder={"Language"}
-              />
-
-              <SelectCmp
-                selectItems={requestVariables["religion-list"]?.map(
-                  (val: string) => {
-                    return {
-                      id: val,
-                      value: val,
-                    };
-                  }
-                )}
-                value={religion}
-                onSelect={(val) => setReligion(val)}
-                placeholder={"Religion"}
-              />
-
-              <SelectCmp
-                selectItems={[
-                  { id: 1, value: "Audio" },
-                  { id: 2, value: "Video" },
-                ]}
-                value={communicationPreference}
-                onSelect={(val) => setCommunicationPreference(val)}
-                placeholder={"Communication preference"}
-              />
-            </div>
-
-            <div className="pt-8 gap-x-4 grid grid-cols-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowFilterButtonOnly(!showFilterButtonOnly)}
-              >
-                Close
-              </Button>
-              <Button onClick={handleApplyFilter}>Apply</Button>
-            </div>
+            <FilterContent />
           </div>
         </RenderIf>
       </div>
@@ -326,6 +363,18 @@ export const ProvidersTable = () => {
 
         <div className="flex flex-col md:flex-row gap-3 items-end md:items-center justify-between">
           <Searchbar onChange={onChangeHandler} placeholder="Search" />
+
+          <FilterProvidersTable
+            openMobileDrawer={openMobileDrawer}
+            setOpenMobileDrawer={setOpenMobileDrawer}
+          >
+            <div className="p-3 grid gap-y-4">
+              <h4 className="font-semibold">Filter</h4>
+              <FilterContent
+                handleApplyMobile={() => setOpenMobileDrawer(false)}
+              />
+            </div>
+          </FilterProvidersTable>
 
           <Button
             variant="outline"
@@ -343,7 +392,7 @@ export const ProvidersTable = () => {
         </div>
 
         <RenderIf condition={Object.keys(filters)?.length > 0}>
-          <div className="flex items-start justify-between gap-x-3">
+          <div className="flex flex-col md:flex-row flex-wrap justify-between items-end">
             <div className="flex flex-wrap gap-2">
               {Object.keys(filters)?.map((filter, index) => (
                 <FilterTag
@@ -360,15 +409,18 @@ export const ProvidersTable = () => {
                   onClear={() => removeFilter(filter)}
                 />
               ))}
-            </div>
 
-            <Button
-              variant="link"
-              className="underline underline-offset-1 text-button-primary text-xs"
-              onClick={() => setFilters({})}
-            >
-              Clear all filters
-            </Button>
+              <Button
+                variant="link"
+                className="underline underline-offset-1 text-button-primary text-xs"
+                onClick={() => {
+                  setFilters({});
+                  handleClearAllFilters();
+                }}
+              >
+                Clear all filters
+              </Button>
+            </div>
           </div>
         </RenderIf>
 
