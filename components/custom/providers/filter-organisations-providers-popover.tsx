@@ -51,10 +51,6 @@ const FilterContent = ({
 }) => {
   const communicationPreferences = ["Video", "Audio"];
 
-  let category = requestVariables["service-category"]?.filter(
-    (val: { name: string }) => val?.name === selectedProviderType
-  );
-
   const handleApplyFilter = () => {
     setFilters({
       ...(selectedService
