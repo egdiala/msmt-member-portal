@@ -98,3 +98,15 @@ export const BLUR_VARIANTS = {
   enter: { opacity: 1, filter: "blur(0px)" },
   exit: { opacity: 0, filter: "blur(4px)" },
 };
+
+export const PROVIDER_FILTER_KEY_MATCH: Record<string, string> = {
+  appt_date: "Appointment Date",
+  time_zone: "Time Zone",
+  user_type: "Provider Type",
+  service_offer_id: "Specific Service",
+  amount: "Price Range",
+  gender: "Gender",
+  language: "Language",
+  religion: "Religion",
+  comm_mode: "Communication Preference",
+};

@@ -14,6 +14,7 @@ interface ISelectCmp {
   selectItems: { id: number; value: string }[];
   placeholder: string;
   className?: string;
+  value?: string;
   onSelect?: (val: string) => void;
 }
 export const SelectCmp = ({
@@ -21,10 +22,15 @@ export const SelectCmp = ({
   placeholder,
   className,
   onSelect,
+  value,
   ...props
 }: ISelectCmp) => {
   return (
-    <Select {...props} onValueChange={(val) => onSelect && onSelect(val)}>
+    <Select
+      {...props}
+      value={value}
+      onValueChange={(val) => onSelect && onSelect(val)}
+    >
       <SelectTrigger className={cn("w-full cursor-pointer", className)}>
         <SelectValue
           placeholder={placeholder}

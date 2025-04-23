@@ -28,7 +28,10 @@ import {
 } from "@/hooks/use-pagination-params";
 import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
 import { cn } from "@/lib/utils";
-import { PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
+import {
+  PROVIDER_FILTER_KEY_MATCH,
+  PROVIDERS_TABLE_HEADERS,
+} from "@/lib/constants";
 import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
 import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import {
@@ -89,10 +92,29 @@ export const ProvidersTable = () => {
   };
 
   const removeFilter = (filterToRemove: string) => {
+    const setFilterValues: Record<string, any> = {
+      appt_date: setApptDate,
+      time_zone: setApptDate,
+      user_type: setProviderType,
+      service_offer_id: setSpecificService,
+      amount: setPriceRange,
+      gender: setGender,
+      language: setLanguage,
+      religion: setReligion,
+      comm_mode: setCommunicationPreference,
+    };
+
     setFilters((prev) => {
-      const { [filterToRemove]: _, ...rest } = prev;
-      return rest;
+      if (filterToRemove === "appt_date" || filterToRemove === "time_zone") {
+        const { appt_date: _, time_zone: __, ...rest } = prev;
+        return rest;
+      } else {
+        const { [filterToRemove]: _, ...rest } = prev;
+        return rest;
+      }
     });
+
+    setFilterValues[filterToRemove]("");
   };
 
   const itemsPerPage = 10;
@@ -187,7 +209,7 @@ export const ProvidersTable = () => {
               </Button>
             </div>
 
-            <div className="grid gap-y-4">
+            <div className="grid gap-y-4 w-full">
               <CalendarInput
                 value={apptDate === "" ? undefined : new Date(apptDate)}
                 onChange={(date: any) => {
@@ -201,6 +223,7 @@ export const ProvidersTable = () => {
                   { id: 1, value: "Provider" },
                   { id: 2, value: "Organization" },
                 ]}
+                value={providerType}
                 onSelect={(val) => setProviderType(val)}
                 placeholder={"Provider type"}
               />
@@ -211,6 +234,7 @@ export const ProvidersTable = () => {
                     return { id: val?.service_offer_id, value: val?.name };
                   }
                 )}
+                value={specificService}
                 onSelect={(val) => setSpecificService(val)}
                 placeholder={"Specific service"}
               />
@@ -226,6 +250,7 @@ export const ProvidersTable = () => {
                   { id: 7, value: "60000-80000" },
                   { id: 8, value: "80000-100000" },
                 ]}
+                value={priceRange}
                 onSelect={(val) => setPriceRange(val)}
                 placeholder={"Price range"}
               />
@@ -235,6 +260,7 @@ export const ProvidersTable = () => {
                   { id: 1, value: "Male" },
                   { id: 2, value: "Female" },
                 ]}
+                value={gender}
                 onSelect={(val) => setGender(val)}
                 placeholder={"Gender"}
               />
@@ -248,6 +274,7 @@ export const ProvidersTable = () => {
                     };
                   }
                 )}
+                value={language}
                 onSelect={(val) => setLanguage(val)}
                 placeholder={"Language"}
               />
@@ -261,6 +288,7 @@ export const ProvidersTable = () => {
                     };
                   }
                 )}
+                value={religion}
                 onSelect={(val) => setReligion(val)}
                 placeholder={"Religion"}
               />
@@ -270,6 +298,7 @@ export const ProvidersTable = () => {
                   { id: 1, value: "Audio" },
                   { id: 2, value: "Video" },
                 ]}
+                value={communicationPreference}
                 onSelect={(val) => setCommunicationPreference(val)}
                 placeholder={"Communication preference"}
               />
@@ -316,9 +345,7 @@ export const ProvidersTable = () => {
             <div className="flex flex-wrap gap-2">
               {Object.keys(filters)?.map((filter) => (
                 <FilterTag
-                  title={
-                    filter === "service_offer_id" ? "Specific Service" : filter
-                  }
+                  title={PROVIDER_FILTER_KEY_MATCH[filter]}
                   value={
                     filter === "service_offer_id"
                       ? requestVariables["service-offering"]?.filter(
