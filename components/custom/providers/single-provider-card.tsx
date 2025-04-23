@@ -90,7 +90,8 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           </h2>
           <RenderIf
             condition={
-              provider?.provider_data?.user_type.toLowerCase() !== "org"
+              provider?.provider_data?.user_type.toLowerCase() !== "org" ||
+              !user_type
             }
           >
             <ProviderSpecialtyInfo />
@@ -100,7 +101,8 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
         <div className="flex items-center justify-between">
           <RenderIf
             condition={
-              provider?.provider_data?.user_type.toLowerCase() === "org"
+              provider?.provider_data?.user_type.toLowerCase() === "org" &&
+              !!user_type
             }
           >
             <ProviderSpecialtyInfo />
@@ -113,7 +115,8 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
 
           <RenderIf
             condition={
-              provider?.provider_data?.user_type.toLowerCase() !== "org"
+              provider?.provider_data?.user_type.toLowerCase() !== "org" ||
+              !user_type
             }
           >
             <p className="font-medium text-xs">
