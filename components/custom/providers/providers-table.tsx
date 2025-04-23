@@ -106,9 +106,11 @@ export const ProvidersTable = () => {
 
     setFilters((prev) => {
       if (filterToRemove === "appt_date" || filterToRemove === "time_zone") {
+        // eslint-disable-next-line
         const { appt_date: _, time_zone: __, ...rest } = prev;
         return rest;
       } else {
+        // eslint-disable-next-line
         const { [filterToRemove]: _, ...rest } = prev;
         return rest;
       }
@@ -343,8 +345,9 @@ export const ProvidersTable = () => {
         <RenderIf condition={Object.keys(filters)?.length > 0}>
           <div className="flex items-start justify-between gap-x-3">
             <div className="flex flex-wrap gap-2">
-              {Object.keys(filters)?.map((filter) => (
+              {Object.keys(filters)?.map((filter, index) => (
                 <FilterTag
+                  key={index}
                   title={PROVIDER_FILTER_KEY_MATCH[filter]}
                   value={
                     filter === "service_offer_id"
