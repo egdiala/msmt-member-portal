@@ -186,9 +186,11 @@ export const SingleIndividualProviderContent = () => {
             ))}
           </div>
 
-          <Button className="flex md:hidden">
-            <IconPlus className="stroke-white" />
-            Book An Appointment
+          <Button asChild className="flex md:hidden">
+            <Link href="/providers/book-appointment">
+              <IconPlus className="stroke-white" />
+              Book An Appointment
+            </Link>
           </Button>
         </RenderIf>
       </div>
