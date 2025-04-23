@@ -25,7 +25,7 @@ export const SelectCmp = ({
 }: ISelectCmp) => {
   return (
     <Select {...props} onValueChange={(val) => onSelect && onSelect(val)}>
-      <SelectTrigger className={cn("w-full", className)}>
+      <SelectTrigger className={cn("w-full cursor-pointer", className)}>
         <SelectValue
           placeholder={placeholder}
           className="placeholder:text-text-2"

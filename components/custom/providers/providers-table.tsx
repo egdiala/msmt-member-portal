@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { format } from "date-fns";
 import {
-  IconCalendar,
   IconClose,
   IconList,
   IconList2,
   IconListFilter,
 } from "@/components/icons";
 import {
-  FloatingInput,
+  FilterTag,
   PaginationCmp,
   RenderIf,
   Searchbar,
@@ -30,14 +30,70 @@ import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
 import { cn } from "@/lib/utils";
 import { PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
 import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import {
   FetchedServiceProvidersCountType,
   FetchedServiceProvidersType,
 } from "@/types/providers";
 import { SingleProviderCard } from "./single-provider-card";
+import { CalendarInput } from "../wallet/calendar-input";
 
 export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
+
+  const { data: requestVariables } = useMultipleRequestVariables([
+    "service-offering",
+    "preferred-lan",
+    "religion-list",
+  ]);
+
+  // filters
+  const [apptDate, setApptDate] = useState(""); // appt_date (requires time_zone)
+  const [providerType, setProviderType] = useState(""); // user_type
+  const [specificService, setSpecificService] = useState(""); // service_offer_id or service_cat_id
+  const [priceRange, setPriceRange] = useState(""); // amount
+  const [gender, setGender] = useState(""); // gender (male | female)
+  const [religion, setReligion] = useState("");
+  const [language, setLanguage] = useState("");
+  const [communicationPreference, setCommunicationPreference] = useState(""); //comm_mode
+
+  const [filters, setFilters] = useState<Record<string, any>>({});
+
+  const handleApplyFilter = () => {
+    setFilters({
+      ...(apptDate ? { appt_date: apptDate } : {}),
+      ...(apptDate ? { time_zone: new Date().getTimezoneOffset() } : {}),
+      ...(providerType
+        ? {
+            user_type:
+              providerType?.toLowerCase() === "organization"
+                ? "org"
+                : "provider",
+          }
+        : {}),
+      ...(specificService
+        ? {
+            service_offer_id: requestVariables["service-offering"]?.filter(
+              (val: { name: string }) => val?.name === specificService
+            )[0]?.service_offer_id,
+          }
+        : {}),
+      ...(priceRange ? { amount: priceRange } : {}),
+      ...(gender ? { gender: gender?.toLowerCase() } : {}),
+      ...(language ? { language: language?.toLowerCase() } : {}),
+      ...(religion ? { religion: religion?.toLowerCase() } : {}),
+      ...(communicationPreference
+        ? { comm_mode: communicationPreference?.toLowerCase() }
+        : {}),
+    });
+  };
+
+  const removeFilter = (filterToRemove: string) => {
+    setFilters((prev) => {
+      const { [filterToRemove]: _, ...rest } = prev;
+      return rest;
+    });
+  };
 
   const itemsPerPage = 10;
   const [page, setPage] = useState(1);
@@ -47,7 +103,7 @@ export const ProvidersTable = () => {
 
   const { data, isLoading } = useGetServiceProviders<
     FetchedServiceProvidersType[]
-  >({ q: value?.toString() });
+  >({ ...(value ? { q: value?.toString() } : {}), ...filters });
 
   const handlePageChange = (page: number) => {
     if (!isNaN(page)) {
@@ -70,7 +126,8 @@ export const ProvidersTable = () => {
       name: <p className="capitalize">{provider?.provider_data?.name}</p>,
       specialty: (
         <p className="capitalize">
-          {provider?.provider_data?.specialty || provider?.provider_data?.industry_name}
+          {provider?.provider_data?.specialty ||
+            provider?.provider_data?.industry_name}
         </p>
       ),
       rating: provider?.provider_data?.rating,
@@ -131,31 +188,101 @@ export const ProvidersTable = () => {
             </div>
 
             <div className="grid gap-y-4">
-              <div className="relative">
-                <FloatingInput
-                  label="Available date"
-                  type="text"
-                  className=" pr-10 w-full"
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3 pointer-events-none">
-                  <IconCalendar className="h-4 w-4" />
-                </div>
-              </div>
-              <SelectCmp selectItems={[]} placeholder={"Provider type"} />
-              <SelectCmp selectItems={[]} placeholder={"Service type"} />
-              <SelectCmp selectItems={[]} placeholder={"Specific service"} />
-              <SelectCmp selectItems={[]} placeholder={"Price range"} />
-              <SelectCmp selectItems={[]} placeholder={"Gender"} />
-              <SelectCmp selectItems={[]} placeholder={"Ratings"} />
+              <CalendarInput
+                value={apptDate === "" ? undefined : new Date(apptDate)}
+                onChange={(date: any) => {
+                  setApptDate(format(date, "yyy-MM-dd"));
+                }}
+                label="Available date"
+              />
+
               <SelectCmp
-                selectItems={[]}
+                selectItems={[
+                  { id: 1, value: "Provider" },
+                  { id: 2, value: "Organization" },
+                ]}
+                onSelect={(val) => setProviderType(val)}
+                placeholder={"Provider type"}
+              />
+
+              <SelectCmp
+                selectItems={requestVariables["service-offering"]?.map(
+                  (val: { service_offer_id: string; name: string }) => {
+                    return { id: val?.service_offer_id, value: val?.name };
+                  }
+                )}
+                onSelect={(val) => setSpecificService(val)}
+                placeholder={"Specific service"}
+              />
+
+              <SelectCmp
+                selectItems={[
+                  { id: 1, value: "100-1000" },
+                  { id: 2, value: "1000-5000" },
+                  { id: 3, value: "5000-10000" },
+                  { id: 4, value: "10000-20000" },
+                  { id: 5, value: "20000-40000" },
+                  { id: 6, value: "40000-60000" },
+                  { id: 7, value: "60000-80000" },
+                  { id: 8, value: "80000-100000" },
+                ]}
+                onSelect={(val) => setPriceRange(val)}
+                placeholder={"Price range"}
+              />
+
+              <SelectCmp
+                selectItems={[
+                  { id: 1, value: "Male" },
+                  { id: 2, value: "Female" },
+                ]}
+                onSelect={(val) => setGender(val)}
+                placeholder={"Gender"}
+              />
+
+              <SelectCmp
+                selectItems={requestVariables["preferred-lan"]?.map(
+                  (val: string) => {
+                    return {
+                      id: val,
+                      value: val,
+                    };
+                  }
+                )}
+                onSelect={(val) => setLanguage(val)}
+                placeholder={"Language"}
+              />
+
+              <SelectCmp
+                selectItems={requestVariables["religion-list"]?.map(
+                  (val: string) => {
+                    return {
+                      id: val,
+                      value: val,
+                    };
+                  }
+                )}
+                onSelect={(val) => setReligion(val)}
+                placeholder={"Religion"}
+              />
+
+              <SelectCmp
+                selectItems={[
+                  { id: 1, value: "Audio" },
+                  { id: 2, value: "Video" },
+                ]}
+                onSelect={(val) => setCommunicationPreference(val)}
                 placeholder={"Communication preference"}
               />
             </div>
 
             <div className="pt-8 gap-x-4 grid grid-cols-2">
-              <Button variant="outline">Close</Button>
-              <Button>Apply</Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowFilterButtonOnly(!showFilterButtonOnly)}
+              >
+                Close
+              </Button>
+              <Button onClick={handleApplyFilter}>Apply</Button>
             </div>
           </div>
         </RenderIf>
@@ -184,15 +311,52 @@ export const ProvidersTable = () => {
           </Button>
         </div>
 
+        <RenderIf condition={Object.keys(filters)?.length > 0}>
+          <div className="flex items-start justify-between gap-x-3">
+            <div className="flex flex-wrap gap-2">
+              {Object.keys(filters)?.map((filter) => (
+                <FilterTag
+                  title={
+                    filter === "service_offer_id" ? "Specific Service" : filter
+                  }
+                  value={
+                    filter === "service_offer_id"
+                      ? requestVariables["service-offering"]?.filter(
+                          (val: { service_offer_id: string }) =>
+                            val?.service_offer_id === filters[filter]
+                        )[0]?.name
+                      : filters[filter]
+                  }
+                  onClear={() => removeFilter(filter)}
+                />
+              ))}
+            </div>
+
+            <Button
+              variant="link"
+              className="underline underline-offset-1 text-button-primary text-xs"
+              onClick={() => setFilters({})}
+            >
+              Clear all filters
+            </Button>
+          </div>
+        </RenderIf>
+
         <RenderIf condition={!showGridView}>
           <TableCmp
             data={tableData ?? []}
             headers={PROVIDERS_TABLE_HEADERS}
             onClickRow={(row) => {
               if (row.datum.provider_data.user_type.toLowerCase() === "org") {
-                router.push(`/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`);
-              } else if (row.datum.provider_data.user_type.toLowerCase() === "provider") {
-                router.push(`/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`);
+                router.push(
+                  `/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                );
+              } else if (
+                row.datum.provider_data.user_type.toLowerCase() === "provider"
+              ) {
+                router.push(
+                  `/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                );
               }
             }}
             isLoading={isLoading}
@@ -252,7 +416,9 @@ export const ProvidersTable = () => {
           </RenderIf>
         </RenderIf>
 
-        <RenderIf condition={!isLoading && tableData!.length > 0}>
+        <RenderIf
+          condition={!isLoading && tableData ? tableData.length > 0 : false}
+        >
           <PaginationCmp
             onInputPage={(val) => handlePageChange(parseInt(val))}
             currentPage={page?.toString()}
