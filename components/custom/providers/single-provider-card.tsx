@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import {
   IconHospital,
   IconStarFull,
@@ -18,6 +18,8 @@ interface ISingleProviderCard extends FetchedServiceProvidersType {
 }
 export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const { id } = useParams();
+  const searchParams = useSearchParams();
+  const user_type = searchParams.get("type") as "provider" | "org";
 
   const ProviderSpecialtyInfo = () => {
     return (
@@ -31,11 +33,11 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   return (
     <Link
       href={
-        provider?.provider_data?.user_type.toLowerCase() === "org"
+        provider?.provider_data?.user_type.toLowerCase() === "org" && !user_type
           ? `/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
           : provider?.provider_data?.user_type.toLowerCase() === "provider"
           ? `/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
-          : `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}`
+          : `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
       }
       className="border border-divider rounded-lg p-1"
     >

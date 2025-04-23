@@ -10,7 +10,7 @@ import {
   Searchbar,
   TableCmp,
 } from "@/components/shared";
-import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
+import { Avatar, AvatarImage, Button } from "@/components/ui";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
@@ -38,14 +38,15 @@ export const SingleOrganisationProviderContent = () => {
   const { id } = useParams();
 
   const searchParams = useSearchParams();
+  const user_type = searchParams.get("type") as "provider" | "org";
+  const account_type = searchParams.get("service_type") as "provider" | "payer";
+
   const { value, onChangeHandler } = useDebounce(400);
 
   const { data } = useGetServiceProviders<FetchOrganizationProvider>({
     user_id: id?.toString(),
-    user_type: searchParams.get("type") as "provider" | "org",
-    account_service_type: searchParams.get("service_type") as
-      | "provider"
-      | "payer",
+    user_type: user_type,
+    account_service_type: account_type,
   });
 
   const { data: providers, isLoading } = useGetOrganizationProviders<
@@ -78,10 +79,13 @@ export const SingleOrganisationProviderContent = () => {
   const cardStats = [
     {
       id: 1,
-      title: "Completed appointment",
-      value: data?.completed_appointment ?? 0,
+      title: account_type === "provider" ? "Charge" : "Total Members",
+      value:
+        account_type === "provider"
+          ? `From ${formatNumberWithCommas(data?.charge_from ?? 0)}/hr`
+          : data?.total_member ?? 0,
     },
-    { id: 2, title: "Providers", value: providersCount?.total ?? 0 },
+    { id: 2, title: "Providers", value: data?.total_provider ?? 0 },
   ];
 
   const [showGridView, setShowGridView] = useState(true);
@@ -122,31 +126,30 @@ export const SingleOrganisationProviderContent = () => {
         <RenderIf condition={!isLoading}>
           <div className="rounded-lg bg-blue-400 p-3 flex gap-3 flex-col md:flex-row">
             <Avatar className="w-full md:w-39 h-39 rounded-sm">
-              <AvatarImage className="object-cover" src={data?.avatar} />
-              <AvatarFallback className="text-5xl">
-                {data?.name?.split(" ")[0][0]}
-                {data?.name?.split(" ")[1][0]}
-              </AvatarFallback>
+              <AvatarImage
+                className="object-cover"
+                src={data?.avatar || "/assets/blank-profile-picture.png"}
+              />
             </Avatar>
 
-            <div className="grid gap-y-3 w-full">
+            <div className="grid gap-y-3 w-full items-center">
               <div className="grid gap-y-1">
-                <h3 className="text-xl font-bold text-brand-1">{data?.name}</h3>
-                <p className="text-brand-2">{data?.industry_data?.name}</p>
-                {/* <div className="flex items-center gap-x-1 text-sm text-brand-1">
-                <IconStarFull className="fill-actions-amber size-5" />
-                4.5
-              </div> */}
+                <h3 className="text-lg md:text-xl font-bold text-brand-1">
+                  {data?.name}
+                </h3>
+                <p className="text-brand-2">{data?.industry_name}</p>
               </div>
 
-              <div className="border-t border-divider"></div>
+              <RenderIf condition={account_type === "provider"}>
+                <div className="border-t border-divider"></div>
 
-              <div className="flex items-center justify-between">
-                <Button variant="ghost" className="p-0 font-semibold">
-                  <IconStarFull className="stroke-brand-btn-secondary size-4" />
-                  Mark as Favourite
-                </Button>
-              </div>
+                <div className="flex items-center justify-between">
+                  <Button variant="ghost" className="p-0 font-semibold">
+                    <IconStarFull className="stroke-brand-btn-secondary size-4" />
+                    Mark as Favourite
+                  </Button>
+                </div>
+              </RenderIf>
             </div>
           </div>
 

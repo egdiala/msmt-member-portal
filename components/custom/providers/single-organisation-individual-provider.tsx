@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
 import {
@@ -10,9 +10,31 @@ import {
   IconVideo,
 } from "@/components/icons";
 import Link from "next/link";
+import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
+import {
+  FetchOrganizationProvider,
+  FetchSingleProvider,
+} from "@/types/providers";
 
 export const SingleOrganisationIndividualProviderContent = () => {
-  const { id } = useParams();
+  const { id, uid } = useParams();
+  const searchParams = useSearchParams();
+  const user_type = searchParams.get("type") as "provider" | "org";
+  const account_type = searchParams.get("service_type") as "provider" | "payer";
+
+  const { data: orgProvider } =
+    useGetServiceProviders<FetchOrganizationProvider>({
+      user_id: id?.toString(),
+      user_type: user_type,
+      account_service_type: account_type,
+    });
+
+  const { data } = useGetServiceProviders<FetchSingleProvider>({
+    user_id: uid?.toString(),
+    user_type: user_type,
+    account_service_type: account_type,
+  });
 
   const providerInfo = [
     {
@@ -24,7 +46,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
     {
       id: 2,
       title: "Special Training",
-      value: "Psychotherapy (Cognitive Behavioural Therapy)",
+      value:
+        data?.special_training_data?.map((item) => item.name).join(", ") ??
+        "N/A",
     },
     {
       id: 3,
@@ -33,21 +57,18 @@ export const SingleOrganisationIndividualProviderContent = () => {
     },
   ];
 
-  const services = [
-    "Couple counselling",
-    "Family counselling",
-    "Child/Adolescent counselling",
-    "Gambling addiction",
-    "Sex counselling",
-    "Psychological evaluation",
-    "Drug & Alcohol treatment",
-    "Adult individual counselling",
-  ];
-
   const cardStats = [
-    { id: 1, title: "Completed appointment", value: "152" },
-    { id: 2, title: "Charge", value: "45" },
-    { id: 3, title: "Communication preferences", value: ["Video", "Audio"] },
+    {
+      id: 1,
+      title: "Completed appointment",
+      value: data?.completed_appointment,
+    },
+    {
+      id: 2,
+      title: "Charge",
+      value: formatNumberWithCommas(data?.charge_from ?? 0),
+    },
+    { id: 3, title: "Communication preferences", value: data?.comm_mode ?? [] },
   ];
 
   return (
@@ -57,10 +78,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
           { id: 1, name: "Providers", href: "/providers" },
           {
             id: 2,
-            name: "Leadway Health",
-            href: `/providers/organisation/${id}`,
+            name: orgProvider?.name ?? "",
           },
-          { id: 3, name: "Jide Kosoko" },
+          { id: 3, name: data?.name ?? "" },
         ]}
       />
 
@@ -68,18 +88,18 @@ export const SingleOrganisationIndividualProviderContent = () => {
         <div className="rounded-lg bg-blue-400 p-3 flex gap-3 flex-col md:flex-row">
           <Avatar className="w-full md:w-39 h-39 rounded-sm">
             <AvatarImage
-              className="object-cover"
-              src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              className="object-cover rounded-sm"
+              src={data?.avatar || "/assets/blank-profile-picture.png"}
             />
           </Avatar>
 
           <div className="grid gap-y-3 w-full">
             <div className="grid gap-y-1">
-              <h3 className="text-xl font-bold text-brand-1">Jide Kosoko</h3>
-              <p className="text-brand-2">Psychologist</p>
+              <h3 className="text-xl font-bold text-brand-1">{data?.name}</h3>
+              <p className="text-brand-2">{data?.specialty ?? "General"}</p>
               <div className="flex items-center gap-x-1 text-sm text-brand-1">
                 <IconStarFull className="fill-actions-amber size-5" />
-                4.5
+                {data?.rating ?? 0}
               </div>
             </div>
 
@@ -114,12 +134,12 @@ export const SingleOrganisationIndividualProviderContent = () => {
           <p className="text-brand-2 text-sm">Services</p>
 
           <div className="flex gap-4 flex-wrap">
-            {services.map((service) => (
+            {data?.service_data?.map((service) => (
               <div
-                key={service}
-                className="rounded-full bg-grey-400 px-4 py-2.5"
+                key={service?.service_offer_id}
+                className="rounded-full bg-grey-400 px-4 py-2.5 capitalize"
               >
-                {service}
+                {service?.name}
               </div>
             ))}
           </div>
@@ -140,7 +160,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 <RenderIf
                   condition={
                     stat.title === "Communication preferences" &&
-                    stat.value?.includes("Video")
+                    [stat.value]?.flat()?.includes("video")
                   }
                 >
                   <Button
@@ -155,7 +175,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 <RenderIf
                   condition={
                     stat.title === "Communication preferences" &&
-                    stat.value?.includes("Audio")
+                    [stat.value]?.flat()?.includes("audio")
                   }
                 >
                   <Button

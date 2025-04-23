@@ -69,10 +69,6 @@ export interface FetchOrganizationProvider {
   industry_id: string;
   comm_mode: string[];
   user_id: string;
-  industry_data: {
-    _id: string;
-    name: string;
-  };
   completed_appointment: number;
   charge_from: number;
   service_data: {
@@ -80,7 +76,9 @@ export interface FetchOrganizationProvider {
     amount: number;
     name: string;
   }[];
-  specialty?: string;
+  industry_name: string;
+  total_provider: number;
+  total_member: number;
 }
 
 export interface FetchSingleProvider {

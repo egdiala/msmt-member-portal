@@ -9,7 +9,7 @@ import {
   IconVideo,
 } from "@/components/icons";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
-import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
+import { Avatar, AvatarImage, Button } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
@@ -18,13 +18,13 @@ import { FetchSingleProvider } from "@/types/providers";
 export const SingleIndividualProviderContent = () => {
   const { id } = useParams();
   const searchParams = useSearchParams();
-  const { data, isLoading } = useGetServiceProviders<FetchSingleProvider>(
-    {
-      user_id: id?.toString(),
-      user_type: searchParams.get("type") as "provider" | "org",
-      account_service_type: searchParams.get("service_type") as "provider" | "payer"
-    }
-  );
+  const { data, isLoading } = useGetServiceProviders<FetchSingleProvider>({
+    user_id: id?.toString(),
+    user_type: searchParams.get("type") as "provider" | "org",
+    account_service_type: searchParams.get("service_type") as
+      | "provider"
+      | "payer",
+  });
 
   const providerInfo = [
     {
@@ -78,11 +78,10 @@ export const SingleIndividualProviderContent = () => {
         <RenderIf condition={!isLoading}>
           <div className="rounded-lg bg-blue-400 p-3 flex gap-3 flex-col md:flex-row">
             <Avatar className="w-full md:w-39 h-39 rounded-sm">
-              <AvatarImage className="object-cover" src={data?.avatar} />
-              <AvatarFallback className="text-5xl">
-                {data?.name?.split(" ")[0][0]}
-                {data?.name?.split(" ")[1][0]}
-              </AvatarFallback>
+              <AvatarImage
+                className="object-cover rounded-sm"
+                src={data?.avatar || "/assets/blank-profile-picture.png"}
+              />
             </Avatar>
 
             <div className="grid gap-y-3 w-full">
