@@ -43,7 +43,9 @@ export const SingleOrganisationProviderContent = () => {
   const { data } = useGetServiceProviders<FetchOrganizationProvider>({
     user_id: id?.toString(),
     user_type: searchParams.get("type") as "provider" | "org",
-    account_service_type: searchParams.get("service_type") as "provider" | "payer"
+    account_service_type: searchParams.get("service_type") as
+      | "provider"
+      | "payer",
   });
 
   const { data: providers, isLoading } = useGetOrganizationProviders<
@@ -225,7 +227,6 @@ export const SingleOrganisationProviderContent = () => {
               {providers?.map((provider) => (
                 <SingleProviderCard
                   key={provider?.provider_id}
-                  isOrganisation
                   provider_data={{
                     name: provider?.user_data?.name,
                     avatar: provider?.user_data?.avatar,
@@ -237,7 +238,6 @@ export const SingleOrganisationProviderContent = () => {
                     createdAt: provider?.createdAt,
                     rating: provider?.rating?.toString(),
                   }}
-                  // user_type="individual"
                   charge_from={0}
                 />
               ))}
@@ -266,7 +266,6 @@ export const SingleOrganisationProviderContent = () => {
                 {providers?.map((provider) => (
                   <SingleProviderCard
                     key={provider?.provider_id}
-                    isOrganisation
                     provider_data={{
                       name: provider?.user_data?.name,
                       avatar: provider?.user_data?.avatar,
@@ -278,7 +277,6 @@ export const SingleOrganisationProviderContent = () => {
                       createdAt: provider?.createdAt,
                       rating: provider?.rating?.toString(),
                     }}
-                    // user_type="individual"
                     charge_from={0}
                   />
                 ))}

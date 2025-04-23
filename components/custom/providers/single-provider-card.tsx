@@ -15,7 +15,6 @@ import { FetchedServiceProvidersType } from "@/types/providers";
 
 interface ISingleProviderCard extends FetchedServiceProvidersType {
   key: string;
-  isOrganisation?: boolean;
 }
 export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const { id } = useParams();
@@ -23,19 +22,20 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const ProviderSpecialtyInfo = () => {
     return (
       <p className="text-[8px] md:text-xs text-brand-2 capitalize">
-        {provider?.provider_data?.industry_name || provider?.provider_data?.specialty}
+        {provider?.provider_data?.industry_name ||
+          provider?.provider_data?.specialty}
       </p>
     );
   };
+
   return (
     <Link
       href={
-        provider.isOrganisation
-          ? `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}`
-          : provider?.provider_data?.account_type?.toLowerCase() ===
-            "individual"
-          ? `/providers/individual/${provider?.provider_data?.user_id}`
-          : `/providers/organisation/${provider?.provider_data?.user_id}`
+        provider?.provider_data?.user_type.toLowerCase() === "org"
+          ? `/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
+          : provider?.provider_data?.user_type.toLowerCase() === "provider"
+          ? `/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
+          : `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}`
       }
       className="border border-divider rounded-lg p-1"
     >
@@ -86,22 +86,34 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           <h2 className="font-medium text-brand-1 text-[10px] md:text-base">
             {provider?.provider_data?.name}
           </h2>
-          <RenderIf condition={!provider.isOrganisation}>
+          <RenderIf
+            condition={
+              provider?.provider_data?.user_type.toLowerCase() !== "org"
+            }
+          >
             <ProviderSpecialtyInfo />
           </RenderIf>
         </div>
 
         <div className="flex items-center justify-between">
-          <RenderIf condition={!!provider.isOrganisation}>
+          <RenderIf
+            condition={
+              provider?.provider_data?.user_type.toLowerCase() === "org"
+            }
+          >
             <ProviderSpecialtyInfo />
           </RenderIf>
 
           <div className="flex items-center gap-x-0.5 text-xs text-brand-1">
-              <IconStarFull className="fill-actions-amber size-4" />
-              {provider?.provider_data?.rating ?? 0}
+            <IconStarFull className="fill-actions-amber size-4" />
+            {provider?.provider_data?.rating ?? 0}
           </div>
 
-          <RenderIf condition={!provider.isOrganisation}>
+          <RenderIf
+            condition={
+              provider?.provider_data?.user_type.toLowerCase() !== "org"
+            }
+          >
             <p className="font-medium text-xs">
               From {formatNumberWithCommas(provider?.charge_from as number)}/hr
             </p>
