@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { IconList, IconList2, IconStarFull } from "@/components/icons";
 import {
   BreadcrumbCmp,
+  FilterTag,
   PaginationCmp,
   RenderIf,
   Searchbar,
@@ -20,12 +21,16 @@ import {
   setPaginationParams,
 } from "@/hooks/use-pagination-params";
 import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
-import { PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
+import {
+  PROVIDER_FILTER_KEY_MATCH,
+  PROVIDERS_TABLE_HEADERS,
+} from "@/lib/constants";
 import { formatTableDate } from "@/lib/utils";
 import {
   useGetOrganizationProviders,
   useGetServiceProviders,
 } from "@/services/hooks/queries/use-providers";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import {
   FetchedServiceProvidersCountType,
   FetchedSingleOrganizationProviders,
@@ -49,17 +54,61 @@ export const SingleOrganisationProviderContent = () => {
     account_service_type: account_type,
   });
 
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const { data: requestVariables } = useMultipleRequestVariables([
+    "service-offering",
+    "service-category",
+  ]);
+  const [selectedService, setSelectedService] = useState("");
+  const [selectedCommunicationPreference, setSelectedCommunicationPreference] =
+    useState("Video");
+  const [selectedProviderType, setSelectedProviderType] = useState("");
+  const [selectedApptDate, setSelectedApptDate] = useState("");
+
+  const handleClearAllFilters = () => {
+    setSelectedService("");
+    setSelectedCommunicationPreference("");
+    setSelectedProviderType("");
+    setSelectedApptDate("");
+  };
+
+  const removeFilter = (filterToRemove: string) => {
+    const setFilterValues: Record<string, any> = {
+      service_offer_id: setSelectedService,
+      service_cat_id: setSelectedProviderType,
+      appt_date: setSelectedApptDate,
+      time_zone: setSelectedApptDate,
+      comm_mode: setSelectedCommunicationPreference,
+    };
+
+    setFilters((prev) => {
+      if (filterToRemove === "appt_date" || filterToRemove === "time_zone") {
+        // eslint-disable-next-line
+        const { appt_date: _, time_zone: __, ...rest } = prev;
+        return rest;
+      } else {
+        // eslint-disable-next-line
+        const { [filterToRemove]: _, ...rest } = prev;
+        return rest;
+      }
+    });
+
+    setFilterValues[filterToRemove]("");
+  };
+
   const { data: providers, isLoading } = useGetOrganizationProviders<
     FetchedSingleOrganizationProviders[]
   >({
     org_id: id!.toString(),
     q: value,
+    ...filters,
   });
 
   const { data: providersCount } =
     useGetOrganizationProviders<FetchedServiceProvidersCountType>({
       org_id: id!.toString(),
       component: "count",
+      ...filters,
     });
 
   const itemsPerPage = 10;
@@ -213,9 +262,59 @@ export const SingleOrganisationProviderContent = () => {
               </RenderIf>
             </Button>
 
-            <FilterOrganisationsProvidersPopover />
+            <FilterOrganisationsProvidersPopover
+              setFilters={setFilters}
+              requestVariables={requestVariables}
+              selectedService={selectedService}
+              selectedCommunicationPreference={selectedCommunicationPreference}
+              selectedProviderType={selectedProviderType}
+              selectedApptDate={selectedApptDate}
+              setSelectedService={setSelectedService}
+              setSelectedCommunicationPreference={
+                setSelectedCommunicationPreference
+              }
+              setSelectedProviderType={setSelectedProviderType}
+              setSelectedApptDate={setSelectedApptDate}
+            />
           </div>
         </div>
+
+        <RenderIf condition={Object.keys(filters)?.length > 0}>
+          <div className="flex flex-col md:flex-row flex-wrap justify-between items-end">
+            <div className="flex flex-wrap gap-2">
+              {Object.keys(filters)?.map((filter, index) => (
+                <FilterTag
+                  key={index}
+                  title={PROVIDER_FILTER_KEY_MATCH[filter]}
+                  value={
+                    filter === "service_offer_id"
+                      ? requestVariables["service-offering"]?.filter(
+                          (val: { service_offer_id: string }) =>
+                            val?.service_offer_id === filters[filter]
+                        )[0]?.name
+                      : filter === "service_cat_id"
+                      ? requestVariables["service-category"]?.filter(
+                          (val: { _id: string }) => val?._id === filters[filter]
+                        )[0]?.name
+                      : filters[filter]
+                  }
+                  onClear={() => removeFilter(filter)}
+                />
+              ))}
+
+              <Button
+                variant="link"
+                className="underline underline-offset-1 text-button-primary text-xs"
+                onClick={() => {
+                  setFilters({});
+                  handleClearAllFilters();
+                }}
+              >
+                Clear all filters
+              </Button>
+            </div>
+          </div>
+        </RenderIf>
 
         <RenderIf condition={!showGridView}>
           <TableCmp
@@ -233,15 +332,15 @@ export const SingleOrganisationProviderContent = () => {
                   provider_data={{
                     name: provider?.user_data?.name,
                     avatar: provider?.user_data?.avatar,
-                    user_type: "org",
+                    user_type: user_type,
                     account_type: "individual",
-                    account_service_type: "payer",
+                    account_service_type: account_type,
                     user_id: provider?.provider_id,
                     specialty: provider?.user_data?.specialty,
                     createdAt: provider?.createdAt,
                     rating: provider?.rating?.toString(),
                   }}
-                  charge_from={0}
+                  charge_from={provider?.user_data?.charge_from}
                 />
               ))}
             </div>
@@ -272,15 +371,15 @@ export const SingleOrganisationProviderContent = () => {
                     provider_data={{
                       name: provider?.user_data?.name,
                       avatar: provider?.user_data?.avatar,
-                      user_type: "org",
+                      user_type: user_type,
                       account_type: "individual",
-                      account_service_type: "payer",
+                      account_service_type: account_type,
                       user_id: provider?.provider_id,
                       specialty: provider?.user_data?.specialty,
                       createdAt: provider?.createdAt,
                       rating: provider?.rating?.toString(),
                     }}
-                    charge_from={0}
+                    charge_from={provider?.user_data?.charge_from}
                   />
                 ))}
               </div>
@@ -288,7 +387,9 @@ export const SingleOrganisationProviderContent = () => {
           </RenderIf>
         </RenderIf>
 
-        <RenderIf condition={!isLoading && tableData!.length > 0}>
+        <RenderIf
+          condition={!isLoading && tableData ? tableData?.length > 0 : false}
+        >
           <PaginationCmp
             onInputPage={(val) => handlePageChange(parseInt(val))}
             currentPage={page?.toString()}

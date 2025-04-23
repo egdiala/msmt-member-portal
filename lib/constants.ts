@@ -109,4 +109,5 @@ export const PROVIDER_FILTER_KEY_MATCH: Record<string, string> = {
   language: "Language",
   religion: "Religion",
   comm_mode: "Communication Preference",
+  service_cat_id: "Provider Type",
 };
