@@ -51,3 +51,17 @@ export const getFavouriteProviders = async (
   );
   return res.data;
 };
+
+export const addFavouriteProvider = async (provider_id: string) => {
+  const res = await axiosUserService.post("members/accounts/fav-providers", {
+    provider_id,
+  });
+  return res.data;
+};
+
+export const removeFavouriteProvider = async (provider_id: string) => {
+  const res = await axiosUserService.delete(
+    `members/accounts/fav-providers/${provider_id}`
+  );
+  return res.data;
+};

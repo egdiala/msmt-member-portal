@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "motion/react";
 import { IconList, IconList2, IconStarFull } from "@/components/icons";
 import {
   BreadcrumbCmp,
@@ -25,12 +26,19 @@ import {
   PROVIDER_FILTER_KEY_MATCH,
   PROVIDERS_TABLE_HEADERS,
 } from "@/lib/constants";
-import { formatTableDate } from "@/lib/utils";
+import { cn, formatTableDate } from "@/lib/utils";
 import {
   useGetOrganizationProviders,
   useGetServiceProviders,
 } from "@/services/hooks/queries/use-providers";
-import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
+import {
+  useGetProfile,
+  useMultipleRequestVariables,
+} from "@/services/hooks/queries/use-profile";
+import {
+  useAddFavouriteProvider,
+  useRemoveFavouriteProvider,
+} from "@/services/hooks/mutations/use-providers";
 import {
   FetchedServiceProvidersCountType,
   FetchedSingleOrganizationProviders,
@@ -48,10 +56,13 @@ export const SingleOrganisationProviderContent = () => {
 
   const { value, onChangeHandler } = useDebounce(400);
 
+  const { data: userProfile } = useGetProfile();
+
   const { data } = useGetServiceProviders<FetchOrganizationProvider>({
     user_id: id?.toString(),
     user_type: user_type,
     account_service_type: account_type,
+    member_id: userProfile?.user_id,
   });
 
   const [filters, setFilters] = useState<Record<string, any>>({});
@@ -97,7 +108,7 @@ export const SingleOrganisationProviderContent = () => {
     FetchedSingleOrganizationProviders[]
   >({
     org_id: id!.toString(),
-    q: value,
+    ...(value ? { q: value } : {}),
     ...filters,
   });
 
@@ -154,6 +165,32 @@ export const SingleOrganisationProviderContent = () => {
     };
   });
 
+  const { mutate: addFavourite, isPending } = useAddFavouriteProvider();
+  const { mutate: removeFavourite, isPending: isRemovingFavourite } =
+    useRemoveFavouriteProvider();
+
+  const handleMarkAsFavourite = () => {
+    data?.isfav_provider
+      ? removeFavourite(id!.toString())
+      : addFavourite(id!.toString());
+  };
+
+  const buttonCopy = {
+    idle: (
+      <div className="flex items-center justify-between gap-x-2 px-3 py-2">
+        <IconStarFull className="size-4" />
+        <p>
+          {data?.isfav_provider ? "Remove from Favourite" : "Mark as Favourite"}
+        </p>
+      </div>
+    ),
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isPending || isRemovingFavourite ? "loading" : "idle";
+  }, [isPending, isRemovingFavourite]);
+
   return (
     <>
       <BreadcrumbCmp
@@ -190,9 +227,32 @@ export const SingleOrganisationProviderContent = () => {
                 <div className="border-t border-divider"></div>
 
                 <div className="flex items-center justify-between">
-                  <Button variant="ghost" className="p-0 font-semibold">
-                    <IconStarFull className="stroke-brand-btn-secondary size-4" />
-                    Mark as Favourite
+                  <Button
+                    variant={data?.isfav_provider ? "default" : "ghost"}
+                    className={cn(
+                      "p-0 font-semibold min-w-42",
+                      data?.isfav_provider
+                        ? "stroke-white"
+                        : "stroke-brand-btn-secondary hover:stroke-white"
+                    )}
+                    disabled={isPending || isRemovingFavourite}
+                    onClick={handleMarkAsFavourite}
+                  >
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      <motion.span
+                        transition={{
+                          type: "spring",
+                          duration: 0.3,
+                          bounce: 0,
+                        }}
+                        initial={{ opacity: 0, y: -25 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 25 }}
+                        key={buttonState}
+                      >
+                        {buttonCopy[buttonState]}
+                      </motion.span>
+                    </AnimatePresence>
                   </Button>
                 </div>
               </RenderIf>
@@ -201,10 +261,7 @@ export const SingleOrganisationProviderContent = () => {
 
           <div className="border border-divider rounded-lg px-4 md:px-5 py-4 grid gap-y-2">
             <p className="text-sm text-brand-2">About</p>
-            <p className="text-brand-1">
-              Has 0 years of professional experience with 3 publications and 3
-              certifications
-            </p>
+            <p className="text-brand-1">{data?.description}</p>
           </div>
 
           <div className="border border-divider rounded-lg px-3 md:px-5 py-4 grid gap-y-2">

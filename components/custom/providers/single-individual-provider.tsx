@@ -1,8 +1,10 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { differenceInYears } from "date-fns";
+import { AnimatePresence, motion } from "motion/react";
 import {
   IconAudioLines,
   IconPlus,
@@ -13,18 +15,27 @@ import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { cn } from "@/lib/utils";
 import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
+import {
+  useAddFavouriteProvider,
+  useRemoveFavouriteProvider,
+} from "@/services/hooks/mutations/use-providers";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { FetchSingleProvider } from "@/types/providers";
 
 export const SingleIndividualProviderContent = () => {
   const { id } = useParams();
   const searchParams = useSearchParams();
+  const { data: userProfile } = useGetProfile();
+
   const { data, isLoading } = useGetServiceProviders<FetchSingleProvider>({
     user_id: id?.toString(),
     user_type: searchParams.get("type") as "provider" | "org",
     account_service_type: searchParams.get("service_type") as
       | "provider"
       | "payer",
+    member_id: userProfile?.user_id,
   });
 
   const yearsOfExperience = differenceInYears(
@@ -60,6 +71,32 @@ export const SingleIndividualProviderContent = () => {
     },
     { id: 3, title: "Communication preferences", value: data?.comm_mode ?? [] },
   ];
+
+  const { mutate: addFavourite, isPending } = useAddFavouriteProvider();
+  const { mutate: removeFavourite, isPending: isRemovingFavourite } =
+    useRemoveFavouriteProvider();
+
+  const handleMarkAsFavourite = () => {
+    data?.isfav_provider
+      ? removeFavourite(id!.toString())
+      : addFavourite(id!.toString());
+  };
+
+  const buttonCopy = {
+    idle: (
+      <div className="flex items-center justify-between gap-x-2 px-3 py-2">
+        <IconStarFull className="size-4" />
+        <p>
+          {data?.isfav_provider ? "Remove from Favourite" : "Mark as Favourite"}
+        </p>
+      </div>
+    ),
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isPending || isRemovingFavourite ? "loading" : "idle";
+  }, [isPending, isRemovingFavourite]);
 
   return (
     <>
@@ -99,9 +136,28 @@ export const SingleIndividualProviderContent = () => {
               <div className="border-t border-divider"></div>
 
               <div className="flex items-center justify-between">
-                <Button variant="ghost" className="p-0 font-semibold">
-                  <IconStarFull className="stroke-brand-btn-secondary size-4" />
-                  Mark as Favourite
+                <Button
+                  variant={data?.isfav_provider ? "default" : "ghost"}
+                  className={cn(
+                    "p-0 font-semibold min-w-42",
+                    data?.isfav_provider
+                      ? "stroke-white"
+                      : "stroke-brand-btn-secondary hover:stroke-white"
+                  )}
+                  disabled={isPending || isRemovingFavourite}
+                  onClick={handleMarkAsFavourite}
+                >
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.span
+                      transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                      initial={{ opacity: 0, y: -25 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 25 }}
+                      key={buttonState}
+                    >
+                      {buttonCopy[buttonState]}
+                    </motion.span>
+                  </AnimatePresence>
                 </Button>
 
                 <Button asChild className="hidden md:inline-flex">

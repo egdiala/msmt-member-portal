@@ -15,6 +15,7 @@ export interface FetchServiceProvidersQuery {
   appt_date?: string; // Appointment date / availability date. It is in format YYYY-MM-DD
   time_zone?: string; // The user's device time zone. Required when there's appt_date
   component?: "count";
+  member_id?: string;
 }
 
 export interface FetchOrganizationProvidersQuery {
@@ -68,6 +69,7 @@ export interface FetchOrganizationProvider {
   avatar: string;
   industry_id: string;
   comm_mode: string[];
+  description: string;
   user_id: string;
   completed_appointment: number;
   charge_from: number;
@@ -76,6 +78,7 @@ export interface FetchOrganizationProvider {
     amount: number;
     name: string;
   }[];
+  isfav_provider: boolean;
   industry_name: string;
   total_provider: number;
   total_member: number;
@@ -101,6 +104,7 @@ export interface FetchSingleProvider {
   total_provider: number;
   total_member: number;
   rating: number;
+  isfav_provider: boolean;
   total_certification: number;
   total_publication: number;
   service_start_year: number;
