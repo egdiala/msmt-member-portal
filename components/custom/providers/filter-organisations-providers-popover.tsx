@@ -104,7 +104,7 @@ const FilterContent = ({
                 return { id: val?._id, value: val?.name };
               })
               ?.map((type: { id: string; value: string }) => (
-                <button
+                <div role="button"
                   key={type?.id}
                   onClick={() => setSelectedProviderType(type?.value)}
                 >
@@ -122,7 +122,7 @@ const FilterContent = ({
                         : "border-divider"
                     )}
                   />
-                </button>
+                </div>
               ))}
           </RadioGroup>
         </div>
