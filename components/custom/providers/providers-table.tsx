@@ -49,6 +49,7 @@ export const ProvidersTable = () => {
     "service-offering",
     "preferred-lan",
     "religion-list",
+    "booking-prices",
   ]);
 
   // filters
@@ -84,7 +85,13 @@ export const ProvidersTable = () => {
             )[0]?.service_offer_id,
           }
         : {}),
-      ...(priceRange ? { amount: priceRange } : {}),
+      ...(priceRange
+        ? {
+            amount: requestVariables["booking-prices"]?.filter(
+              (val: { name: string }) => val?.name === priceRange
+            )[0]?.value,
+          }
+        : {}),
       ...(gender ? { gender: gender?.toLowerCase() } : {}),
       ...(language ? { language: language?.toLowerCase() } : {}),
       ...(religion ? { religion: religion?.toLowerCase() } : {}),
@@ -227,16 +234,14 @@ export const ProvidersTable = () => {
           />
 
           <SelectCmp
-            selectItems={[
-              { id: 1, value: "100-1000" },
-              { id: 2, value: "1000-5000" },
-              { id: 3, value: "5000-10000" },
-              { id: 4, value: "10000-20000" },
-              { id: 5, value: "20000-40000" },
-              { id: 6, value: "40000-60000" },
-              { id: 7, value: "60000-80000" },
-              { id: 8, value: "80000-100000" },
-            ]}
+            selectItems={requestVariables["booking-prices"]?.map(
+              (val: { name: string }, index: number) => {
+                return {
+                  id: index,
+                  value: val?.name,
+                };
+              }
+            )}
             value={priceRange}
             onSelect={(val) => setPriceRange(val)}
             placeholder={"Price range"}
@@ -403,6 +408,11 @@ export const ProvidersTable = () => {
                       ? requestVariables["service-offering"]?.filter(
                           (val: { service_offer_id: string }) =>
                             val?.service_offer_id === filters[filter]
+                        )[0]?.name
+                      : filter === "amount"
+                      ? requestVariables["booking-prices"]?.filter(
+                          (val: { value: string }) =>
+                            val?.value === filters[filter]
                         )[0]?.name
                       : filters[filter]
                   }

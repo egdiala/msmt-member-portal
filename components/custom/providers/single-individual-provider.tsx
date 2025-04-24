@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import { differenceInYears } from "date-fns";
 import {
   IconAudioLines,
   IconPlus,
@@ -26,22 +27,23 @@ export const SingleIndividualProviderContent = () => {
       | "payer",
   });
 
+  const yearsOfExperience = differenceInYears(
+    new Date(),
+    new Date(data?.service_start_year ?? 0)
+  );
+
   const providerInfo = [
     {
       id: 1,
       title: "About",
-      value:
-        "Has 0 years of professional experience with 3 publications and 3 certifications",
+      value: `Has ${yearsOfExperience} years of professional experience with ${
+        data?.total_publication ?? 0
+      } publications and ${data?.total_certification ?? 0} certifications`,
     },
     {
       id: 2,
       title: "Special Training",
       value: data?.special_training_data.map((item) => item.name).join(", "),
-    },
-    {
-      id: 3,
-      title: "Diagnosis Preference",
-      value: "Mood problems and emotional distress",
     },
   ];
 

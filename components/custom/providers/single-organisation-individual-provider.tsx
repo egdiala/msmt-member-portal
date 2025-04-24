@@ -51,11 +51,6 @@ export const SingleOrganisationIndividualProviderContent = () => {
         data?.special_training_data?.map((item) => item.name).join(", ") ??
         "N/A",
     },
-    {
-      id: 3,
-      title: "Diagnosis Preference",
-      value: "Mood problems and emotional distress",
-    },
   ];
 
   const cardStats = [

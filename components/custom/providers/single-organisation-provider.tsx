@@ -61,21 +61,18 @@ export const SingleOrganisationProviderContent = () => {
   ]);
   const [selectedService, setSelectedService] = useState("");
   const [selectedCommunicationPreference, setSelectedCommunicationPreference] =
-    useState("Video");
-  const [selectedProviderType, setSelectedProviderType] = useState("");
+    useState("");
   const [selectedApptDate, setSelectedApptDate] = useState("");
 
   const handleClearAllFilters = () => {
     setSelectedService("");
     setSelectedCommunicationPreference("");
-    setSelectedProviderType("");
     setSelectedApptDate("");
   };
 
   const removeFilter = (filterToRemove: string) => {
     const setFilterValues: Record<string, any> = {
       service_offer_id: setSelectedService,
-      service_cat_id: setSelectedProviderType,
       appt_date: setSelectedApptDate,
       time_zone: setSelectedApptDate,
       comm_mode: setSelectedCommunicationPreference,
@@ -267,13 +264,11 @@ export const SingleOrganisationProviderContent = () => {
               requestVariables={requestVariables}
               selectedService={selectedService}
               selectedCommunicationPreference={selectedCommunicationPreference}
-              selectedProviderType={selectedProviderType}
               selectedApptDate={selectedApptDate}
               setSelectedService={setSelectedService}
               setSelectedCommunicationPreference={
                 setSelectedCommunicationPreference
               }
-              setSelectedProviderType={setSelectedProviderType}
               setSelectedApptDate={setSelectedApptDate}
             />
           </div>

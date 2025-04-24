@@ -32,8 +32,6 @@ const FilterContent = ({
   setSelectedService,
   selectedCommunicationPreference,
   setSelectedCommunicationPreference,
-  selectedProviderType,
-  setSelectedProviderType,
   selectedApptDate,
   setSelectedApptDate,
 }: {
@@ -42,11 +40,9 @@ const FilterContent = ({
   requestVariables: any;
   selectedService: string;
   selectedCommunicationPreference: string;
-  selectedProviderType: string;
   selectedApptDate: string;
   setSelectedService: Dispatch<SetStateAction<string>>;
   setSelectedCommunicationPreference: Dispatch<SetStateAction<string>>;
-  setSelectedProviderType: Dispatch<SetStateAction<string>>;
   setSelectedApptDate: Dispatch<SetStateAction<string>>;
 }) => {
   const communicationPreferences = ["Video", "Audio"];
@@ -58,13 +54,6 @@ const FilterContent = ({
             service_offer_id: requestVariables["service-offering"]?.filter(
               (val: { name: string }) => val?.name === selectedService
             )[0]?.service_offer_id,
-          }
-        : {}),
-      ...(selectedProviderType
-        ? {
-            service_cat_id: requestVariables["service-category"]?.filter(
-              (val: { name: string }) => val?.name === selectedProviderType
-            )[0]?._id,
           }
         : {}),
       ...(selectedApptDate ? { appt_date: selectedApptDate } : {}),
@@ -94,37 +83,6 @@ const FilterContent = ({
             onSelect={(val) => setSelectedService(val)}
             placeholder="Select Service"
           />
-        </div>
-
-        <div className="grid gap-y-2">
-          <h4 className="font-semibold text-sm text-brand-1">Provider Type</h4>
-          <RadioGroup className="flex items-center gap-2 flex-wrap">
-            {requestVariables["service-category"]
-              ?.map((val: { _id: string; name: string }) => {
-                return { id: val?._id, value: val?.name };
-              })
-              ?.map((type: { id: string; value: string }) => (
-                <div role="button"
-                  key={type?.id}
-                  onClick={() => setSelectedProviderType(type?.value)}
-                >
-                  <RadioButton
-                    isActive={selectedProviderType === type?.value}
-                    option={{
-                      id: type?.id,
-                      value: type?.value,
-                      name: type?.value,
-                    }}
-                    className={cn(
-                      "border rounded-full md:py-2 md:px-3 capitalize",
-                      selectedProviderType === type?.value
-                        ? "border-button-primary text-button-primary"
-                        : "border-divider"
-                    )}
-                  />
-                </div>
-              ))}
-          </RadioGroup>
         </div>
 
         <div className="grid gap-y-2">
@@ -205,11 +163,9 @@ interface IFilterOrganisationsProvidersPopover {
   requestVariables: any;
   selectedService: string;
   selectedCommunicationPreference: string;
-  selectedProviderType: string;
   selectedApptDate: string;
   setSelectedService: Dispatch<SetStateAction<string>>;
   setSelectedCommunicationPreference: Dispatch<SetStateAction<string>>;
-  setSelectedProviderType: Dispatch<SetStateAction<string>>;
   setSelectedApptDate: Dispatch<SetStateAction<string>>;
 }
 
@@ -220,8 +176,6 @@ export const FilterOrganisationsProvidersPopover = ({
   setSelectedService,
   selectedCommunicationPreference,
   setSelectedCommunicationPreference,
-  selectedProviderType,
-  setSelectedProviderType,
   selectedApptDate,
   setSelectedApptDate,
 }: IFilterOrganisationsProvidersPopover) => {
@@ -253,13 +207,11 @@ export const FilterOrganisationsProvidersPopover = ({
               requestVariables={requestVariables}
               selectedService={selectedService}
               selectedCommunicationPreference={selectedCommunicationPreference}
-              selectedProviderType={selectedProviderType}
               selectedApptDate={selectedApptDate}
               setSelectedService={setSelectedService}
               setSelectedCommunicationPreference={
                 setSelectedCommunicationPreference
               }
-              setSelectedProviderType={setSelectedProviderType}
               setSelectedApptDate={setSelectedApptDate}
             />
           </PopoverContent>
@@ -307,13 +259,11 @@ export const FilterOrganisationsProvidersPopover = ({
                 selectedCommunicationPreference={
                   selectedCommunicationPreference
                 }
-                selectedProviderType={selectedProviderType}
                 selectedApptDate={selectedApptDate}
                 setSelectedService={setSelectedService}
                 setSelectedCommunicationPreference={
                   setSelectedCommunicationPreference
                 }
-                setSelectedProviderType={setSelectedProviderType}
                 setSelectedApptDate={setSelectedApptDate}
               />
             </DrawerPrimitive.Content>
