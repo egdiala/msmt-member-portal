@@ -129,3 +129,19 @@ export interface FetchedSingleOrganizationProviders {
   };
   rating: number;
 }
+
+export interface FetchFavouriteProvidersQuery {
+  item_per_page?: string;
+  page?: string;
+  component?: "count";
+  provider_id?: string;
+  q?: string;
+}
+
+export interface FetchedFavouriteProviders {
+  provider_id: string;
+  name: string;
+  avatar: string;
+  specialty: string;
+  rating: number;
+}

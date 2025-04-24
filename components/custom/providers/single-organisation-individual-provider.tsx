@@ -1,7 +1,8 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
+import { differenceInYears } from "date-fns";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
 import {
@@ -21,28 +22,38 @@ import {
 export const SingleOrganisationIndividualProviderContent = () => {
   const { id, uid } = useParams();
   const searchParams = useSearchParams();
-  const user_type = searchParams.get("type") as "provider" | "org";
+  const org_user_type = searchParams.get("type") as "provider" | "org";
+  const user_type = searchParams.get("user_type") as "provider" | "org";
   const account_type = searchParams.get("service_type") as "provider" | "payer";
+  const user_account_type = searchParams.get("user_service_type") as
+    | "provider"
+    | "payer";
 
   const { data: orgProvider } =
     useGetServiceProviders<FetchOrganizationProvider>({
       user_id: id?.toString(),
-      user_type: user_type,
+      user_type: org_user_type,
       account_service_type: account_type,
     });
 
   const { data, isLoading } = useGetServiceProviders<FetchSingleProvider>({
     user_id: uid?.toString(),
     user_type: user_type,
-    account_service_type: account_type,
+    account_service_type: user_account_type,
   });
+
+  const yearsOfExperience = differenceInYears(
+    new Date(),
+    new Date(data?.service_start_year ?? 0)
+  );
 
   const providerInfo = [
     {
       id: 1,
       title: "About",
-      value:
-        "Has 0 years of professional experience with 3 publications and 3 certifications",
+      value: `Has ${yearsOfExperience} years of professional experience with ${
+        data?.total_publication ?? 0
+      } publications and ${data?.total_certification ?? 0} certifications`,
     },
     {
       id: 2,
@@ -99,7 +110,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
             <div className="grid gap-y-3 w-full">
               <div className="grid gap-y-1">
                 <h3 className="text-xl font-bold text-brand-1">{data?.name}</h3>
-                <p className="text-brand-2">{data?.specialty ?? "General"}</p>
+                <p className="text-brand-2 capitalize">{data?.specialty}</p>
                 <div className="flex items-center gap-x-1 text-sm text-brand-1">
                   <IconStarFull className="fill-actions-amber size-5" />
                   {data?.rating ?? 0}

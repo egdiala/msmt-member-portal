@@ -1,12 +1,14 @@
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import {
+  getFavouriteProviders,
   getOrganizationProviders,
   getProviderSchedule,
   getServiceIndustries,
   getServiceProviders,
 } from "@/services/api/providers";
 import {
+  FetchFavouriteProvidersQuery,
   FetchOrganizationProvidersQuery,
   FetchServiceProvidersQuery,
 } from "@/types/providers";
@@ -61,6 +63,21 @@ export const useGetProviderSchedule = <T>(
   return useQuery({
     queryKey: ["get-provider-schedule", query],
     queryFn: () => getProviderSchedule(query),
+    select: (res) => res?.data as T,
+    retry: false,
+    throwOnError(error: any) {
+      toast.error(error?.response?.data?.msg || "Something went wrong");
+      return false;
+    },
+  });
+};
+
+export const useGetFavouriteProviders = <T>(
+  query: FetchFavouriteProvidersQuery
+) => {
+  return useQuery({
+    queryKey: ["get-favourite-provider", query],
+    queryFn: () => getFavouriteProviders(query),
     select: (res) => res?.data as T,
     retry: false,
     throwOnError(error: any) {

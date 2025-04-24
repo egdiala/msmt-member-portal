@@ -9,3 +9,4 @@ export * from "./single-organisation-provider";
 export * from "./single-organisation-individual-provider";
 export * from "./single-individual-provider";
 export * from "./book-appointment";
+export * from "./favourite-providers-table";

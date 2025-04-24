@@ -1,9 +1,11 @@
+import { createQueryString } from "@/lib/utils";
 import {
+  FetchFavouriteProvidersQuery,
   FetchOrganizationProvidersQuery,
   FetchProviderScheduleQuery,
   FetchServiceProvidersQuery,
 } from "@/types/providers";
-import { axiosRequestService } from "../axios-instance";
+import { axiosRequestService, axiosUserService } from "../axios-instance";
 
 export const getServiceProviders = async (
   query: FetchServiceProvidersQuery
@@ -37,6 +39,15 @@ export const getProviderSchedule = async (
   const res = await axiosRequestService.post(
     "members/requests/provider-schedules",
     { ...query }
+  );
+  return res.data;
+};
+
+export const getFavouriteProviders = async (
+  query: FetchFavouriteProvidersQuery
+) => {
+  const res = await axiosUserService.get(
+    `members/accounts/fav-providers${createQueryString(query)}`
   );
   return res.data;
 };

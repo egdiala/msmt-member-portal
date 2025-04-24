@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import {
   IconHospital,
   IconStarFull,
@@ -21,6 +21,8 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const searchParams = useSearchParams();
   const user_type = searchParams.get("type") as "provider" | "org";
 
+  const path = usePathname();
+
   const ProviderSpecialtyInfo = () => {
     return (
       <p className="text-[8px] md:text-xs text-brand-2 capitalize">
@@ -37,7 +39,7 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           ? `/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
           : provider?.provider_data?.user_type.toLowerCase() === "provider"
           ? `/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
-          : `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
+          : `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}&user_type=provider&user_service_type=provider`
       }
       className="border border-divider rounded-lg p-1"
     >
@@ -53,34 +55,36 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           />
         </Avatar>
 
-        <div
-          className={cn(
-            "w-fit capitalize px-1 py-0.5 flex gap-x-1 text-xs text-brand-2 absolute top-1 left-1 rounded-sm",
-            provider?.provider_data?.account_type?.toLowerCase() ===
-              "individual"
-              ? "bg-blue-400"
-              : "bg-brand-bkg-3"
-          )}
-        >
-          <RenderIf
-            condition={
+        <RenderIf condition={path !== "/favourite-providers"}>
+          <div
+            className={cn(
+              "w-fit capitalize px-1 py-0.5 flex gap-x-1 text-xs text-brand-2 absolute top-1 left-1 rounded-sm",
               provider?.provider_data?.account_type?.toLowerCase() ===
-              "individual"
-            }
+                "individual"
+                ? "bg-blue-400"
+                : "bg-brand-bkg-3"
+            )}
           >
-            <IconStethoscope className="stroke-brand-btn-secondary size-3" />
-            {provider?.provider_data?.account_type}
-          </RenderIf>
+            <RenderIf
+              condition={
+                provider?.provider_data?.account_type?.toLowerCase() ===
+                "individual"
+              }
+            >
+              <IconStethoscope className="stroke-brand-btn-secondary size-3" />
+              {provider?.provider_data?.account_type}
+            </RenderIf>
 
-          <RenderIf
-            condition={
-              provider?.provider_data?.account_type?.toLowerCase() === "payer"
-            }
-          >
-            <IconHospital className="stroke-brand-btn-secondary size-3" />
-            Organization
-          </RenderIf>
-        </div>
+            <RenderIf
+              condition={
+                provider?.provider_data?.account_type?.toLowerCase() === "payer"
+              }
+            >
+              <IconHospital className="stroke-brand-btn-secondary size-3" />
+              Organization
+            </RenderIf>
+          </div>
+        </RenderIf>
       </div>
 
       <div className="grid gap-y-4 py-1 px-0.5">
@@ -88,6 +92,7 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           <h2 className="font-medium text-brand-1 text-[10px] md:text-base">
             {provider?.provider_data?.name}
           </h2>
+
           <RenderIf
             condition={
               provider?.provider_data?.user_type.toLowerCase() !== "org" ||
@@ -115,8 +120,9 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
 
           <RenderIf
             condition={
-              provider?.provider_data?.user_type.toLowerCase() !== "org" ||
-              !user_type
+              path !== "/favourite-providers" &&
+              (provider?.provider_data?.user_type.toLowerCase() !== "org" ||
+                !user_type)
             }
           >
             <p className="font-medium text-xs">
