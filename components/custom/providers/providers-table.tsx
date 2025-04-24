@@ -210,6 +210,10 @@ export const ProvidersTable = () => {
               setApptDate(format(date, "yyy-MM-dd"));
             }}
             label="Available date"
+            disabledDate={(date: any) => {
+              const today = new Date();
+              return date < today;
+            }}
           />
 
           <SelectCmp

@@ -95,6 +95,10 @@ const FilterContent = ({
               setSelectedApptDate(format(date, "yyy-MM-dd"));
             }}
             label="Available date"
+            disabledDate={(date: any) => {
+              const today = new Date();
+              return date < today;
+            }}
           />
         </div>
 
