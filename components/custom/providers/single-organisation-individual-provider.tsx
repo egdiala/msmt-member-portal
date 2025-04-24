@@ -94,9 +94,11 @@ export const SingleOrganisationIndividualProviderContent = () => {
     useRemoveFavouriteProvider();
 
   const handleMarkAsFavourite = () => {
-    data?.isfav_provider
-      ? removeFavourite(uid!.toString())
-      : addFavourite(uid!.toString());
+    if (data?.isfav_provider) {
+      removeFavourite(uid!.toString());
+    } else {
+      addFavourite(uid!.toString());
+    }
   };
 
   const buttonCopy = {

@@ -77,9 +77,11 @@ export const SingleIndividualProviderContent = () => {
     useRemoveFavouriteProvider();
 
   const handleMarkAsFavourite = () => {
-    data?.isfav_provider
-      ? removeFavourite(id!.toString())
-      : addFavourite(id!.toString());
+    if (data?.isfav_provider) {
+      removeFavourite(id!.toString());
+    } else {
+      addFavourite(id!.toString());
+    }
   };
 
   const buttonCopy = {
