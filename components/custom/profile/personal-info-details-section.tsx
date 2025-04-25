@@ -46,7 +46,7 @@ export const PersonalInfoDetailsSection = () => {
     <div className="border border-divider rounded-lg p-4 md:py-4 md:px-6 w-full grid gap-y-6">
       <div className="flex justify-between">
         <div className="grid gap-y-4">
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center gap-x-3">
             <Avatar className="h-25 w-25 rounded-full">
               <AvatarImage
                 src={
