@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { IconTick } from "@/components/icons";
 import { RenderIf } from "@/components/shared";
 import { cn } from "@/lib/utils";
@@ -8,7 +9,9 @@ interface IAppointmentStepper {
 }
 
 export const AppointmentStepper = ({ step, steps }: IAppointmentStepper) => {
+  const isLoggedIn = Cookies.get("authToken");
 
+  console.log(!isLoggedIn);
   return (
     <>
       <div className="hidden md:flex items-start gap-x-41 justify-center pt-16 pb-7">
@@ -26,7 +29,16 @@ export const AppointmentStepper = ({ step, steps }: IAppointmentStepper) => {
               <p className="text-brand-1 text-sm">{innerStep.name}</p>
             </div>
 
-            <RenderIf condition={index === 0}>
+            <RenderIf condition={index <= 1 && !isLoggedIn}>
+              <div
+                className={cn(
+                  "w-53 border-t absolute top-2 left-11",
+                  step > index + 1 ? "border-actions-green" : "border-divider"
+                )}
+              ></div>
+            </RenderIf>
+
+            <RenderIf condition={index === 0 && !!isLoggedIn}>
               <div
                 className={cn(
                   "w-53 border-t absolute top-2 left-11",
