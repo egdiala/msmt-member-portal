@@ -83,6 +83,12 @@ export const PROVIDERS_TABLE_HEADERS = [
   { key: "charge_from", value: "Charge From" },
 ];
 
+export const FAVOURITE_PROVIDERS_TABLE_HEADERS = [
+  { key: "name", value: "Name" },
+  { key: "specialty", value: "Specialty" },
+  { key: "rating", value: "Rating" },
+];
+
 export const TRANSACTION_STATUS_ENUM: Record<string, string> = {
   successful: "1",
   failed: "2",

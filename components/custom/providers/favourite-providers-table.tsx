@@ -18,7 +18,7 @@ import {
   setPaginationParams,
 } from "@/hooks/use-pagination-params";
 import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
-import { PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
+import { FAVOURITE_PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
 import { useGetFavouriteProviders } from "@/services/hooks/queries/use-providers";
 import {
   FetchedFavouriteProviders,
@@ -58,7 +58,7 @@ export const FavouriteProvidersTable = () => {
       id: provider?.provider_id,
       datum: provider,
       name: <p className="capitalize">{provider?.name}</p>,
-      specialty: <p className="capitalize">{provider?.specialty}</p>,
+      specialty: <p className="capitalize">{provider?.specialty ?? "N/A"}</p>,
       rating: provider?.rating,
     };
   });
@@ -92,7 +92,7 @@ export const FavouriteProvidersTable = () => {
       <RenderIf condition={!showGridView}>
         <TableCmp
           data={tableData ?? []}
-          headers={PROVIDERS_TABLE_HEADERS}
+          headers={FAVOURITE_PROVIDERS_TABLE_HEADERS}
           onClickRow={(row) => {
             router.push(
               `/providers/individual/${row.id}?type=provider&service_type=provider`
