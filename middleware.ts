@@ -8,6 +8,10 @@ const publicRoutes = [
   "/reset-password",
   "/set-password",
   "/verify-email",
+  "/verify-booking",
+  "/complete-booking/providers/individual",
+  "/complete-booking/providers/organization",
+  "/complete-booking",
 ];
 
 export function middleware(request: NextRequest) {

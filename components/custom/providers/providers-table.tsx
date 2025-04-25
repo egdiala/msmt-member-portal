@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import {
   IconCalendar,
@@ -25,6 +26,7 @@ import { SingleProviderCard } from "./single-provider-card";
 
 export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
+  const isLoggedIn = Cookies.get("authToken");
 
   const tableData = PROVIDERS_LIST.map((provider) => {
     return {
@@ -143,10 +145,22 @@ export const ProvidersTable = () => {
             data={tableData}
             headers={PROVIDERS_TABLE_HEADERS}
             onClickRow={(row) => {
-              if (row.datum.type.toLowerCase() === "organisation") {
-                router.push(`/providers/organisation/${row.id}`);
-              } else if (row.datum.type.toLowerCase() === "individual") {
-                router.push(`/providers/individual/${row.id}`);
+              if (!!isLoggedIn) {
+                if (row.datum.type.toLowerCase() === "organisation") {
+                  router.push(`/providers/organisation/${row.id}`);
+                } else if (row.datum.type.toLowerCase() === "individual") {
+                  router.push(`/providers/individual/${row.id}`);
+                }
+              } else {
+                if (row.datum.type.toLowerCase() === "organisation") {
+                  router.push(
+                    `/complete-booking/providers/organisation/${row.id}`
+                  );
+                } else if (row.datum.type.toLowerCase() === "individual") {
+                  router.push(
+                    `/complete-booking/providers/individual/${row.id}`
+                  );
+                }
               }
             }}
           />

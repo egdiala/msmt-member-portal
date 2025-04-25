@@ -1,5 +1,5 @@
 "use client";
-
+import Cookies from "js-cookie";
 import { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -49,6 +49,8 @@ export const SetScheduleStep = ({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState([
     "Family",
   ]);
+
+  const isLoggedIn = Cookies.get("authToken");
 
   const communicationPreferences = [
     { id: 1, name: "Video", icon: IconVideo },
@@ -334,7 +336,13 @@ export const SetScheduleStep = ({
         <Button variant="secondary" onClick={() => navigate.back()}>
           Go Back
         </Button>
-        <Button onClick={() => setStep("gateway")}>Proceed to Pay</Button>
+        <RenderIf condition={!!isLoggedIn}>
+          <Button onClick={() => setStep("gateway")}>Proceed to Pay</Button>
+        </RenderIf>
+
+        <RenderIf condition={!isLoggedIn}>
+          <Button onClick={() => setStep(2)}>Continue</Button>
+        </RenderIf>
       </div>
     </div>
   );

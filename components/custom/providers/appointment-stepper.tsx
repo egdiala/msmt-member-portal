@@ -4,17 +4,15 @@ import { cn } from "@/lib/utils";
 
 interface IAppointmentStepper {
   step: number;
+  steps: { id: number; name: string }[];
 }
 
-export const AppointmentStepper = ({ step }: IAppointmentStepper) => {
-  const steps = [
-    { id: 1, name: "Schedule" },
-    { id: 2, name: "Questionaire" },
-  ];
+export const AppointmentStepper = ({ step, steps }: IAppointmentStepper) => {
+
   return (
     <>
       <div className="hidden md:flex items-start gap-x-41 justify-center pt-16 pb-7">
-        {steps.map((innerStep, index) => (
+        {steps?.map((innerStep, index) => (
           <div key={index} className="flex items-center gap-x-1 relative">
             <div className="flex flex-col items-center gap-y-2 text-center">
               <RenderIf condition={step > index + 1}>
@@ -41,7 +39,7 @@ export const AppointmentStepper = ({ step }: IAppointmentStepper) => {
       </div>
 
       <p className="md:hidden text-center text-sm text-brand-2">
-        Step {step} of {steps.length}
+        Step {step} of {steps?.length}
       </p>
     </>
   );
