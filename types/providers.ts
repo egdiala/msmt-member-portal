@@ -148,4 +148,5 @@ export interface FetchedFavouriteProviders {
   avatar: string;
   specialty: string;
   rating: number;
+  industry_name?: string;
 }
