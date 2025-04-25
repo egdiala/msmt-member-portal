@@ -117,3 +117,20 @@ export const PROVIDER_FILTER_KEY_MATCH: Record<string, string> = {
   comm_mode: "Communication Preference",
   service_cat_id: "Provider Type",
 };
+
+export const WALLET_FILTER_KEY_MATCH: Record<string, string> = {
+  start_date: "Start Date",
+  end_date: "End Date",
+  transaction_type: "Transaction Type",
+  status: "Status",
+};
+
+export const WALLET_TRANSACTION_TYPE_FILTER_ENUM: Record<number, string> = {
+  1: "Credit",
+  2: "Debit",
+};
+
+export const WALLET_TRANSACTION_STATUS_FILTER_ENUM: Record<number, string> = {
+  1: "Successful",
+  2: "Failed",
+};

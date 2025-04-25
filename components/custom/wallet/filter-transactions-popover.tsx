@@ -155,6 +155,13 @@ const FilterContent = ({
 export const FilterTransactionsPopover = ({
   isDeduction = false,
   setFilters,
+  selected,
+  setSelected,
+  transactionTypeFilter,
+  setTransactionTypeFilter,
+  statusFilter,
+  setStatusFilter,
+  dateFilters,
 }: {
   isDeduction?: boolean;
   setFilters: Dispatch<
@@ -165,47 +172,16 @@ export const FilterTransactionsPopover = ({
       status?: string;
     }>
   >;
+  selected: any;
+  setSelected: Dispatch<SetStateAction<any>>;
+  transactionTypeFilter: string;
+  setTransactionTypeFilter: Dispatch<SetStateAction<string>>;
+  statusFilter: string;
+  setStatusFilter: Dispatch<SetStateAction<string>>;
+  dateFilters: any;
 }) => {
   const [openPopover, setOpenPopover] = useState(false);
   const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
-
-  const today = startOfToday();
-  //eslint-disable-next-line
-  const [dateFilters, _] = useState([
-    {
-      id: 1,
-      name: "Today",
-      value: { start: today, end: today, label: "today" },
-    },
-    {
-      id: 2,
-      name: "This Month",
-      value: {
-        start: startOfMonth(
-          parse(format(today, "yyyy-MM-dd"), "yyyy-MM-dd", new Date())
-        ),
-        end: endOfMonth(
-          parse(format(today, "yyyy-MM-dd"), "yyyy-MM-dd", new Date())
-        ),
-        label: "this-month",
-      },
-    },
-    {
-      id: 3,
-      name: "All Time",
-      value: { start: "", end: "", label: "all-time" },
-    },
-    {
-      id: 4,
-      name: "Custom",
-      value: { start: "", end: "", label: "custom-range" },
-    },
-  ]);
-
-  const [selected, setSelected] = useState(dateFilters[2]);
-
-  const [transactionTypeFilter, setTransactionTypeFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
 
   const setCustomDate = (dates: { start: string; end: string }) => {
     setSelected({

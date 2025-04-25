@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui";
-import { PaginationCmp, RenderIf, TableCmp } from "@/components/shared";
+import {
+  FilterTag,
+  PaginationCmp,
+  RenderIf,
+  TableCmp,
+} from "@/components/shared";
 import { IconHandCoins, IconPlus } from "@/components/icons";
 import {
   getPaginationParams,
@@ -16,7 +21,11 @@ import {
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { cn } from "@/lib/utils";
 import { TRANSACTIONS_DATA } from "@/lib/mock";
-import { WALLET_TABLE_HEADERS } from "@/lib/constants";
+import {
+  WALLET_FILTER_KEY_MATCH,
+  WALLET_TABLE_HEADERS,
+  WALLET_TRANSACTION_TYPE_FILTER_ENUM,
+} from "@/lib/constants";
 import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 import {
   FetchedWalletTransactionsCountType,
@@ -25,6 +34,14 @@ import {
 import { FundWalletModal } from "./fund-wallet-modal";
 import { FilterTransactionsPopover } from "./filter-transactions-popover";
 import { TransactionMobileCard } from "./transaction-mobile-card";
+import { WALLET_TRANSACTION_STATUS_FILTER_ENUM } from "../../../lib/constants";
+import {
+  endOfMonth,
+  format,
+  parse,
+  startOfMonth,
+  startOfToday,
+} from "date-fns";
 
 export const WalletTable = () => {
   const itemsPerPage = 10;
@@ -32,7 +49,7 @@ export const WalletTable = () => {
 
   const searchParams = useSearchParams();
 
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState<Record<string, any>>({});
 
   const { data: walletTransactions, isLoading: isLoadingWalletTransactions } =
     useGetWalletTransactions<FetchedWalletTransactionsType[]>({
@@ -94,13 +111,93 @@ export const WalletTable = () => {
 
   getPaginationParams(setPage);
 
+  const today = startOfToday();
+  //eslint-disable-next-line
+  const [dateFilters, _] = useState([
+    {
+      id: 1,
+      name: "Today",
+      value: { start: today, end: today, label: "today" },
+    },
+    {
+      id: 2,
+      name: "This Month",
+      value: {
+        start: startOfMonth(
+          parse(format(today, "yyyy-MM-dd"), "yyyy-MM-dd", new Date())
+        ),
+        end: endOfMonth(
+          parse(format(today, "yyyy-MM-dd"), "yyyy-MM-dd", new Date())
+        ),
+        label: "this-month",
+      },
+    },
+    {
+      id: 3,
+      name: "All Time",
+      value: { start: "", end: "", label: "all-time" },
+    },
+    {
+      id: 4,
+      name: "Custom",
+      value: { start: "", end: "", label: "custom-range" },
+    },
+  ]);
+
+  const [selected, setSelected] = useState(dateFilters[2]);
+
+  const [transactionTypeFilter, setTransactionTypeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  const handleClearAllFilters = () => {
+    setSelected(dateFilters[2]);
+    setTransactionTypeFilter("");
+    setStatusFilter("");
+  };
+
+  const removeFilter = (filterToRemove: string) => {
+    const setFilterValues: Record<string, any> = {
+      start_date: setSelected,
+      end_date: setSelected,
+      transaction_type: setTransactionTypeFilter,
+      status: setStatusFilter,
+    };
+
+    setFilters((prev) => {
+      if (filterToRemove === "start_date" || filterToRemove === "end_date") {
+        // eslint-disable-next-line
+        const { start_date: _, end_date: __, ...rest } = prev;
+        return rest;
+      } else {
+        // eslint-disable-next-line
+        const { [filterToRemove]: _, ...rest } = prev;
+        return rest;
+      }
+    });
+
+    if (filterToRemove === "start_date" || filterToRemove === "end_date") {
+      setSelected(dateFilters[2]);
+    } else {
+      setFilterValues[filterToRemove]("");
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-brand-1">Transactions</h3>
 
         <div className="flex items-center gap-x-4">
-          <FilterTransactionsPopover setFilters={setFilters} />
+          <FilterTransactionsPopover
+            setFilters={setFilters}
+            selected={selected}
+            setSelected={setSelected}
+            transactionTypeFilter={transactionTypeFilter}
+            setTransactionTypeFilter={setTransactionTypeFilter}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            dateFilters={dateFilters}
+          />
 
           <Button
             className="gap-x-1"
@@ -112,6 +209,38 @@ export const WalletTable = () => {
           </Button>
         </div>
       </div>
+
+      <RenderIf condition={Object.keys(filters)?.length > 0}>
+        <div className="flex flex-col md:flex-row flex-wrap justify-between items-end">
+          <div className="flex flex-wrap gap-2">
+            {Object.keys(filters)?.map((filter, index) => (
+              <FilterTag
+                key={index}
+                title={WALLET_FILTER_KEY_MATCH[filter]}
+                value={
+                  filter === "transaction_type"
+                    ? WALLET_TRANSACTION_TYPE_FILTER_ENUM[filters[filter]]
+                    : filter === "status"
+                    ? WALLET_TRANSACTION_STATUS_FILTER_ENUM[filters[filter]]
+                    : filters[filter]
+                }
+                onClear={() => removeFilter(filter)}
+              />
+            ))}
+
+            <Button
+              variant="link"
+              className="underline underline-offset-1 text-button-primary text-xs"
+              onClick={() => {
+                setFilters({});
+                handleClearAllFilters();
+              }}
+            >
+              Clear all filters
+            </Button>
+          </div>
+        </div>
+      </RenderIf>
 
       <TableCmp
         data={tableData ?? []}
