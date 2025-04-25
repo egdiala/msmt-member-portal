@@ -46,7 +46,7 @@ export const PersonalInfoDetailsSection = () => {
     <div className="border border-divider rounded-lg p-4 md:py-4 md:px-6 w-full grid gap-y-6">
       <div className="flex justify-between">
         <div className="grid gap-y-4">
-          <div className="flex items-center justify-center flex-col">
+          <div className="flex items-end justify-center">
             <Avatar className="h-25 w-25 rounded-full">
               <AvatarImage
                 src={
@@ -63,15 +63,14 @@ export const PersonalInfoDetailsSection = () => {
               </AvatarFallback>
             </Avatar>
 
-            <Button
-              variant="ghost"
+            <button
               className="p-0 gap-x-1 underline text-button-primary font-medium cursor-pointer"
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
             >
               <IconCamera className="stroke-text-tertiary size-4" />
               {isLoading ? "Uploading..." : "Upload Profile Picture"}
-            </Button>
+            </button>
 
             <input
               type="file"
