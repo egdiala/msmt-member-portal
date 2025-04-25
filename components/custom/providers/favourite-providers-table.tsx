@@ -114,6 +114,8 @@ export const FavouriteProvidersTable = () => {
                 account_service_type: "provider",
                 user_id: provider?.provider_id,
                 createdAt: "",
+                specialty:
+                  provider?.specialty || provider?.industry_name || "N/A",
                 rating: provider?.rating?.toString(),
               }}
             />
@@ -150,6 +152,8 @@ export const FavouriteProvidersTable = () => {
                     account_service_type: "provider",
                     user_id: provider?.provider_id,
                     createdAt: "",
+                    specialty:
+                      provider?.specialty || provider?.industry_name || "N/A",
                     rating: provider?.rating?.toString(),
                   }}
                 />
