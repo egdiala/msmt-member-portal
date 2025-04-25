@@ -46,7 +46,7 @@ export const PersonalInfoDetailsSection = () => {
     <div className="border border-divider rounded-lg p-4 md:py-4 md:px-6 w-full grid gap-y-6">
       <div className="flex justify-between">
         <div className="grid gap-y-4">
-          <div className="flex items-end justify-center">
+          <div className="flex items-center justify-center">
             <Avatar className="h-25 w-25 rounded-full">
               <AvatarImage
                 src={
@@ -54,7 +54,7 @@ export const PersonalInfoDetailsSection = () => {
                     ? URL.createObjectURL(avatar)
                     : avatar || data?.avatar || "/placeholder.svg"
                 }
-                className="object-cover"
+                className="object-cover w-full h-full"
                 alt={`${data?.first_name} ${data?.last_name}`}
               />
               <AvatarFallback className="rounded-full text-brand-1 font-semibold text-lg md:text-xl bg-brand-btn-primary">
@@ -64,7 +64,7 @@ export const PersonalInfoDetailsSection = () => {
             </Avatar>
 
             <button
-              className="p-0 gap-x-1 underline text-button-primary font-medium cursor-pointer"
+              className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
             >
