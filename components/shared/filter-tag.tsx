@@ -17,7 +17,7 @@ export const FilterTag = ({ title, value, onClear }: IFilterTag) => {
         </b>
       </p>
 
-      <Button variant="ghost" className="!p-0" onClick={onClear}>
+      <Button variant="ghost" className="!p-0 h-fit" onClick={onClear}>
         <IconClose className="stroke-brand-bkg-1" />
       </Button>
     </div>
