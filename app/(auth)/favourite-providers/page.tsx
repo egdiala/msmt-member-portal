@@ -1,24 +1,22 @@
 import { Suspense } from "react";
 import { BreadcrumbCmp } from "@/components/shared";
-import { ProvidersTable } from "@/components/custom";
+import { FavouriteProvidersTable } from "@/components/custom";
 
-const Providers = () => {
+const FavouriteProviders = () => {
   return (
     <div className="grid gap-y-4">
       <BreadcrumbCmp
         breadcrumbItems={[
           { id: 1, name: "Home", href: "/home" },
-          { id: 2, name: "Providers" },
+          { id: 2, name: "Favourite Providers" },
         ]}
       />
 
-      <div className="flex md:gap-x-5">
-        <Suspense>
-          <ProvidersTable />
-        </Suspense>
-      </div>
+      <Suspense>
+        <FavouriteProvidersTable />
+      </Suspense>
     </div>
   );
 };
 
-export default Providers;
+export default FavouriteProviders;

@@ -13,7 +13,7 @@ import { BLUR_VARIANTS } from "@/lib/constants";
 import { useGetAllNotifications } from "@/services/hooks/queries/use-notifications";
 
 export const NotificationsCard = () => {
-  const { data, isPending } = useGetAllNotifications({
+  const { data, isLoading } = useGetAllNotifications({
     page: "1",
     status: "0",
     item_per_page: "3",
@@ -21,11 +21,11 @@ export const NotificationsCard = () => {
 
   return (
     <AnimatePresence mode="popLayout">
-      {isPending ? (
+      {isLoading ? (
         <motion.div
           key="notifications-card-skeleton-loader"
           layoutId="notifications-card"
-          className="order-2 md:order-3 col-span-1 md:col-span-2 xl:col-span-5"
+          className="order-2 md:order-3 col-span-1 md:col-span-2 xl:col-span-5 h-86"
           variants={BLUR_VARIANTS}
           animate="enter"
           exit="exit"
@@ -35,7 +35,7 @@ export const NotificationsCard = () => {
       ) : (
         <motion.div
           key="notifications-card"
-          layoutId="profile-card"
+          layoutId="notifications-card"
           className="order-2 md:order-3 col-span-1 md:col-span-2 xl:col-span-5 flex flex-col justify-between gap-y-10 md:gap-y-4 rounded-2xl bg-white py-6 px-4 md:px-6"
           variants={BLUR_VARIANTS}
           initial="initial"

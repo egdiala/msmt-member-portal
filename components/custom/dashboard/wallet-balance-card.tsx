@@ -11,14 +11,14 @@ import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 import { FetchedWalletTransactionsStatsType } from "@/types/wallet";
 
 export const WalletBalanceCard = () => {
-  const { data, isPending } =
+  const { data, isLoading } =
     useGetWalletTransactions<FetchedWalletTransactionsStatsType>({
       component: "count-status",
     });
 
   return (
     <AnimatePresence mode="popLayout">
-      {isPending ? (
+      {isLoading ? (
         <motion.div
           key="wallet-card-skeleton-loader"
           layoutId="wallet-card"

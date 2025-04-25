@@ -29,7 +29,13 @@ export type RequestVariableComponent =
   | "religion-list"
   | "marital-status"
   | "country-list"
-  | "preferred-lan";
+  | "preferred-lan"
+  | "service-offering"
+  | "service-category"
+  | "booking-prices"
+  | "booking-question"
+  | "bank-list";
+
 export type UserProfileType = {
   first_name: string;
   last_name: string;

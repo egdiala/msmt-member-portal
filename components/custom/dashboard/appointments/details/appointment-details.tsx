@@ -66,7 +66,10 @@ export default function AppointmentDetails() {
             <div className="flex items-center gap-x-2 md:gap-x-3">
               <div className="relative h-12 w-12 rounded-full overflow-hidden">
                 <Image
-                  src={appointment.psychologist.avatar || "/placeholder.svg"}
+                  src={
+                    appointment.psychologist.avatar ||
+                    "/assets/blank-profile-picture.png"
+                  }
                   alt={appointment.psychologist.name}
                   fill
                   className="object-cover"
@@ -156,16 +159,22 @@ export default function AppointmentDetails() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className=" p-4 md:px-5 py-4 rounded-lg  border border-[#DADCDD] ">
-            <h3 className="font-medium mb-2 text-sm text-brand-1">Assessment</h3>
+            <h3 className="font-medium mb-2 text-sm text-brand-1">
+              Assessment
+            </h3>
             <p className="text-sm  text-brand-2">{appointment.assessment}</p>
           </div>
           <div className="p-4 md:px-5 py-4 rounded-lg  border border-[#DADCDD] ">
-            <h3 className="font-medium mb-2 text-sm text-brand-1">Prescription</h3>
+            <h3 className="font-medium mb-2 text-sm text-brand-1">
+              Prescription
+            </h3>
             <p className="text-sm  text-brand-2">{appointment.prescription}</p>
           </div>
 
           <div className="p-4 md:px-5 py-4 rounded-lg border border-[#DADCDD]">
-            <h3 className="font-medium mb-2 text-sm text-brand-1">Your after-session Feedback</h3>
+            <h3 className="font-medium mb-2 text-sm text-brand-1">
+              Your after-session Feedback
+            </h3>
             <div className="grid gap-2">
               <div className="flex items-center gap-2 text-sm">
                 <div className="text-center border py-2 px-3 rounded-full border-brand-accent-2 bg-blue-400 text-brand-accent-2 text">

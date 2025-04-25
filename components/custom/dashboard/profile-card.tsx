@@ -29,7 +29,7 @@ export const ProfileCard = () => {
         <motion.div
           key="profile-card-skeleton-loader"
           layoutId="profile-card"
-          className="order-3 md:order-1 col-span-1 xl:col-span-3"
+          className="col-span-1 xl:col-span-3 h-86"
           variants={blurVariants}
           animate="enter"
           exit="exit"
