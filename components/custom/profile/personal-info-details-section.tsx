@@ -27,7 +27,7 @@ export const PersonalInfoDetailsSection = () => {
         <div className="grid gap-y-4">
           <Image
             alt="man"
-            src={data?.avatar || "/placeholder.svg"}
+            src={data?.avatar || "/assets/blank-profile-picture.png"}
             className="rounded-full h-20 object-cover"
             width={80}
             height={80}
