@@ -2,102 +2,138 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { AnimatePresence, motion } from "motion/react";
 import { IconExternalLink, IconLogOut } from "@/components/icons";
-import { Button } from "@/components/ui";
-import { PROFILE_ORGANISATIONS_DATA } from "@/lib/mock";
-import { LogoutModal } from "./logout-modal";
+import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AnimatePresence, motion } from "motion/react";
+import { LogoutModal } from "./logout-modal";
+import { RenderIf } from "@/components/shared";
+import { EmptyState } from "@/components/shared/empty-state";
 
 export const ProfileCard = () => {
   const { data, isLoading } = useGetProfile();
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
+  const organizationsData = data?.org_data?.map((val) => {
+    return {
+      id: val?.org_id,
+      name: val?.name,
+      icon: val?.avatar,
+    };
+  });
+
   return (
     <AnimatePresence mode="popLayout">
-      {
-        isLoading ? (
-          <motion.div key="profile-card-skeleton-loader" layoutId="profile-card" className="col-span-1 xl:col-span-3" variants={blurVariants} animate="enter" exit="exit">
-            <Skeleton className="h-full w-full rounded-2xl" />
-          </motion.div>
-        ) : (
-          <motion.div key="profile-card" layoutId="profile-card" className="col-span-1 xl:col-span-3 flex flex-col gap-y-3 rounded-2xl bg-white p-4 md:p-6" variants={blurVariants} initial="initial" animate="enter" exit="exit">
-            <div className="grid gap-y-2 content-start">
-              <Image
-                alt={`${data?.first_name} ${data?.last_name}`}
-                className="h-25 object-cover rounded-full"
-                src={data?.avatar || '/placeholder.svg'}
-                width={100}
-                height={100}
+      {isLoading ? (
+        <motion.div
+          key="profile-card-skeleton-loader"
+          layoutId="profile-card"
+          className="col-span-1 xl:col-span-3 h-86"
+          variants={blurVariants}
+          animate="enter"
+          exit="exit"
+        >
+          <Skeleton className="h-full w-full rounded-2xl" />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="profile-card"
+          layoutId="profile-card"
+          className="order-3 md:order-1 col-span-1 xl:col-span-3 flex flex-col gap-y-3 rounded-2xl bg-white p-4 md:p-6"
+          variants={blurVariants}
+          initial="initial"
+          animate="enter"
+          exit="exit"
+        >
+          <div className="grid gap-y-2 content-start">
+            <Avatar className="size-25 rounded-2xl">
+              <AvatarImage
+                src={data?.avatar}
+                className="object-cover rounded-2xl w-full h-full border border-divider"
               />
+              <AvatarFallback className="text-5xl rounded-2xl">
+                {data?.first_name[0]}
+                {data?.last_name[0]}
+              </AvatarFallback>
+            </Avatar>
 
-              <div className="grid gap-y-0.5">
-                <h2 className="text-text-2 font-semibold">
-                  {data?.first_name} {data?.last_name}
-                </h2>
-                <p className="text-text-tertiary text-xs">{data?.email}</p>
-              </div>
+            <div className="grid gap-y-0.5">
+              <h2 className="text-text-2 font-semibold">
+                {data?.first_name} {data?.last_name}
+              </h2>
+              <p className="text-text-tertiary text-xs">{data?.email}</p>
             </div>
+          </div>
 
-            <div className="flex flex-col gap-y-1 flex-1">
-              <h4 className="text-text-2 text-xs">Your organisation(s)</h4>
+          <div className="flex flex-col gap-y-1 flex-1">
+            <h4 className="text-text-2 text-xs">Your organisation(s)</h4>
 
-              <div className="flex items-center gap-2 flex-wrap">
-                {PROFILE_ORGANISATIONS_DATA.map((organisation) => (
+            <div className="flex items-center gap-2 flex-wrap">
+              <RenderIf condition={organizationsData!.length > 0}>
+                {organizationsData?.map((organisation) => (
                   <div
                     key={organisation.id}
                     className="py-1 px-2 flex items-center gap-x-1 border border-grey-400 rounded-sm"
                   >
-                    <Image
-                      src={organisation.icon}
-                      alt="organisation-icon"
-                      className="size-6 bg-[#FFFFFF20] object-cover rounded-xs"
-                      width={24}
-                      height={24}
-                    />
+                    <Avatar>
+                      <AvatarImage src={organisation?.icon} />
+                      <AvatarFallback className="text-sm">
+                        {organisation?.name?.split(" ")?.[0]?.[0]}
+                        {organisation?.name?.split(" ")?.[1]?.[0]}
+                      </AvatarFallback>
+                    </Avatar>
                     <p className="text-xs text-text-2">{organisation.name}</p>
                   </div>
                 ))}
-              </div>
+              </RenderIf>
+
+              <RenderIf condition={organizationsData!.length === 0}>
+                <div className="w-full flex justify-center items-center">
+                  <EmptyState
+                    title=""
+                    subtitle="Your organisations will appear here"
+                    hasIcon
+                  />
+                </div>
+              </RenderIf>
             </div>
+          </div>
 
-            <div className="pt-4 flex items-center justify-between">
-              <Button
-                asChild
-                variant="secondary"
-                className="text-button-primary gap-x-1"
-              >
-                <Link href="/profile">
-                  Profile
-                  <IconExternalLink className="stroke-button-primary" />
-                </Link>
-              </Button>
+          <div className="pt-4 flex items-center justify-between">
+            <Button
+              asChild
+              variant="secondary"
+              className="text-button-primary gap-x-1"
+            >
+              <Link href="/profile">
+                Profile
+                <IconExternalLink className="stroke-button-primary" />
+              </Link>
+            </Button>
 
-              <Button
-                variant="outline"
-                className="text-button-primary hover:text-button-primary"
-                onClick={() => setOpenLogoutModal(true)}
-              >
-                <IconLogOut className="stroke-button-primary" />
-                Logout
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              className="text-button-primary hover:text-button-primary"
+              onClick={() => setOpenLogoutModal(true)}
+            >
+              <IconLogOut className="stroke-button-primary" />
+              Logout
+            </Button>
+          </div>
 
-            <LogoutModal
-              handleClose={() => setOpenLogoutModal(false)}
-              isOpen={openLogoutModal}
-            />
-          </motion.div>
-        )
-      }
+          <LogoutModal
+            handleClose={() => setOpenLogoutModal(false)}
+            isOpen={openLogoutModal}
+          />
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 };
 
 const blurVariants = {
-	initial: { opacity: 0, filter: 'blur(4px)' },
-	enter: { opacity: 1, filter: 'blur(0px)' },
-	exit: { opacity: 0, filter: 'blur(4px)' },
-}
+  initial: { opacity: 0, filter: "blur(4px)" },
+  enter: { opacity: 1, filter: "blur(0px)" },
+  exit: { opacity: 0, filter: "blur(4px)" },
+};

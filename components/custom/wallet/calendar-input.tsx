@@ -14,12 +14,14 @@ interface DatePickerPopoverProps {
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
   label: string;
+  disabledDate?: any;
 }
 
 export const CalendarInput: React.FC<DatePickerPopoverProps> = ({
   value,
   onChange,
   label,
+  disabledDate,
 }) => {
   return (
     <Popover>
@@ -50,6 +52,7 @@ export const CalendarInput: React.FC<DatePickerPopoverProps> = ({
           initialFocus
           className="border-none p-3"
           captionLayout="dropdown-buttons"
+          disabled={disabledDate}
           fromYear={1920}
           toYear={new Date().getFullYear()}
           defaultMonth={new Date()}

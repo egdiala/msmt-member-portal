@@ -37,7 +37,7 @@ export const SingleFamilyOrFriendContent = () => {
     {
       id: 4,
       title: "Total appointment",
-      value: formatNumberWithCommas(user?.total_appointment ?? 0),
+      value: user?.total_appointment,
     },
     {
       id: 5,

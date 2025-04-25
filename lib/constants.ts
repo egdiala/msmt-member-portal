@@ -13,11 +13,11 @@ export const COLORS = ["#DD2418", "#0AA571"];
 
 export const CHART_CONFIG = {
   desktop: {
-    label: "Male",
+    label: "Family",
     color: "#DD2418",
   },
   mobile: {
-    label: "Female",
+    label: "Friends",
     color: "#0AA571",
   },
 } satisfies ChartConfig;
@@ -76,12 +76,17 @@ export const APPLICATIONS_FILTER_STATUS_OPTIONS = [
 ];
 
 export const PROVIDERS_TABLE_HEADERS = [
-  { key: "date_and_time", value: "Date & Time Added" },
   { key: "name", value: "Name" },
   { key: "specialty", value: "Specialty" },
   { key: "rating", value: "Rating" },
   { key: "type", value: "Type" },
   { key: "charge_from", value: "Charge From" },
+];
+
+export const FAVOURITE_PROVIDERS_TABLE_HEADERS = [
+  { key: "name", value: "Name" },
+  { key: "specialty", value: "Specialty" },
+  { key: "rating", value: "Rating" },
 ];
 
 export const TRANSACTION_STATUS_ENUM: Record<string, string> = {
@@ -92,4 +97,40 @@ export const TRANSACTION_STATUS_ENUM: Record<string, string> = {
 export const TRANSACTION_TYPE_ENUM: Record<string, string> = {
   credit: "1",
   debit: "2",
+};
+
+export const BLUR_VARIANTS = {
+  initial: { opacity: 0, filter: "blur(4px)" },
+  enter: { opacity: 1, filter: "blur(0px)" },
+  exit: { opacity: 0, filter: "blur(4px)" },
+};
+
+export const PROVIDER_FILTER_KEY_MATCH: Record<string, string> = {
+  appt_date: "Appointment Date",
+  time_zone: "Time Zone",
+  user_type: "Provider Type",
+  service_offer_id: "Specific Service",
+  amount: "Price Range",
+  gender: "Gender",
+  language: "Language",
+  religion: "Religion",
+  comm_mode: "Communication Preference",
+  service_cat_id: "Provider Type",
+};
+
+export const WALLET_FILTER_KEY_MATCH: Record<string, string> = {
+  start_date: "Start Date",
+  end_date: "End Date",
+  transaction_type: "Transaction Type",
+  status: "Status",
+};
+
+export const WALLET_TRANSACTION_TYPE_FILTER_ENUM: Record<number, string> = {
+  1: "Credit",
+  2: "Debit",
+};
+
+export const WALLET_TRANSACTION_STATUS_FILTER_ENUM: Record<number, string> = {
+  1: "Successful",
+  2: "Failed",
 };

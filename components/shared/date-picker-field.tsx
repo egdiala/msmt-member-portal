@@ -38,8 +38,8 @@ export const DatePickerField: React.FC<DatePickerPopoverProps> = ({
       </PopoverTrigger>
       <PopoverContent
         side="bottom"
-        align="start"
-        className="w-auto p-0 z-50 overflow-visible"
+        align="end"
+        className="w-auto p-0 z-50 overflow-visible !bg-white"
         sideOffset={5}
         alignOffset={0}
         style={{ maxHeight: "none" }}
