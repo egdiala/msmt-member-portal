@@ -12,7 +12,7 @@ export const useAddFavouriteProvider = (fn?: (res: any) => void) => {
     mutationFn: addFavouriteProvider,
     onSuccess: (res: any) => {
       toast.success("Successfully added this provider as your favourite!");
-      queryClient.invalidateQueries({ queryKey: ["get-service-providers"] });
+      queryClient.invalidateQueries({ queryKey: ["get-favourite-provider"] });
       fn?.(res);
     },
     onError: (err: any) => {
@@ -28,7 +28,7 @@ export const useRemoveFavouriteProvider = (fn?: (res: any) => void) => {
     mutationFn: removeFavouriteProvider,
     onSuccess: (res: any) => {
       toast.success("Successfully removed this provider from your favourites!");
-      queryClient.invalidateQueries({ queryKey: ["get-service-providers"] });
+      queryClient.invalidateQueries({ queryKey: ["get-favourite-provider"] });
       fn?.(res);
     },
     onError: (err: any) => {
