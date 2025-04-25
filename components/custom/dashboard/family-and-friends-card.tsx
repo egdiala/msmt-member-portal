@@ -15,12 +15,12 @@ import {
 } from "@/types/family-and-friends";
 
 export const FamilyAndFriendsCard = () => {
-  const { data, isPending } =
+  const { data, isLoading } =
     useGetFamilyAndFriends<FetchedFamilyAndFriendStats>({
       component: "count-relationship",
     });
 
-  const { data: count } =
+  const { data: count, isLoading: countLoading } =
     useGetFamilyAndFriends<FetchedFamilyAndFriendCountType>({
       component: "count",
     });
@@ -38,7 +38,7 @@ export const FamilyAndFriendsCard = () => {
 
   return (
     <AnimatePresence mode="popLayout">
-      {isPending ? (
+      {(isLoading || countLoading) ? (
         <motion.div
           key="ff-card-skeleton-loader"
           layoutId="ff-card"

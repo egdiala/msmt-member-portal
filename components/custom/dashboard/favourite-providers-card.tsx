@@ -32,7 +32,7 @@ export const FavouriteProvidersCard = () => {
         <motion.div
           key="favp-card-skeleton-loader"
           layoutId="favp-card"
-          className="order-1 col-span-1 xl:col-span-4"
+          className="order-1 col-span-1 xl:col-span-4 h-86"
           variants={BLUR_VARIANTS}
           animate="enter"
           exit="exit"
@@ -55,7 +55,7 @@ export const FavouriteProvidersCard = () => {
 
           <div
             className={cn(
-              "flex md:h-3/4 md:justify-end flex-row md:flex-col gap-y-3 md:gap-y-4",
+              "flex md:h-3/4 md:justify-end flex-col gap-y-3 md:gap-y-4",
               favProvidersCount
                 ? favProvidersCount?.total === 0
                   ? "justify-center"

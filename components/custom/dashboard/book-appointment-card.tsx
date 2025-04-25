@@ -9,14 +9,14 @@ import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
 import { FetchedServiceProvidersCountType } from "@/types/providers";
 
 export const BookAppointmentCard = () => {
-  const { data: count, isPending } =
+  const { data: count, isLoading } =
     useGetServiceProviders<FetchedServiceProvidersCountType>({
       component: "count",
     });
 
   return (
     <AnimatePresence mode="popLayout">
-      {isPending ? (
+      {isLoading ? (
         <motion.div
           key="appt-booking-card-skeleton-loader"
           layoutId="appt-booking-card"
