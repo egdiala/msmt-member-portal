@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  endOfMonth,
+  format,
+  parse,
+  startOfMonth,
+  startOfToday,
+} from "date-fns";
 import { Button } from "@/components/ui";
 import {
   FilterTag,
@@ -35,13 +42,6 @@ import { FundWalletModal } from "./fund-wallet-modal";
 import { FilterTransactionsPopover } from "./filter-transactions-popover";
 import { TransactionMobileCard } from "./transaction-mobile-card";
 import { WALLET_TRANSACTION_STATUS_FILTER_ENUM } from "../../../lib/constants";
-import {
-  endOfMonth,
-  format,
-  parse,
-  startOfMonth,
-  startOfToday,
-} from "date-fns";
 
 export const WalletTable = () => {
   const itemsPerPage = 10;
