@@ -114,8 +114,15 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           </RenderIf>
 
           <div className="flex items-center gap-x-0.5 text-xs text-brand-1">
-            <IconStarFull className="fill-actions-amber size-4" />
-            {provider?.provider_data?.rating ?? 0}
+            <RenderIf
+              condition={
+                provider?.provider_data?.user_type?.toLowerCase() !== "org" ||
+                !!user_type
+              }
+            >
+              <IconStarFull className="fill-actions-amber size-4" />
+              {provider?.provider_data?.rating ?? 0}
+            </RenderIf>
           </div>
 
           <RenderIf
