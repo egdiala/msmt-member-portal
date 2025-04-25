@@ -14,7 +14,6 @@ import {
   IconVideo,
 } from "@/components/icons";
 import { Loader } from "@/components/shared/loader";
-import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { cn } from "@/lib/utils";
 import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
 import {
@@ -62,7 +61,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
     {
       id: 1,
       title: "About",
-      value: `Has ${yearsOfExperience} years of professional experience with ${
+      value: `Has ${
+        data?.service_start_year === 0 ? 0 : yearsOfExperience
+      } years of professional experience with ${
         data?.total_publication ?? 0
       } publications and ${data?.total_certification ?? 0} certifications`,
     },
@@ -81,12 +82,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
       title: "Completed appointment",
       value: data?.completed_appointment,
     },
-    {
-      id: 2,
-      title: "Charge",
-      value: formatNumberWithCommas(data?.charge_from ?? 0),
-    },
-    { id: 3, title: "Communication preferences", value: data?.comm_mode ?? [] },
+    { id: 2, title: "Communication preferences", value: data?.comm_mode ?? [] },
   ];
 
   const { mutate: addFavourite, isPending } = useAddFavouriteProvider();
@@ -221,7 +217,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {cardStats.map((stat) => (
               <div
                 key={stat.id}
