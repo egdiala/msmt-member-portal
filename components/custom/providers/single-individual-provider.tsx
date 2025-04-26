@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 import {
   IconAudioLines,
   IconPlus,
@@ -9,6 +11,7 @@ import {
 } from "@/components/icons";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
+import { useStepper } from "@/contexts/StepperContext";
 
 export const SingleIndividualProviderContent = () => {
   const providerInfo = [
@@ -47,6 +50,11 @@ export const SingleIndividualProviderContent = () => {
     { id: 3, title: "Communication preferences", value: ["Video", "Audio"] },
   ];
 
+  const { step,setStep } = useStepper();
+  const router = useRouter();
+
+  const isLoggedIn = !!Cookies.get("authToken");
+
   return (
     <>
       <BreadcrumbCmp
@@ -83,12 +91,26 @@ export const SingleIndividualProviderContent = () => {
                 Mark as Favourite
               </Button>
 
-              <Button asChild className="hidden md:inline-flex">
-                <Link href="/providers/book-appointment">
+              <RenderIf condition={isLoggedIn}>
+                <Button asChild className="hidden md:inline-flex">
+                  <Link href="/providers/book-appointment">
+                    <IconPlus className="stroke-white" />
+                    Book An Appointment
+                  </Link>
+                </Button>
+              </RenderIf>
+              <RenderIf condition={!isLoggedIn}>
+                <Button
+                  className="hidden md:inline-flex"
+                  onClick={() => {
+                    router.push("/complete-booking");
+                    setStep(2);
+                  }}
+                >
                   <IconPlus className="stroke-white" />
                   Book An Appointment
-                </Link>
-              </Button>
+                </Button>
+              </RenderIf>
             </div>
           </div>
         </div>
@@ -163,10 +185,24 @@ export const SingleIndividualProviderContent = () => {
           ))}
         </div>
 
-        <Button className="flex md:hidden">
-          <IconPlus className="stroke-white" />
-          Book An Appointment
-        </Button>
+        <RenderIf condition={isLoggedIn}>
+          <Button className="flex md:hidden">
+            <IconPlus className="stroke-white" />
+            Book An Appointment
+          </Button>
+        </RenderIf>
+        <RenderIf condition={!isLoggedIn}>
+          <Button
+            className="flex md:hidden"
+            onClick={() => {
+              router.push("/complete-booking");
+              setStep(2);
+            }}
+          >
+            <IconPlus className="stroke-white" />
+            Book An Appointment
+          </Button>
+        </RenderIf>
       </div>
     </>
   );

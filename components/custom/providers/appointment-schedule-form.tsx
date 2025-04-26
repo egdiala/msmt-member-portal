@@ -341,7 +341,7 @@ export const SetScheduleStep = ({
         </RenderIf>
 
         <RenderIf condition={!isLoggedIn}>
-          <Button onClick={() => setStep(2)}>Continue</Button>
+          <Button onClick={() => setStep(3)}>Continue</Button>
         </RenderIf>
       </div>
     </div>

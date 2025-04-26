@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Cookies from "js-cookie";
 import { useParams } from "next/navigation";
 import {
   IconHospital,
@@ -23,6 +24,7 @@ interface ISingleProviderCard {
 }
 export const SingleProviderCard = (provider: ISingleProviderCard) => {
   const { id } = useParams();
+  const isLoggedIn = !Cookies.get("authToken");
   return (
     <Link
       href={

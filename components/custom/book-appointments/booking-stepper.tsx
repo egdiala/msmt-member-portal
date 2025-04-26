@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { RenderIf } from "@/components/shared";
 import { AppointmentStepper, ProvidersTable } from "../providers";
 import { SetScheduleStep } from "../providers";
 import { ThirdPartyPaymentGate } from "../providers";
 import { FillAppointmentQuestionnaireForm } from "../providers";
+import { useStepper } from "@/contexts/StepperContext";
 
 export const BookingStepper = () => {
-  const [step, setStep] = useState<number | string>(1);
+  const { step, setStep } = useStepper();
+  console.log(step, "STEPS");
 
   return (
     <div className="mx-auto w-full ">
@@ -30,7 +31,9 @@ export const BookingStepper = () => {
       </RenderIf>
 
       <RenderIf condition={step === 2}>
-        <SetScheduleStep setStep={setStep} />
+        <div className="mx-auto w-full max-w-2xl">
+          <SetScheduleStep setStep={setStep} />
+        </div>
       </RenderIf>
 
       <RenderIf condition={step === "gateway"}>
@@ -38,7 +41,9 @@ export const BookingStepper = () => {
       </RenderIf>
 
       <RenderIf condition={step === 3}>
-        <FillAppointmentQuestionnaireForm setStep={setStep} />
+        <div className="mx-auto w-full max-w-2xl">
+          <FillAppointmentQuestionnaireForm setStep={setStep} />
+        </div>
       </RenderIf>
     </div>
   );

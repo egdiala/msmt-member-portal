@@ -1,10 +1,13 @@
 import { SingleIndividualProviderContent } from "@/components/custom";
+import { StepperProvider } from "@/contexts/StepperContext";
 
 const SingleIndividualProvider = () => {
   return (
-    <div className="grid gap-y-2">
-      <SingleIndividualProviderContent />
-    </div>
+    <StepperProvider>
+      <div className="grid gap-y-2">
+        <SingleIndividualProviderContent />
+      </div>
+    </StepperProvider>
   );
 };
 

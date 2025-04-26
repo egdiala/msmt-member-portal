@@ -1,6 +1,8 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { useStepper } from "@/contexts/StepperContext";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
 import {
@@ -13,6 +15,9 @@ import Link from "next/link";
 
 export const SingleOrganisationIndividualProviderContent = () => {
   const { id } = useParams();
+  const router = useRouter()
+  const isLoggedIn = !!Cookies.get("authToken");
+  const { setStep } = useStepper();
 
   const providerInfo = [
     {
@@ -91,12 +96,26 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 Mark as Favourite
               </Button>
 
-              <Button asChild className="hidden md:inline-flex">
-                <Link href="/providers/book-appointment">
+              <RenderIf condition={isLoggedIn}>
+                <Button asChild className="hidden md:inline-flex">
+                  <Link href="/providers/book-appointment">
+                    <IconPlus className="stroke-white" />
+                    Book An Appointment
+                  </Link>
+                </Button>
+              </RenderIf>
+              <RenderIf condition={!isLoggedIn}>
+                <Button
+                  className="hidden md:inline-flex"
+                  onClick={() => {
+                    router.push('/complete-bookking')
+                    setStep(2)
+                  }}
+                >
                   <IconPlus className="stroke-white" />
                   Book An Appointment
-                </Link>
-              </Button>
+                </Button>
+              </RenderIf>
             </div>
           </div>
         </div>

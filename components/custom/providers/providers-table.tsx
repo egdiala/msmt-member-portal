@@ -26,7 +26,9 @@ import { SingleProviderCard } from "./single-provider-card";
 
 export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
-  const isLoggedIn = Cookies.get("authToken");
+  const isLoggedIn = !!Cookies.get("authToken");
+
+  console.log(isLoggedIn, "IS LOGGED IM")
 
   const tableData = PROVIDERS_LIST.map((provider) => {
     return {
@@ -145,7 +147,7 @@ export const ProvidersTable = () => {
             data={tableData}
             headers={PROVIDERS_TABLE_HEADERS}
             onClickRow={(row) => {
-              if (!!isLoggedIn) {
+              if (isLoggedIn) {
                 if (row.datum.type.toLowerCase() === "organisation") {
                   router.push(`/providers/organisation/${row.id}`);
                 } else if (row.datum.type.toLowerCase() === "individual") {
