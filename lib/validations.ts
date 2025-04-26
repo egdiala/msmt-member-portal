@@ -242,10 +242,21 @@ export const appointmentQuestionnaireSchema = z.object({
   sleepingHabits: z.string(),
 });
 
+export const setAppointmentSchedule = z.object({
+  service: z.string().nonempty("Required"),
+  paymentMethod: z.array(z.string()),
+  appointmentDate: z.date(),
+  appointmentTime: z.string().nonempty("Required"),
+  communicationPreference: z.string().nonempty("Required"),
+  agreeToCancellation: z.boolean().refine((val) => val === true, {
+    message: "You must accept the cancellation and refund policy.",
+  }),
+});
+
 export const fundWalletSchema = z.object({
   amount: z.coerce.number().int().gte(1),
 });
 
 export const disableProfileSchema = z.object({
-  password: z.string().min(1, { message: 'Password is required' }),
+  password: z.string().min(1, { message: "Password is required" }),
 });

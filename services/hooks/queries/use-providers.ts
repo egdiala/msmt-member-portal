@@ -10,6 +10,7 @@ import {
 import {
   FetchFavouriteProvidersQuery,
   FetchOrganizationProvidersQuery,
+  FetchProviderScheduleQuery,
   FetchServiceProvidersQuery,
 } from "@/types/providers";
 
@@ -58,7 +59,7 @@ export const useGetServiceIndustries = () => {
 };
 
 export const useGetProviderSchedule = <T>(
-  query: FetchOrganizationProvidersQuery
+  query: FetchProviderScheduleQuery
 ) => {
   return useQuery({
     queryKey: ["get-provider-schedule", query],

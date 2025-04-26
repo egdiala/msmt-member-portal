@@ -188,7 +188,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 </Button>
 
                 <Button asChild className="hidden md:inline-flex">
-                  <Link href="/providers/book-appointment">
+                  <Link
+                    href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                  >
                     <IconPlus className="stroke-white" />
                     Book An Appointment
                   </Link>
@@ -272,7 +274,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
           </div>
 
           <Button asChild className="flex md:hidden">
-            <Link href="/providers/book-appointment">
+            <Link
+              href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+            >
               <IconPlus className="stroke-white" />
               Book An Appointment
             </Link>

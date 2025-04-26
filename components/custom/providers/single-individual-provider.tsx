@@ -29,12 +29,15 @@ export const SingleIndividualProviderContent = () => {
   const searchParams = useSearchParams();
   const { data: userProfile } = useGetProfile();
 
+  const user_type = searchParams.get("type") as "provider" | "org";
+  const account_service_type = searchParams.get("service_type") as
+    | "provider"
+    | "payer";
+
   const { data, isLoading } = useGetServiceProviders<FetchSingleProvider>({
     user_id: id?.toString(),
-    user_type: searchParams.get("type") as "provider" | "org",
-    account_service_type: searchParams.get("service_type") as
-      | "provider"
-      | "payer",
+    user_type: user_type,
+    account_service_type: account_service_type,
     member_id: userProfile?.user_id,
   });
 
@@ -163,7 +166,9 @@ export const SingleIndividualProviderContent = () => {
                 </Button>
 
                 <Button asChild className="hidden md:inline-flex">
-                  <Link href="/providers/book-appointment">
+                  <Link
+                    href={`/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`}
+                  >
                     <IconPlus className="stroke-white" />
                     Book An Appointment
                   </Link>
@@ -247,7 +252,9 @@ export const SingleIndividualProviderContent = () => {
           </div>
 
           <Button asChild className="flex md:hidden">
-            <Link href="/providers/book-appointment">
+            <Link
+              href={`/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`}
+            >
               <IconPlus className="stroke-white" />
               Book An Appointment
             </Link>
