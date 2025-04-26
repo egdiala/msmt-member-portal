@@ -10,8 +10,6 @@ interface IAppointmentStepper {
 
 export const AppointmentStepper = ({ step, steps }: IAppointmentStepper) => {
   const isLoggedIn = Cookies.get("authToken");
-
-  console.log(!isLoggedIn);
   return (
     <>
       <div className="hidden md:flex items-start gap-x-41 justify-center pt-16 pb-7">
