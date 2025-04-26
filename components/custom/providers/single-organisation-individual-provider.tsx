@@ -58,8 +58,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
     new Date(),
     new Date(data?.service_start_year ?? 0)
   );
-  const router = useRouter()
+  const router = useRouter();
   const isLoggedIn = !!Cookies.get("authToken");
+  console.log(isLoggedIn, "IS LOGGED IN")
   const { setStep } = useStepper();
 
   const providerInfo = [
@@ -189,26 +190,26 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 </Button>
 
                 <RenderIf condition={isLoggedIn}>
-                <Button asChild className="hidden md:inline-flex">
+                  <Button asChild className="hidden md:inline-flex">
                     <Link href="/providers/book-appointment">
                       <IconPlus className="stroke-white" />
                       Book An Appointment
                     </Link>
                   </Button>
                 </RenderIf>
-              <RenderIf condition={!isLoggedIn}>
-                <Button
-                  className="hidden md:inline-flex"
-                  onClick={() => {
-                    router.push('/complete-bookking')
-                    setStep(2)
-                  }}
-                >
-                  <IconPlus className="stroke-white" />
-                  Book An Appointment
-                </Button>
-              </RenderIf>
-            </div>
+                <RenderIf condition={!isLoggedIn}>
+                  <Button
+                    className="hidden md:inline-flex"
+                    onClick={() => {
+                      router.push("/complete-bookking");
+                      setStep(2);
+                    }}
+                  >
+                    <IconPlus className="stroke-white" />
+                    Book An Appointment
+                  </Button>
+                </RenderIf>
+              </div>
             </div>
           </div>
 
@@ -286,12 +287,26 @@ export const SingleOrganisationIndividualProviderContent = () => {
             ))}
           </div>
 
-          <Button asChild className="flex md:hidden">
-            <Link href="/providers/book-appointment">
+          <RenderIf condition={isLoggedIn}>
+            <Button asChild className="flex md:hidden">
+              <Link href="/providers/book-appointment">
+                <IconPlus className="stroke-white" />
+                Book An Appointment
+              </Link>
+            </Button>
+          </RenderIf>
+          <RenderIf condition={!isLoggedIn}>
+            <Button
+              className="flex md:hidden"
+              onClick={() => {
+                router.push("/complete-bookking");
+                setStep(2);
+              }}
+            >
               <IconPlus className="stroke-white" />
               Book An Appointment
-            </Link>
-          </Button>
+            </Button>
+          </RenderIf>
         </RenderIf>
       </div>
     </>
