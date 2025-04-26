@@ -29,6 +29,9 @@ import { FetchSingleProvider } from "@/types/providers";
 
 export const SingleIndividualProviderContent = () => {
   const { id } = useParams();
+  const router = useRouter();
+  const { setStep } = useStepper();
+  const isLoggedIn = !!Cookies.get("authToken");
   const searchParams = useSearchParams();
   const { data: userProfile } = useGetProfile();
 
@@ -167,26 +170,26 @@ export const SingleIndividualProviderContent = () => {
                   </AnimatePresence>
                 </Button>
 
-              <RenderIf condition={isLoggedIn}>
+                <RenderIf condition={isLoggedIn}>
                   <Button asChild className="hidden md:inline-flex">
                     <Link href="/providers/book-appointment">
                       <IconPlus className="stroke-white" />
                       Book An Appointment
                     </Link>
                   </Button>
-              </RenderIf>
-              <RenderIf condition={!isLoggedIn}>
-                <Button
-                  className="hidden md:inline-flex"
-                  onClick={() => {
-                    router.push("/complete-booking");
-                    setStep(2);
-                  }}
-                >
-                  <IconPlus className="stroke-white" />
-                  Book An Appointment
-                </Button>
-              </RenderIf>
+                </RenderIf>
+                <RenderIf condition={!isLoggedIn}>
+                  <Button
+                    className="hidden md:inline-flex"
+                    onClick={() => {
+                      router.push("/complete-booking");
+                      setStep(2);
+                    }}
+                  >
+                    <IconPlus className="stroke-white" />
+                    Book An Appointment
+                  </Button>
+                </RenderIf>
               </div>
             </div>
           </div>
@@ -266,13 +269,13 @@ export const SingleIndividualProviderContent = () => {
           </div>
 
           <RenderIf condition={isLoggedIn}>
-          <Button asChild className="flex md:hidden">
-            <Link href="/providers/book-appointment">
+            <Button asChild className="flex md:hidden">
+              <Link href="/providers/book-appointment">
                 <IconPlus className="stroke-white" />
                 Book An Appointment
-            </Link>
+              </Link>
             </Button>
-        </RenderIf>
+          </RenderIf>
         </RenderIf>
         <RenderIf condition={!isLoggedIn}>
           <Button

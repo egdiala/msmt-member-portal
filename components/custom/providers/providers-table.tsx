@@ -47,7 +47,7 @@ export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
   const isLoggedIn = !!Cookies.get("authToken");
 
-  console.log(isLoggedIn, "IS LOGGED IM")
+  console.log(isLoggedIn, "IS LOGGED IM");
 
   const { data: requestVariables } = useMultipleRequestVariables([
     "service-offering",
@@ -450,23 +450,25 @@ export const ProvidersTable = () => {
               if (isLoggedIn) {
                 if (row.datum.provider_data.user_type.toLowerCase() === "org") {
                   router.push(
-                  `/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
-                );
+                    `/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                  );
                 } else if (
-                row.datum.provider_data.user_type.toLowerCase() === "provider"
-              ) {
+                  row.datum.provider_data.user_type.toLowerCase() === "provider"
+                ) {
                   router.push(
-                  `/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
-                );
+                    `/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                  );
                 }
               } else {
-                if (row.datum.type.toLowerCase() === "organisation") {
+                if (row.datum.provider_data.user_type.toLowerCase() === "org") {
                   router.push(
-                    `/complete-booking/providers/organisation/${row.id}`
+                    `/complete-booking/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
                   );
-                } else if (row.datum.type.toLowerCase() === "individual") {
+                } else if (
+                  row.datum.provider_data.user_type.toLowerCase() === "provider"
+                ) {
                   router.push(
-                    `/complete-booking/providers/individual/${row.id}`
+                    `/complete-booking/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
                   );
                 }
               }
