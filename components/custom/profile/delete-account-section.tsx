@@ -20,7 +20,7 @@ export const DeleteAccountSection = () => {
 
       <Button
         variant="ghost"
-        className="text-sm text-status-danger underline font-semibold pl-2 py-0 pr-0 md:p-0 md:mr-1"
+        className="text-sm text-status-danger underline font-semibold pl-2 py-0 pr-0 md:p-0 md:mr-1 hover:!px-2"
         onClick={() => setOpenDeleteAccountModal(true)}
       >
         Delete Account

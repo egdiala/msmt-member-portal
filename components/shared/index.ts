@@ -8,3 +8,4 @@ export * from "./table";
 export * from "./select";
 export * from "./floating-input";
 export * from "./radio-button";
+export * from "./filter-tag";

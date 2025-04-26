@@ -22,7 +22,7 @@ export const EmptyState = ({ hasIcon, subtitle, title }: IEmptyState) => {
       <h3 className="text-brand-1 font-semibold text-sm">{title}</h3>
 
       <RenderIf condition={!!subtitle}>
-        <p className="text-xs text-brand-3">{subtitle}</p>
+        <p className="text-xs text-brand-3 text-center">{subtitle}</p>
       </RenderIf>
     </div>
   );

@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { format } from "date-fns";
 import {
-  IconCalendar,
   IconClose,
   IconList,
   IconList2,
   IconListFilter,
 } from "@/components/icons";
 import {
-  FloatingInput,
+  FilterTag,
   PaginationCmp,
   RenderIf,
   Searchbar,
@@ -19,10 +19,29 @@ import {
   TableCmp,
 } from "@/components/shared";
 import { Button } from "@/components/ui";
+import { Loader } from "@/components/shared/loader";
+import { EmptyState } from "@/components/shared/empty-state";
+import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useDebounce } from "@/hooks/use-debounce";
+import {
+  getPaginationParams,
+  setPaginationParams,
+} from "@/hooks/use-pagination-params";
+import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
 import { cn } from "@/lib/utils";
-import { PROVIDERS_LIST } from "@/lib/mock";
-import { PROVIDERS_TABLE_HEADERS } from "@/lib/constants";
+import {
+  PROVIDER_FILTER_KEY_MATCH,
+  PROVIDERS_TABLE_HEADERS,
+} from "@/lib/constants";
+import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
+import {
+  FetchedServiceProvidersCountType,
+  FetchedServiceProvidersType,
+} from "@/types/providers";
 import { SingleProviderCard } from "./single-provider-card";
+import { FilterProvidersTable } from "./filter-providers-table";
+import { CalendarInput } from "../wallet/calendar-input";
 
 export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
@@ -30,26 +49,283 @@ export const ProvidersTable = () => {
 
   console.log(isLoggedIn, "IS LOGGED IM")
 
-  const tableData = PROVIDERS_LIST.map((provider) => {
+  const { data: requestVariables } = useMultipleRequestVariables([
+    "service-offering",
+    "preferred-lan",
+    "religion-list",
+    "booking-prices",
+  ]);
+
+  // filters
+  const [apptDate, setApptDate] = useState(""); // appt_date (requires time_zone)
+  const [providerType, setProviderType] = useState(""); // user_type
+  const [specificService, setSpecificService] = useState(""); // service_offer_id or service_cat_id
+  const [priceRange, setPriceRange] = useState(""); // amount
+  const [gender, setGender] = useState(""); // gender (male | female)
+  const [religion, setReligion] = useState("");
+  const [language, setLanguage] = useState("");
+  const [communicationPreference, setCommunicationPreference] = useState(""); //comm_mode
+
+  const [filters, setFilters] = useState<Record<string, any>>({});
+
+  const handleApplyFilter = () => {
+    setFilters({
+      ...(apptDate ? { appt_date: apptDate } : {}),
+      ...(apptDate
+        ? { time_zone: new Date().getTimezoneOffset()?.toString() }
+        : {}),
+      ...(providerType
+        ? {
+            user_type:
+              providerType?.toLowerCase() === "organization"
+                ? "org"
+                : "provider",
+          }
+        : {}),
+      ...(specificService
+        ? {
+            service_offer_id: requestVariables["service-offering"]?.filter(
+              (val: { name: string }) => val?.name === specificService
+            )[0]?.service_offer_id,
+          }
+        : {}),
+      ...(priceRange
+        ? {
+            amount: requestVariables["booking-prices"]?.filter(
+              (val: { name: string }) => val?.name === priceRange
+            )[0]?.value,
+          }
+        : {}),
+      ...(gender ? { gender: gender?.toLowerCase() } : {}),
+      ...(language ? { language: language?.toLowerCase() } : {}),
+      ...(religion ? { religion: religion?.toLowerCase() } : {}),
+      ...(communicationPreference
+        ? { comm_mode: communicationPreference?.toLowerCase() }
+        : {}),
+    });
+  };
+
+  const handleClearAllFilters = () => {
+    setApptDate("");
+    setProviderType("");
+    setSpecificService("");
+    setPriceRange("");
+    setGender("");
+    setLanguage("");
+    setReligion("");
+    setCommunicationPreference("");
+  };
+
+  const removeFilter = (filterToRemove: string) => {
+    const setFilterValues: Record<string, any> = {
+      appt_date: setApptDate,
+      time_zone: setApptDate,
+      user_type: setProviderType,
+      service_offer_id: setSpecificService,
+      amount: setPriceRange,
+      gender: setGender,
+      language: setLanguage,
+      religion: setReligion,
+      comm_mode: setCommunicationPreference,
+    };
+
+    setFilters((prev) => {
+      if (filterToRemove === "appt_date" || filterToRemove === "time_zone") {
+        // eslint-disable-next-line
+        const { appt_date: _, time_zone: __, ...rest } = prev;
+        return rest;
+      } else {
+        // eslint-disable-next-line
+        const { [filterToRemove]: _, ...rest } = prev;
+        return rest;
+      }
+    });
+
+    setFilterValues[filterToRemove]("");
+  };
+
+  const itemsPerPage = 10;
+  const [page, setPage] = useState(1);
+
+  const searchParams = useSearchParams();
+  const { value, onChangeHandler } = useDebounce(400);
+
+  const { data, isLoading } = useGetServiceProviders<
+    FetchedServiceProvidersType[]
+  >({ ...(value ? { q: value?.toString() } : {}), ...filters });
+
+  const handlePageChange = (page: number) => {
+    if (!isNaN(page)) {
+      setPage(page);
+      setPaginationParams(page, router, searchParams);
+    }
+  };
+
+  getPaginationParams(setPage);
+
+  const { data: count } =
+    useGetServiceProviders<FetchedServiceProvidersCountType>({
+      component: "count",
+    });
+
+  const tableData = data?.map((provider) => {
     return {
-      id: provider.id,
+      id: provider?.provider_data?.user_id,
       datum: provider,
-      date_and_time: (
-        <p className="text-brand-2">
-          {provider.date} • {provider.time}
+      name: <p className="capitalize">{provider?.provider_data?.name}</p>,
+      specialty: (
+        <p className="capitalize">
+          {provider?.provider_data?.specialty ||
+            provider?.provider_data?.industry_name}
         </p>
       ),
-      name: <p className="capitalize">{provider.name}</p>,
-      specialty: <p className="capitalize">{provider.title}</p>,
-      rating: provider.rating,
-      type: <p className="capitalize">{provider.type}</p>,
-      charge_from: <p className="capitalize">{provider.rate}</p>,
+      rating: provider?.provider_data?.rating,
+      type: (
+        <p className="capitalize">
+          {provider?.provider_data?.account_type === "payer"
+            ? "Organization"
+            : provider?.provider_data?.account_type}
+        </p>
+      ),
+      charge_from: (
+        <p className="capitalize">
+          {formatNumberWithCommas(provider?.charge_from)}
+        </p>
+      ),
     };
   });
 
   const router = useRouter();
 
   const [showFilterButtonOnly, setShowFilterButtonOnly] = useState(true);
+  const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
+
+  const FilterContent = ({
+    handleApplyMobile,
+  }: {
+    handleApplyMobile?: () => void;
+  }) => {
+    return (
+      <>
+        <div className="grid gap-y-4 w-full">
+          <CalendarInput
+            value={apptDate === "" ? undefined : new Date(apptDate)}
+            onChange={(date: any) => {
+              setApptDate(format(date, "yyy-MM-dd"));
+            }}
+            label="Available date"
+            disabledDate={(date: any) => {
+              const today = new Date();
+              return date < today;
+            }}
+          />
+
+          <SelectCmp
+            selectItems={[
+              { id: 1, value: "Provider" },
+              { id: 2, value: "Organization" },
+            ]}
+            value={providerType}
+            onSelect={(val) => setProviderType(val)}
+            placeholder={"Provider type"}
+          />
+
+          <SelectCmp
+            selectItems={requestVariables["service-offering"]?.map(
+              (val: { service_offer_id: string; name: string }) => {
+                return { id: val?.service_offer_id, value: val?.name };
+              }
+            )}
+            value={specificService}
+            onSelect={(val) => setSpecificService(val)}
+            placeholder={"Specific service"}
+          />
+
+          <SelectCmp
+            selectItems={requestVariables["booking-prices"]?.map(
+              (val: { name: string }, index: number) => {
+                return {
+                  id: index,
+                  value: val?.name,
+                };
+              }
+            )}
+            value={priceRange}
+            onSelect={(val) => setPriceRange(val)}
+            placeholder={"Price range"}
+          />
+
+          <SelectCmp
+            selectItems={[
+              { id: 1, value: "Male" },
+              { id: 2, value: "Female" },
+            ]}
+            value={gender}
+            onSelect={(val) => setGender(val)}
+            placeholder={"Gender"}
+          />
+
+          <SelectCmp
+            selectItems={requestVariables["preferred-lan"]?.map(
+              (val: string) => {
+                return {
+                  id: val,
+                  value: val,
+                };
+              }
+            )}
+            value={language}
+            onSelect={(val) => setLanguage(val)}
+            placeholder={"Language"}
+          />
+
+          <SelectCmp
+            selectItems={requestVariables["religion-list"]?.map(
+              (val: string) => {
+                return {
+                  id: val,
+                  value: val,
+                };
+              }
+            )}
+            value={religion}
+            onSelect={(val) => setReligion(val)}
+            placeholder={"Religion"}
+          />
+
+          <SelectCmp
+            selectItems={[
+              { id: 1, value: "Audio" },
+              { id: 2, value: "Video" },
+            ]}
+            value={communicationPreference}
+            onSelect={(val) => setCommunicationPreference(val)}
+            placeholder={"Communication preference"}
+          />
+        </div>
+
+        <div className="pt-8 gap-x-4 grid grid-cols-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowFilterButtonOnly(!showFilterButtonOnly)}
+          >
+            Close
+          </Button>
+          <Button
+            onClick={() => {
+              handleApplyFilter();
+
+              if (handleApplyMobile) {
+                handleApplyMobile();
+              }
+            }}
+          >
+            Apply
+          </Button>
+        </div>
+      </>
+    );
+  };
 
   return (
     <>
@@ -88,44 +364,30 @@ export const ProvidersTable = () => {
               </Button>
             </div>
 
-            <div className="grid gap-y-4">
-              <div className="relative">
-                <FloatingInput
-                  label="Available date"
-                  type="text"
-                  className=" pr-10 w-full"
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3 pointer-events-none">
-                  <IconCalendar className="h-4 w-4" />
-                </div>
-              </div>
-              <SelectCmp selectItems={[]} placeholder={"Provider type"} />
-              <SelectCmp selectItems={[]} placeholder={"Service type"} />
-              <SelectCmp selectItems={[]} placeholder={"Specific service"} />
-              <SelectCmp selectItems={[]} placeholder={"Price range"} />
-              <SelectCmp selectItems={[]} placeholder={"Gender"} />
-              <SelectCmp selectItems={[]} placeholder={"Ratings"} />
-              <SelectCmp
-                selectItems={[]}
-                placeholder={"Communication preference"}
-              />
-            </div>
-
-            <div className="pt-8 gap-x-4 grid grid-cols-2">
-              <Button variant="outline">Close</Button>
-              <Button>Apply</Button>
-            </div>
+            <FilterContent />
           </div>
         </RenderIf>
       </div>
 
-      <div className="bg-white w-full rounded-2xl py-4 px-3 md:p-6 grid gap-y-4 md:gap-y-5">
+      <div className="bg-white w-full rounded-2xl py-4 px-3 md:p-6 grid content-start gap-y-4 md:gap-y-5 h-fit">
         <RenderIf condition={showGridView}>
           <h3 className="font-bold text-brand-1">Providers</h3>
         </RenderIf>
 
         <div className="flex flex-col md:flex-row gap-3 items-end md:items-center justify-between">
-          <Searchbar onChange={() => {}} placeholder="Search" />
+          <Searchbar onChange={onChangeHandler} placeholder="Search" />
+
+          <FilterProvidersTable
+            openMobileDrawer={openMobileDrawer}
+            setOpenMobileDrawer={setOpenMobileDrawer}
+          >
+            <div className="p-3 grid gap-y-4">
+              <h4 className="font-semibold">Filter</h4>
+              <FilterContent
+                handleApplyMobile={() => setOpenMobileDrawer(false)}
+              />
+            </div>
+          </FilterProvidersTable>
 
           <Button
             variant="outline"
@@ -142,16 +404,60 @@ export const ProvidersTable = () => {
           </Button>
         </div>
 
+        <RenderIf condition={Object.keys(filters)?.length > 0}>
+          <div className="flex flex-col md:flex-row flex-wrap justify-between items-end">
+            <div className="flex flex-wrap gap-2">
+              {Object.keys(filters)?.map((filter, index) => (
+                <FilterTag
+                  key={index}
+                  title={PROVIDER_FILTER_KEY_MATCH[filter]}
+                  value={
+                    filter === "service_offer_id"
+                      ? requestVariables["service-offering"]?.filter(
+                          (val: { service_offer_id: string }) =>
+                            val?.service_offer_id === filters[filter]
+                        )[0]?.name
+                      : filter === "amount"
+                      ? requestVariables["booking-prices"]?.filter(
+                          (val: { value: string }) =>
+                            val?.value === filters[filter]
+                        )[0]?.name
+                      : filters[filter]
+                  }
+                  onClear={() => removeFilter(filter)}
+                />
+              ))}
+
+              <Button
+                variant="link"
+                className="underline underline-offset-1 text-button-primary text-xs"
+                onClick={() => {
+                  setFilters({});
+                  handleClearAllFilters();
+                }}
+              >
+                Clear all filters
+              </Button>
+            </div>
+          </div>
+        </RenderIf>
+
         <RenderIf condition={!showGridView}>
           <TableCmp
-            data={tableData}
+            data={tableData ?? []}
             headers={PROVIDERS_TABLE_HEADERS}
             onClickRow={(row) => {
               if (isLoggedIn) {
-                if (row.datum.type.toLowerCase() === "organisation") {
-                  router.push(`/providers/organisation/${row.id}`);
-                } else if (row.datum.type.toLowerCase() === "individual") {
-                  router.push(`/providers/individual/${row.id}`);
+                if (row.datum.provider_data.user_type.toLowerCase() === "org") {
+                  router.push(
+                  `/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                );
+                } else if (
+                row.datum.provider_data.user_type.toLowerCase() === "provider"
+              ) {
+                  router.push(
+                  `/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                );
                 }
               } else {
                 if (row.datum.type.toLowerCase() === "organisation") {
@@ -165,6 +471,8 @@ export const ProvidersTable = () => {
                 }
               }
             }}
+            isLoading={isLoading}
+            emptyStateTitleText="There are no providers yet"
           />
 
           <div
@@ -175,32 +483,63 @@ export const ProvidersTable = () => {
                 : "grid-cols-2 lg:grid-cols-3"
             )}
           >
-            {PROVIDERS_LIST.map((provider) => (
-              <SingleProviderCard key={provider.id} {...provider} />
+            {data?.map((provider) => (
+              <SingleProviderCard
+                key={provider.provider_data?.user_id}
+                {...provider}
+              />
             ))}
           </div>
         </RenderIf>
 
         <RenderIf condition={showGridView}>
-          <div
-            className={cn(
-              "grid gap-4 md:gap-6",
-              showFilterButtonOnly
-                ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                : "grid-cols-2 lg:grid-cols-3"
-            )}
-          >
-            {PROVIDERS_LIST.map((provider) => (
-              <SingleProviderCard key={provider.id} {...provider} />
-            ))}
-          </div>
+          <RenderIf condition={isLoading}>
+            <div className="w-full h-full flex justify-center items-center">
+              <Loader />
+            </div>
+          </RenderIf>
+
+          <RenderIf condition={!isLoading}>
+            <RenderIf condition={tableData?.length === 0}>
+              <EmptyState
+                title="Providers"
+                subtitle="There are no providers yet"
+                hasIcon
+              />
+            </RenderIf>
+
+            <RenderIf condition={tableData?.length !== 0}>
+              <div
+                className={cn(
+                  "grid gap-4 md:gap-6",
+                  showFilterButtonOnly
+                    ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                    : "grid-cols-2 lg:grid-cols-3"
+                )}
+              >
+                {data?.map((provider) => (
+                  <SingleProviderCard
+                    key={provider?.provider_data?.user_id}
+                    {...provider}
+                  />
+                ))}
+              </div>
+            </RenderIf>
+          </RenderIf>
         </RenderIf>
 
-        <PaginationCmp
-          onInputPage={() => {}}
-          currentPage={"1"}
-          totalPages={"30"}
-        />
+        <RenderIf
+          condition={!isLoading && tableData ? tableData.length > 0 : false}
+        >
+          <PaginationCmp
+            onInputPage={(val) => handlePageChange(parseInt(val))}
+            currentPage={page?.toString()}
+            totalPages={useGetTableTotalPages({
+              totalDataCount: count?.total ?? 0,
+              itemsPerPage: itemsPerPage,
+            })}
+          />
+        </RenderIf>
       </div>
     </>
   );

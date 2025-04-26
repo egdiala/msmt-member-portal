@@ -77,7 +77,7 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
             src={
               avatarFile instanceof File
                 ? URL.createObjectURL(avatarFile)
-                : avatarFile || "/placeholder.svg"
+                : avatarFile || "/assets/blank-profile-picture.png"
             }
             className="object-cover"
             alt={`${data?.first_name} ${data?.last_name}`}

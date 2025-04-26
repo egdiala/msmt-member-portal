@@ -44,7 +44,17 @@ export const WalletDeductionsTable = () => {
             <IconDownload className="stroke-brand-btn-secondary" />
           </Button>
 
-          <FilterTransactionsPopover isDeduction setFilters={() => {}} />
+          <FilterTransactionsPopover
+            isDeduction
+            setFilters={() => console.log("")}
+            selected={undefined}
+            setSelected={() => console.log("")}
+            transactionTypeFilter={""}
+            setTransactionTypeFilter={() => console.log("")}
+            statusFilter={""}
+            setStatusFilter={() => console.log("")}
+            dateFilters={undefined}
+          />
         </div>
       </div>
 
