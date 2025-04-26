@@ -56,6 +56,7 @@ interface ISetScheduleStep {
   setStep: Dispatch<SetStateAction<string | number>>;
 }
 export const SetScheduleStep = ({
+  // eslint-disable-next-line
   isOrganisation,
   setStep,
 }: ISetScheduleStep) => {
@@ -97,6 +98,8 @@ export const SetScheduleStep = ({
     provider_id: provider_id,
     time_zone: new Date().getTimezoneOffset()?.toString(),
   });
+
+  console.log({ providerSchedule });
 
   const today = new Date();
   const yesterday = subDays(today, 1);
@@ -289,7 +292,7 @@ export const SetScheduleStep = ({
                 <FormField
                   control={form.control}
                   name="paymentMethod"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormControl>
                         <div className="flex items-center gap-x-2">
@@ -491,7 +494,7 @@ export const SetScheduleStep = ({
               <FormField
                 control={form.control}
                 name="communicationPreference"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormControl>
                       <div className="flex flex-col gap-2 md:flex-row  md:items-center justify-between">
