@@ -18,7 +18,7 @@ const StepperContext = createContext<StepperType | undefined>(undefined);
 export const StepperProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<number|string>(1);
 
   return (
     <StepperContext.Provider value={{ step, setStep }}>
