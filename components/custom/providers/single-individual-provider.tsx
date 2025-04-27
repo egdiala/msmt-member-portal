@@ -50,7 +50,9 @@ export const SingleIndividualProviderContent = () => {
     {
       id: 1,
       title: "About",
-      value: `Has ${yearsOfExperience} years of professional experience with ${
+      value: `Has ${
+        data?.service_start_year === 0 ? 0 : yearsOfExperience
+      } years of professional experience with ${
         data?.total_publication ?? 0
       } publications and ${data?.total_certification ?? 0} certifications`,
     },

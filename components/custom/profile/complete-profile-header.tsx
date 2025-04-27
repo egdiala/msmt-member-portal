@@ -38,7 +38,7 @@ export const CompleteProfileHeader = () => {
 
             <div className="ml-6 lg:ml-0">
               <Button asChild>
-                <Link href="/profile/complete-profile">Complete Profile</Link>
+                <Link href="/profile">Complete Profile</Link>
               </Button>
             </div>
           </div>

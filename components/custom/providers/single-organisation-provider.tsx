@@ -58,12 +58,13 @@ export const SingleOrganisationProviderContent = () => {
 
   const { data: userProfile } = useGetProfile();
 
-  const { data } = useGetServiceProviders<FetchOrganizationProvider>({
-    user_id: id?.toString(),
-    user_type: user_type,
-    account_service_type: account_type,
-    member_id: userProfile?.user_id,
-  });
+  const { data, isLoading: isLoadingServiceProviderInfo } =
+    useGetServiceProviders<FetchOrganizationProvider>({
+      user_id: id?.toString(),
+      user_type: user_type,
+      account_service_type: account_type,
+      member_id: userProfile?.user_id,
+    });
 
   const [filters, setFilters] = useState<Record<string, any>>({});
   const { data: requestVariables } = useMultipleRequestVariables([
@@ -203,12 +204,12 @@ export const SingleOrganisationProviderContent = () => {
       />
 
       <div className="bg-white rounded-2xl p-3 md:p-4 grid gap-y-5">
-        <RenderIf condition={isLoading}>
+        <RenderIf condition={isLoadingServiceProviderInfo}>
           <div className="flex items-center justify-center h-screen">
             <Loader />
           </div>
         </RenderIf>
-        <RenderIf condition={!isLoading}>
+        <RenderIf condition={!isLoadingServiceProviderInfo}>
           <div className="rounded-lg bg-blue-400 p-3 flex gap-3 flex-col md:flex-row">
             <Avatar className="w-full md:w-39 h-39 rounded-sm">
               <AvatarImage

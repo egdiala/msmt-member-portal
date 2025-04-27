@@ -72,19 +72,23 @@ export const ProfileCard = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <RenderIf condition={organizationsData!.length > 0}>
                 {organizationsData?.map((organisation) => (
-                  <div
+                  <Link
                     key={organisation.id}
-                    className="py-1 px-2 flex items-center gap-x-1 border border-grey-400 rounded-sm"
+                    href={`/providers/organisation/${organisation?.id}?type=org&service_type=payer`}
+                    className="cursor-pointer"
                   >
-                    <Avatar>
-                      <AvatarImage src={organisation?.icon} />
-                      <AvatarFallback className="text-sm">
-                        {organisation?.name?.split(" ")?.[0]?.[0]}
-                        {organisation?.name?.split(" ")?.[1]?.[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                    <p className="text-xs text-text-2">{organisation.name}</p>
-                  </div>
+                    <div className="py-1 px-2 flex items-center gap-x-1 border border-grey-400 rounded-sm">
+                      <Avatar>
+                        <AvatarImage
+                          src={
+                            organisation?.icon ||
+                            "/assets/blank-profile-picture.png"
+                          }
+                        />
+                      </Avatar>
+                      <p className="text-xs text-text-2">{organisation.name}</p>
+                    </div>
+                  </Link>
                 ))}
               </RenderIf>
 
