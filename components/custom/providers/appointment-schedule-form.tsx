@@ -81,9 +81,16 @@ export const SetScheduleStep = ({
 
   return (
     <div className="min-h-full pb-12 grid gap-y-4">
-      <span className="text-center font-bold text-xl md:text-2xl text-brand-1 py-5">
-        Book an Appointment
-      </span>
+      <RenderIf condition={!!isLoggedIn}>
+        <span className="text-center font-bold text-xl md:text-2xl text-brand-1 py-5">
+          Book an Appointment
+        </span>
+      </RenderIf>
+      <RenderIf condition={!isLoggedIn}>
+        <span className="text-center font-bold text-xl md:text-2xl text-brand-1 pb-5 md:py-5">
+          Set Schedule Preference
+        </span>
+      </RenderIf>
 
       <div className="bg-white p-3 md:p-4 grid gap-y-4 rounded-2xl h-fit">
         <h4 className="font-semibold text-brand-1 text-sm md:text-base">
@@ -110,12 +117,22 @@ export const SetScheduleStep = ({
               </div>
             </div>
 
-            <button
-              onClick={() => navigate.push("/providers")}
-              className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
-            >
-              Change
-            </button>
+            <RenderIf condition={!!isLoggedIn}>
+              <button
+                onClick={() => navigate.push("/providers")}
+                className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
+              >
+                Change
+              </button>
+            </RenderIf>
+            <RenderIf condition={!isLoggedIn}>
+              <button
+                onClick={() => navigate.back()}
+                className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
+              >
+                Change
+              </button>
+            </RenderIf>
           </div>
 
           <RenderIf condition={!!isOrganisation}>
@@ -138,75 +155,97 @@ export const SetScheduleStep = ({
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-3 md:p-4 grid gap-y-4">
-        <div className="grid gap-y-2">
-          <p className="font-semibold text-brand-2 text-sm md:text-base">
-            Services
-          </p>
-          <SelectCmp selectItems={[]} placeholder="Select Service" />
-        </div>
+      <RenderIf condition={!!isLoggedIn}>
+        <div className="bg-white rounded-2xl p-3 md:p-4 grid gap-y-4">
+          <div className="grid gap-y-2">
+            <p className="font-semibold text-brand-2 text-sm md:text-base">
+              Services
+            </p>
+            <SelectCmp selectItems={[]} placeholder="Select Service" />
+          </div>
 
-        <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
-          <p className="text-sm">Charge</p>
-          <p className="text-lg">$45/hr</p>
-        </div>
+          <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
+            <p className="text-sm">Charge</p>
+            <p className="text-lg">$45/hr</p>
+          </div>
 
-        <div className="border-t border-divider"></div>
+          <div className="border-t border-divider"></div>
 
-        <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
-          <p className="font-medium text-sm text-brand-1">Payment Method</p>
+          <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+            <p className="font-medium text-sm text-brand-1">Payment Method</p>
 
-          <div className="flex items-center gap-x-2">
-            {paymentMethods.map((method) => (
-              <div
-                key={method.id}
-                onClick={() => {
-                  if (selectedPaymentMethod.includes(method.name)) {
-                    setSelectedPaymentMethod(
-                      selectedPaymentMethod.filter((val) => val !== method.name)
-                    );
-                  } else {
-                    setSelectedPaymentMethod([
-                      ...selectedPaymentMethod,
-                      method.name,
-                    ]);
-                  }
-                }}
-                className="flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400"
-              >
-                {selectedPaymentMethod.includes(method.name) ? (
-                  <Checkbox
-                    checked={selectedPaymentMethod.includes(method.name)}
-                  />
-                ) : (
-                  <method.icon className="stroke-brand-3 size-3.5" />
-                )}
-
-                <p
-                  className={cn(
-                    "text-sm",
-                    selectedPaymentMethod.includes(method.name)
-                      ? "text-button-primary"
-                      : "text-brand-2"
-                  )}
+            <div className="flex items-center gap-x-2">
+              {paymentMethods.map((method) => (
+                <div
+                  key={method.id}
+                  onClick={() => {
+                    if (selectedPaymentMethod.includes(method.name)) {
+                      setSelectedPaymentMethod(
+                        selectedPaymentMethod.filter(
+                          (val) => val !== method.name
+                        )
+                      );
+                    } else {
+                      setSelectedPaymentMethod([
+                        ...selectedPaymentMethod,
+                        method.name,
+                      ]);
+                    }
+                  }}
+                  className="flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400"
                 >
-                  {method.name}
-                </p>
-              </div>
-            ))}
+                  {selectedPaymentMethod.includes(method.name) ? (
+                    <Checkbox
+                      checked={selectedPaymentMethod.includes(method.name)}
+                    />
+                  ) : (
+                    <method.icon className="stroke-brand-3 size-3.5" />
+                  )}
+
+                  <p
+                    className={cn(
+                      "text-sm",
+                      selectedPaymentMethod.includes(method.name)
+                        ? "text-button-primary"
+                        : "text-brand-2"
+                    )}
+                  >
+                    {method.name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-divider"></div>
+
+          <div className="flex justify-between items-center bg-input-field px-3 py-2 rounded-sm">
+            <p className="text-xs font-medium text-brand-1">
+              I agree to cancellation and refund policy
+            </p>
+
+            <Switch />
           </div>
         </div>
+      </RenderIf>
 
-        <div className="border-t border-divider"></div>
+      <RenderIf condition={!isLoggedIn}>
+        <div className="bg-white rounded-2xl p-3 md:p-4 flex flex-col gap-y-4 md:items-center md:justify-between">
+          <div className="grid gap-y-2">
+            <p className="font-semibold text-brand-2 text-sm md:text-base">
+              Service Preference
+            </p>
+            <span className="text-xs text-text-2">
+              This is pre-selected by your organisation admin
+            </span>
+          </div>
 
-        <div className="flex justify-between items-center bg-input-field px-3 py-2 rounded-sm">
-          <p className="text-xs font-medium text-brand-1">
-            I agree to cancellation and refund policy
-          </p>
-
-          <Switch />
+          <div className="py-2 px-3 rounded-full w-fit border text-sm text-brand-accent-2 border-brand-accent-2 bg-blue-400 flex items-center gap-x-2">
+            <Checkbox checked={true} className="rounded-full size-4" />
+            Family Counselling
+          </div>
         </div>
-      </div>
+      </RenderIf>
 
       <div className="bg-white rounded-2xl p-4 grid gap-y-4">
         <div className="grid gap-y-0.5">

@@ -12,7 +12,7 @@ export const AppointmentStepper = ({ step, steps }: IAppointmentStepper) => {
   const isLoggedIn = Cookies.get("authToken");
   return (
     <>
-      <div className="hidden md:flex items-start gap-x-41 justify-center pt-16 pb-7">
+      <div className={cn("hidden md:flex items-start gap-x-41 justify-center ", !!isLoggedIn ? 'pt-16 pb-7' : '')}>
         {steps?.map((innerStep, index) => (
           <div key={index} className="flex items-center gap-x-1 relative">
             <div className="flex flex-col items-center gap-y-2 text-center">

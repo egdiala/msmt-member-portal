@@ -201,7 +201,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
                   <Button
                     className="hidden md:inline-flex"
                     onClick={() => {
-                      router.push("/complete-bookking");
+                      router.push("/complete-booking");
                       setStep(2);
                     }}
                   >
@@ -299,7 +299,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
             <Button
               className="flex md:hidden"
               onClick={() => {
-                router.push("/complete-bookking");
+                router.push("/complete-booking");
                 setStep(2);
               }}
             >
