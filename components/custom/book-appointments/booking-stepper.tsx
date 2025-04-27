@@ -78,7 +78,7 @@ export const BookingStepper = () => {
       </div>
       <RenderIf condition={step === 1}>
         <div className="grid gap-4">
-          <div className="text-center pb-4 md:py-5">
+          <div className="text-center pb-4 md:py-5 grid gap-2">
             <h1 className="text-lg md:text-2xl font-bold text-text-1 text-center">
               Select a Provider
             </h1>

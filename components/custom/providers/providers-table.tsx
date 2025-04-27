@@ -47,8 +47,6 @@ export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
   const isLoggedIn = !!Cookies.get("authToken");
 
-  console.log(isLoggedIn, "IS LOGGED IM");
-
   const { data: requestVariables } = useMultipleRequestVariables([
     "service-offering",
     "preferred-lan",
@@ -496,7 +494,7 @@ export const ProvidersTable = () => {
 
         <RenderIf condition={showGridView}>
           <RenderIf condition={isLoading}>
-            <div className="w-full h-full flex justify-center items-center">
+            <div className="w-full h-full min-h-[300px] flex justify-center items-center">
               <Loader />
             </div>
           </RenderIf>
