@@ -230,7 +230,7 @@ export const SetScheduleStep = ({
       </RenderIf>
 
       <RenderIf condition={!isLoggedIn}>
-        <div className="bg-white rounded-2xl p-3 md:p-4 flex flex-col gap-y-4 md:items-center md:justify-between">
+        <div className="bg-white rounded-2xl p-3 md:p-4 flex flex-col md:flex-row gap-y-4 md:items-center md:justify-between">
           <div className="grid gap-y-2">
             <p className="font-semibold text-brand-2 text-sm md:text-base">
               Service Preference
