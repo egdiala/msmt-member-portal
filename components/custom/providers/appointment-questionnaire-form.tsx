@@ -80,14 +80,7 @@ export const FillAppointmentQuestionnaireForm = ({
                       return (
                         <div className="grid gap-y-4" key={index}>
                           <div className="grid gap-y-2">
-                            <p
-                              className={cn(
-                                "font-medium text-xs md:text-sm text-brand-1",
-                                bookingQuestion?.option?.length > 2
-                                  ? "basis-1/3"
-                                  : "basis-3/4"
-                              )}
-                            >
+                            <p className="font-medium text-xs md:text-sm text-brand-1">
                               {bookingQuestion?.question}
                             </p>
 
