@@ -6,9 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import {
   addMonths,
-  eachDayOfInterval,
-  eachMinuteOfInterval,
-  endOfMonth,
   format,
   getDay,
   isBefore,
@@ -41,7 +38,13 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
-import { cn } from "@/lib/utils";
+import {
+  cn,
+  formatTimeToAMPM,
+  formatTimeToHH,
+  getDaysOfMonth,
+  mergeAvailabilityWithDays,
+} from "@/lib/utils";
 import { setAppointmentSchedule } from "@/lib/validations";
 import {
   useGetProviderSchedule,
@@ -49,7 +52,11 @@ import {
 } from "@/services/hooks/queries/use-providers";
 import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { useBookSelfAppointment } from "@/services/hooks/mutations/use-booking";
-import { FetchSingleProvider } from "@/types/providers";
+import {
+  FetchedProviderSchedule,
+  FetchedProviderScheduleTimes,
+  FetchSingleProvider,
+} from "@/types/providers";
 
 interface ISetScheduleStep {
   isOrganisation?: boolean;
@@ -94,25 +101,69 @@ export const SetScheduleStep = ({
   const [selectedCommunicationPreference, setSelectedCommunicationPreference] =
     useState("");
 
-  const { data: providerSchedule } = useGetProviderSchedule({
+  const [intialDate, setInitialDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<any>(""); // Default is current date
+
+  const { data: providerDates } = useGetProviderSchedule<
+    FetchedProviderSchedule[]
+  >({
     provider_id: provider_id,
     time_zone: new Date().getTimezoneOffset()?.toString(),
   });
 
-  console.log({ providerSchedule });
+  const { data: providerTimes } = useGetProviderSchedule<
+    FetchedProviderScheduleTimes[]
+  >({
+    provider_id: provider_id,
+    time_zone: new Date().getTimezoneOffset()?.toString(),
+    ...(selectedDate ? { appt_date: format(selectedDate, "yyyy-MM-dd") } : {}),
+  });
+
+  const availableTimeBasedOnApptDate = providerTimes?.filter(
+    (val) => val?.status === 0
+  );
+
+  const formattedSlots = availableTimeBasedOnApptDate?.map((slot, index) => {
+    const formattedStartTimeAMPM = formatTimeToAMPM(slot.start_time); // Convert start_time to AM/PM format
+    const formattedEndTimeAMPM = formatTimeToAMPM(slot.end_time); // Convert end_time to AM/PM format
+    const formattedStartTimeHH = formatTimeToHH(slot.start_time); // Convert start_time to 24-hour (HH) format
+    return {
+      id: index, // Using the index as the id
+      value: `${formattedStartTimeAMPM} - ${formattedEndTimeAMPM}`, // Combine both times as the value
+      real: formattedStartTimeHH, // Add the start_time in 24-hour format (HH)
+    };
+  });
 
   const today = new Date();
   const yesterday = subDays(today, 1);
-  const [currentMonth, setCurrentMonth] = useState(startOfMonth(today));
-  const [selectedDate, setSelectedDate] = useState(today);
+
+  // Handlers for navigation
+  const goToNextMonth = () => {
+    setInitialDate(addMonths(intialDate, 1)); // Move to the next month
+  };
+
+  const goToPreviousMonth = () => {
+    setInitialDate(subMonths(intialDate, 1)); // Move to the previous month
+  };
+
+  const currentMonth = intialDate.getMonth(); // Current selected month
+  const currentYear = intialDate.getFullYear(); // Current selected year
 
   const start = startOfMonth(currentMonth);
-  const end = endOfMonth(currentMonth);
-  const days = eachDayOfInterval({ start, end });
   const startDay = getDay(start);
 
-  const handlePrev = () => setCurrentMonth(subMonths(currentMonth, 1));
-  const handleNext = () => setCurrentMonth(addMonths(currentMonth, 1));
+  // Get availability for the selected month
+  const mergedAvailability = providerDates
+    ? mergeAvailabilityWithDays(
+        getDaysOfMonth(currentYear, currentMonth),
+        providerDates
+      )
+    : [];
+
+  function isDateBeforeToday(date: Date): boolean {
+    const today = startOfDay(new Date()); // Normalize to midnight to compare only the date, not the time
+    return isBefore(date, today); // Returns true if the date is before today
+  }
 
   const handleDateClick = (date: any) => {
     if (!isBefore(startOfDay(date), yesterday)) {
@@ -120,19 +171,6 @@ export const SetScheduleStep = ({
       form.setValue("appointmentDate", date);
     }
   };
-
-  const timesOfDay = eachMinuteOfInterval(
-    {
-      start: new Date(2023, 0, 1, 0, 0),
-      end: new Date(2023, 0, 1, 23, 59),
-    },
-    { step: 30 }
-  ).map((time, index) => {
-    return {
-      id: index,
-      value: format(time, "hh:mm a"),
-    };
-  });
 
   const form = useForm<z.infer<typeof setAppointmentSchedule>>({
     resolver: zodResolver(setAppointmentSchedule),
@@ -149,19 +187,23 @@ export const SetScheduleStep = ({
   const { mutate } = useBookSelfAppointment(() => setStep("gateway"));
 
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
-    console.log(values);
-    mutate({
+    const dataToBeSent = {
       provider_id: provider_id,
       service_offer_id: requestVariables["service-offering"]?.filter(
         (val: { name: string }) => val.name === values.service
       )[0]?.service_offer_id,
-      appt_date: format(values.appointmentDate, "yyy-MM-dd"),
-      appt_time: values.appointmentTime,
+      appt_date: format(values.appointmentDate, "yyyy-MM-dd"),
+      appt_time:
+        formattedSlots?.filter(
+          (val) => val?.value === values.appointmentTime
+        )[0]?.real ?? "",
       comm_mode: values.communicationPreference?.toLowerCase() as
         | "video"
         | "audio",
       time_zone: new Date().getTimezoneOffset()?.toString(),
-    });
+    };
+
+    mutate(dataToBeSent);
   }
 
   return (
@@ -399,21 +441,27 @@ export const SetScheduleStep = ({
                       <div className="grid gap-y-4.5">
                         <div className="flex items-center justify-between">
                           <Button
-                            className="py-4.5 px-3 "
+                            className="py-4.5 px-3 disabled:cursor-not-allowed"
                             variant="secondary"
-                            onClick={handlePrev}
+                            type="button"
+                            onClick={goToPreviousMonth}
+                            disabled={
+                              currentMonth === new Date().getMonth() &&
+                              currentYear === new Date().getFullYear()
+                            }
                           >
                             <IconArrowDown className="stroke-button-primary rotate-90 stroke-3" />
                           </Button>
 
                           <h2 className="text-lg font-semibold">
-                            {format(currentMonth, "MMMM yyyy")}
+                            {format(intialDate, "MMMM yyyy")}
                           </h2>
 
                           <Button
                             className="py-4.5 px-3 "
                             variant="secondary"
-                            onClick={handleNext}
+                            onClick={goToNextMonth}
+                            type="button"
                           >
                             <IconArrowDown className="stroke-button-primary rotate-270 stroke-3" />
                           </Button>
@@ -424,39 +472,30 @@ export const SetScheduleStep = ({
                             <div key={`empty-${i}`}></div>
                           ))}
 
-                          {days.map((date, i) => (
+                          {mergedAvailability?.map((val, i) => (
                             <button
                               key={i}
+                              type="button"
                               className={cn(
                                 "flex flex-col items-center justify-center text-xs py-2.5 rounded-lg cursor-pointer disabled:cursor-not-allowed",
-                                isSameDay(date, selectedDate)
-                                  ? "font-bold bg-button-primary"
+                                isSameDay(val?.date, selectedDate) &&
+                                  val?.available &&
+                                  !isDateBeforeToday(val?.date)
+                                  ? "font-semibold bg-button-primary text-whiteb"
+                                  : isDateBeforeToday(val?.date) ||
+                                    !val?.available
+                                  ? "bg-gray-300 text-white"
                                   : "bg-input-field"
                               )}
-                              disabled={isBefore(startOfDay(date), yesterday)}
+                              disabled={
+                                isDateBeforeToday(val?.date) || !val?.available
+                              }
                               onClick={() => {
-                                handleDateClick(date);
+                                handleDateClick(val?.date);
                               }}
                             >
-                              <p
-                                className={
-                                  isSameDay(date, selectedDate)
-                                    ? "text-white"
-                                    : "text-brand-2"
-                                }
-                              >
-                                {format(date, "EEE")}
-                              </p>
-
-                              <p
-                                className={
-                                  isSameDay(date, selectedDate)
-                                    ? "text-white"
-                                    : "text-brand-1"
-                                }
-                              >
-                                {format(date, "d")}
-                              </p>
+                              <p>{format(val?.date, "EEE")}</p>
+                              <p>{format(val?.date, "d")}</p>
                             </button>
                           ))}
                         </div>
@@ -476,7 +515,7 @@ export const SetScheduleStep = ({
                   <FormItem>
                     <FormControl>
                       <SelectCmp
-                        selectItems={timesOfDay}
+                        selectItems={formattedSlots ?? []}
                         placeholder="Select time (WAT)"
                         onSelect={(val) =>
                           form.setValue("appointmentTime", val)

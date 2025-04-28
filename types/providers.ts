@@ -150,3 +150,16 @@ export interface FetchedFavouriteProviders {
   rating: number;
   industry_name?: string;
 }
+
+export interface FetchedProviderSchedule {
+  _id: number;
+  av_day: number;
+  start_time: number[];
+  end_time: number[];
+}
+
+export interface FetchedProviderScheduleTimes {
+  start_time: string;
+  end_time: string;
+  status: 0 | 1;
+}

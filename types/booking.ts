@@ -7,4 +7,10 @@ export type BookSelfAppointmentType = {
   time_zone: string;
   org_provider_id?: string;
   org_payer_id?: string;
+  familyuser_id?: string;
+};
+
+export type BookingQuestionnaireType = {
+  appointment_id: string;
+  data: any;
 };
