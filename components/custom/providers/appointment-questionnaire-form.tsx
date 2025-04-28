@@ -15,11 +15,7 @@ import {
   RadioGroup,
 } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
-import {
-  cn,
-  generateDefaultValues,
-  generateValidationSchema,
-} from "@/lib/utils";
+import { generateDefaultValues, generateValidationSchema } from "@/lib/utils";
 import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { FetchedQuestionsForQuestionnaireType } from "@/types/booking";
 
