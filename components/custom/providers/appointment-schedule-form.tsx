@@ -184,7 +184,10 @@ export const SetScheduleStep = ({
     },
   });
 
-  const { mutate } = useBookSelfAppointment(() => setStep("gateway"));
+  const { mutate } = useBookSelfAppointment((res) => {
+    localStorage.setItem("booking-appointment-id", res?.appointment_id);
+    setStep(2);
+  });
 
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
     const dataToBeSent = {

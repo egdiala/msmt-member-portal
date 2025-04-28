@@ -5,12 +5,12 @@ import {
   submitBookingQuestionnaire,
 } from "@/services/api/booking";
 
-export const useBookSelfAppointment = (fn?: () => void) => {
+export const useBookSelfAppointment = (fn?: (res: any) => void) => {
   return useMutation({
     mutationFn: bookSelfAppointment,
-    onSuccess: () => {
+    onSuccess: (res: any) => {
       toast.success("Successfully initiated appointment booking process.");
-      fn?.();
+      fn?.(res);
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.msg || "Something went wrong");

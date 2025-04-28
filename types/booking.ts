@@ -14,3 +14,15 @@ export type BookingQuestionnaireType = {
   appointment_id: string;
   data: any;
 };
+
+export interface FetchedQuestionsForQuestionnaireType {
+  question: string;
+  option: string[];
+  option_type?: "radio" | "checkbox";
+  has_child: boolean;
+  child_question?: {
+    question: string;
+    option: string[];
+    option_type: string;
+  }[];
+}

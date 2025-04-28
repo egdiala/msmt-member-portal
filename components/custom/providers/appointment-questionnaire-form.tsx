@@ -1,11 +1,10 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { RadioButton } from "@/components/shared";
+import { RadioButton, RenderIf } from "@/components/shared";
 import {
   Checkbox,
   Form,
@@ -15,7 +14,14 @@ import {
   FormMessage,
   RadioGroup,
 } from "@/components/ui";
-import { appointmentQuestionnaireSchema } from "@/lib/validations";
+import { Loader } from "@/components/shared/loader";
+import {
+  cn,
+  generateDefaultValues,
+  generateValidationSchema,
+} from "@/lib/utils";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
+import { FetchedQuestionsForQuestionnaireType } from "@/types/booking";
 
 interface IFillAppointmentQuestionnaireForm {
   setStep: Dispatch<SetStateAction<string | number>>;
@@ -24,71 +30,19 @@ interface IFillAppointmentQuestionnaireForm {
 export const FillAppointmentQuestionnaireForm = ({
   setStep,
 }: IFillAppointmentQuestionnaireForm) => {
-  const employmentStatuses = ["Employed", "Unemployed", "Retired", "Student"];
-  const alcoholIntakeFrequencies = [
-    "Infrequently",
-    "Daily",
-    "Weekly",
-    "Monthly",
-    "Never",
-  ];
-  const otherOptions = ["Good", "Fair", "Poor"];
-  const yesOrNoOptions = ["Yes", "No"];
-  const helpOptions = [
-    "Traumatic experience (Past or Present)",
-    "Stress at work or school",
-    "Curiosity",
-    "Feeling down or having emotional struggles",
-    "Difficulty in relationships",
-    "Worry about something",
-    "Addiction or substance abuse",
-    "Struggling with medical problems",
-    "Trouble sleeping",
-    "Other (Please specify)",
-  ];
+  const { data, isLoading } = useMultipleRequestVariables(["booking-question"]);
 
-  const form = useForm<z.infer<typeof appointmentQuestionnaireSchema>>({
-    resolver: zodResolver(appointmentQuestionnaireSchema),
+  const form = useForm({
+    resolver: zodResolver(generateValidationSchema(data["booking-question"])),
     mode: "onChange",
-    defaultValues: {
-      safePlace: "",
-      aloneWithSomeone: "",
-      experiencingFear: "",
-      everBeenInCounselling: "",
-      experiencingSadness: "",
-      reasonForSeekingHelp: [],
-      currentPhysicalHealthRate: "",
-      currentEatingHabits: "",
-      currentSleepingHabits: "",
-      employmentStatus: "",
-      alcoholIntakeFrequency: "",
-      eatingHabits: "",
-      sleepingHabits: "",
-    },
+    defaultValues: generateDefaultValues(data["booking-question"]),
   });
 
-  async function onSubmit(
-    values: z.infer<typeof appointmentQuestionnaireSchema>
-  ) {
+  async function onSubmit(values: any) {
     console.log(values);
   }
 
-  const handleChangeSeekHelpArray = ({
-    val,
-    arrayVals,
-  }: {
-    val: string;
-    arrayVals: string[];
-  }) => {
-    if (arrayVals.includes(val)) {
-      form.setValue(
-        "reasonForSeekingHelp",
-        arrayVals.filter((innerVal) => innerVal !== val)
-      );
-    } else {
-      form.setValue("reasonForSeekingHelp", [...arrayVals, val]);
-    }
-  };
+  console.log({ errors: form.formState?.errors });
 
   return (
     <div className="min-h-full pb-12">
@@ -99,7 +53,7 @@ export const FillAppointmentQuestionnaireForm = ({
         >
           <div className="grid gap-y-1 text-brand-1 py-5 text-center">
             <h2 className="font-bold text-xl md:text-2xl">
-              Appointment questionaire
+              Appointment questionnaire
             </h2>
 
             <p className="text-brand-2 text-sm">
@@ -110,509 +64,219 @@ export const FillAppointmentQuestionnaireForm = ({
 
           <div className="grid gap-y-5">
             <div className="bg-white rounded-2xl p-3 md:p-6 grid gap-y-4">
-              <div className="flex justify-between items-center">
-                <p className="font-medium text-xs md:text-sm text-brand-1">
-                  Are you in a safe place?
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="safePlace"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          className="flex items-center flex-wrap"
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          {yesOrNoOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `safePlace-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="border-t border-divider"></div>
-
-              <div className="flex justify-between items-center">
-                <p className="font-medium text-xs md:text-sm text-brand-1 basis-3/6 md:basis-1/2">
-                  Are you alone with someone?
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="aloneWithSomeone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          className="flex items-center flex-wrap"
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          {yesOrNoOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `aloneWithSomeone-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="border-t border-divider"></div>
-
-              <div className="flex justify-between items-center">
-                <p className="font-medium text-xs md:text-sm text-brand-1 basis-3/6 md:basis-1/2">
-                  Are you experiencing any fear or worry?
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="experiencingFear"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {yesOrNoOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `experiencingFear-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="border-t border-divider"></div>
-
-              <div className="flex justify-between items-center">
-                <p className="font-medium text-xs md:text-sm text-brand-1 basis-3/6 md:basis-1/2">
-                  Have you ever been in counselling or therapy before?
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="everBeenInCounselling"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {yesOrNoOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `everBeenInCounselling-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="border-t border-divider"></div>
-
-              <div className="flex justify-between items-center">
-                <p className="font-medium text-xs md:text-sm text-brand-1 basis-3/6 md:basis-3/5">
-                  Are you currently experiencing overwhelming sadness, grief, or
-                  having emotional struggles?
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="experiencingSadness"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {yesOrNoOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `experiencingSadness-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="border-t border-divider"></div>
-
-              <div className="grid gap-y-2">
-                <div className="grid gap-y-0.5">
-                  <h4 className="text-sm font-medium text-brand-1">
-                    What led you to seek help today?
-                  </h4>
-
-                  <p className="text-xs text-brand-2">
-                    You can select multiple answers
-                  </p>
+              <RenderIf condition={isLoading}>
+                <div className="w-full h-screen flex justify-center items-center">
+                  <Loader />
                 </div>
+              </RenderIf>
 
-                <FormField
-                  control={form.control}
-                  name="reasonForSeekingHelp"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex gap-4 flex-wrap">
-                          {helpOptions.map((option) => (
-                            <div
-                              key={option}
-                              className="flex items-center gap-x-2 rounded-full border border-divider px-3 py-2 cursor-pointer"
-                              onClick={() =>
-                                handleChangeSeekHelpArray({
-                                  val: option,
-                                  arrayVals: field.value,
-                                })
-                              }
+              <RenderIf condition={!isLoading}>
+                {data["booking-question"]?.map(
+                  (
+                    bookingQuestion: FetchedQuestionsForQuestionnaireType,
+                    index: number
+                  ) => {
+                    if (bookingQuestion?.option_type === "radio") {
+                      return (
+                        <div className="grid gap-y-4" key={index}>
+                          <div className="grid gap-y-2">
+                            <p
+                              className={cn(
+                                "font-medium text-xs md:text-sm text-brand-1",
+                                bookingQuestion?.option?.length > 2
+                                  ? "basis-1/3"
+                                  : "basis-3/4"
+                              )}
                             >
-                              <Checkbox
-                                checked={field.value.includes(option)}
-                              />
-                              <p className="text-brand-2 text-sm">{option}</p>
-                            </div>
-                          ))}
+                              {bookingQuestion?.question}
+                            </p>
+
+                            <FormField
+                              control={form.control}
+                              name={`questions[${index}].option`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <RadioGroup
+                                      defaultValue={field.value}
+                                      onValueChange={field.onChange}
+                                      className="flex items-center flex-wrap"
+                                    >
+                                      {bookingQuestion?.option?.map(
+                                        (option) => (
+                                          <RadioButton
+                                            key={option}
+                                            isActive={field.value === option}
+                                            option={{
+                                              id: `questions[${index}]-${option}`,
+                                              value: option,
+                                              name: option,
+                                            }}
+                                            className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
+                                          />
+                                        )
+                                      )}
+                                    </RadioGroup>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <RenderIf
+                            condition={
+                              index < data["booking-question"]?.length - 1
+                            }
+                          >
+                            <div className="border-t border-divider"></div>
+                          </RenderIf>
                         </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+                      );
+                    } else if (bookingQuestion?.option_type === "checkbox") {
+                      return (
+                        <div className="grid gap-y-4" key={index}>
+                          <div className="grid gap-y-2">
+                            <div className="grid gap-y-0.5">
+                              <h4 className="text-sm font-medium text-brand-1">
+                                {bookingQuestion?.question}
+                              </h4>
 
-            <div className="bg-white rounded-2xl p-3 md:p-6 grid gap-y-5">
-              <h3 className="font-bold text-brand-1">
-                How would you rate your current:
-              </h3>
+                              <p className="text-xs text-brand-2">
+                                You can select multiple answers
+                              </p>
+                            </div>
 
-              <div className="grid gap-y-2">
-                <p className="font-medium text-sm text-brand-1">
-                  Physical health
-                </p>
+                            <FormField
+                              control={form.control}
+                              name={`questions[${index}].option`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <div className="flex gap-4 flex-wrap">
+                                      {bookingQuestion?.option?.map(
+                                        (option, idx) => (
+                                          <div
+                                            key={idx}
+                                            className="flex items-center gap-x-2 rounded-full border border-divider px-3 py-2 cursor-pointer"
+                                            onClick={() => {
+                                              // Ensure field.value is always an array
+                                              const value = Array.isArray(
+                                                field.value
+                                              )
+                                                ? field.value
+                                                : [];
 
-                <FormField
-                  control={form.control}
-                  name="currentPhysicalHealthRate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {otherOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `currentPhysicalHealthRate-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
+                                              // Update the value array for checkbox options
+                                              const updatedValues =
+                                                value.includes(option)
+                                                  ? value.filter(
+                                                      (val: any) =>
+                                                        val !== option
+                                                    )
+                                                  : [...value, option];
+
+                                              // Call the onChange function from react-hook-form to update the state
+                                              field.onChange(updatedValues);
+                                            }}
+                                          >
+                                            <Checkbox
+                                              checked={field?.value?.includes(
+                                                option
+                                              )}
+                                            />
+
+                                            <p className="text-brand-2 text-sm">
+                                              {option}
+                                            </p>
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
                             />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                          </div>
 
-              <div className="border-t border-divider"></div>
+                          <RenderIf
+                            condition={
+                              index < data["booking-question"]?.length - 1
+                            }
+                          >
+                            <div className="border-t border-divider"></div>
+                          </RenderIf>
+                        </div>
+                      );
+                    } else if (bookingQuestion?.has_child) {
+                      return (
+                        <div className="grid gap-y-4" key={index}>
+                          <div className="grid gap-y-2">
+                            <h3 className="text-sm font-medium text-brand-1">
+                              {bookingQuestion?.question}
+                            </h3>
 
-              <div className="grid gap-y-2">
-                <p className="font-medium text-sm text-brand-1">
-                  Eating habits
-                </p>
+                            <div className="grid gap-y-4">
+                              {bookingQuestion?.child_question?.map(
+                                (childQuestion, childIdx) => (
+                                  <div className="grid gap-y-2" key={childIdx}>
+                                    <p className="text-xs text-brand-2">
+                                      {childQuestion?.question}
+                                    </p>
 
-                <FormField
-                  control={form.control}
-                  name="currentEatingHabits"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {otherOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `currentEatingHabits-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                                    <FormField
+                                      control={form.control}
+                                      name={`questions.${index}.child_question.${childIdx}.option`}
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormControl>
+                                            <RadioGroup
+                                              defaultValue={field.value}
+                                              onValueChange={field.onChange}
+                                              className="flex items-center flex-wrap"
+                                            >
+                                              {childQuestion?.option?.map(
+                                                (option) => (
+                                                  <RadioButton
+                                                    key={option}
+                                                    isActive={
+                                                      field.value === option
+                                                    }
+                                                    option={{
+                                                      id: `questions[${index}].child_question[${childIdx}]-${option}`,
+                                                      value: option,
+                                                      name: option,
+                                                    }}
+                                                    className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
+                                                  />
+                                                )
+                                              )}
+                                            </RadioGroup>
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
 
-              <div className="border-t border-divider"></div>
-
-              <div className="grid gap-y-2">
-                <p className="font-medium text-sm text-brand-1">
-                  Sleeping habits
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="currentSleepingHabits"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {otherOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `currentSleepingHabits-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-3 md:p-6 grid gap-y-5">
-              <div className="grid gap-y-2">
-                <p className="font-medium text-sm text-brand-1">
-                  Employment status
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="employmentStatus"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {employmentStatuses.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `employmentStatus-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="border-t border-divider"></div>
-
-              <div className="grid gap-y-2">
-                <p className="font-medium text-sm text-brand-1">
-                  How often do you drink alcohol?
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="alcoholIntakeFrequency"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {alcoholIntakeFrequencies.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `alcoholIntakeFrequency-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="border-t border-divider"></div>
-
-              <div className="grid gap-y-2">
-                <p className="font-medium text-sm text-brand-1">
-                  Eating habits
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="eatingHabits"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {otherOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `eatingHabits-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="border-t border-divider"></div>
-
-              <div className="grid gap-y-2">
-                <p className="font-medium text-sm text-brand-1">
-                  Sleeping habits
-                </p>
-
-                <FormField
-                  control={form.control}
-                  name="sleepingHabits"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroup
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                          className="flex items-center flex-wrap"
-                        >
-                          {otherOptions.map((option) => (
-                            <RadioButton
-                              key={option}
-                              isActive={field.value === option}
-                              option={{
-                                id: `sleepingHabits-${option}`,
-                                value: option,
-                                name: option,
-                              }}
-                              className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                            />
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                          <RenderIf
+                            condition={
+                              index < data["booking-question"]?.length - 1
+                            }
+                          >
+                            <div className="border-t border-divider"></div>
+                          </RenderIf>
+                        </div>
+                      );
+                    }
+                  }
+                )}
+              </RenderIf>
             </div>
           </div>
 
@@ -621,11 +285,12 @@ export const FillAppointmentQuestionnaireForm = ({
               className="shadow-none"
               variant="secondary"
               onClick={() => setStep(1)}
+              type="button"
             >
               Cancel
             </Button>
 
-            <Button>Complete Booking</Button>
+            <Button type="submit">Complete Booking</Button>
           </div>
         </form>
       </Form>

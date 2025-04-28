@@ -1,7 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { LoginResponse } from "@/types/auth";
-import { UpdateProfileType } from "@/types/profile";
 import {
   addDays,
   endOfMonth,
@@ -12,6 +10,10 @@ import {
   parseISO,
   startOfMonth,
 } from "date-fns";
+import { z } from "zod";
+import { LoginResponse } from "@/types/auth";
+import { UpdateProfileType } from "@/types/profile";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -172,3 +174,50 @@ export function formatTimeToHH(time: string): string {
   const timeObj = parse(time, "HH:mm", new Date());
   return format(timeObj, "HH"); // 'HH' gives the time in 24-hour format
 }
+
+export const generateValidationSchema = (questions: any[]) => {
+  const schemaObject: Record<string, any> = {};
+
+  questions?.forEach((question, index) => {
+    if (question.option_type === "checkbox") {
+      schemaObject[`questions.${index}.option`] = z
+        .array(z.string())
+        .min(1, { message: "At least one option must be selected." });
+    } else if (question.option_type === "radio") {
+      schemaObject[`questions.${index}.option`] = z
+        .string()
+        .min(1, { message: "This field is required." });
+    }
+
+    if (question.has_child && question.child_question) {
+      question.child_question.forEach((child: any, childIndex: number) => {
+        schemaObject[`questions.${index}.child_question.${childIndex}.option`] =
+          z.string().min(1, { message: "This field is required." });
+      });
+    }
+  });
+
+  return z.object(schemaObject);
+};
+
+export const generateDefaultValues = (questions: any[]) => {
+  const defaultValues: any = {
+    questions: [],
+  };
+
+  questions?.forEach((question: any) => {
+    if (question.option_type === "checkbox") {
+      defaultValues.questions.push({ option: [] }); // empty array
+    } else if (question.option_type === "radio") {
+      defaultValues.questions.push({ option: "" }); // empty string
+    } else if (question.has_child && question.child_question) {
+      defaultValues.questions.push({
+        child_question: question.child_question.map(() => ({ option: "" })),
+      });
+    } else {
+      defaultValues.questions.push({ option: "" });
+    }
+  });
+
+  return defaultValues;
+};
