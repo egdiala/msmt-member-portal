@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import {
   subDays,
   subMonths,
 } from "date-fns";
+import { AnimatePresence, motion } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -165,10 +166,10 @@ export const SetScheduleStep = ({
     return isBefore(date, today); // Returns true if the date is before today
   }
 
-  const handleDateClick = (date: any) => {
+  const handleDateClick = (date: any, field: any) => {
     if (!isBefore(startOfDay(date), yesterday)) {
       setSelectedDate(date);
-      form.setValue("appointmentDate", date);
+      field?.onChange(date);
     }
   };
 
@@ -184,7 +185,7 @@ export const SetScheduleStep = ({
     },
   });
 
-  const { mutate } = useBookSelfAppointment((res) => {
+  const { mutate, isPending } = useBookSelfAppointment((res) => {
     localStorage.setItem("booking-appointment-id", res?.appointment_id);
     setStep(2);
   });
@@ -208,6 +209,15 @@ export const SetScheduleStep = ({
 
     mutate(dataToBeSent);
   }
+
+  const buttonCopy = {
+    idle: "Proceed to Pay",
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isPending ? "loading" : "idle";
+  }, [isPending]);
 
   return (
     <div className="min-h-full pb-12 grid gap-y-4 content-start">
@@ -306,7 +316,7 @@ export const SetScheduleStep = ({
                               value: val?.name,
                             };
                           })}
-                          onSelect={(val) => form.setValue("service", val)}
+                          onSelect={(val) => field.onChange(val)}
                           placeholder="Select Service"
                           {...field}
                         />
@@ -337,7 +347,7 @@ export const SetScheduleStep = ({
                 <FormField
                   control={form.control}
                   name="paymentMethod"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <div className="flex items-center gap-x-2">
@@ -357,14 +367,14 @@ export const SetScheduleStep = ({
                                       (val) => val !== method.name
                                     );
                                     setSelectedPaymentMethod(newVal);
-                                    form.setValue("paymentMethod", newVal);
+                                    field.onChange(newVal);
                                   } else {
                                     const newVal = [
                                       ...selectedPaymentMethod,
                                       method.name,
                                     ];
                                     setSelectedPaymentMethod(newVal);
-                                    form.setValue("paymentMethod", newVal);
+                                    field.onChange(newVal);
                                   }
                                 }}
                                 className="flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400"
@@ -438,7 +448,7 @@ export const SetScheduleStep = ({
               <FormField
                 control={form.control}
                 name="appointmentDate"
-                render={() => (
+                render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <div className="grid gap-y-4.5">
@@ -484,7 +494,7 @@ export const SetScheduleStep = ({
                                 isSameDay(val?.date, selectedDate) &&
                                   val?.available &&
                                   !isDateBeforeToday(val?.date)
-                                  ? "font-semibold bg-button-primary text-whiteb"
+                                  ? "font-semibold bg-button-primary text-white"
                                   : isDateBeforeToday(val?.date) ||
                                     !val?.available
                                   ? "bg-gray-300 text-white"
@@ -494,7 +504,7 @@ export const SetScheduleStep = ({
                                 isDateBeforeToday(val?.date) || !val?.available
                               }
                               onClick={() => {
-                                handleDateClick(val?.date);
+                                handleDateClick(val?.date, field);
                               }}
                             >
                               <p>{format(val?.date, "EEE")}</p>
@@ -520,9 +530,7 @@ export const SetScheduleStep = ({
                       <SelectCmp
                         selectItems={formattedSlots ?? []}
                         placeholder="Select time (WAT)"
-                        onSelect={(val) =>
-                          form.setValue("appointmentTime", val)
-                        }
+                        onSelect={(val) => field.onChange(val)}
                         {...field}
                       />
                     </FormControl>
@@ -536,7 +544,7 @@ export const SetScheduleStep = ({
               <FormField
                 control={form.control}
                 name="communicationPreference"
-                render={() => (
+                render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <div className="flex flex-col gap-2 md:flex-row  md:items-center justify-between">
@@ -552,10 +560,7 @@ export const SetScheduleStep = ({
                                 setSelectedCommunicationPreference(
                                   preference.name
                                 );
-                                form.setValue(
-                                  "communicationPreference",
-                                  preference.name
-                                );
+                                field.onChange(preference.name);
                               }}
                               key={preference.id}
                               className={cn(
@@ -607,7 +612,19 @@ export const SetScheduleStep = ({
               >
                 Go Back
               </Button>
-              <Button type="submit">Proceed to Pay</Button>
+              <Button type="submit" disabled={isPending} className="w-29">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                    initial={{ opacity: 0, y: -25 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 25 }}
+                    key={buttonState}
+                  >
+                    {buttonCopy[buttonState]}
+                  </motion.span>
+                </AnimatePresence>
+              </Button>
             </div>
           </form>
         </Form>

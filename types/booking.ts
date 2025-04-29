@@ -12,17 +12,27 @@ export type BookSelfAppointmentType = {
 
 export type BookingQuestionnaireType = {
   appointment_id: string;
-  data: any;
+  data: {
+    question: string;
+    sub_question?: string;
+    answer: string | string[];
+  };
 };
 
 export interface FetchedQuestionsForQuestionnaireType {
   question: string;
-  option: string[];
-  option_type?: "radio" | "checkbox";
+  option?: string[];
+  option_type?: string;
   has_child: boolean;
   child_question?: {
     question: string;
     option: string[];
     option_type: string;
+    answer: string;
   }[];
+}
+
+export interface FetchedQuestionnaireSchemaType
+  extends FetchedQuestionsForQuestionnaireType {
+  answer: string | string[];
 }

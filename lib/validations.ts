@@ -260,3 +260,41 @@ export const fundWalletSchema = z.object({
 export const disableProfileSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
+
+const childQuestionSchema = z.object({
+  question: z.string(),
+  option: z.array(z.string()),
+  option_type: z.literal("radio"),
+  answer: z.string().min(1, "This child question is required"),
+});
+
+const baseQuestionSchema = z.object({
+  question: z.string(),
+  option: z.array(z.string()).optional(),
+  option_type: z.string().optional(),
+  has_child: z.boolean(),
+});
+
+const radioQuestionSchema = baseQuestionSchema.extend({
+  option_type: z.literal("radio"),
+  has_child: z.literal(false),
+  answer: z.string().min(1, "This question is required"),
+});
+
+const checkboxQuestionSchema = baseQuestionSchema.extend({
+  option_type: z.literal("checkbox"),
+  has_child: z.literal(false),
+  answer: z.array(z.string()).min(1, "Select at least one option"),
+});
+
+const parentQuestionSchema = baseQuestionSchema.extend({
+  has_child: z.literal(true),
+  child_question: z.array(childQuestionSchema),
+  answer: z.string().optional(),
+});
+
+export const appointmentBookingQuestionnaireSchema = z.object({
+  questions: z.array(
+    z.union([radioQuestionSchema, checkboxQuestionSchema, parentQuestionSchema])
+  ),
+});

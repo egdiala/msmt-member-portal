@@ -1,7 +1,8 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
-import { useForm } from "react-hook-form";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { RadioButton, RenderIf } from "@/components/shared";
@@ -15,7 +16,7 @@ import {
   RadioGroup,
 } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
-import { generateDefaultValues, generateValidationSchema } from "@/lib/utils";
+import { appointmentBookingQuestionnaireSchema } from "@/lib/validations";
 import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { FetchedQuestionsForQuestionnaireType } from "@/types/booking";
 
@@ -28,17 +29,56 @@ export const FillAppointmentQuestionnaireForm = ({
 }: IFillAppointmentQuestionnaireForm) => {
   const { data, isLoading } = useMultipleRequestVariables(["booking-question"]);
 
-  const form = useForm({
-    resolver: zodResolver(generateValidationSchema(data["booking-question"])),
+  const bookingQuestions = data["booking-question"]
+    ?.filter((val: { option_type: string }) => val?.option_type !== "checkbox")
+    ?.map((bookingQuestion: FetchedQuestionsForQuestionnaireType) => {
+      return {
+        question: bookingQuestion?.question,
+        answer: "",
+        option: bookingQuestion?.option,
+        option_type: bookingQuestion?.option_type,
+        child_question: bookingQuestion?.child_question?.map((val) => {
+          return {
+            question: val?.question,
+            option: val?.option,
+            option_type: val?.option_type,
+            answer: "",
+          };
+        }),
+        has_child: bookingQuestion?.has_child,
+      };
+    });
+
+  const form = useForm<z.infer<typeof appointmentBookingQuestionnaireSchema>>({
+    resolver: zodResolver(appointmentBookingQuestionnaireSchema),
     mode: "onChange",
-    defaultValues: generateDefaultValues(data["booking-question"]),
+    defaultValues: {
+      questions: bookingQuestions,
+    },
+  });
+
+  useEffect(
+    () => {
+      if (!isLoading) {
+        if (data["booking-question"]) {
+          form.reset({
+            questions: bookingQuestions,
+          });
+        }
+      }
+    },
+    //eslint-disable-next-line
+    [form.reset, isLoading]
+  );
+
+  const { fields } = useFieldArray({
+    control: form.control,
+    name: "questions",
   });
 
   async function onSubmit(values: any) {
-    console.log(values);
+    console.log({ values });
   }
-
-  console.log({ errors: form.formState?.errors });
 
   return (
     <div className="min-h-full pb-12">
@@ -67,204 +107,203 @@ export const FillAppointmentQuestionnaireForm = ({
               </RenderIf>
 
               <RenderIf condition={!isLoading}>
-                {data["booking-question"]?.map(
-                  (
-                    bookingQuestion: FetchedQuestionsForQuestionnaireType,
-                    index: number
-                  ) => {
-                    if (bookingQuestion?.option_type === "radio") {
-                      return (
-                        <div className="grid gap-y-4" key={index}>
-                          <div className="grid gap-y-2">
-                            <p className="font-medium text-xs md:text-sm text-brand-1">
+                {fields?.map((bookingQuestion, index: number) => {
+                  if (bookingQuestion?.option_type === "radio") {
+                    return (
+                      <div className="grid gap-y-4" key={index}>
+                        <div className="grid gap-y-2">
+                          <p className="font-medium text-xs md:text-sm text-brand-1">
+                            {bookingQuestion?.question}
+                          </p>
+
+                          <FormField
+                            control={form.control}
+                            name={`questions.${index}.answer`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <RadioGroup
+                                    defaultValue={field.value as string}
+                                    onValueChange={field.onChange}
+                                    className="flex items-center flex-wrap"
+                                  >
+                                    {bookingQuestion?.option?.map(
+                                      (option: string) => (
+                                        <RadioButton
+                                          key={option}
+                                          isActive={field.value === option}
+                                          option={{
+                                            id: `questions[${index}]-${option}`,
+                                            value: option,
+                                            name: option,
+                                          }}
+                                          className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
+                                        />
+                                      )
+                                    )}
+                                  </RadioGroup>
+                                </FormControl>
+
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <RenderIf condition={index < fields?.length - 1}>
+                          <div className="border-t border-divider"></div>
+                        </RenderIf>
+                      </div>
+                    );
+                  } else if (bookingQuestion?.option_type === "checkbox") {
+                    return (
+                      <div className="grid gap-y-4" key={index}>
+                        <div className="grid gap-y-2">
+                          <div className="grid gap-y-0.5">
+                            <h4 className="text-sm font-medium text-brand-1">
                               {bookingQuestion?.question}
+                            </h4>
+
+                            <p className="text-xs text-brand-2">
+                              You can select multiple answers
                             </p>
-
-                            <FormField
-                              control={form.control}
-                              name={`questions[${index}].option`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <RadioGroup
-                                      defaultValue={field.value}
-                                      onValueChange={field.onChange}
-                                      className="flex items-center flex-wrap"
-                                    >
-                                      {bookingQuestion?.option?.map(
-                                        (option) => (
-                                          <RadioButton
-                                            key={option}
-                                            isActive={field.value === option}
-                                            option={{
-                                              id: `questions[${index}]-${option}`,
-                                              value: option,
-                                              name: option,
-                                            }}
-                                            className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                                          />
-                                        )
-                                      )}
-                                    </RadioGroup>
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
                           </div>
 
-                          <RenderIf
-                            condition={
-                              index < data["booking-question"]?.length - 1
-                            }
-                          >
-                            <div className="border-t border-divider"></div>
-                          </RenderIf>
-                        </div>
-                      );
-                    } else if (bookingQuestion?.option_type === "checkbox") {
-                      return (
-                        <div className="grid gap-y-4" key={index}>
-                          <div className="grid gap-y-2">
-                            <div className="grid gap-y-0.5">
-                              <h4 className="text-sm font-medium text-brand-1">
-                                {bookingQuestion?.question}
-                              </h4>
-
-                              <p className="text-xs text-brand-2">
-                                You can select multiple answers
-                              </p>
-                            </div>
-
-                            <FormField
-                              control={form.control}
-                              name={`questions[${index}].option`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <div className="flex gap-4 flex-wrap">
-                                      {bookingQuestion?.option?.map(
-                                        (option, idx) => (
-                                          <div
-                                            key={idx}
-                                            className="flex items-center gap-x-2 rounded-full border border-divider px-3 py-2 cursor-pointer"
-                                            onClick={() => {
-                                              // Ensure field.value is always an array
-                                              const value = Array.isArray(
-                                                field.value
-                                              )
-                                                ? field.value
-                                                : [];
-
-                                              // Update the value array for checkbox options
-                                              const updatedValues =
-                                                value.includes(option)
-                                                  ? value.filter(
-                                                      (val: any) =>
-                                                        val !== option
-                                                    )
-                                                  : [...value, option];
-
-                                              // Call the onChange function from react-hook-form to update the state
-                                              field.onChange(updatedValues);
-                                            }}
-                                          >
-                                            <Checkbox
-                                              checked={field?.value?.includes(
-                                                option
-                                              )}
-                                            />
-
-                                            <p className="text-brand-2 text-sm">
-                                              {option}
-                                            </p>
-                                          </div>
-                                        )
-                                      )}
-                                    </div>
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-
-                          <RenderIf
-                            condition={
-                              index < data["booking-question"]?.length - 1
-                            }
-                          >
-                            <div className="border-t border-divider"></div>
-                          </RenderIf>
-                        </div>
-                      );
-                    } else if (bookingQuestion?.has_child) {
-                      return (
-                        <div className="grid gap-y-4" key={index}>
-                          <div className="grid gap-y-2">
-                            <h3 className="text-sm font-medium text-brand-1">
-                              {bookingQuestion?.question}
-                            </h3>
-
-                            <div className="grid gap-y-4">
-                              {bookingQuestion?.child_question?.map(
-                                (childQuestion, childIdx) => (
-                                  <div className="grid gap-y-2" key={childIdx}>
-                                    <p className="text-xs text-brand-2">
-                                      {childQuestion?.question}
-                                    </p>
-
-                                    <FormField
-                                      control={form.control}
-                                      name={`questions.${index}.child_question.${childIdx}.option`}
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormControl>
-                                            <RadioGroup
-                                              defaultValue={field.value}
-                                              onValueChange={field.onChange}
-                                              className="flex items-center flex-wrap"
-                                            >
-                                              {childQuestion?.option?.map(
-                                                (option) => (
-                                                  <RadioButton
-                                                    key={option}
-                                                    isActive={
-                                                      field.value === option
-                                                    }
-                                                    option={{
-                                                      id: `questions[${index}].child_question[${childIdx}]-${option}`,
-                                                      value: option,
-                                                      name: option,
-                                                    }}
-                                                    className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
-                                                  />
+                          <FormField
+                            control={form.control}
+                            name={`questions.${index}.answer`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <div className="flex gap-4 flex-wrap">
+                                    {bookingQuestion?.option?.map(
+                                      (option, idx: number) => (
+                                        <div
+                                          key={idx}
+                                          className="flex items-center gap-x-2 rounded-full border border-divider px-3 py-2 cursor-pointer"
+                                          onClick={() => {
+                                            const current = Array.isArray(
+                                              field.value
+                                            )
+                                              ? field.value
+                                              : [];
+                                            if (current.includes(option)) {
+                                              field.onChange(
+                                                current.filter(
+                                                  (item: string) =>
+                                                    item !== option
                                                 )
-                                              )}
-                                            </RadioGroup>
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          </div>
+                                              );
+                                            } else {
+                                              field.onChange([
+                                                ...current,
+                                                option,
+                                              ]);
+                                            }
+                                          }}
+                                        >
+                                          <Checkbox
+                                            checked={field?.value?.includes(
+                                              option
+                                            )}
+                                            {...field}
+                                          />
 
-                          <RenderIf
-                            condition={
-                              index < data["booking-question"]?.length - 1
-                            }
-                          >
-                            <div className="border-t border-divider"></div>
-                          </RenderIf>
+                                          <p className="text-brand-2 text-sm">
+                                            {option}
+                                          </p>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         </div>
-                      );
-                    }
+
+                        <RenderIf
+                          condition={
+                            index < data["booking-question"]?.length - 1
+                          }
+                        >
+                          <div className="border-t border-divider"></div>
+                        </RenderIf>
+                      </div>
+                    );
+                  } else if (bookingQuestion?.has_child) {
+                    return (
+                      <div className="grid gap-y-4" key={index}>
+                        <div className="grid gap-y-2">
+                          <h3 className="text-sm font-medium text-brand-1">
+                            {bookingQuestion?.question}
+                          </h3>
+
+                          <div className="grid gap-y-4">
+                            {bookingQuestion?.child_question?.map(
+                              (
+                                childQuestion: {
+                                  option: string[];
+                                  question: string;
+                                },
+                                childIdx: number
+                              ) => (
+                                <div className="grid gap-y-2" key={childIdx}>
+                                  <p className="text-xs text-brand-2">
+                                    {childQuestion?.question}
+                                  </p>
+
+                                  <FormField
+                                    control={form.control}
+                                    name={`questions.${index}.child_question.${childIdx}.answer`}
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormControl>
+                                          <RadioGroup
+                                            defaultValue={field.value}
+                                            onValueChange={field.onChange}
+                                            className="flex items-center flex-wrap"
+                                          >
+                                            {childQuestion?.option?.map(
+                                              (option: string) => (
+                                                <RadioButton
+                                                  key={option}
+                                                  isActive={
+                                                    field.value === option
+                                                  }
+                                                  option={{
+                                                    id: `questions[${index}].child_question[${childIdx}]-${option}`,
+                                                    value: option,
+                                                    name: option,
+                                                  }}
+                                                  className="rounded-full border border-divider px-3 md:px-3 py-2 md:py-2"
+                                                />
+                                              )
+                                            )}
+                                          </RadioGroup>
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+
+                        <RenderIf
+                          condition={
+                            index < data["booking-question"]?.length - 1
+                          }
+                        >
+                          <div className="border-t border-divider"></div>
+                        </RenderIf>
+                      </div>
+                    );
                   }
-                )}
+                })}
               </RenderIf>
             </div>
           </div>
