@@ -1,3 +1,4 @@
+import { ChildQuestion, FormQuestions } from "@/types/appointment";
 import * as z from "zod";
 
 export const passwordSchema = z
@@ -226,20 +227,76 @@ export const suspendMemberSchema = z.object({
   reason: z.string().min(2, "Reason must be atleast 2 characters"),
 });
 
+export const createAppointmentQuestionnaireSchema = (
+  questions: FormQuestions
+) => {
+  const schemaFields: Record<string, z.ZodType<any>> = {};
+
+  if (Array.isArray(questions)) {
+    questions.forEach((question) => {
+      const fieldName = getFieldNameFromQuestion(question.question);
+
+      if (question.has_child && question.child_question) {
+        question.child_question.forEach((childQ: ChildQuestion) => {
+          const childFieldName = getFieldNameFromQuestion(childQ.question);
+          schemaFields[childFieldName] = z
+            .string()
+            .min(1, { message: `${childQ.question} is required` });
+        });
+      } else {
+        if (question.option_type === "checkbox") {
+          schemaFields[fieldName] = z
+            .array(z.string())
+            .min(1, {
+              message: `${question.question} requires at least one selection`,
+            });
+        } else {
+          schemaFields[fieldName] = z
+            .string()
+            .min(1, { message: `${question.question} is required` });
+        }
+      }
+    });
+  }
+
+  return z.object(schemaFields);
+};
+
+function getFieldNameFromQuestion(question: string): string {
+  return question
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, "_");
+}
+
 export const appointmentQuestionnaireSchema = z.object({
-  safePlace: z.string(),
-  aloneWithSomeone: z.string(),
-  experiencingFear: z.string(),
-  everBeenInCounselling: z.string(),
-  experiencingSadness: z.string(),
-  reasonForSeekingHelp: z.array(z.string()),
-  currentPhysicalHealthRate: z.string(),
-  currentEatingHabits: z.string(),
-  currentSleepingHabits: z.string(),
-  employmentStatus: z.string(),
-  alcoholIntakeFrequency: z.string(),
-  eatingHabits: z.string(),
-  sleepingHabits: z.string(),
+  safePlace: z.string().min(1, { message: "Please select an option" }),
+  aloneWithSomeone: z.string().min(1, { message: "Please select an option" }),
+  experiencingFear: z.string().min(1, { message: "Please select an option" }),
+  everBeenInCounselling: z
+    .string()
+    .min(1, { message: "Please select an option" }),
+  experiencingSadness: z
+    .string()
+    .min(1, { message: "Please select an option" }),
+  reasonForSeekingHelp: z
+    .array(z.string())
+    .min(1, { message: "Please select at least one reason" }),
+  currentPhysicalHealthRate: z
+    .string()
+    .min(1, { message: "Please select an option" }),
+  currentEatingHabits: z
+    .string()
+    .min(1, { message: "Please select an option" }),
+  currentSleepingHabits: z
+    .string()
+    .min(1, { message: "Please select an option" }),
+  employmentStatus: z.string().min(1, { message: "Please select an option" }),
+  alcoholIntakeFrequency: z
+    .string()
+    .min(1, { message: "Please select an option" }),
+  eatingHabits: z.string().min(1, { message: "Please select an option" }),
+  sleepingHabits: z.string().min(1, { message: "Please select an option" }),
 });
 
 export const fundWalletSchema = z.object({
@@ -247,5 +304,5 @@ export const fundWalletSchema = z.object({
 });
 
 export const disableProfileSchema = z.object({
-  password: z.string().min(1, { message: 'Password is required' }),
+  password: z.string().min(1, { message: "Password is required" }),
 });

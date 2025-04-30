@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { LoginResponse } from "@/types/auth";
 import { UpdateProfileType } from "@/types/profile";
+import { FormOption } from "@/types/appointment";
 import { format, isToday, parseISO } from "date-fns";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -94,4 +95,23 @@ export const formatTableDate = (date: string) => {
   }
 
   return format(parsedDate, "MMM d • h:mmaaa");
+};
+
+
+export const convertToFormOptions = (
+  options: string[],
+  questionId: string
+): FormOption[] => {
+  return options.map((option) => ({
+    id: `${questionId}-${option}`,
+    value: option,
+    name: option,
+  }));
+};
+
+export const getFieldNameFromQuestion = (question: string): string => {
+  return question
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, "_");
 };
