@@ -51,6 +51,7 @@ export const MainLanding = () => {
       <div className="max-w-4xl grid gap-y-7">
         {MAIN_SECTION_INFO.map((info) => (
           <SectionContainer
+            key={info.id}
             color={info.color}
             header={info.header}
             description={`${info.description1} \n${info.description2}`}
