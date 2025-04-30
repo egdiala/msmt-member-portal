@@ -11,6 +11,7 @@ export const axiosBookingService: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_MSMT_BOOKING_SERVICE_URL,
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${process.env.NEXT_PUBLIC_REQUEST_VARIABLES_TOKEN}`,
   },
 });
 
@@ -18,7 +19,7 @@ export const axiosRequestService: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_MSMT_USER_SERVICE_URL,
   headers: {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${process.env.NEXT_PUBLIC_REQUEST_VARIABLES_TOKEN}`,
+    Authorization: `Bearer ${process.env.NEXT_PUBLIC_REQUEST_VARIABLES_TOKEN}`,
   },
 });
 
@@ -34,11 +35,14 @@ axiosUserService.interceptors.request.use(function (config) {
   return config;
 });
 
-    
 if (typeof window !== "undefined") {
   const token = localStorage.getItem("token");
   if (token) {
-    axiosBookingService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    axiosUserService.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axiosBookingService.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${token}`;
+    axiosUserService.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${token}`;
   }
 }

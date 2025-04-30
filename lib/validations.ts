@@ -270,33 +270,30 @@ function getFieldNameFromQuestion(question: string): string {
 }
 
 export const appointmentQuestionnaireSchema = z.object({
-  safePlace: z.string().min(1, { message: "Please select an option" }),
-  aloneWithSomeone: z.string().min(1, { message: "Please select an option" }),
-  experiencingFear: z.string().min(1, { message: "Please select an option" }),
-  everBeenInCounselling: z
-    .string()
-    .min(1, { message: "Please select an option" }),
-  experiencingSadness: z
-    .string()
-    .min(1, { message: "Please select an option" }),
-  reasonForSeekingHelp: z
-    .array(z.string())
-    .min(1, { message: "Please select at least one reason" }),
-  currentPhysicalHealthRate: z
-    .string()
-    .min(1, { message: "Please select an option" }),
-  currentEatingHabits: z
-    .string()
-    .min(1, { message: "Please select an option" }),
-  currentSleepingHabits: z
-    .string()
-    .min(1, { message: "Please select an option" }),
-  employmentStatus: z.string().min(1, { message: "Please select an option" }),
-  alcoholIntakeFrequency: z
-    .string()
-    .min(1, { message: "Please select an option" }),
-  eatingHabits: z.string().min(1, { message: "Please select an option" }),
-  sleepingHabits: z.string().min(1, { message: "Please select an option" }),
+  safePlace: z.string(),
+  aloneWithSomeone: z.string(),
+  experiencingFear: z.string(),
+  everBeenInCounselling: z.string(),
+  experiencingSadness: z.string(),
+  reasonForSeekingHelp: z.array(z.string()),
+  currentPhysicalHealthRate: z.string(),
+  currentEatingHabits: z.string(),
+  currentSleepingHabits: z.string(),
+  employmentStatus: z.string(),
+  alcoholIntakeFrequency: z.string(),
+  eatingHabits: z.string(),
+  sleepingHabits: z.string(),
+});
+
+export const setAppointmentSchedule = z.object({
+  service: z.string().nonempty("Required"),
+  paymentMethod: z.array(z.string()),
+  appointmentDate: z.date(),
+  appointmentTime: z.string().nonempty("Required"),
+  communicationPreference: z.string().nonempty("Required"),
+  agreeToCancellation: z.boolean().refine((val) => val === true, {
+    message: "You must accept the cancellation and refund policy.",
+  }),
 });
 
 export const fundWalletSchema = z.object({
@@ -305,4 +302,42 @@ export const fundWalletSchema = z.object({
 
 export const disableProfileSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
+});
+
+const childQuestionSchema = z.object({
+  question: z.string(),
+  option: z.array(z.string()),
+  option_type: z.literal("radio"),
+  answer: z.string().min(1, "This child question is required"),
+});
+
+const baseQuestionSchema = z.object({
+  question: z.string(),
+  option: z.array(z.string()).optional(),
+  option_type: z.string().optional(),
+  has_child: z.boolean(),
+});
+
+const radioQuestionSchema = baseQuestionSchema.extend({
+  option_type: z.literal("radio"),
+  has_child: z.literal(false),
+  answer: z.string().min(1, "This question is required"),
+});
+
+const checkboxQuestionSchema = baseQuestionSchema.extend({
+  option_type: z.literal("checkbox"),
+  has_child: z.literal(false),
+  answer: z.array(z.string()).min(1, "Select at least one option"),
+});
+
+const parentQuestionSchema = baseQuestionSchema.extend({
+  has_child: z.literal(true),
+  child_question: z.array(childQuestionSchema),
+  answer: z.string().optional(),
+});
+
+export const appointmentBookingQuestionnaireSchema = z.object({
+  questions: z.array(
+    z.union([radioQuestionSchema, checkboxQuestionSchema, parentQuestionSchema])
+  ),
 });

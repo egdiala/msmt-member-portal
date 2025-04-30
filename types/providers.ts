@@ -36,7 +36,7 @@ export interface FetchOrganizationProvidersQuery {
 }
 
 export interface FetchProviderScheduleQuery {
-  provider_id?: string;
+  provider_id: string;
   appt_date?: string; // Appointment date / availability date. It is in format YYYY-MM-DD
   time_zone?: string; // The user's device time zone. Required when there's appt_date
 }
@@ -149,4 +149,17 @@ export interface FetchedFavouriteProviders {
   specialty: string;
   rating: number;
   industry_name?: string;
+}
+
+export interface FetchedProviderSchedule {
+  _id: number;
+  av_day: number;
+  start_time: number[];
+  end_time: number[];
+}
+
+export interface FetchedProviderScheduleTimes {
+  start_time: string;
+  end_time: string;
+  status: 0 | 1;
 }

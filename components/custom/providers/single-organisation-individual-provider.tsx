@@ -60,7 +60,6 @@ export const SingleOrganisationIndividualProviderContent = () => {
   );
   const router = useRouter();
   const isLoggedIn = !!Cookies.get("authToken");
-  console.log(isLoggedIn, "IS LOGGED IN")
   const { setStep } = useStepper();
 
   const providerInfo = [
@@ -191,7 +190,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
 
                 <RenderIf condition={isLoggedIn}>
                   <Button asChild className="hidden md:inline-flex">
-                    <Link href="/providers/book-appointment">
+                    <Link
+                      href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                    >
                       <IconPlus className="stroke-white" />
                       Book An Appointment
                     </Link>
@@ -199,14 +200,18 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 </RenderIf>
                 <RenderIf condition={!isLoggedIn}>
                   <Button
+                    asChild
                     className="hidden md:inline-flex"
                     onClick={() => {
-                      router.push("/complete-booking");
                       setStep(2);
                     }}
                   >
-                    <IconPlus className="stroke-white" />
-                    Book An Appointment
+                    <Link
+                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                    >
+                      <IconPlus className="stroke-white" />
+                      Book An Appointment
+                    </Link>
                   </Button>
                 </RenderIf>
               </div>
@@ -289,7 +294,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
 
           <RenderIf condition={isLoggedIn}>
             <Button asChild className="flex md:hidden">
-              <Link href="/providers/book-appointment">
+              <Link
+                href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+              >
                 <IconPlus className="stroke-white" />
                 Book An Appointment
               </Link>
@@ -299,7 +306,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
             <Button
               className="flex md:hidden"
               onClick={() => {
-                router.push("/complete-booking");
+                router.push(
+                  `/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`
+                );
                 setStep(2);
               }}
             >
