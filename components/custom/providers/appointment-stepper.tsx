@@ -30,7 +30,7 @@ export const AppointmentStepper = ({ step, steps }: IAppointmentStepper) => {
             <RenderIf condition={index <= 1 && !isLoggedIn}>
               <div
                 className={cn(
-                  "w-53 border-t absolute top-2 left-11",
+                  "w-57 border-t absolute top-2 left-9",
                   step > index + 1 ? "border-actions-green" : "border-divider"
                 )}
               ></div>
