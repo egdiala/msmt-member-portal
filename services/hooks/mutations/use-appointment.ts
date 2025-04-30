@@ -1,18 +1,20 @@
 import { useMutation } from "@tanstack/react-query";
 import { completeOrgBooking } from "@/services/api/appointment";
 import { CompleteOrgBookingPayload } from "@/types/appointment";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 
-export const useCompleteOrgBooking = (fn?: () => void) => {
+export const useCompleteOrgBooking = (fn?: (res: any) => void) => {
   return useMutation({
     mutationFn: (payload: CompleteOrgBookingPayload) =>
       completeOrgBooking(payload),
-    onSuccess: () => {
+    onSuccess: (res: any) => {
       toast.success("Booking completed successfully!");
-      fn?.();
+      fn?.(res);
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.msg || "Booking failed. Please try again.");
+      toast.error(
+        err?.response?.data?.msg || "Booking failed. Please try again."
+      );
     },
   });
 };

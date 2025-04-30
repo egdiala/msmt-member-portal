@@ -1,6 +1,6 @@
 "use client";
 import Cookies from "js-cookie";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
@@ -58,6 +58,7 @@ import {
   FetchedProviderScheduleTimes,
   FetchSingleProvider,
 } from "@/types/providers";
+import { useCompleteOrgBooking } from "@/services/hooks/mutations/use-appointment";
 
 interface ISetScheduleStep {
   isOrganisation?: boolean;
@@ -192,6 +193,12 @@ export const SetScheduleStep = ({
     setStep(2);
   });
 
+  const { mutate: completeOrgBooking, isPending: isSubmitting } =
+    useCompleteOrgBooking((res) => {
+      console.log(res);
+      setStep(3);
+    });
+
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
     const dataToBeSent = {
       provider_id: provider_id,
@@ -208,18 +215,21 @@ export const SetScheduleStep = ({
         | "audio",
       time_zone: new Date().getTimezoneOffset()?.toString(),
     };
-
-    mutate(dataToBeSent);
+    if (!!isLoggedIn) {
+      mutate(dataToBeSent);
+    } else {
+      completeOrgBooking({ ...dataToBeSent, booking_link: "" });
+    }
   }
 
   const buttonCopy = {
-    idle: "Proceed to Pay",
+    idle: !!isLoggedIn ? "Proceed to Pay" : "Continue",
     loading: <Loader className="spinner size-4" />,
   };
 
   const buttonState = useMemo(() => {
-    return isPending ? "loading" : "idle";
-  }, [isPending]);
+    return isPending || isSubmitting ? "loading" : "idle";
+  }, [isPending, isSubmitting]);
 
   return (
     <div className="min-h-full pb-12 grid gap-y-4">
@@ -269,23 +279,24 @@ export const SetScheduleStep = ({
                 </div>
               </div>
 
-            <RenderIf condition={!!isLoggedIn}>
-              <button
-                onClick={() => navigate.push("/providers")}
-                className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
-              >
-                Change
-              </button>
-            </RenderIf>
-            <RenderIf condition={!isLoggedIn}>
-              <button
-                onClick={() => navigate.back()}
-                className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
-              >
-                Change
-              </button>
-            </RenderIf>
-          </div>
+              <RenderIf condition={!!isLoggedIn}>
+                <Button
+                  asChild
+                  variant="link"
+                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
+                >
+                  <Link href="/providers">Change</Link>
+                </Button>
+              </RenderIf>
+              <RenderIf condition={!isLoggedIn}>
+                <button
+                  onClick={() => navigate.back()}
+                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
+                >
+                  Change
+                </button>
+              </RenderIf>
+            </div>
 
             <RenderIf condition={user_type === "org"}>
               <div className="border-t border-divider"></div>
@@ -630,8 +641,11 @@ export const SetScheduleStep = ({
               >
                 Go Back
               </Button>
-        <RenderIf condition={!!isLoggedIn}>
-                <Button type="submit" disabled={isPending} className="w-29">
+              <Button
+                type="submit"
+                disabled={isPending || isSubmitting}
+                className="w-29"
+              >
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span
                     transition={{ type: "spring", duration: 0.3, bounce: 0 }}
@@ -644,12 +658,7 @@ export const SetScheduleStep = ({
                   </motion.span>
                 </AnimatePresence>
               </Button>
-              </RenderIf>
-
-        <RenderIf condition={!isLoggedIn}>
-          <Button onClick={() => setStep(3)}>Continue</Button>
-        </RenderIf>
-      </div>
+            </div>
           </form>
         </Form>
       </RenderIf>

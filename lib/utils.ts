@@ -13,7 +13,7 @@ import {
 import { LoginResponse } from "@/types/auth";
 import { UpdateProfileType } from "@/types/profile";
 import { FormOption } from "@/types/appointment";
-import { format, isToday, parseISO } from "date-fns";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -107,6 +107,24 @@ export const formatTableDate = (date: string) => {
   return format(parsedDate, "MMM d • h:mmaaa");
 };
 
+
+export const convertToFormOptions = (
+  options: string[],
+  questionId: string
+): FormOption[] => {
+  return options.map((option) => ({
+    id: `${questionId}-${option}`,
+    value: option,
+    name: option,
+  }));
+};
+
+export const getFieldNameFromQuestion = (question: string): string => {
+  return question
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, "_");
+};
 // Function to get all the days of a specific month and year
 export function getDaysOfMonth(year: number, month: number) {
   const startOfThisMonth = startOfMonth(new Date(year, month)); // start of the selected month

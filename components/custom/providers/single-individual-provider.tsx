@@ -176,8 +176,8 @@ export const SingleIndividualProviderContent = () => {
                 <RenderIf condition={isLoggedIn}>
                   <Button asChild className="hidden md:inline-flex">
                     <Link
-                    href={`/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`}
-                  >
+                      href={`/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`}
+                    >
                       <IconPlus className="stroke-white" />
                       Book An Appointment
                     </Link>
@@ -187,7 +187,9 @@ export const SingleIndividualProviderContent = () => {
                   <Button
                     className="hidden md:inline-flex"
                     onClick={() => {
-                      router.push("/complete-booking");
+                      router.push(
+                        `/complete-booking?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`
+                      );
                       setStep(2);
                     }}
                   >
@@ -276,8 +278,8 @@ export const SingleIndividualProviderContent = () => {
           <RenderIf condition={isLoggedIn}>
             <Button asChild className="flex md:hidden">
               <Link
-              href={`/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`}
-            >
+                href={`/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`}
+              >
                 <IconPlus className="stroke-white" />
                 Book An Appointment
               </Link>
@@ -288,7 +290,9 @@ export const SingleIndividualProviderContent = () => {
           <Button
             className="flex md:hidden"
             onClick={() => {
-              router.push("/complete-booking");
+              router.push(
+                `/complete-booking?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`
+              );
               setStep(2);
             }}
           >
