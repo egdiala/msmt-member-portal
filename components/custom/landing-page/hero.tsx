@@ -1,7 +1,35 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { IconFilter } from "@/components/icons";
 import { Button, Input } from "@/components/ui";
 
 export const Hero = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const searchParams = useSearchParams();
+  const searchVal = searchParams.get("q");
+
+  const [search, setSearch] = useState("");
+
+  const handleSearch = () => {
+    router.push(`${pathname}?q=${search}`);
+  };
+
+  useEffect(() => {
+    if (searchVal) {
+      setSearch(searchVal);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (search === "") {
+      router.push("/");
+    }
+  }, [search]);
+
   return (
     <div className="py-15 md:py-25 px-5 grid gap-y-6 bg-blue-400 w-full">
       <div className="grid gap-y-1 text-center">
@@ -17,9 +45,14 @@ export const Hero = () => {
 
       <div className="flex flex-col justify-center items-center gap-y-8 w-full">
         <div className="w-full lg:w-4xl max-w-4xl relative">
-          <Input className="w-full bg-white shadow-modal-button-landing rounded-full pr-23" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white shadow-modal-button-landing rounded-full pr-23 placeholder:text-brand-2"
+            placeholder="Search service, email, provider name, etc"
+          />
           <div className="absolute right-2 top-2">
-            <Button>Search</Button>
+            <Button onClick={handleSearch}>Search</Button>
           </div>
         </div>
 

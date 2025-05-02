@@ -27,9 +27,9 @@ const SectionContainer = ({
     <div
       className={`w-full flex flex-col md:flex-row rounded-2xl ${color} bg-no-repeat bg-cover bg-[url(${bgImg})]`}
     >
-      <div className="py-12 pl px-5 md:pl-12 md:pr-0 grid gap-y-6 basis-1/2">
+      <div className="py-5 md:py-12 pl px-5 md:pl-12 md:pr-0 grid gap-y-6 basis-1/2">
         <div className="grid gap-y-2 text-brand-1">
-          <h3 className="text-2xl font-bold">{header}</h3>
+          <h3 className="text-xl md:text-2xl font-bold">{header}</h3>
           <p className="text-base md:text-lg">{description1}</p>
           <p className="text-base md:text-lg">{description2}</p>
         </div>
@@ -78,7 +78,7 @@ const SectionContainer = ({
 export const MainLanding = () => {
   return (
     <div className="py-10 md:py-25 flex flex-col justify-center items-center gap-y-12">
-      <div className="max-w-xl text-center grid gap-y-2 px-5">
+      <div className="max-w-2xl text-center grid gap-y-2 px-5">
         <h2 className="font-bold text-3xl md:text-4xl text-brand-1">
           Your Path to Immediate, Trusted Mental Health Care
         </h2>
