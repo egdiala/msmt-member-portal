@@ -13,8 +13,10 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useValidateOrgBooking } from "@/services/hooks/mutations/use-appointment";
 
 const formSchema = z.object({
   code: z
@@ -26,6 +28,11 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export const VerifyBookingForm = () => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+  const { mutate, isPending } = useValidateOrgBooking(() => {
+    localStorage.setItem("booking-link", token!);
+  });
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { code: "" },
@@ -33,6 +40,7 @@ export const VerifyBookingForm = () => {
 
   const onSubmit = (data: FormValues) => {
     console.log("Submitted code:", data.code);
+    mutate({ otp_code: data?.code, booking_link: token! });
   };
 
   return (
