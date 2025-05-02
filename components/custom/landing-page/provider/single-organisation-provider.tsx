@@ -79,7 +79,7 @@ export const SingleOrganisationProviderContent = () => {
         ]}
       />
 
-      <div className="p-3 md:p-4 grid gap-y-5">
+      <div className="grid gap-y-5">
         <RenderIf condition={isLoadingServiceProviderInfo}>
           <div className="flex items-center justify-center h-screen">
             <Loader />

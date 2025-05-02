@@ -108,7 +108,7 @@ export const SingleIndividualProviderContent = () => {
         ]}
       />
 
-      <div className="p-3 md:p-6 grid gap-y-5">
+      <div className="grid gap-y-5">
         <RenderIf condition={isLoading}>
           <div className="h-screen w-full flex justify-center items-center">
             <Loader />

@@ -13,7 +13,7 @@ export const SingleProvider = () => {
   const account_type = searchParams.get("service_type") as "provider" | "payer";
 
   return (
-    <div className="bg-white">
+    <div className="bg-white grid gap-y-5">
       <RenderIf
         condition={user_type === "provider" && account_type === "provider"}
       >
