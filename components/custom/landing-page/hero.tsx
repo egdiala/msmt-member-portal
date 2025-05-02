@@ -8,10 +8,7 @@ import { Button, Input } from "@/components/ui";
 export const Hero = () => {
   const router = useRouter();
   const pathname = usePathname();
-
   const searchParams = useSearchParams();
-  const searchVal = searchParams.get("q");
-
   const [search, setSearch] = useState("");
 
   const handleSearch = () => {
@@ -19,16 +16,10 @@ export const Hero = () => {
   };
 
   useEffect(() => {
-    if (searchVal) {
-      setSearch(searchVal);
+    if (searchParams.get("q")) {
+      setSearch(searchParams.get("q") as string);
     }
-  }, []);
-
-  useEffect(() => {
-    if (search === "") {
-      router.push("/");
-    }
-  }, [search]);
+  }, [searchParams]);
 
   return (
     <div className="py-15 md:py-25 px-5 grid gap-y-6 bg-blue-400 w-full">
@@ -47,7 +38,14 @@ export const Hero = () => {
         <div className="w-full lg:w-4xl max-w-4xl relative">
           <Input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value === "") {
+                setSearch("");
+                router.push("/");
+              } else {
+                setSearch(e.target.value);
+              }
+            }}
             className="w-full bg-white shadow-modal-button-landing rounded-full pr-23 placeholder:text-brand-2"
             placeholder="Search service, email, provider name, etc"
           />

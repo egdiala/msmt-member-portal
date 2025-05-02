@@ -1,9 +1,11 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { SingleIndividualProviderContent } from "../providers";
 import { RenderIf } from "@/components/shared";
-import SingleOrganisationProvider from "@/app/(auth)/providers/organisation/[id]/page";
+import {
+  SingleIndividualProviderContent,
+  SingleOrganisationProviderContent,
+} from "./provider";
 
 export const SingleProvider = () => {
   const searchParams = useSearchParams();
@@ -11,7 +13,7 @@ export const SingleProvider = () => {
   const account_type = searchParams.get("service_type") as "provider" | "payer";
 
   return (
-    <div>
+    <div className="bg-white">
       <RenderIf
         condition={user_type === "provider" && account_type === "provider"}
       >
@@ -21,7 +23,7 @@ export const SingleProvider = () => {
       <RenderIf
         condition={user_type !== "provider" && account_type !== "provider"}
       >
-        <SingleOrganisationProvider />
+        <SingleOrganisationProviderContent />
       </RenderIf>
     </div>
   );

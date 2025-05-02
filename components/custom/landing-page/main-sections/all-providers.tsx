@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   IconHospital,
@@ -23,7 +24,6 @@ import {
   FetchedServiceProvidersCountType,
   FetchedServiceProvidersType,
 } from "@/types/providers";
-import Link from "next/link";
 
 export const AllProviders = () => {
   const searchParams = useSearchParams();
@@ -157,7 +157,7 @@ const LandingProviderCard = ({
 }) => {
   return (
     <Link
-      href={`/provider/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`}
+      href={`/available-providers/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`}
       className={cn(
         "border border-divider rounded-lg pt-1 px-1",
         isOtherProvider ? "pb-3" : "pb-3 md:pb-17"
