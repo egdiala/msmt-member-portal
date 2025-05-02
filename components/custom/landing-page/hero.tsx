@@ -2,14 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { IconFilter } from "@/components/icons";
 import { Button, Input } from "@/components/ui";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
+import { FilterLandingPageProvidersPopover } from "./provider";
 
 export const Hero = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
+
+  const { data: requestVariables } = useMultipleRequestVariables([
+    "service-offering",
+    "preferred-lan",
+    "religion-list",
+    "booking-prices",
+  ]);
 
   const handleSearch = () => {
     router.push(`${pathname}?q=${search}`);
@@ -54,9 +62,9 @@ export const Hero = () => {
           </div>
         </div>
 
-        <Button className="!px-3 !py-5">
-          <IconFilter className="stroke-white" />
-        </Button>
+        <FilterLandingPageProvidersPopover
+          requestVariables={requestVariables}
+        />
       </div>
     </div>
   );
