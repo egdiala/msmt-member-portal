@@ -8,6 +8,7 @@ const publicRoutes = [
   "/reset-password",
   "/set-password",
   "/verify-email",
+  "/start-session",
 ];
 
 export function middleware(request: NextRequest) {

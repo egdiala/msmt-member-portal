@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import AudioView from "@/components/custom/dashboard/session/conferencing/ui/audio-view";
 import VideoView from "@/components/custom/dashboard/session/conferencing/ui/video-view";
+import VideoSDKApp from "@/components/custom/dashboard/session/meeting/video-sdk";
 
 export default function AudioSession() {
   const isMobile = useIsMobile();
@@ -11,11 +12,12 @@ export default function AudioSession() {
 
   return (
     <div>
-      {view === "audio" ? (
+      {/* {view === "audio" ? (
         <AudioView isMobile={isMobile} />
       ) : (
         <VideoView isMobile={isMobile} />
-      )}
+      )} */}
+      <VideoSDKApp/>
     </div>
   );
 }
