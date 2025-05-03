@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button, Input } from "@/components/ui";
 import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { FilterLandingPageProvidersPopover } from "./provider";
+import { RenderIf } from "@/components/shared";
 
 export const Hero = () => {
   const router = useRouter();
@@ -28,6 +29,12 @@ export const Hero = () => {
     if (searchParams.get("q")) {
       setSearch(searchParams.get("q") as string);
     }
+  }, [searchParams]);
+
+  const [searchParamsArrLength, setSearchParamsArrLength] = useState(0);
+
+  useEffect(() => {
+    setSearchParamsArrLength(Array.from(searchParams.entries()).length);
   }, [searchParams]);
 
   return (
@@ -65,9 +72,23 @@ export const Hero = () => {
           </div>
         </div>
 
-        <FilterLandingPageProvidersPopover
-          requestVariables={requestVariables}
-        />
+        <div className="flex items-center gap-x-2">
+          <FilterLandingPageProvidersPopover
+            requestVariables={requestVariables}
+          />
+
+          <RenderIf condition={searchParamsArrLength > 0}>
+            <Button
+              variant="ghost"
+              className="underline text-button-primary"
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              Clear all filters
+            </Button>
+          </RenderIf>
+        </div>
       </div>
     </div>
   );
