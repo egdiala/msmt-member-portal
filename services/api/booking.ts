@@ -16,9 +16,9 @@ export const submitBookingQuestionnaire = async ({
   appointment_id,
   data,
 }: BookingQuestionnaireType) => {
-  const res = await axiosBookingService.post(
+  const res = await axiosBookingService.patch(
     `users/members/appointments/${appointment_id}`,
-    data
+    { data: data }
   );
   return res.data.data;
 };
