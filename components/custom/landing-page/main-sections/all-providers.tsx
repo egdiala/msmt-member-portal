@@ -20,6 +20,7 @@ import {
 import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
 import { cn } from "@/lib/utils";
 import { useGetServiceProviders } from "@/services/hooks/queries/use-providers";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import {
   FetchedServiceProvidersCountType,
   FetchedServiceProvidersType,
@@ -28,6 +29,61 @@ import {
 export const AllProviders = () => {
   const searchParams = useSearchParams();
   const searchVal = searchParams.get("q");
+  const apptDate = searchParams.get("appt_date");
+  const providerType = searchParams.get("provider_type");
+  const service = searchParams.get("service");
+  const priceRange = searchParams.get("amount");
+  const gender = searchParams.get("gender");
+  const language = searchParams.get("language");
+  const religion = searchParams.get("religion");
+  const communicationPreference = searchParams.get("comm_mode");
+
+  const { data: requestVariables } = useMultipleRequestVariables([
+    "service-offering",
+    "preferred-lan",
+    "religion-list",
+    "booking-prices",
+  ]);
+
+  const filters = {
+    ...(apptDate ? { appt_date: apptDate } : {}),
+    ...(apptDate
+      ? { time_zone: new Date().getTimezoneOffset()?.toString() }
+      : {}),
+    ...(providerType
+      ? {
+          user_type:
+            providerType?.toLowerCase() === "organization"
+              ? "org"
+              : ("provider" as "provider" | "org"),
+        }
+      : {}),
+    ...(service
+      ? {
+          service_offer_id: requestVariables["service-offering"]?.filter(
+            (val: { name: string }) =>
+              val?.name?.toLowerCase() === service?.toLowerCase()
+          )[0]?.service_offer_id,
+        }
+      : {}),
+    ...(priceRange
+      ? {
+          amount: requestVariables["booking-prices"]?.filter(
+            (val: { name: string }) => val?.name === priceRange
+          )[0]?.value,
+        }
+      : {}),
+    ...(gender ? { gender: gender?.toLowerCase() } : {}),
+    ...(language ? { language: language?.toLowerCase() } : {}),
+    ...(religion ? { religion: religion?.toLowerCase() } : {}),
+    ...(communicationPreference
+      ? {
+          comm_mode: communicationPreference?.toLowerCase() as
+            | "video"
+            | "audio",
+        }
+      : {}),
+  };
 
   const itemsPerPage = 10;
   const [page, setPage] = useState(1);
@@ -35,9 +91,10 @@ export const AllProviders = () => {
   const { data, isLoading } = useGetServiceProviders<
     FetchedServiceProvidersType[]
   >({
-    q: searchVal as string,
+    ...(searchVal ? { q: searchVal as string } : {}),
     page: page?.toString(),
     item_per_page: itemsPerPage.toString(),
+    ...filters,
   });
 
   const { data: otherProviders } = useGetServiceProviders<
@@ -50,7 +107,8 @@ export const AllProviders = () => {
   const { data: count } =
     useGetServiceProviders<FetchedServiceProvidersCountType>({
       component: "count",
-      q: searchVal as string,
+      ...(searchVal ? { q: searchVal as string } : {}),
+      ...filters,
     });
 
   const { data: otherProvidersCount } =

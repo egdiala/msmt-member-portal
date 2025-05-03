@@ -185,8 +185,8 @@ export const FilterLandingPageProvidersPopover = ({
   const applyFilter = () => {
     const data = {
       ...(apptDate ? { appt_date: format(apptDate, "yyyy-MM-dd") } : {}),
-      ...(providerType ? { provider_type: providerType } : {}),
-      ...(specificService ? { service_offer_id: specificService } : {}),
+      ...(providerType ? { provider_type: providerType?.toLowerCase() } : {}),
+      ...(specificService ? { service: specificService } : {}),
       ...(priceRange ? { amount: priceRange } : {}),
       ...(gender ? { gender } : {}),
       ...(language ? { language } : {}),
