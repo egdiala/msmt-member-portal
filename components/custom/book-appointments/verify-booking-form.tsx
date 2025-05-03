@@ -30,7 +30,7 @@ type FormValues = z.infer<typeof formSchema>;
 export const VerifyBookingForm = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const { mutate, isPending } = useValidateOrgBooking(() => {
+  const { mutate } = useValidateOrgBooking(() => {
     localStorage.setItem("booking-link", token!);
   });
   const form = useForm<FormValues>({
