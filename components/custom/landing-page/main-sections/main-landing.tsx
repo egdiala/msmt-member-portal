@@ -3,6 +3,7 @@ import { Button } from "@/components/ui";
 import ImgBkg from "@/components/assets/img-bkg-landing.png";
 import { MAIN_SECTION_INFO } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const SectionContainer = ({
   color,
@@ -35,9 +36,11 @@ const SectionContainer = ({
         </div>
 
         <div className="flex items-center gap-x-2">
-          <Button>Sign up</Button>
+          <Button asChild>
+            <Link href="/sign-up">Sign up</Link>
+          </Button>
           <Button variant="secondary" className="!bg-inherit shadow-none">
-            Log in
+            <Link href="/sign-in">Log in</Link>
           </Button>
         </div>
       </div>
