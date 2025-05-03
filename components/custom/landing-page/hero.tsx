@@ -39,7 +39,7 @@ export const Hero = () => {
 
   return (
     <div className="py-15 md:py-25 px-5 grid gap-y-6 bg-blue-400 w-full">
-      <div className="grid gap-y-1 text-center">
+      <div className="grid gap-y-1 text-center max-w-screen-2xl mx-auto">
         <h2 className="font-bold text-3xl md:text-5xl text-brand-1">
           Find a Provider
         </h2>
@@ -50,7 +50,7 @@ export const Hero = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center gap-y-8 w-full">
+      <div className="flex flex-col justify-center items-center gap-y-8 w-full max-w-screen-2xl mx-auto">
         <div className="w-full lg:w-4xl max-w-4xl relative">
           <Input
             value={search}
