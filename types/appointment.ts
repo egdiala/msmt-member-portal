@@ -39,3 +39,8 @@ export interface CompleteOrgBookingPayload {
   comm_mode: "video" | "audio";
   time_zone: string;
 }
+
+export interface RequestOrgBookingPayload {
+  booking_link: string;
+  otp_code: string;
+}

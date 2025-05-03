@@ -4,7 +4,7 @@ import {  axiosBookingService } from "../axios-instance";
 export const completeOrgBooking = async (
   payload: CompleteOrgBookingPayload
 ) => {
-  const res = await axiosBookingService.post(
+  const res = await axiosBookingService.put(
     "/users/requests/org-bookings",
     payload
   );
