@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button, Input } from "@/components/ui";
 import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { FilterLandingPageProvidersPopover } from "./provider";
 
 export const Hero = () => {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
 
@@ -20,7 +19,9 @@ export const Hero = () => {
   ]);
 
   const handleSearch = () => {
-    router.push(`${pathname}?q=${search}`);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("q", search);
+    router.push(`?${params.toString()}`);
   };
 
   useEffect(() => {
@@ -49,7 +50,9 @@ export const Hero = () => {
             onChange={(e) => {
               if (e.target.value === "") {
                 setSearch("");
-                router.push("/");
+                const params = new URLSearchParams(searchParams.toString());
+                params.delete("q");
+                router.push(`?${params.toString()}`);
               } else {
                 setSearch(e.target.value);
               }
