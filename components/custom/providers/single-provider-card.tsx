@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Cookies from "js-cookie";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import {
   IconHospital,
@@ -32,14 +33,47 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
     );
   };
 
+  const isLoggedIn = !!Cookies.get("authToken");
+
+  const link = () => {
+    if (!isLoggedIn) {
+      if (
+        provider?.provider_data?.user_type.toLowerCase() === "org" &&
+        !user_type
+      ) {
+        return `/complete-booking/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`;
+      } else if (
+        provider?.provider_data?.user_type.toLowerCase() === "provider"
+      ) {
+        return `/complete-booking/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`;
+      } else {
+        return `/complete-booking/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}&user_type=provider&user_service_type=provider`;
+      }
+    } else {
+      if (
+        provider?.provider_data?.user_type.toLowerCase() === "org" &&
+        !user_type
+      ) {
+        return `/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`;
+      } else if (
+        provider?.provider_data?.user_type.toLowerCase() === "provider"
+      ) {
+        return `/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`;
+      } else {
+        return `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}&user_type=provider&user_service_type=provider`;
+      }
+    }
+  };
+
   return (
     <Link
       href={
-        provider?.provider_data?.user_type.toLowerCase() === "org" && !user_type
-          ? `/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
-          : provider?.provider_data?.user_type.toLowerCase() === "provider"
-          ? `/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
-          : `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}&user_type=provider&user_service_type=provider`
+        // provider?.provider_data?.user_type.toLowerCase() === "org" && !user_type
+        //   ? `/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
+        //   : provider?.provider_data?.user_type.toLowerCase() === "provider"
+        //   ? `/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`
+        //   : `/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}&user_type=provider&user_service_type=provider`
+        link()!
       }
       className="border border-divider rounded-lg p-1"
     >

@@ -80,7 +80,7 @@ const SectionContainer = ({
 
 export const MainLanding = () => {
   return (
-    <div className="py-10 md:py-25 flex flex-col justify-center items-center gap-y-12">
+    <div className="py-10 md:py-25 flex flex-col justify-center items-center gap-y-12 max-w-screen-2xl mx-auto">
       <div className="max-w-2xl text-center grid gap-y-2 px-5">
         <h2 className="font-bold text-3xl md:text-4xl text-brand-1">
           Your Path to Immediate, Trusted Mental Health Care

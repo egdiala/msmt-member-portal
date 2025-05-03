@@ -1,20 +1,19 @@
+import Cookies from "js-cookie";
 import { IconTick } from "@/components/icons";
 import { RenderIf } from "@/components/shared";
 import { cn } from "@/lib/utils";
 
 interface IAppointmentStepper {
   step: number;
+  steps: { id: number; name: string }[];
 }
 
-export const AppointmentStepper = ({ step }: IAppointmentStepper) => {
-  const steps = [
-    { id: 1, name: "Schedule" },
-    { id: 2, name: "Questionaire" },
-  ];
+export const AppointmentStepper = ({ step, steps }: IAppointmentStepper) => {
+  const isLoggedIn = Cookies.get("authToken");
   return (
     <>
-      <div className="hidden md:flex items-start gap-x-41 justify-center pt-16 pb-7">
-        {steps.map((innerStep, index) => (
+      <div className={cn("hidden md:flex items-start gap-x-41 justify-center ", !!isLoggedIn ? 'pt-16 pb-7' : '')}>
+        {steps?.map((innerStep, index) => (
           <div key={index} className="flex items-center gap-x-1 relative">
             <div className="flex flex-col items-center gap-y-2 text-center">
               <RenderIf condition={step > index + 1}>
@@ -28,7 +27,16 @@ export const AppointmentStepper = ({ step }: IAppointmentStepper) => {
               <p className="text-brand-1 text-sm">{innerStep.name}</p>
             </div>
 
-            <RenderIf condition={index === 0}>
+            <RenderIf condition={index <= 1 && !isLoggedIn}>
+              <div
+                className={cn(
+                  "w-57 border-t absolute top-2 left-9",
+                  step > index + 1 ? "border-actions-green" : "border-divider"
+                )}
+              ></div>
+            </RenderIf>
+
+            <RenderIf condition={index === 0 && !!isLoggedIn}>
               <div
                 className={cn(
                   "w-53 border-t absolute top-2 left-11",
@@ -41,7 +49,7 @@ export const AppointmentStepper = ({ step }: IAppointmentStepper) => {
       </div>
 
       <p className="md:hidden text-center text-sm text-brand-2">
-        Step {step} of {steps.length}
+        Step {step} of {steps?.length}
       </p>
     </>
   );

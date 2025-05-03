@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { differenceInYears } from "date-fns";
 import { AnimatePresence, motion } from "motion/react";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 import {
   IconAudioLines,
   IconPlus,
@@ -13,6 +15,7 @@ import {
 } from "@/components/icons";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
+import { useStepper } from "@/contexts/StepperContext";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { cn } from "@/lib/utils";
@@ -26,15 +29,21 @@ import { FetchSingleProvider } from "@/types/providers";
 
 export const SingleIndividualProviderContent = () => {
   const { id } = useParams();
+  const router = useRouter();
+  const { setStep } = useStepper();
+  const isLoggedIn = !!Cookies.get("authToken");
   const searchParams = useSearchParams();
   const { data: userProfile } = useGetProfile();
 
+  const user_type = searchParams.get("type") as "provider" | "org";
+  const account_service_type = searchParams.get("service_type") as
+    | "provider"
+    | "payer";
+
   const { data, isLoading } = useGetServiceProviders<FetchSingleProvider>({
     user_id: id?.toString(),
-    user_type: searchParams.get("type") as "provider" | "org",
-    account_service_type: searchParams.get("service_type") as
-      | "provider"
-      | "payer",
+    user_type: user_type,
+    account_service_type: account_service_type,
     member_id: userProfile?.user_id,
   });
 
@@ -164,12 +173,30 @@ export const SingleIndividualProviderContent = () => {
                   </AnimatePresence>
                 </Button>
 
-                <Button asChild className="hidden md:inline-flex">
-                  <Link href="/providers/book-appointment">
+                <RenderIf condition={isLoggedIn}>
+                  <Button asChild className="hidden md:inline-flex">
+                    <Link
+                      href={`/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`}
+                    >
+                      <IconPlus className="stroke-white" />
+                      Book An Appointment
+                    </Link>
+                  </Button>
+                </RenderIf>
+                <RenderIf condition={!isLoggedIn}>
+                  <Button
+                    className="hidden md:inline-flex"
+                    onClick={() => {
+                      router.push(
+                        `/complete-booking?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`
+                      );
+                      setStep(2);
+                    }}
+                  >
                     <IconPlus className="stroke-white" />
                     Book An Appointment
-                  </Link>
-                </Button>
+                  </Button>
+                </RenderIf>
               </div>
             </div>
           </div>
@@ -248,11 +275,29 @@ export const SingleIndividualProviderContent = () => {
             ))}
           </div>
 
-          <Button asChild className="flex md:hidden">
-            <Link href="/providers/book-appointment">
-              <IconPlus className="stroke-white" />
-              Book An Appointment
-            </Link>
+          <RenderIf condition={isLoggedIn}>
+            <Button asChild className="flex md:hidden">
+              <Link
+                href={`/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`}
+              >
+                <IconPlus className="stroke-white" />
+                Book An Appointment
+              </Link>
+            </Button>
+          </RenderIf>
+        </RenderIf>
+        <RenderIf condition={!isLoggedIn}>
+          <Button
+            className="flex md:hidden"
+            onClick={() => {
+              router.push(
+                `/complete-booking?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`
+              );
+              setStep(2);
+            }}
+          >
+            <IconPlus className="stroke-white" />
+            Book An Appointment
           </Button>
         </RenderIf>
       </div>
