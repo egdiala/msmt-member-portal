@@ -3,7 +3,7 @@
 import { Fragment, useState } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { format } from "date-fns";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { IconClose, IconFilter } from "@/components/icons";
 import {
   Button,
@@ -172,6 +172,7 @@ export const FilterLandingPageProvidersPopover = ({
 
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [apptDate, setApptDate] = useState("");
   const [gender, setGender] = useState("");
@@ -196,7 +197,10 @@ export const FilterLandingPageProvidersPopover = ({
         : {}),
     };
 
-    router.push(`${pathname}${createQueryString(data)}`);
+    const search = searchParams.get("q");
+    router.push(
+      `${pathname}${createQueryString(data)}${search ? `&q=${search}` : ""}`
+    );
     setOpenPopover(false);
   };
 
