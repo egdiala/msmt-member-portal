@@ -8,7 +8,6 @@ import React, {
   SetStateAction,
   Dispatch,
 } from "react";
-import Cookies from "js-cookie";
 
 interface StepperType {
   step: number | string;
@@ -21,13 +20,18 @@ export const StepperProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [step, setStep] = useState<number | string>(() => {
-    const cookieStep = Cookies.get("current-step");
-    console.log(cookieStep, "Cookies");
-    return Number(cookieStep) ?? 1;
+    if (typeof window !== "undefined") {
+      const storedStep = localStorage.getItem("current-step");
+      const parsedStep = parseInt(storedStep || "", 10);
+      return isNaN(parsedStep) ? 1 : parsedStep;
+    }
+    return 1;
   });
 
   useEffect(() => {
-    Cookies.set("current-step", step.toString(), { expires: 7 });
+    if (typeof window !== "undefined") {
+      localStorage.setItem("current-step", step.toString());
+    }
   }, [step]);
 
   return (
