@@ -67,7 +67,8 @@ export const FillAppointmentQuestionnaireForm = ({
   });
 
   async function onSubmit(values: z.infer<typeof schema>) {
-    mutate({ data: mapAnswersToData(questions, values), appointment_id: "" });
+    const bookingId = localStorage.getItem("booking-appointment-id");
+    mutate({ data: mapAnswersToData(questions, values), appointment_id: bookingId as string });
   }
 
   return (
@@ -193,7 +194,7 @@ export const FillAppointmentQuestionnaireForm = ({
                 Cancel
               </Button>
 
-              <Button type="submit">
+              <Button type="submit" disabled={form.formState.isSubmitting}>
                 Complete Booking
               </Button>
             </div>
