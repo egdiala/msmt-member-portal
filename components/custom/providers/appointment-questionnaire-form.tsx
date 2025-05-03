@@ -29,6 +29,8 @@ export const FillAppointmentQuestionnaireForm = ({
     [questions]
   );
 
+  console.log(schema)
+
   const defaultValues = useMemo(() => {
     const values: Record<string, any> = {};
 
@@ -187,7 +189,7 @@ export const FillAppointmentQuestionnaireForm = ({
                 Cancel
               </Button>
 
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+              <Button type="submit">
                 Complete Booking
               </Button>
             </div>
