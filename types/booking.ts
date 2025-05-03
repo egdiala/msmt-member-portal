@@ -14,9 +14,9 @@ export type BookingQuestionnaireType = {
   appointment_id: string;
   data: {
     question: string;
-    sub_question?: string;
+    sub_question?: string | string[];
     answer: string | string[];
-  };
+  }[];
 };
 
 export interface FetchedQuestionsForQuestionnaireType {

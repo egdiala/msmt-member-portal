@@ -192,3 +192,63 @@ export function formatTimeToHH(time: string): string {
   const timeObj = parse(time, "HH:mm", new Date());
   return format(timeObj, "HH"); // 'HH' gives the time in 24-hour format
 }
+
+
+type QuestionOption = {
+  question: string;
+  option?: string[];
+  option_type: 'radio' | 'checkbox';
+  has_child?: boolean;
+  child_question?: {
+    question: string;
+    option: string[];
+    option_type: 'radio' | 'checkbox';
+  }[];
+};
+
+type AnswerValue = string | string[];
+
+type Answers = {
+  [key: string]: AnswerValue;
+};
+
+type MappedData = {
+  question: string;
+  sub_question?: string;
+  answer: AnswerValue;
+};
+
+export function mapAnswersToData(questions: QuestionOption[], answers: Answers): MappedData[] {
+  const data: MappedData[] = [];
+
+  questions.forEach(q => {
+    if (q.has_child && q.child_question) {
+      q.child_question.forEach(sub => {
+        const key = sub.question.toLowerCase().replace(/ /g, "_");
+        const answer = answers[key];
+        if (answer !== undefined) {
+          data.push({
+            question: q.question,
+            sub_question: sub.question,
+            answer
+          });
+        }
+      });
+    } else {
+      const key = q.question
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_|_$/g, "");
+      const answer = answers[key];
+      if (answer !== undefined) {
+        data.push({
+          question: q.question,
+          answer
+        });
+      }
+    }
+  });
+
+  return data;
+}

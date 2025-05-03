@@ -10,10 +10,15 @@ import { RadioButtonGroup } from "./radio-button-group";
 import { Form } from "@/components/ui";
 import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { createAppointmentQuestionnaireSchema } from "@/lib/validations";
-import { getFieldNameFromQuestion, convertToFormOptions } from "@/lib/utils";
+import {
+  getFieldNameFromQuestion,
+  convertToFormOptions,
+  mapAnswersToData,
+} from "@/lib/utils";
 import { ChildQuestion } from "@/types/appointment";
 import { RenderIf } from "@/components/shared";
 import { Loader } from "@/components/shared/loader";
+import { useSubmitBookingQuestionnaire } from "@/services/hooks/mutations/use-booking";
 
 interface IFillAppointmentQuestionnaireForm {
   setStep: Dispatch<SetStateAction<string | number>>;
@@ -23,6 +28,7 @@ export const FillAppointmentQuestionnaireForm = ({
   setStep,
 }: IFillAppointmentQuestionnaireForm) => {
   const { data, isLoading } = useMultipleRequestVariables(["booking-question"]);
+  const { mutate } = useSubmitBookingQuestionnaire();
   const questions = data?.["booking-question"];
   const schema = useMemo(
     () => createAppointmentQuestionnaireSchema(questions),
@@ -52,8 +58,6 @@ export const FillAppointmentQuestionnaireForm = ({
     return values;
   }, [questions]);
 
-  console.log(defaultValues, "DEFAULTVALUES");
-
   const form = useForm({
     resolver: zodResolver(schema),
     mode: "onChange",
@@ -61,7 +65,7 @@ export const FillAppointmentQuestionnaireForm = ({
   });
 
   async function onSubmit(values: z.infer<typeof schema>) {
-    console.log(values);
+    mutate({ data: mapAnswersToData(questions, values), appointment_id: "" });
   }
 
   return (
@@ -195,7 +199,9 @@ export const FillAppointmentQuestionnaireForm = ({
         </Form>
       </RenderIf>
       <RenderIf condition={isLoading}>
-        <Loader />
+        <div className="h-[400px] w-full flex flex-col items-center justify-center">
+          <Loader />
+        </div>
       </RenderIf>
     </div>
   );
