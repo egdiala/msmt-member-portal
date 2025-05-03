@@ -21,21 +21,22 @@ export function middleware(request: NextRequest) {
 
   // Check authentication status via cookie
   const isAuthenticated = request.cookies.has("authToken");
-  console.log(`[Middleware] isAuthenticated:`, isAuthenticated);
+  // console.log(`[Middleware] isAuthenticated:`, isAuthenticated);
 
   try {
     // CASE 1: Authenticated user trying to access public routes (sign-in, etc.)
     if (
       isAuthenticated &&
-      publicRoutes.some((route) => pathname.startsWith(route))
+      publicRoutes.some((route) => pathname.startsWith(route)) &&
+      pathname !== "/"
     ) {
-      console.log(
-        `[Middleware] Authenticated user trying to access public route`
-      );
+      // console.log(
+      //   `[Middleware] Authenticated user trying to access public route`
+      // );
 
       // Get referer (where the user came from)
       const referer = request.headers.get("referer");
-      console.log(`[Middleware] Referer:`, referer);
+      // console.log(`[Middleware] Referer:`, referer);
 
       // Create response redirecting to home
       const response = NextResponse.redirect(new URL("/home", url.origin));
@@ -71,9 +72,9 @@ export function middleware(request: NextRequest) {
       pathname.startsWith("/_next") || pathname.includes(".");
 
     if (!isAuthenticated && !isPublicRoute && !isNextInternal) {
-      console.log(
-        `[Middleware] Unauthenticated user trying to access protected route`
-      );
+      // console.log(
+      //   `[Middleware] Unauthenticated user trying to access protected route`
+      // );
 
       // Store the current URL as a query param for possible redirect after login
       url.pathname = "/sign-in";
@@ -83,10 +84,10 @@ export function middleware(request: NextRequest) {
     }
 
     // Otherwise, continue with the request
-    console.log(`[Middleware] Continuing with request`);
+    // console.log(`[Middleware] Continuing with request`);
     return NextResponse.next();
   } catch (error) {
-    console.error(`[Middleware] Error:`, error);
+    // console.error(`[Middleware] Error:`, error);
     // In case of error, allow the request to proceed to avoid blocking navigation
     return NextResponse.next();
   }

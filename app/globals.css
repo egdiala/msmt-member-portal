@@ -61,6 +61,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --shadow-modal-shadow: var(--modal-shadow);
+  --shadow-modal-button-landing: var(--modal-button-landing);
   --breakpoint-3xl: 1430px;
 }
 
@@ -85,6 +86,7 @@
   --actions-blue: #0073c4;
   --divider: #dadcdd;
   --modal-shadow: 0px 10px 153px -32px #00000033;
+  --modal-button-landing: 0px 7px 40.5px -1px #3D717F33;
   --portal-bkg: #f3f5f9;
   --status-danger: #dd2418;
   --status-light-red: #fff5f5;

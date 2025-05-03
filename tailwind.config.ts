@@ -18,9 +18,11 @@ export default {
           "btn-secondary": "#001933",
           "accent-2": "#007BFF",
           "bkg-1": "#001933",
+          "bkg-2": "#CED8E3",
           "bkg-3": "#FFF7F2",
         },
         blue: {
+          "dark-100": "#0B3D72",
           "200": "#007BFF",
           "400": "#F2F8FF",
           "500": "#6A7181",
