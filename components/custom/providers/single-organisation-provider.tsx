@@ -264,7 +264,7 @@ export const SingleOrganisationProviderContent = () => {
 
           <div className="border border-divider rounded-lg px-4 md:px-5 py-4 grid gap-y-2">
             <p className="text-sm text-brand-2">About</p>
-            <p className="text-brand-1">{data?.description}</p>
+            <p className="text-brand-1">{data?.description ?? "N/A"}</p>
           </div>
 
           <div className="border border-divider rounded-lg px-3 md:px-5 py-4 grid gap-y-2">
