@@ -7,7 +7,6 @@ import { WALLET_TABLE_HEADERS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { DEDUCTION_TRANSACTIONS_DATA } from "@/lib/mock";
 import { FilterTransactionsPopover } from "./filter-transactions-popover";
-import { TransactionMobileCard } from "./transaction-mobile-card";
 
 export const WalletDeductionsTable = () => {
   const tableData = DEDUCTION_TRANSACTIONS_DATA.map((deduction) => {
@@ -60,11 +59,11 @@ export const WalletDeductionsTable = () => {
 
       <TableCmp data={tableData} headers={WALLET_TABLE_HEADERS} />
 
-      <div className="md:hidden grid gap-y-2">
+      {/* <div className="md:hidden grid gap-y-2">
         {DEDUCTION_TRANSACTIONS_DATA.map((transaction) => (
           <TransactionMobileCard key={transaction.id} {...transaction} />
         ))}
-      </div>
+      </div> */}
 
       <PaginationCmp
         onInputPage={() => {}}
