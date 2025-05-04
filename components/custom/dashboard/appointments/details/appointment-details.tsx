@@ -13,11 +13,19 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
 import { Loader } from "@/components/shared/loader";
-import { getSessionStatus, isEmpty } from "@/lib/utils";
+import { formatApptTimeShort, getSessionStatus, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { RatingDialog } from "../rating-form";
 import { Button } from "@/components/ui";
 import { useState } from "react";
+import { format, parseISO } from "date-fns";
+import { enUS } from "date-fns/locale";
+
+export function formatSessionDate(dateStr: string): string {
+  if (dateStr === '') return "";
+  const date = parseISO(dateStr);
+  return format(date, "EEE, do MMM, yyyy", { locale: enUS });
+}
 
 export default function AppointmentDetails() {
   const { slug } = useParams();
@@ -60,7 +68,7 @@ export default function AppointmentDetails() {
             name: "Appointments",
             href: "/appointments",
           },
-          { id: 3, name: data?.provider_data?.name || '' },
+          { id: 3, name: data?.provider_data?.name || "" },
         ]}
       />
 
@@ -103,13 +111,13 @@ export default function AppointmentDetails() {
               <div className="flex items-center gap-x-1">
                 <IconCalendarCheck2 className="h-4 w-4 !stroke-brand-3" />
                 <span className="text-brand-1 text-xs md:text-sm">
-                  {appointment.date}
+                  {formatSessionDate(data?.appt_date || "")}
                 </span>
               </div>
               <div className="flex items-center gap-x-1">
                 <IconClock className="h-4 w-4 !stroke-brand-3" />
                 <span className="text-brand-1 text-xs md:text-sm">
-                  {appointment.time}
+                  {formatApptTimeShort(Number(data?.appt_time) || 0)}
                 </span>
               </div>
             </div>
@@ -144,9 +152,7 @@ export default function AppointmentDetails() {
                       : "bg-actions-green "
                   }`}
                 >
-                 {
-                  getSessionStatus(data?.status || 0)
-                 }
+                  {getSessionStatus(data?.status || 0)}
                 </Badge>
               </div>
             </div>
@@ -220,7 +226,10 @@ export default function AppointmentDetails() {
             </RenderIf>
 
             <RenderIf
-              condition={!data?.rating_data.length && getSessionStatus(data?.status || 0) === 'Completed'}
+              condition={
+                !data?.rating_data.length &&
+                getSessionStatus(data?.status || 0) === "Completed"
+              }
             >
               <div className="p-4 md:px-5 py-4 rounded-lg border border-[#DADCDD]">
                 <div className="grid gap-3 place-content-center">
@@ -246,7 +255,11 @@ export default function AppointmentDetails() {
           <Loader />
         </div>
       </RenderIf>
-      <RatingDialog open={open} onOpenChange={setOpen} personName={data?.provider_data?.name}/>
+      <RatingDialog
+        open={open}
+        onOpenChange={setOpen}
+        personName={data?.provider_data?.name}
+      />
     </div>
   );
 }
