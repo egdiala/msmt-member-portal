@@ -3,7 +3,7 @@ import { getStatusBadge } from "./get-status-badge";
 import { IconStethoscope } from "@/components/icons";
 
 interface AppointmentListMobileProps {
-  appointments: Appointment[];
+  appointments: Appointment[] | undefined;
   onAppointmentClick: (appointment: Appointment) => void;
   className?: string;
 }
@@ -32,7 +32,6 @@ interface CardProps {
 }
 
 const Card = ({ appointment, onClick }: CardProps) => {
-  console.log( appointment?.serviceoffered, "SNSJSJSJ" )
   return (
     <div
       className=" rounded-xs p-3 bg-[#F6F8F9] grid gap-2 text-brand-1 "

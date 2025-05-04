@@ -276,3 +276,7 @@ export function formatApptDate(dateStr: string): string {
   return format(date, "MMM d, yyyy"); 
 }
 
+export const isEmpty = (obj: unknown): boolean => {
+  return !obj || Object.keys(obj).length === 0;
+};
+

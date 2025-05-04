@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppointmentSearch } from "./appointment-search";
 import { AppliedFilters } from "./applied-filters";
-import { TableCmp } from "@/components/shared";
+import { RenderIf, TableCmp } from "@/components/shared";
 import { AppointmentListMobile } from "./appointments-list-mobile";
 import { PaginationCmp, BreadcrumbCmp } from "@/components/shared";
 import { UpcomingAppointmentCard } from "../upcoming-appointment-card";
@@ -15,6 +15,7 @@ import { capitalizeFirstLetter } from "@/lib/hooks";
 import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
 import { formatApptDate, formatApptTimeShort } from "@/lib/utils";
+import { Loader } from "@/components/shared/loader";
 
 export function AppointmentContainer() {
   const [, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -24,36 +25,6 @@ export function AppointmentContainer() {
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { data, isPending } = useGetAppointments({ page: currentPage });
-  console.log(data, "APPOINT");
-
-  const appointments: Appointment[] = data?.map((item) => ({
-    id: item?.appointment_id,
-    date: formatApptDate(item.appt_date),
-    time: formatApptTimeShort(item?.appt_time),
-    amount: new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      minimumFractionDigits: 0,
-    }).format(item?.amount),
-    consultant: item?.provider_data?.name,
-    serviceOffered: item?.service_offer_name.split(' ').map((item)=> (item.charAt(0).toUpperCase() + item.split("").slice(1).join(""))).join(' '),
-    status: item?.status === 0 ? "Upcoming" : "Completed",
-  }));
-
-  const headers = [
-    { key: "date", value: "Date & Time" },
-    { key: "consultant", value: "Consultant" },
-    { key: "amount", value: "Amount" },
-    { key: "serviceOffered", value: "Service Offerred" },
-    { key: "status", value: "Status" },
-  ];
-
-  const handleAppointmentClick = (appointment: Appointment) => {
-    setSelectedAppointment(appointment);
-    router.push(`/appointments/1`);
-  };
-
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
@@ -70,6 +41,40 @@ export function AppointmentContainer() {
 
   const handleClearAllFilters = () => {
     setAppliedFilters({});
+  };
+  const { data, isPending } = useGetAppointments({ page: currentPage, status:appliedFilters.status, start_date:appliedFilters.fromDate, end_date:appliedFilters.toDate });
+
+  const appointments: Appointment[] | undefined = data?.map((item) => ({
+    id: item?.appointment_id,
+    date: formatApptDate(item.appt_date),
+    time: formatApptTimeShort(item?.appt_time),
+    amount: new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      minimumFractionDigits: 0,
+    }).format(item?.amount),
+    consultant: item?.provider_data?.name,
+    serviceOffered: item?.service_offer_name
+      .split(" ")
+      .map(
+        (item) =>
+          item.charAt(0).toUpperCase() + item.split("").slice(1).join("")
+      )
+      .join(" "),
+    status: item?.status === 0 ? "Upcoming" : "Completed",
+  }));
+
+  const headers = [
+    { key: "date", value: "Date & Time" },
+    { key: "consultant", value: "Consultant" },
+    { key: "amount", value: "Amount" },
+    { key: "serviceOffered", value: "Service Offerred" },
+    { key: "status", value: "Status" },
+  ];
+
+  const handleAppointmentClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    router.push(`/appointments/1`);
   };
 
   return (
@@ -98,32 +103,40 @@ export function AppointmentContainer() {
               onClearAll={handleClearAllFilters}
             />
           </CardHeader>
-          <CardContent className="w-full">
-            <TableCmp
-              data={appointments?.map((apt) => ({
-                ...apt,
-                date: `${apt.date} • ${apt.time}`,
-                status: getStatusBadge(apt.status),
-              }))}
-              isLoading={isPending}
-              onClickRow={(value) => router.push(`/appointments/${value?.id}`)}
-              headers={headers}
-            />
+          <RenderIf condition={!isPending}>
+            <CardContent className="w-full grid gap-4">
+              <TableCmp
+                data={(appointments as Appointment[])?.map((apt) => ({
+                  ...apt,
+                  date: `${apt.date} • ${apt.time}`,
+                  status: getStatusBadge(apt.status),
+                }))}
+                isLoading={isPending}
+                onClickRow={(value) =>
+                  router.push(`/appointments/${value?.id}`)
+                }
+                headers={headers}
+              />
 
-            {/* Mobile list view */}
-            <AppointmentListMobile
-              appointments={appointments}
-              className="mb-4"
-              onAppointmentClick={handleAppointmentClick}
-            />
+              {/* Mobile list view */}
+              <AppointmentListMobile
+                appointments={appointments}
+                onAppointmentClick={handleAppointmentClick}
+              />
 
-            {/* Pagination */}
-            <PaginationCmp
-              currentPage={currentPage}
-              totalPages={"3"}
-              onInputPage={(page) => setCurrentPage(page)}
-            />
-          </CardContent>
+              {/* Pagination */}
+              <PaginationCmp
+                currentPage={currentPage}
+                totalPages={"3"}
+                onInputPage={(page) => setCurrentPage(page)}
+              />
+            </CardContent>
+          </RenderIf>
+          <RenderIf condition={isPending}>
+            <CardContent className="w-full grid place-content-center h-full">
+              <Loader />
+            </CardContent>
+          </RenderIf>
         </Card>
         <div className="h-fit w-full lg:w-fit col-span-1">
           <UpcomingAppointmentCard onCancel={() => setOpenCancelModal(true)} />

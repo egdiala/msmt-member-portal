@@ -1,4 +1,4 @@
-import { AppointmentType } from "@/types/appointment";
+import { AppointmentType, GetAppointmentIdType, SessionRatingPayload } from "@/types/appointment";
 import { axiosBookingService } from "../axios-instance";
 
 const APPOINTMENT_BASE_URL = "users/members/appointments";
@@ -9,3 +9,20 @@ export const getAppointments = async (
   const res = await axiosBookingService.get(`${APPOINTMENT_BASE_URL}${query}`);
   return res.data;
 };
+
+export const getAppointmentsById = async (
+  id: string
+): Promise<{ data: GetAppointmentIdType }> => {
+  const res = await axiosBookingService.get(`${APPOINTMENT_BASE_URL}/${id}`);
+  return res.data;
+};
+
+export const submitSessionRating = async (payload: SessionRatingPayload) => {
+  const res = await axiosBookingService.post(
+    "/users/members/session-ratings",
+    payload
+  );
+  return res.data;
+};
+
+

@@ -95,3 +95,61 @@ export interface RequestOrgBookingPayload {
   booking_link: string;
   otp_code: string;
 }
+
+interface MemberQuestion {
+  question: string;
+  answer: string | string[];
+  sub_question?: string;
+}
+
+interface ProviderData {
+  name: string;
+  avatar: string;
+  email: string;
+  service_cat_id: string;
+  gender: string;
+  user_id: string;
+  isfav_provider: boolean;
+  specialty: string;
+}
+
+export interface GetAppointmentIdType {
+  member_id: string;
+  provider_id: string;
+  service_offer_id: string;
+  service_cat_id: string;
+  booking_ref: string;
+  booking_link: string;
+  comm_mode: string;
+  member_questionnaire: MemberQuestion[];
+  appt_schedule: string;
+  appt_date: string;
+  appt_day: number;
+  appt_time: number;
+  amount: number;
+  refunded_amount: number;
+  status: number;
+  status_cancel: number;
+  notify_count: number;
+  member_gender: string;
+  charge_status: number;
+  payment_option: number;
+  meeting_id: string;
+  member_token: string;
+  provider_token: string;
+  systemdata_charge: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  provider_data: ProviderData;
+  rating_data: any[];
+  appointment_id: string;
+  service_offer_name: string;
+}
+
+export interface SessionRatingPayload {
+  rating: string;
+  provider_on_time: string;
+  appointment_id: string;
+  comment?: string;
+}
+
