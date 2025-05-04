@@ -60,7 +60,7 @@ export default function AppointmentDetails() {
             name: "Appointments",
             href: "/appointments",
           },
-          { id: 3, name: data?.provider_data?.name! },
+          { id: 3, name: data?.provider_data?.name || '' },
         ]}
       />
 
@@ -126,7 +126,7 @@ export default function AppointmentDetails() {
                     style: "currency",
                     currency: "NGN",
                     minimumFractionDigits: 0,
-                  }).format(data?.amount!)}
+                  }).format(data?.amount || 0)}
                 </p>
               </div>
               <div>
@@ -139,13 +139,13 @@ export default function AppointmentDetails() {
                 <p className="text-sm text-brand-2 mb-1">Status</p>
                 <Badge
                   className={`!font-normal !text-sm rounded-xs !py-0.5 !px-2 ${
-                    getSessionStatus(data?.status!) !== "Completed"
+                    getSessionStatus(data?.status || 0) !== "Completed"
                       ? "bg-actions-blue "
                       : "bg-actions-green "
                   }`}
                 >
                  {
-                  getSessionStatus(data?.status!)
+                  getSessionStatus(data?.status || 0)
                  }
                 </Badge>
               </div>
@@ -220,7 +220,7 @@ export default function AppointmentDetails() {
             </RenderIf>
 
             <RenderIf
-              condition={!data?.rating_data.length && getSessionStatus(data?.status!) === 'Completed'}
+              condition={!data?.rating_data.length && getSessionStatus(data?.status || 0) === 'Completed'}
             >
               <div className="p-4 md:px-5 py-4 rounded-lg border border-[#DADCDD]">
                 <div className="grid gap-3 place-content-center">
