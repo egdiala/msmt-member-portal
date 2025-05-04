@@ -134,7 +134,7 @@ export const FavouriteProvidersTable = () => {
           <RenderIf condition={tableData?.length === 0}>
             <EmptyState
               title="Providers"
-              subtitle="There are no providers yet"
+              subtitle="You don't have any favourite providers yet"
               hasIcon
             />
           </RenderIf>
