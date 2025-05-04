@@ -226,7 +226,11 @@ export const FillAppointmentQuestionnaireForm = ({
                 Cancel
               </Button>
 
-              <Button type="submit" disabled={isPending || isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isPending || isSubmitting}
+                className="w-39"
+              >
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span
                     transition={{ type: "spring", duration: 0.3, bounce: 0 }}
