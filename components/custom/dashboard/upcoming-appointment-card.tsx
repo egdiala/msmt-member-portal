@@ -27,10 +27,9 @@ export const UpcomingAppointmentCard = ({
 }) => {
   const pathname = usePathname();
   const isAppointmentPage = pathname.includes("/appointments");
-  const { data, isPending } = useGetAppointments({});
+  const { data, isPending } = useGetAppointments({ status: "1" });
 
-  const upcomingData = data?.filter((item) => item.status === 1);
-  const mostRecent = upcomingData?.[0];
+  const mostRecent = data?.[0];
 
   return (
     <AnimatePresence mode="popLayout">
@@ -59,7 +58,7 @@ export const UpcomingAppointmentCard = ({
             Upcoming appointment
           </h3>
 
-          {isEmpty(mostRecent) && !upcomingData?.length ? (
+          {isEmpty(mostRecent) && !data?.length ? (
             <div className="flex flex-col items-center w-full h-full">
               <EmptyState
                 hasIcon
