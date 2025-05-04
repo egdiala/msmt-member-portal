@@ -16,7 +16,6 @@ import { PaginationCmp, BreadcrumbCmp } from "@/components/shared";
 import { UpcomingAppointmentCard } from "../upcoming-appointment-card";
 import { getStatusBadge } from "./get-status-badge";
 import { Appointment } from "@/types/appointment";
-import { capitalizeFirstLetter } from "@/lib/hooks";
 import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
 import {
