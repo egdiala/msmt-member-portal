@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
 import { Loader } from "@/components/shared/loader";
-import { isEmpty } from "@/lib/utils";
+import { getSessionStatus, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { RatingDialog } from "../rating-form";
 import { Button } from "@/components/ui";
@@ -139,12 +139,14 @@ export default function AppointmentDetails() {
                 <p className="text-sm text-brand-2 mb-1">Status</p>
                 <Badge
                   className={`!font-normal !text-sm rounded-xs !py-0.5 !px-2 ${
-                    data?.status !== 1
+                    getSessionStatus(data?.status!) !== "Completed"
                       ? "bg-actions-blue "
                       : "bg-actions-green "
                   }`}
                 >
-                  {data?.status === 1 ? "Completed" : "Upcoming"}
+                 {
+                  getSessionStatus(data?.status!)
+                 }
                 </Badge>
               </div>
             </div>
@@ -218,7 +220,7 @@ export default function AppointmentDetails() {
             </RenderIf>
 
             <RenderIf
-              condition={!data?.rating_data.length && data?.status === 1}
+              condition={!data?.rating_data.length && getSessionStatus(data?.status!) === 'Completed'}
             >
               <div className="p-4 md:px-5 py-4 rounded-lg border border-[#DADCDD]">
                 <div className="grid gap-3 place-content-center">

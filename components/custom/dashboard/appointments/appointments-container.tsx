@@ -14,19 +14,19 @@ import { Appointment } from "@/types/appointment";
 import { capitalizeFirstLetter } from "@/lib/hooks";
 import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
-import { formatApptDate, formatApptTimeShort, getSessionStatus } from "@/lib/utils";
+import {
+  formatApptDate,
+  formatApptTimeShort,
+  getSessionStatus,
+} from "@/lib/utils";
 import { Loader } from "@/components/shared/loader";
 
 export function AppointmentContainer() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
   const [currentPage, setCurrentPage] = useState("1");
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
 
   const handleApplyFilters = (filters: Record<string, any>) => {
     setAppliedFilters({ ...appliedFilters, ...filters });
@@ -92,10 +92,7 @@ export function AppointmentContainer() {
             <CardTitle className="text-brand-1 font-bold text-base">
               Appointments
             </CardTitle>
-            <AppointmentSearch
-              onSearch={handleSearch}
-              onFilter={handleApplyFilters}
-            />
+            <AppointmentSearch onFilter={handleApplyFilters} />
 
             <AppliedFilters
               filters={appliedFilters}
