@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { RenderIf } from "@/components/shared";
 import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
 import {
   IconCalendarCheck2,
   IconClock,
@@ -14,12 +13,12 @@ import {
   IconStarFull,
 } from "@/components/icons";
 import { Button } from "@/components/ui";
-import { BLUR_VARIANTS } from "@/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
 import { formatSessionDate } from "./appointments/details/appointment-details";
 import { formatApptTimeShort, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
+import { BLUR_VARIANTS } from "@/lib/constants";
 
 export const UpcomingAppointmentCard = ({
   onCancel,
@@ -30,27 +29,23 @@ export const UpcomingAppointmentCard = ({
   const isAppointmentPage = pathname.includes("/appointments");
   const { data, isPending } = useGetAppointments({});
 
-  const upcomingData = data?.filter((item) => {
-    return (item.status = 1);
-  });
-
+  const upcomingData = data?.filter((item) => item.status === 1);
   const mostRecent = upcomingData?.[0];
 
   return (
     <AnimatePresence mode="popLayout">
-      <RenderIf condition={isPending}>
+      {isPending ? (
         <motion.div
           key="appointment-card-skeleton-loader"
           layoutId="appointment-card"
-          className="max-w-full grid gap-y-4 order-1 md:order-2  col-span-1 xl:col-span-4 h-86 rounded-2xl"
+          className="max-w-full grid gap-y-4 order-1 md:order-2 col-span-1 xl:col-span-4 h-86 rounded-2xl"
           variants={BLUR_VARIANTS}
           animate="enter"
           exit="exit"
         >
           <Skeleton className="h-full w-full rounded-2xl" />
         </motion.div>
-      </RenderIf>
-      <RenderIf condition={!isPending}>
+      ) : (
         <motion.div
           key="appointment-card"
           layoutId="appointment-card"
@@ -64,7 +59,7 @@ export const UpcomingAppointmentCard = ({
             Upcoming appointment
           </h3>
 
-          <RenderIf condition={isEmpty(mostRecent) && !upcomingData?.length}>
+          {isEmpty(mostRecent) && !upcomingData?.length ? (
             <div className="flex flex-col items-center w-full h-full">
               <EmptyState
                 hasIcon
@@ -72,9 +67,7 @@ export const UpcomingAppointmentCard = ({
                 subtitle="Upcoming appointments will appear here"
               />
             </div>
-          </RenderIf>
-
-          <RenderIf condition={!isEmpty(mostRecent) && !!upcomingData?.length}>
+          ) : (
             <div className="grid gap-y-4">
               <div className="bg-input-field rounded-lg grid gap-y-3 p-3">
                 <div className="flex justify-between">
@@ -86,7 +79,6 @@ export const UpcomingAppointmentCard = ({
                         className="w-full h-full object-cover"
                       />
                       <AvatarFallback>
-                        {" "}
                         {mostRecent?.provider_data?.name
                           .split(" ")
                           .map((word) => word[0])
@@ -99,22 +91,19 @@ export const UpcomingAppointmentCard = ({
                       <h3 className="text-sm font-medium text-text-1">
                         {mostRecent?.provider_data?.name}
                       </h3>
-
                       <p className="text-text-2 text-xs capitalize">
                         {mostRecent?.provider_data?.specialty}
                       </p>
-
                       <div className="flex gap-x-1 items-center">
                         <IconStarFull className="fill-actions-amber size-4" />
                         <p className="text-xs text-text-1">4.5</p>
                       </div>
                     </div>
                   </div>
-
                   <IconHeart className="stroke-button-secondary size-4" />
                 </div>
 
-                <div className="border-b border-divider"></div>
+                <div className="border-b border-divider" />
 
                 <div className="grid gap-y-3">
                   <div className="flex gap-x-1 items-center">
@@ -123,7 +112,6 @@ export const UpcomingAppointmentCard = ({
                       {formatSessionDate(mostRecent?.appt_date || "")}
                     </p>
                   </div>
-
                   <div className="flex gap-x-1 items-center">
                     <IconClock className="stroke-text-tertiary size-4" />
                     <p className="text-xs text-text-1">
@@ -133,7 +121,8 @@ export const UpcomingAppointmentCard = ({
                 </div>
               </div>
 
-              <RenderIf condition={false}>
+              {/* Placeholder: Show when session is live */}
+              {false && (
                 <div className="bg-blue-400 flex justify-center items-center gap-x-2 py-2 rounded-lg">
                   <Image
                     src="/starting-stream.gif"
@@ -142,7 +131,6 @@ export const UpcomingAppointmentCard = ({
                     height={24}
                     unoptimized
                   />
-
                   <p className="font-medium text-xs text-button-primary">
                     Provider has started the Session.
                     <Link href="/session" className="underline">
@@ -150,12 +138,12 @@ export const UpcomingAppointmentCard = ({
                     </Link>
                   </p>
                 </div>
-              </RenderIf>
+              )}
             </div>
-          </RenderIf>
+          )}
 
           <div className="flex justify-between lg:pt-5">
-            <RenderIf condition={!isAppointmentPage}>
+            {!isAppointmentPage ? (
               <Button
                 asChild
                 variant="secondary"
@@ -166,27 +154,27 @@ export const UpcomingAppointmentCard = ({
                   <IconExternalLink className="stroke-button-primary" />
                 </Link>
               </Button>
-              <RenderIf condition={false}>
-                <Button asChild>
-                  <Link href="/session">Join Session </Link>
-                </Button>
-              </RenderIf>
-            </RenderIf>
-            <RenderIf condition={isAppointmentPage && false}>
-              <Button
-                onClick={() => onCancel?.()}
-                variant={"outline"}
-                className="py-2 px-4"
-              >
-                Cancel
-              </Button>
-              <Button asChild className="py-2 px-4">
-                <Link href="/session">Join Session</Link>
-              </Button>
-            </RenderIf>
+            ) : (
+              <>
+                {false && (
+                  <>
+                    <Button
+                      onClick={() => onCancel?.()}
+                      variant="outline"
+                      className="py-2 px-4"
+                    >
+                      Cancel
+                    </Button>
+                    <Button asChild className="py-2 px-4">
+                      <Link href="/session">Join Session</Link>
+                    </Button>
+                  </>
+                )}
+              </>
+            )}
           </div>
         </motion.div>
-      </RenderIf>
+      )}
     </AnimatePresence>
   );
 };
