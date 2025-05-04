@@ -233,6 +233,12 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
       ...(selectedPaymentMethod === "Family"
         ? { familyuser_id: familyFriendInfo?.familyfriend_id }
         : {}),
+      ...(account_service_type === "provider"
+        ? { org_provider_id: orgInfo?.user_id }
+        : {}),
+      ...(account_service_type === "payer"
+        ? { org_payer_id: orgInfo?.user_id }
+        : {}),
     };
     if (!!isLoggedIn) {
       mutate(dataToBeSent);
