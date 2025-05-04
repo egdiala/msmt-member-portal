@@ -14,12 +14,11 @@ import { Appointment } from "@/types/appointment";
 import { capitalizeFirstLetter } from "@/lib/hooks";
 import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
-import { formatApptDate, formatApptTimeShort } from "@/lib/utils";
+import { formatApptDate, formatApptTimeShort, getSessionStatus } from "@/lib/utils";
 import { Loader } from "@/components/shared/loader";
 
 export function AppointmentContainer() {
-  const [, setSelectedAppointment] = useState<Appointment | null>(null);
-  const [, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
   const [currentPage, setCurrentPage] = useState("1");
   const [openCancelModal, setOpenCancelModal] = useState(false);
@@ -42,7 +41,13 @@ export function AppointmentContainer() {
   const handleClearAllFilters = () => {
     setAppliedFilters({});
   };
-  const { data, isPending } = useGetAppointments({ page: currentPage, status:appliedFilters.status, start_date:appliedFilters.fromDate, end_date:appliedFilters.toDate });
+  const { data, isPending } = useGetAppointments({
+    page: currentPage,
+    // search: searchQuery,
+    status: appliedFilters.status,
+    start_date: appliedFilters.fromDate,
+    end_date: appliedFilters.toDate,
+  });
 
   const appointments: Appointment[] | undefined = data?.map((item) => ({
     id: item?.appointment_id,
@@ -61,7 +66,7 @@ export function AppointmentContainer() {
           item.charAt(0).toUpperCase() + item.split("").slice(1).join("")
       )
       .join(" "),
-    status: item?.status === 0 ? "Upcoming" : "Completed",
+    status: getSessionStatus(item?.status),
   }));
 
   const headers = [
@@ -71,11 +76,6 @@ export function AppointmentContainer() {
     { key: "serviceOffered", value: "Service Offerred" },
     { key: "status", value: "Status" },
   ];
-
-  const handleAppointmentClick = (appointment: Appointment) => {
-    setSelectedAppointment(appointment);
-    router.push(`/appointments/1`);
-  };
 
   return (
     <div className="grid gap-y-4">
@@ -104,7 +104,7 @@ export function AppointmentContainer() {
             />
           </CardHeader>
           <RenderIf condition={!isPending}>
-            <CardContent className="w-full grid gap-4">
+            <CardContent className="w-full flex flex-col min-h-[200px]  h-full justify-between">
               <TableCmp
                 data={(appointments as Appointment[])?.map((apt) => ({
                   ...apt,
@@ -116,12 +116,15 @@ export function AppointmentContainer() {
                   router.push(`/appointments/${value?.id}`)
                 }
                 headers={headers}
+                emptyStateTitleText="No data available"
               />
 
               {/* Mobile list view */}
               <AppointmentListMobile
                 appointments={appointments}
-                onAppointmentClick={handleAppointmentClick}
+                onAppointmentClick={(appointment) =>
+                  router.push(`/appointments/${appointment?.id}`)
+                }
               />
 
               {/* Pagination */}

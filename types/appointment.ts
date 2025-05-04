@@ -5,7 +5,7 @@ export interface Appointment {
   consultant: string;
   amount: string;
   serviceOffered: string;
-  status: "Upcoming" | "Completed" | "Cancelled" | "Pending";
+  status: string;
 }
 
 export interface FormOption {
