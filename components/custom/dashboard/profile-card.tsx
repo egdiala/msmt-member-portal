@@ -49,7 +49,7 @@ export const ProfileCard = () => {
           <div className="grid gap-y-2 content-start">
             <Avatar className="size-25 rounded-2xl">
               <AvatarImage
-                src={data?.avatar}
+                src={data?.avatar || "/assets/blank-profile-picture.png"}
                 className="object-cover rounded-2xl w-full h-full border border-divider"
               />
               <AvatarFallback className="text-5xl rounded-2xl">

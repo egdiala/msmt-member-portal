@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
 import QueryProvider from "@/components/query-provider";
-import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
+import { TOAST_STYLING } from "@/lib/constants";
+import "./globals.css";
 
 const alliance = localFont({
   src: [
@@ -92,7 +93,8 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://msmt-members-portal.vercel.app/"),
   openGraph: {
     title: "MSMT Patient Dashboard",
-    description: "Empowering your mental health journey - Access top-tier mental health care from certified psychiatrists and psychologists—all from the comfort of your home.",
+    description:
+      "Empowering your mental health journey - Access top-tier mental health care from certified psychiatrists and psychologists—all from the comfort of your home.",
     url: "https://msmt-members-portal.vercel.app/",
     siteName: "MSMT Patient Dashboard",
     images: [
@@ -116,7 +118,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(alliance.className, "antialiased")}>
         <QueryProvider>{children}</QueryProvider>
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            unstyled: true,
+            classNames: {
+              error: `${TOAST_STYLING} !bg-red-light`,
+              success: `${TOAST_STYLING} !bg-actions-green`,
+            },
+          }}
+        />
       </body>
     </html>
   );
