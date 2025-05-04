@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {  useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppointmentSearch } from "./appointment-search";
 import { AppliedFilters } from "./applied-filters";
@@ -32,7 +32,6 @@ export function AppointmentContainer() {
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [openCancelModal, setOpenCancelModal] = useState(false);
-  const pathname = usePathname();
   const router = useRouter();
 
   const handleApplyFilters = (filters: Record<string, any>) => {
@@ -101,7 +100,7 @@ export function AppointmentContainer() {
       <BreadcrumbCmp
         breadcrumbItems={[
           { id: 1, name: "Home", href: "/home" },
-          { id: 2, name: capitalizeFirstLetter(pathname.split("/")[1]) },
+          { id: 2, name: "Appointments" },
         ]}
       />
 
@@ -155,12 +154,12 @@ export function AppointmentContainer() {
             </CardContent>
           </RenderIf>
           <RenderIf condition={isPending}>
-            <CardContent className="w-full grid place-content-center h-full">
+            <CardContent className="w-full grid place-content-center h-full min-h-[200px]">
               <Loader />
             </CardContent>
           </RenderIf>
         </Card>
-        <div className="h-fit w-full lg:w-fit col-span-1">
+        <div className="h-fit w-full lg:w-full col-span-1">
           <UpcomingAppointmentCard onCancel={() => setOpenCancelModal(true)} />
         </div>
       </div>
