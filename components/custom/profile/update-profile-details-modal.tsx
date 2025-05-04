@@ -206,7 +206,7 @@ export const UpdateProfileDetailsModal = ({
 
             <Button
               type="submit"
-              disabled={!form.formState.isDirty || !form.formState.isValid || isPending}
+              disabled={!form.formState.isValid || isPending}
               className="cursor-pointer w-21"
             >
               <AnimatePresence mode="popLayout" initial={false}>

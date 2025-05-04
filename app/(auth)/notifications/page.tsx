@@ -1,4 +1,5 @@
 import { NotificationTable } from "@/components/custom";
+import { Suspense } from "react";
 import { BreadcrumbCmp } from "@/components/shared";
 
 const Notifications = () => {
@@ -13,8 +14,9 @@ const Notifications = () => {
 
       <div className="bg-white rounded-2xl p-3 md:p-6 grid gap-y-4 md:gap-y-5">
         <h2 className="font-bold text-text-1">Notifications</h2>
-
-        <NotificationTable />
+        <Suspense>
+          <NotificationTable />
+        </Suspense>
       </div>
     </div>
   );

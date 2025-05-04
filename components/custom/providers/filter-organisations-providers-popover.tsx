@@ -1,10 +1,10 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
+import { format } from "date-fns";
 import {
   IconAudioLines,
-  IconCalendar,
   IconClose,
   IconListFilter,
   IconVideo,
@@ -18,28 +18,52 @@ import {
   DrawerPortal,
   DrawerClose,
   DrawerTitle,
-  RadioGroup,
 } from "@/components/ui";
-import {
-  FloatingInput,
-  RadioButton,
-  RenderIf,
-  SelectCmp,
-} from "@/components/shared";
+import { RenderIf, SelectCmp } from "@/components/shared";
 import { cn } from "@/lib/utils";
+import { CalendarInput } from "../wallet/calendar-input";
 
 const FilterContent = ({
   handleCloseFilter,
+  setFilters,
+  requestVariables,
+  selectedService,
+  setSelectedService,
+  selectedCommunicationPreference,
+  setSelectedCommunicationPreference,
+  selectedApptDate,
+  setSelectedApptDate,
 }: {
   handleCloseFilter: () => void;
+  setFilters: Dispatch<SetStateAction<any>>;
+  requestVariables: any;
+  selectedService: string;
+  selectedCommunicationPreference: string;
+  selectedApptDate: string;
+  setSelectedService: Dispatch<SetStateAction<string>>;
+  setSelectedCommunicationPreference: Dispatch<SetStateAction<string>>;
+  setSelectedApptDate: Dispatch<SetStateAction<string>>;
 }) => {
   const communicationPreferences = ["Video", "Audio"];
-  const [selectedCommunicationPreference, setSelectedCommunicationPreference] =
-    useState("Video");
 
-  const providerTypes = ["Pyschology", "Psychiatrist"];
-  const [selectedProviderType, setSelectedProviderTypes] =
-    useState("Psychology");
+  const handleApplyFilter = () => {
+    setFilters({
+      ...(selectedService
+        ? {
+            service_offer_id: requestVariables["service-offering"]?.filter(
+              (val: { name: string }) => val?.name === selectedService
+            )[0]?.service_offer_id,
+          }
+        : {}),
+      ...(selectedApptDate ? { appt_date: selectedApptDate } : {}),
+      ...(selectedApptDate
+        ? { time_zone: new Date().getTimezoneOffset()?.toString() }
+        : {}),
+      ...(selectedCommunicationPreference
+        ? { comm_mode: selectedCommunicationPreference?.toLowerCase() }
+        : {}),
+    });
+  };
 
   return (
     <div className="p-6 grid gap-y-5 w-full rounded-2xl">
@@ -48,41 +72,33 @@ const FilterContent = ({
       <div className="grid gap-y-8">
         <div className="grid gap-y-2">
           <h4 className="font-semibold text-sm text-brand-1">Services</h4>
-          <SelectCmp selectItems={[]} placeholder="Select Service" />
-        </div>
-
-        <div className="grid gap-y-2">
-          <h4 className="font-semibold text-sm text-brand-1">Provider Type</h4>
-          <RadioGroup className="flex items-center gap-2 flex-wrap">
-            {providerTypes.map((type) => (
-              <button key={type} onClick={() => setSelectedProviderTypes(type)}>
-                <RadioButton
-                  isActive={selectedProviderType === type}
-                  option={{
-                    id: type,
-                    value: type,
-                    name: type,
-                  }}
-                  className={cn(
-                    "border rounded-full md:py-2 md:px-3",
-                    selectedProviderType === type
-                      ? "border-button-primary text-button-primary"
-                      : "border-divider"
-                  )}
-                />
-              </button>
-            ))}
-          </RadioGroup>
+          <SelectCmp
+            value={selectedService}
+            selectItems={requestVariables["service-offering"]?.map(
+              (val: { service_offer_id: string; name: string }) => {
+                return { id: val?.service_offer_id, value: val?.name };
+              }
+            )}
+            onSelect={(val) => setSelectedService(val)}
+            placeholder="Select Service"
+          />
         </div>
 
         <div className="grid gap-y-2">
           <h4 className="font-semibold text-sm text-brand-1">Date</h4>
-          <div className="relative">
-            <FloatingInput label="Available on" className="pr-10" />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-              <IconCalendar className="h-4 w-4" />
-            </div>
-          </div>
+          <CalendarInput
+            value={
+              selectedApptDate === "" ? undefined : new Date(selectedApptDate)
+            }
+            onChange={(date: any) => {
+              setSelectedApptDate(format(date, "yyy-MM-dd"));
+            }}
+            label="Available date"
+            disabledDate={(date: any) => {
+              const today = new Date();
+              return date < today;
+            }}
+          />
         </div>
 
         <div className="grid gap-y-2">
@@ -139,15 +155,36 @@ const FilterContent = ({
         >
           Close
         </Button>
-        <Button>Apply</Button>
+        <Button onClick={handleApplyFilter}>Apply</Button>
       </div>
     </div>
   );
 };
 
-export const FilterOrganisationsProvidersPopover = () => {
+interface IFilterOrganisationsProvidersPopover {
+  setFilters: Dispatch<SetStateAction<any>>;
+  requestVariables: any;
+  selectedService: string;
+  selectedCommunicationPreference: string;
+  selectedApptDate: string;
+  setSelectedService: Dispatch<SetStateAction<string>>;
+  setSelectedCommunicationPreference: Dispatch<SetStateAction<string>>;
+  setSelectedApptDate: Dispatch<SetStateAction<string>>;
+}
+
+export const FilterOrganisationsProvidersPopover = ({
+  setFilters,
+  requestVariables,
+  selectedService,
+  setSelectedService,
+  selectedCommunicationPreference,
+  setSelectedCommunicationPreference,
+  selectedApptDate,
+  setSelectedApptDate,
+}: IFilterOrganisationsProvidersPopover) => {
   const [openPopover, setOpenPopover] = useState(false);
   const [openMobileDrawer, setOpenMobileDrawer] = useState(false);
+
   return (
     <Fragment>
       <div className="hidden md:inline-flex">
@@ -167,7 +204,19 @@ export const FilterOrganisationsProvidersPopover = () => {
             sideOffset={10}
             className="md:w-100 xl:w-144 relative right-45 xl:right-18 border-none shadow-modal-shadow bg-white hidden md:flex p-0"
           >
-            <FilterContent handleCloseFilter={() => setOpenPopover(false)} />
+            <FilterContent
+              handleCloseFilter={() => setOpenPopover(false)}
+              setFilters={setFilters}
+              requestVariables={requestVariables}
+              selectedService={selectedService}
+              selectedCommunicationPreference={selectedCommunicationPreference}
+              selectedApptDate={selectedApptDate}
+              setSelectedService={setSelectedService}
+              setSelectedCommunicationPreference={
+                setSelectedCommunicationPreference
+              }
+              setSelectedApptDate={setSelectedApptDate}
+            />
           </PopoverContent>
         </Popover>
       </div>
@@ -207,6 +256,18 @@ export const FilterOrganisationsProvidersPopover = () => {
 
               <FilterContent
                 handleCloseFilter={() => setOpenMobileDrawer(false)}
+                setFilters={setFilters}
+                requestVariables={requestVariables}
+                selectedService={selectedService}
+                selectedCommunicationPreference={
+                  selectedCommunicationPreference
+                }
+                selectedApptDate={selectedApptDate}
+                setSelectedService={setSelectedService}
+                setSelectedCommunicationPreference={
+                  setSelectedCommunicationPreference
+                }
+                setSelectedApptDate={setSelectedApptDate}
               />
             </DrawerPrimitive.Content>
           </DrawerPortal>

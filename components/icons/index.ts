@@ -113,3 +113,5 @@ export * from "./icon-calendar-check-2";
 export * from "./icon-medical-savings";
 export * from "./icon-tick";
 export * from "./icon-empty-state";
+export * from "./icon-double-arrow";
+export * from "./icon-search-vector";

@@ -103,7 +103,7 @@ export default function SignIn() {
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-0 inset-y-1 h-10 w-10"
+                        className="absolute right-0 inset-y-1 h-10 w-10 hover:bg-transparent"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (

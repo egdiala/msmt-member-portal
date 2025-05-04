@@ -23,7 +23,9 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 w-full bg-[#F3F5F9] lg:border-b lg:bg-background">
       <div className="container flex mx-auto px-4 lg:px-5 h-16 items-center justify-between">
         <div className="flex items-center gap-10">
-          <Image src="/assets/logo.svg" alt="Logo" width={40} height={40} />
+          <Link href="/">
+            <Image src="/assets/logo.svg" alt="Logo" width={40} height={40} />
+          </Link>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8 text-sm">
             {navItems.map((item) => (
