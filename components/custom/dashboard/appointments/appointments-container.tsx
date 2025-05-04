@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppointmentSearch } from "./appointment-search";
 import { AppliedFilters } from "./applied-filters";
 import { RenderIf, TableCmp } from "@/components/shared";
+import {
+  getPaginationParams,
+  setPaginationParams,
+} from "@/hooks/use-pagination-params";
+import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
 import { AppointmentListMobile } from "./appointments-list-mobile";
 import { PaginationCmp, BreadcrumbCmp } from "@/components/shared";
 import { UpcomingAppointmentCard } from "../upcoming-appointment-card";
@@ -23,7 +28,9 @@ import { Loader } from "@/components/shared/loader";
 
 export function AppointmentContainer() {
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
-  const [currentPage, setCurrentPage] = useState("1");
+  const itemsPerPage = 10;
+  const searchParams = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(1);
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -31,6 +38,15 @@ export function AppointmentContainer() {
   const handleApplyFilters = (filters: Record<string, any>) => {
     setAppliedFilters({ ...appliedFilters, ...filters });
   };
+
+  const handlePageChange = (page: number) => {
+    if (!isNaN(page)) {
+      setCurrentPage(page);
+      setPaginationParams(page, router, searchParams);
+    }
+  };
+
+  getPaginationParams(setCurrentPage);
 
   const handleClearFilter = (key: string) => {
     const newFilters = { ...appliedFilters };
@@ -42,11 +58,14 @@ export function AppointmentContainer() {
     setAppliedFilters({});
   };
   const { data, isPending } = useGetAppointments({
-    page: currentPage,
-    // search: searchQuery,
+    page: currentPage.toString(),
     status: appliedFilters.status,
     start_date: appliedFilters.fromDate,
     end_date: appliedFilters.toDate,
+  });
+
+  const { data: count } = useGetAppointments({
+    component: "count",
   });
 
   const appointments: Appointment[] | undefined = data?.map((item) => ({
@@ -101,7 +120,7 @@ export function AppointmentContainer() {
             />
           </CardHeader>
           <RenderIf condition={!isPending}>
-            <CardContent className="w-full flex flex-col min-h-[200px]  h-full justify-between">
+            <CardContent className="w-full flex flex-col min-h-[200px] gap-4 h-full justify-between">
               <TableCmp
                 data={(appointments as Appointment[])?.map((apt) => ({
                   ...apt,
@@ -126,9 +145,12 @@ export function AppointmentContainer() {
 
               {/* Pagination */}
               <PaginationCmp
-                currentPage={currentPage}
-                totalPages={"3"}
-                onInputPage={(page) => setCurrentPage(page)}
+                currentPage={currentPage.toString()}
+                totalPages={useGetTableTotalPages({
+                  totalDataCount: (count as any)?.total ?? 0,
+                  itemsPerPage: itemsPerPage,
+                })}
+                onInputPage={(val) => handlePageChange(parseInt(val))}
               />
             </CardContent>
           </RenderIf>
