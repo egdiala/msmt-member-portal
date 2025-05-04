@@ -137,7 +137,7 @@ export const SingleIndividualProviderContent = () => {
             </Avatar>
 
             <div className="grid gap-y-3 w-full">
-              <div className="grid gap-y-1">
+              <div className="grid gap-y-1 capitalize">
                 <h3 className="text-xl font-bold text-brand-1">{data?.name}</h3>
                 <p className="text-brand-2 capitalize">{data?.specialty}</p>
                 <div className="flex items-center gap-x-1 text-sm text-brand-1">

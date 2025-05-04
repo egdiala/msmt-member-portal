@@ -219,7 +219,7 @@ export const SingleOrganisationProviderContent = () => {
             </Avatar>
 
             <div className="grid gap-y-3 w-full items-center">
-              <div className="grid gap-y-1">
+              <div className="grid gap-y-1 capitalize">
                 <h3 className="text-lg md:text-xl font-bold text-brand-1">
                   {data?.name}
                 </h3>
