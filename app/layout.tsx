@@ -122,7 +122,7 @@ export default function RootLayout({
           toastOptions={{
             unstyled: true,
             classNames: {
-              error: `${TOAST_STYLING} !bg-red-light`,
+              error: `${TOAST_STYLING} !bg-status-danger`,
               success: `${TOAST_STYLING} !bg-actions-green`,
             },
           }}

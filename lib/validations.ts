@@ -245,11 +245,9 @@ export const createAppointmentQuestionnaireSchema = (
         });
       } else {
         if (question.option_type === "checkbox") {
-          schemaFields[fieldName] = z
-            .array(z.string())
-            .min(1, {
-              message: `${question.question} requires at least one selection`,
-            });
+          schemaFields[fieldName] = z.array(z.string()).min(1, {
+            message: `${question.question} requires at least one selection`,
+          });
         } else {
           schemaFields[fieldName] = z
             .string()
@@ -287,7 +285,7 @@ export const appointmentQuestionnaireSchema = z.object({
 
 export const setAppointmentSchedule = z.object({
   service: z.string().nonempty("Required"),
-  paymentMethod: z.array(z.string()),
+  paymentMethod: z.string().optional(),
   appointmentDate: z.date(),
   appointmentTime: z.string().nonempty("Required"),
   communicationPreference: z.string().nonempty("Required"),

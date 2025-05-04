@@ -1,24 +1,28 @@
 "use client";
 
 import { Dispatch, SetStateAction, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import Cookies from "js-cookie";
+import { AnimatePresence, motion } from "motion/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { CheckboxGroup } from "./checkbox-group";
-import { RadioButtonGroup } from "./radio-button-group";
 import { Form } from "@/components/ui";
-import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
-import { createAppointmentQuestionnaireSchema } from "@/lib/validations";
+import { RenderIf } from "@/components/shared";
+import { Loader } from "@/components/shared/loader";
 import {
   getFieldNameFromQuestion,
   convertToFormOptions,
   mapAnswersToData,
 } from "@/lib/utils";
-import { ChildQuestion } from "@/types/appointment";
-import { RenderIf } from "@/components/shared";
-import { Loader } from "@/components/shared/loader";
+import { createAppointmentQuestionnaireSchema } from "@/lib/validations";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { useSubmitBookingQuestionnaire } from "@/services/hooks/mutations/use-booking";
+import { useSubmitOrgBookingQuestionnaire } from "@/services/hooks/mutations/use-appointment";
+import { ChildQuestion } from "@/types/appointment";
+import { CheckboxGroup } from "./checkbox-group";
+import { RadioButtonGroup } from "./radio-button-group";
 
 interface IFillAppointmentQuestionnaireForm {
   setStep: Dispatch<SetStateAction<string | number>>;
@@ -27,15 +31,22 @@ interface IFillAppointmentQuestionnaireForm {
 export const FillAppointmentQuestionnaireForm = ({
   setStep,
 }: IFillAppointmentQuestionnaireForm) => {
+  const router = useRouter();
+
   const { data, isLoading } = useMultipleRequestVariables(["booking-question"]);
-  const { mutate } = useSubmitBookingQuestionnaire();
+  const { mutate, isPending } = useSubmitBookingQuestionnaire(() =>
+    router.push("/appointments")
+  );
+  const { mutate: submitOrgQuestionnaire, isPending: isSubmitting } =
+    useSubmitOrgBookingQuestionnaire(() => {
+      router.push("/");
+    });
+
   const questions = data?.["booking-question"];
   const schema = useMemo(
     () => createAppointmentQuestionnaireSchema(questions),
     [questions]
   );
-
-  console.log(schema)
 
   const defaultValues = useMemo(() => {
     const values: Record<string, any> = {};
@@ -68,8 +79,29 @@ export const FillAppointmentQuestionnaireForm = ({
 
   async function onSubmit(values: z.infer<typeof schema>) {
     const bookingId = localStorage.getItem("booking-appointment-id");
-    mutate({ data: mapAnswersToData(questions, values), appointment_id: bookingId as string });
+    const isLoggedIn = Cookies.get("authToken");
+
+    if (!!isLoggedIn) {
+      mutate({
+        data: mapAnswersToData(questions, values),
+        appointment_id: bookingId as string,
+      });
+    } else {
+      submitOrgQuestionnaire({
+        data: mapAnswersToData(questions, values),
+        appointment_id: bookingId as string,
+      });
+    }
   }
+
+  const buttonCopy = {
+    idle: "Complete Booking",
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isPending || isSubmitting ? "loading" : "idle";
+  }, [isPending, isSubmitting]);
 
   return (
     <div className="min-h-full pb-12">
@@ -194,8 +226,18 @@ export const FillAppointmentQuestionnaireForm = ({
                 Cancel
               </Button>
 
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                Complete Booking
+              <Button type="submit" disabled={isPending || isSubmitting}>
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                    initial={{ opacity: 0, y: -25 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 25 }}
+                    key={buttonState}
+                  >
+                    {buttonCopy[buttonState]}
+                  </motion.span>
+                </AnimatePresence>
               </Button>
             </div>
           </form>
