@@ -14,6 +14,7 @@ import { Appointment } from "@/types/appointment";
 import { capitalizeFirstLetter } from "@/lib/hooks";
 import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
+import { formatApptDate, formatApptTimeShort } from "@/lib/utils";
 
 export function AppointmentContainer() {
   const [, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -23,98 +24,28 @@ export function AppointmentContainer() {
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { data } = useGetAppointments({page:currentPage});
-  console.log(data);
+  const { data, isPending } = useGetAppointments({ page: currentPage });
+  console.log(data, "APPOINT");
 
-  const appointments: Appointment[] = [
-    {
-      id: "1",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Adeboyega Precious",
-      amount: "₦50,000",
-      bookedBy: "Work",
-      status: "Upcoming",
-    },
-    {
-      id: "2",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Jide Kosoko",
-      amount: "₦50,000",
-      bookedBy: "You",
-      status: "Upcoming",
-    },
-    {
-      id: "3",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Nneka Chukwu",
-      amount: "₦50,000",
-      bookedBy: "You",
-      status: "Completed",
-    },
-    {
-      id: "4",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Adebayo Salami",
-      amount: "₦50,000",
-      bookedBy: "You",
-      status: "Cancelled",
-    },
-    {
-      id: "5",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Diamond Tutu",
-      amount: "₦50,000",
-      bookedBy: "You",
-      status: "Completed",
-    },
-    {
-      id: "6",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Adebayo Bolaji",
-      amount: "₦50,000",
-      bookedBy: "You",
-      status: "Completed",
-    },
-    {
-      id: "7",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Baba Kauffat",
-      amount: "₦50,000",
-      bookedBy: "You",
-      status: "Completed",
-    },
-    {
-      id: "8",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Jibola Alarape",
-      amount: "₦50,000",
-      bookedBy: "You",
-      status: "Completed",
-    },
-    {
-      id: "9",
-      date: "Today",
-      time: "12:34pm",
-      consultant: "Eze Chinweu",
-      amount: "₦50,000",
-      bookedBy: "You",
-      status: "Completed",
-    },
-  ];
+  const appointments: Appointment[] = data?.map((item) => ({
+    id: item?.appointment_id,
+    date: formatApptDate(item.appt_date),
+    time: formatApptTimeShort(item?.appt_time),
+    amount: new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      minimumFractionDigits: 0,
+    }).format(item?.amount),
+    consultant: item?.provider_data?.name,
+    serviceOffered: item?.service_offer_name.split(' ').map((item)=> (item.charAt(0).toUpperCase() + item.split("").slice(1).join(""))).join(' '),
+    status: item?.status === 0 ? "Upcoming" : "Completed",
+  }));
 
   const headers = [
     { key: "date", value: "Date & Time" },
     { key: "consultant", value: "Consultant" },
     { key: "amount", value: "Amount" },
-    { key: "bookedBy", value: "Booked By" },
+    { key: "serviceOffered", value: "Service Offerred" },
     { key: "status", value: "Status" },
   ];
 
@@ -169,12 +100,13 @@ export function AppointmentContainer() {
           </CardHeader>
           <CardContent className="w-full">
             <TableCmp
-              data={appointments.map((apt) => ({
+              data={appointments?.map((apt) => ({
                 ...apt,
                 date: `${apt.date} • ${apt.time}`,
                 status: getStatusBadge(apt.status),
               }))}
-              onClickRow={handleAppointmentClick}
+              isLoading={isPending}
+              onClickRow={(value) => router.push(`/appointments/${value?.id}`)}
               headers={headers}
             />
 

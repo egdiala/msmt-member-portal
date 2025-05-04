@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAppointments } from "@/services/api/appointments";
 import { createQueryString } from "@/lib/utils";
-import { GetAppointmentsQuery } from "@/types/appointment";
+import { GetAppointmentsQuery, AppointmentType } from "@/types/appointment";
 
 export const useGetAppointments = (query?: GetAppointmentsQuery) => {
   const searchQuery = createQueryString(query!);

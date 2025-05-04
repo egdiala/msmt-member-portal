@@ -1,5 +1,3 @@
-"use client";
-
 import { Appointment } from "@/types/appointment";
 import { getStatusBadge } from "./get-status-badge";
 import { IconStethoscope } from "@/components/icons";
@@ -17,8 +15,12 @@ export function AppointmentListMobile({
 }: AppointmentListMobileProps) {
   return (
     <div className={`md:hidden  space-y-2 ${className}`}>
-      {appointments.map((appointment) => (
-        <Card appointment={appointment} key={appointment.id} onClick={() => onAppointmentClick} />
+      {appointments?.map((appointment) => (
+        <Card
+          appointment={appointment}
+          key={appointment.id}
+          onClick={() => onAppointmentClick}
+        />
       ))}
     </div>
   );
@@ -30,6 +32,7 @@ interface CardProps {
 }
 
 const Card = ({ appointment, onClick }: CardProps) => {
+  console.log( appointment?.serviceoffered, "SNSJSJSJ" )
   return (
     <div
       className=" rounded-xs p-3 bg-[#F6F8F9] grid gap-2 text-brand-1 "
@@ -52,7 +55,7 @@ const Card = ({ appointment, onClick }: CardProps) => {
       </div>
 
       <p className="flex justify-between text-xs text-brand-3">
-        Booked by: {appointment.bookedBy}
+        Service Type: {appointment?.serviceOffered}
       </p>
     </div>
   );

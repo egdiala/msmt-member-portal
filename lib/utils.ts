@@ -8,8 +8,12 @@ import {
   isToday,
   parse,
   parseISO,
+  isYesterday,
   startOfMonth,
+  setHours,
+  setMinutes
 } from "date-fns";
+
 import { LoginResponse } from "@/types/auth";
 import { UpdateProfileType } from "@/types/profile";
 import { FormOption } from "@/types/appointment";
@@ -196,6 +200,11 @@ export function formatTimeToHH(time: string): string {
   return format(timeObj, "HH"); // 'HH' gives the time in 24-hour format
 }
 
+export function formatApptTimeShort(hour: number): string {
+  const date = setMinutes(setHours(new Date(), hour), 0);
+  return format(date, "h a"); 
+}
+
 
 type QuestionOption = {
   question: string;
@@ -255,3 +264,15 @@ export function mapAnswersToData(questions: QuestionOption[], answers: Answers):
 
   return data;
 }
+
+
+
+
+export function formatApptDate(dateStr: string): string {
+  const date = parseISO(dateStr); 
+
+  if (isToday(date)) return "Today";
+  if (isYesterday(date)) return "Yesterday";
+  return format(date, "MMM d, yyyy"); 
+}
+
