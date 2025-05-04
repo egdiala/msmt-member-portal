@@ -279,7 +279,10 @@ export const FilterTransactionsPopover = ({
 
               <FilterContent
                 handleCloseFilter={() => setOpenMobileDrawer(false)}
-                applyFilter={applyFilter}
+                applyFilter={() => {
+                  applyFilter();
+                  setOpenMobileDrawer(!openMobileDrawer);
+                }}
                 selectedStatusOption={statusFilter}
                 setSelectedStatusOption={setStatusFilter}
                 selectedTypeOption={transactionTypeFilter}
