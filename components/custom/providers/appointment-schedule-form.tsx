@@ -339,12 +339,13 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
                   </p>
                 </div>
 
-                <Link
-                  href=""
-                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm"
+                <button
+                  type="button"
+                  onClick={() => navigate.back()}
+                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
                 >
                   Change
-                </Link>
+                </button>
               </div>
             </RenderIf>
           </div>
