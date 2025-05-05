@@ -31,7 +31,6 @@ export default function AppointmentDetails() {
   const { slug } = useParams();
   const [open, setOpen] = useState(false);
   const { data, isLoading } = useGetAppointmentsById(slug as string);
-  console.log(data, "DATA");
   const appointment = {
     id: "completed",
     psychologist: {

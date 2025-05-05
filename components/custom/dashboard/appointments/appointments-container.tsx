@@ -136,9 +136,7 @@ export function AppointmentContainer() {
               {/* Mobile list view */}
               <AppointmentListMobile
                 appointments={appointments}
-                onAppointmentClick={(appointment) =>
-                  router.push(`/appointments/${appointment?.id}`)
-                }
+              
               />
 
               {/* Pagination */}
