@@ -66,6 +66,10 @@ export const SingleOrganisationProviderContent = () => {
       member_id: userProfile?.user_id,
     });
 
+  const org_tier_id = userProfile?.org_data?.filter(
+    (val) => val?.org_id === id?.toString()
+  )?.[0]?.tier_id;
+
   const [filters, setFilters] = useState<Record<string, any>>({});
   const { data: requestVariables } = useMultipleRequestVariables([
     "service-offering",
@@ -110,6 +114,7 @@ export const SingleOrganisationProviderContent = () => {
   >({
     org_id: id!.toString(),
     ...(value ? { q: value } : {}),
+    ...(org_tier_id ? { tier_id: org_tier_id } : {}),
     ...filters,
   });
 

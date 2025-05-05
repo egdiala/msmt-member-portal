@@ -191,7 +191,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 <RenderIf condition={isLoggedIn}>
                   <Button asChild className="hidden md:inline-flex">
                     <Link
-                      href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                      href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
                     >
                       <IconPlus className="stroke-white" />
                       Book An Appointment
@@ -207,7 +207,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
                     }}
                   >
                     <Link
-                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
                     >
                       <IconPlus className="stroke-white" />
                       Book An Appointment
@@ -295,7 +295,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
           <RenderIf condition={isLoggedIn}>
             <Button asChild className="flex md:hidden">
               <Link
-                href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
               >
                 <IconPlus className="stroke-white" />
                 Book An Appointment
@@ -307,7 +307,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
               className="flex md:hidden"
               onClick={() => {
                 router.push(
-                  `/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`
+                  `/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`
                 );
                 setStep(2);
               }}

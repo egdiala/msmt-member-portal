@@ -65,6 +65,12 @@ export type UserProfileType = {
   createdAt: string;
   updatedAt: string;
   user_id: string;
-  org_data: any[];
+  org_data: {
+    avatar: string;
+    industry_name: string;
+    name: string;
+    org_id: string;
+    tier_id: string;
+  }[];
   funding_unitrate: number;
 };

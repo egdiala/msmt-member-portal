@@ -53,7 +53,6 @@ import {
   useGetProviderSchedule,
   useGetServiceProviders,
 } from "@/services/hooks/queries/use-providers";
-import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { useBookSelfAppointment } from "@/services/hooks/mutations/use-booking";
 import {
   FetchedProviderSchedule,
@@ -97,10 +96,6 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
     user_type: "org",
     account_service_type: "payer",
   });
-
-  const { data: requestVariables } = useMultipleRequestVariables([
-    "service-offering",
-  ]);
 
   const paymentMethods = [
     { id: 1, name: "Wallet", icon: IconWallet },
@@ -218,9 +213,14 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
     const dataToBeSent = {
       provider_id: provider_id,
-      service_offer_id: requestVariables["service-offering"]?.filter(
-        (val: { name: string }) => val.name === values.service
-      )[0]?.service_offer_id,
+      service_offer_id:
+        account_service_type === "provider" && user_type === "org"
+          ? orgInfo?.service_data?.filter(
+              (val: { name: string }) => val.name === values.service
+            )[0]?.service_offer_id ?? ""
+          : providerInfo?.service_data?.filter(
+              (val: { name: string }) => val.name === values.service
+            )[0]?.service_offer_id ?? "",
       appt_date: format(values.appointmentDate, "yyyy-MM-dd"),
       appt_time:
         formattedSlots?.filter(
@@ -365,14 +365,26 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
                     <FormItem>
                       <FormControl>
                         <SelectCmp
-                          selectItems={requestVariables[
-                            "service-offering"
-                          ]?.map((val: { name: string }, index: number) => {
-                            return {
-                              id: index,
-                              value: val?.name,
-                            };
-                          })}
+                          selectItems={
+                            account_service_type === "provider" &&
+                            user_type === "org"
+                              ? orgInfo?.service_data?.map(
+                                  (val: { name: string }, index: number) => {
+                                    return {
+                                      id: index,
+                                      value: val?.name,
+                                    };
+                                  }
+                                ) ?? []
+                              : providerInfo?.service_data?.map(
+                                  (val: { name: string }, index: number) => {
+                                    return {
+                                      id: index,
+                                      value: val?.name,
+                                    };
+                                  }
+                                ) ?? []
+                          }
                           onSelect={(val) => field.onChange(val)}
                           placeholder="Select Service"
                           {...field}
