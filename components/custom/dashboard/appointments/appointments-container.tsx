@@ -34,7 +34,10 @@ export function AppointmentContainer() {
   const router = useRouter();
 
   const handleApplyFilters = (filters: Record<string, any>) => {
-    setAppliedFilters({ ...appliedFilters, ...filters });
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => value !== undefined)
+    );
+    setAppliedFilters(cleanFilters);
   };
 
   const handlePageChange = (page: number) => {
