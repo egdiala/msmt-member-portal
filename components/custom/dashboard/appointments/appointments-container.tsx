@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {  useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppointmentSearch } from "./appointment-search";
 import { AppliedFilters } from "./applied-filters";
@@ -58,6 +58,7 @@ export function AppointmentContainer() {
   const { data, isPending } = useGetAppointments({
     page: currentPage.toString(),
     status: appliedFilters.status,
+    item_per_page: itemsPerPage.toString(),
     start_date: appliedFilters.fromDate,
     end_date: appliedFilters.toDate,
   });
@@ -134,10 +135,7 @@ export function AppointmentContainer() {
               />
 
               {/* Mobile list view */}
-              <AppointmentListMobile
-                appointments={appointments}
-              
-              />
+              <AppointmentListMobile appointments={appointments} />
 
               {/* Pagination */}
               <PaginationCmp

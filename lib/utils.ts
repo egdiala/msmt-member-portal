@@ -201,7 +201,7 @@ export function formatTimeToHH(time: string): string {
 
 export function formatApptTimeShort(hour: number): string {
   const date = setMinutes(setHours(new Date(), hour), 0);
-  return format(date, "h a");
+  return format(date, "h:mm a");
 }
 
 type QuestionOption = {
@@ -278,7 +278,7 @@ export const isEmpty = (obj: unknown): boolean => {
   return !obj || Object.keys(obj).length === 0;
 };
 
-export function getSessionStatus(statusCode: number): string {
+export function getSessionStatus(statusCode: number | string): string {
   switch (statusCode) {
     case 1:
       return "Upcoming";
@@ -288,6 +288,8 @@ export function getSessionStatus(statusCode: number): string {
       return "Completed";
     case 4:
       return "Canceled";
+    case "":
+      return "All";
     default:
       return "Unknown";
   }

@@ -93,6 +93,7 @@ export const UpcomingAppointmentCard = ({
                       <p className="text-text-2 text-xs capitalize">
                         {mostRecent?.provider_data?.specialty}
                       </p>
+
                       <div className="flex gap-x-1 items-center">
                         <IconStarFull className="fill-actions-amber size-4" />
                         <p className="text-xs text-text-1">4.5</p>
