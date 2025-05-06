@@ -15,6 +15,13 @@ export const completeOrgBooking = async (
   return res.data;
 };
 
+export const getBookOrganization = async (booking_link: string) => {
+  const res = await axiosBookingService.get(
+    `/users/requests/org-bookings/${booking_link}`
+  );
+  return res.data;
+};
+
 export const submitOrgBookingQuestionnaire = async (
   payload: BookingQuestionnaireType
 ) => {

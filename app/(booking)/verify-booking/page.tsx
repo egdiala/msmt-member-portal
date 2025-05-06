@@ -22,6 +22,7 @@ import { z } from "zod";
 import { AnimatePresence, motion } from "motion/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useValidateOrgBooking } from "@/services/hooks/mutations/use-appointment";
+import { useGetBookOrganization } from "@/services/hooks/queries/use-booking";
 const formSchema = z.object({
   code: z
     .string()
@@ -34,9 +35,12 @@ type FormValues = z.infer<typeof formSchema>;
 const VerifyBooking = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const {data} = useGetBookOrganization(token as string)
   const { mutate, isPending } = useValidateOrgBooking(() => {
     localStorage.setItem("booking-link", token!);
   });
+
+  console.log(data, "STAS")
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { code: "" },

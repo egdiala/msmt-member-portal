@@ -70,7 +70,7 @@ export const ProfileCard = () => {
             <h4 className="text-text-2 text-xs">Your organisation(s)</h4>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <RenderIf condition={organizationsData!.length > 0}>
+              <RenderIf condition={!!organizationsData?.length}>
                 {organizationsData?.map((organisation) => (
                   <Link
                     key={organisation.id}
@@ -92,7 +92,7 @@ export const ProfileCard = () => {
                 ))}
               </RenderIf>
 
-              <RenderIf condition={organizationsData!.length === 0}>
+              <RenderIf condition={organizationsData?.length === 0}>
                 <div className="w-full flex justify-center items-center">
                   <EmptyState
                     title=""
