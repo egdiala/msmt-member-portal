@@ -9,8 +9,6 @@ const publicRoutes = [
   "/set-password",
   "/verify-email",
   "/verify-booking",
-  "/complete-booking/providers/individual/:id",
-  "/complete-booking/providers/organization/:id/single/:uid",
   "/complete-booking",
 ];
 

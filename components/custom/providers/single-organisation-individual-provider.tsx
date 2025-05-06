@@ -148,7 +148,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
             </Avatar>
 
             <div className="grid gap-y-3 w-full">
-              <div className="grid gap-y-1">
+              <div className="grid gap-y-1 capitalize">
                 <h3 className="text-xl font-bold text-brand-1">{data?.name}</h3>
                 <p className="text-brand-2 capitalize">{data?.specialty}</p>
                 <div className="flex items-center gap-x-1 text-sm text-brand-1">
@@ -191,7 +191,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 <RenderIf condition={isLoggedIn}>
                   <Button asChild className="hidden md:inline-flex">
                     <Link
-                      href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                      href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
                     >
                       <IconPlus className="stroke-white" />
                       Book An Appointment
@@ -207,7 +207,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
                     }}
                   >
                     <Link
-                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
                     >
                       <IconPlus className="stroke-white" />
                       Book An Appointment
@@ -295,7 +295,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
           <RenderIf condition={isLoggedIn}>
             <Button asChild className="flex md:hidden">
               <Link
-                href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`}
+                href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
               >
                 <IconPlus className="stroke-white" />
                 Book An Appointment
@@ -307,7 +307,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
               className="flex md:hidden"
               onClick={() => {
                 router.push(
-                  `/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${user_account_type}`
+                  `/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`
                 );
                 setStep(2);
               }}

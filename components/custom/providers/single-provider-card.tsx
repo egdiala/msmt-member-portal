@@ -123,7 +123,7 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
 
       <div className="grid gap-y-4 py-1 px-0.5">
         <div className="grid gap-y-0.5">
-          <h2 className="font-medium text-brand-1 text-[10px] md:text-base">
+          <h2 className="font-medium text-brand-1 text-[10px] md:text-base capitalize">
             {provider?.provider_data?.name}
           </h2>
 

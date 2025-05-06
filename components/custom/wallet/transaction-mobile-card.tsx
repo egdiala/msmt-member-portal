@@ -1,29 +1,31 @@
 import { IconStethoscope } from "@/components/icons";
-import { cn } from "@/lib/utils";
+import { RenderIf } from "@/components/shared";
+import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { WALLET_TRANSACTION_TYPE_FILTER_ENUM } from "@/lib/constants";
+import { cn, formatTableDate } from "@/lib/utils";
+import { FetchedWalletTransactionsType } from "@/types/wallet";
 
-interface ITransactionMobileCard {
-  id: string | number;
-  type: string;
-  status: string;
-  description: string;
-  date: string;
-  time: string;
-  amount: string;
-}
-export const TransactionMobileCard = (transaction: ITransactionMobileCard) => {
+export const TransactionMobileCard = (
+  transaction: FetchedWalletTransactionsType
+) => {
   return (
     <div
-      key={transaction.id}
+      key={transaction.transaction_id}
       className="bg-input-field px-3 py-4 grid gap-y-2 rounded-sm"
     >
       <div className="flex items-center justify-between font-medium text-xs capitalize">
-        <h3 className="text-brand-1">{transaction.type}</h3>
+        <h3 className="text-brand-1 capitalize">
+          {WALLET_TRANSACTION_TYPE_FILTER_ENUM[transaction.transaction_type]}
+        </h3>
         <p
           className={cn(
-            transaction.status === "success" ? "text-green-600" : "text-red-600"
+            "capitalize",
+            transaction.status === 1 ? "text-green-500" : "text-red-500"
           )}
         >
-          {transaction.status}
+          <RenderIf condition={transaction.status === 1}>Successful</RenderIf>
+          <RenderIf condition={transaction.status === 2}>Failed</RenderIf>
+          <RenderIf condition={transaction.status === 3}>Abandoned</RenderIf>
         </p>
       </div>
 
@@ -39,12 +41,14 @@ export const TransactionMobileCard = (transaction: ITransactionMobileCard) => {
           </div>
 
           <p className="text-brand-3 text-xs">
-            {transaction.date} • {transaction.time}
+            {transaction.createdAt
+              ? formatTableDate(transaction.createdAt)
+              : ""}
           </p>
         </div>
 
         <p className="text-brand-2 font-medium text-xs">
-          ₦{transaction.amount}
+          {formatNumberWithCommas(transaction.amount ?? 0)}
         </p>
       </div>
     </div>

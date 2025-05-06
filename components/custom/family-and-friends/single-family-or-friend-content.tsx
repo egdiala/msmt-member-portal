@@ -7,11 +7,11 @@ import { Avatar, AvatarFallback, Badge, Button } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { cn } from "@/lib/utils";
+import { capitalizeFirstLetter } from "@/lib/hooks";
 import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-and-friends";
 import { FetchedSingleFamilyOrFriendType } from "@/types/family-and-friends";
 import { RemoveMemberModal } from "./remove-member-modal";
 import { ActivateMemberModal } from "./activate-member-modal";
-import { capitalizeFirstLetter } from "@/lib/hooks";
 
 export const SingleFamilyOrFriendContent = () => {
   const { id } = useParams();
@@ -72,14 +72,14 @@ export const SingleFamilyOrFriendContent = () => {
                 </Avatar>
 
                 <div className="grid gap-y-0.5">
-                  <h4 className="text-2xl font-bold text-brand-1">
+                  <h4 className="text-2xl font-bold text-brand-1 capitalize">
                     {user?.first_name} {user?.last_name}
                   </h4>
                   <p className="text-sm text-brand-2">{user?.email}</p>
                 </div>
               </div>
 
-              <div className="flex items-start md:items-center gap-4 flex-col md:flex-row">
+              <div className="flex items-start md:items-center gap-4">
                 <Button
                   variant="secondary"
                   onClick={() => setOpenRemoveMemberModal(true)}

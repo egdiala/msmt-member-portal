@@ -1,7 +1,7 @@
 export interface FetchFamilyAndFriendsQuery {
   item_per_page?: string;
   page?: string;
-  component?: "count" | "count-relationship";
+  component?: "count" | "count-relationship" | "payment-option";
   q?: string;
   familyfriend_id?: string;
 }
@@ -60,4 +60,9 @@ export interface FetchedSingleFamilyOrFriendType {
   total_spent: number;
   gender: string;
   phone_number: string;
+}
+
+export interface FetchedPaymentOptionFamilyType {
+  familyfriend_id: string;
+  familyfriend_name: string;
 }

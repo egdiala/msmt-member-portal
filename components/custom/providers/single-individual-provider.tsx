@@ -65,7 +65,7 @@ export const SingleIndividualProviderContent = () => {
     {
       id: 2,
       title: "Special Training",
-      value: data?.special_training_data.map((item) => item.name).join(", "),
+      value: data?.special_training_data?.map((item) => item.name).join(", "),
     },
   ];
 
@@ -137,12 +137,12 @@ export const SingleIndividualProviderContent = () => {
             </Avatar>
 
             <div className="grid gap-y-3 w-full">
-              <div className="grid gap-y-1">
+              <div className="grid gap-y-1 capitalize">
                 <h3 className="text-xl font-bold text-brand-1">{data?.name}</h3>
                 <p className="text-brand-2 capitalize">{data?.specialty}</p>
                 <div className="flex items-center gap-x-1 text-sm text-brand-1">
                   <IconStarFull className="fill-actions-amber size-5" />
-                  {data?.rating.toFixed(1)}
+                  {data?.rating?.toFixed(1)}
                 </div>
               </div>
 
@@ -202,7 +202,7 @@ export const SingleIndividualProviderContent = () => {
           </div>
 
           <div className="border border-divider rounded-lg px-5 py-4 grid gap-y-5">
-            {providerInfo.map((info) => (
+            {providerInfo?.map((info) => (
               <div key={info.id} className="grid gap-y-2">
                 <p className="text-sm text-brand-2">{info.title}</p>
                 <p className="text-brand-1">{info.value}</p>
@@ -226,7 +226,7 @@ export const SingleIndividualProviderContent = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            {cardStats.map((stat) => (
+            {cardStats?.map((stat) => (
               <div
                 key={stat.id}
                 className="grid gap-2 border border-divider rounded-lg px-5 py-4"
