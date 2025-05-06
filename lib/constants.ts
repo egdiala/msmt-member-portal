@@ -259,4 +259,4 @@ export const MAIN_SECTION_INFO = [
 ];
 
 export const TOAST_STYLING =
-  "flex items-center gap-x-2 p-5 !text-white rounded-md";
+  "flex items-center gap-x-2 p-3 !text-white rounded-lg";
