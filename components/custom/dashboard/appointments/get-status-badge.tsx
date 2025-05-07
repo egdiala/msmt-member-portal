@@ -12,7 +12,7 @@ export function getStatusBadge(status: string) {
           Completed
         </span>
       );
-    case "Cancelled":
+    case "Canceled":
       return (
         <span className="text-[#DD2418] font-medium text-xs md:text-sm">
           Cancelled
