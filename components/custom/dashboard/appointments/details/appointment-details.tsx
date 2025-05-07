@@ -9,7 +9,6 @@ import {
   IconClock,
   IconExternalLink,
 } from "@/components/icons";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
 import { Loader } from "@/components/shared/loader";
