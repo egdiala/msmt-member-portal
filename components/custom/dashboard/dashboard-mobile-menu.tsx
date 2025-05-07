@@ -56,7 +56,7 @@ export const DashboardMobileMenu = ({
               </Link>
             ))}
 
-            <Button asChild>
+            <Button asChild onClick={handleClose}>
               <Link href="/providers">Book An Appointment</Link>
             </Button>
           </div>

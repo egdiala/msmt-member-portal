@@ -19,10 +19,11 @@ export const getFamilyAndFriends = async (
 export const getSingleFamilyOrFriend = async (
   query: FetchFamilyAndFriendsQuery
 ) => {
+  const { familyfriend_id, ...rest } = query;
   const res = await axiosUserService.get(
     `${FAMILY_AND_FRIENDS_BASE_URL}/${
       query.familyfriend_id
-    }/${createQueryString(query)}`
+    }/${createQueryString(rest)}`
   );
   return res.data;
 };

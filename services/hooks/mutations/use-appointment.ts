@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import {
   completeOrgBooking,
+  submitOrgBookingQuestionnaire,
   validateOrgBooking,
 } from "@/services/api/appointment";
 import { useQueryClient, InvalidateQueryFilters } from "@tanstack/react-query";
@@ -10,6 +11,7 @@ import {
   SessionRatingPayload,
 } from "@/types/appointment";
 import { toast } from "sonner";
+import { BookingQuestionnaireType } from "@/types/booking";
 
 export const useCompleteOrgBooking = (fn?: (res: any) => void) => {
   return useMutation({
@@ -17,6 +19,22 @@ export const useCompleteOrgBooking = (fn?: (res: any) => void) => {
       completeOrgBooking(payload),
     onSuccess: (res: any) => {
       toast.success("Booking completed successfully!");
+      fn?.(res);
+    },
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.msg || "Booking failed. Please try again."
+      );
+    },
+  });
+};
+
+export const useSubmitOrgBookingQuestionnaire = (fn?: (res: any) => void) => {
+  return useMutation({
+    mutationFn: (payload: BookingQuestionnaireType) =>
+      submitOrgBookingQuestionnaire(payload),
+    onSuccess: (res: any) => {
+      toast.success("Booking questionnaire has been successfully submitted!");
       fn?.(res);
     },
     onError: (err: any) => {

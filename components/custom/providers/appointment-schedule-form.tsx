@@ -1,4 +1,5 @@
 "use client";
+
 import Cookies from "js-cookie";
 import { Dispatch, SetStateAction, useState, useMemo } from "react";
 import Link from "next/link";
@@ -35,6 +36,7 @@ import {
   IconVideo,
   IconWallet,
   IconArrowDown,
+  IconUsers,
 } from "@/components/icons";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader } from "@/components/shared/loader";
@@ -51,49 +53,58 @@ import {
   useGetProviderSchedule,
   useGetServiceProviders,
 } from "@/services/hooks/queries/use-providers";
-import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 import { useBookSelfAppointment } from "@/services/hooks/mutations/use-booking";
 import {
   FetchedProviderSchedule,
   FetchedProviderScheduleTimes,
+  FetchOrganizationProvider,
   FetchSingleProvider,
 } from "@/types/providers";
 import { useCompleteOrgBooking } from "@/services/hooks/mutations/use-appointment";
+import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-and-friends";
+import { FetchedPaymentOptionFamilyType } from "@/types/family-and-friends";
 
 interface ISetScheduleStep {
-  isOrganisation?: boolean;
   setStep: Dispatch<SetStateAction<string | number>>;
 }
-export const SetScheduleStep = ({
-  // eslint-disable-next-line
-  isOrganisation,
-  setStep,
-}: ISetScheduleStep) => {
+export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
   const navigate = useRouter();
 
   const searchParams = useSearchParams();
   const provider_id = searchParams.get("provider_id") as string;
+  const org_id = searchParams.get("org_id") as string;
   const user_type = searchParams.get("type") as "provider" | "org";
   const account_service_type = searchParams.get("service_type") as
     | "provider"
     | "payer";
 
+  const { data: familyFriendInfo } =
+    useGetSingleFamilyOrFriend<FetchedPaymentOptionFamilyType>({
+      familyfriend_id: provider_id,
+      component: "payment-option",
+    });
+
   const { data: providerInfo, isLoading: isLoadingProviderInfo } =
     useGetServiceProviders<FetchSingleProvider>({
       user_id: provider_id?.toString(),
-      user_type: user_type,
-      account_service_type: account_service_type,
+      user_type: "provider",
+      account_service_type: "provider",
     });
 
-  const { data: requestVariables } = useMultipleRequestVariables([
-    "service-offering",
-  ]);
+  const { data: orgInfo } = useGetServiceProviders<FetchOrganizationProvider>({
+    user_id: org_id?.toString(),
+    user_type: "org",
+    account_service_type: "payer",
+  });
 
-  const paymentMethods = [{ id: 1, name: "Wallet", icon: IconWallet }];
+  const paymentMethods = [
+    { id: 1, name: "Wallet", icon: IconWallet },
+    ...(familyFriendInfo && familyFriendInfo?.familyfriend_id
+      ? [{ id: 2, name: "Family", icon: IconUsers }]
+      : []),
+  ];
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState([
-    "Family",
-  ]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("Wallet");
 
   const isLoggedIn = Cookies.get("authToken");
 
@@ -181,7 +192,7 @@ export const SetScheduleStep = ({
     mode: "onChange",
     defaultValues: {
       service: "",
-      paymentMethod: [],
+      paymentMethod: "",
       appointmentDate: new Date(),
       appointmentTime: "",
       communicationPreference: "",
@@ -195,16 +206,21 @@ export const SetScheduleStep = ({
 
   const { mutate: completeOrgBooking, isPending: isSubmitting } =
     useCompleteOrgBooking((res) => {
-      console.log(res);
+      localStorage.setItem("booking-appointment-id", res?.appointment_id);
       setStep(3);
     });
 
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
     const dataToBeSent = {
       provider_id: provider_id,
-      service_offer_id: requestVariables["service-offering"]?.filter(
-        (val: { name: string }) => val.name === values.service
-      )[0]?.service_offer_id,
+      service_offer_id:
+        account_service_type === "provider" && user_type === "org"
+          ? orgInfo?.service_data?.filter(
+              (val: { name: string }) => val.name === values.service
+            )[0]?.service_offer_id ?? ""
+          : providerInfo?.service_data?.filter(
+              (val: { name: string }) => val.name === values.service
+            )[0]?.service_offer_id ?? "",
       appt_date: format(values.appointmentDate, "yyyy-MM-dd"),
       appt_time:
         formattedSlots?.filter(
@@ -214,6 +230,15 @@ export const SetScheduleStep = ({
         | "video"
         | "audio",
       time_zone: new Date().getTimezoneOffset()?.toString(),
+      ...(selectedPaymentMethod === "Family"
+        ? { familyuser_id: familyFriendInfo?.familyfriend_id }
+        : {}),
+      ...(account_service_type === "provider"
+        ? { org_provider_id: orgInfo?.user_id }
+        : {}),
+      ...(account_service_type === "payer"
+        ? { org_payer_id: orgInfo?.user_id }
+        : {}),
     };
     if (!!isLoggedIn) {
       mutate(dataToBeSent);
@@ -263,18 +288,20 @@ export const SetScheduleStep = ({
                   <AvatarImage
                     className="object-cover"
                     src={
-                      providerInfo?.avatar ||
-                      "/assets/blank-profile-picture.png"
+                      org_id
+                        ? orgInfo?.avatar || "/assets/blank-profile-picture.png"
+                        : providerInfo?.avatar ||
+                          "/assets/blank-profile-picture.png"
                     }
                   />
                 </Avatar>
 
                 <div className="grid gap-y-0.5">
                   <h3 className="font-semibold text-brand-1">
-                    {providerInfo?.name}
+                    {org_id ? orgInfo?.name : providerInfo?.name}
                   </h3>
                   <p className="text-brand-2 text-xs capitalize">
-                    {providerInfo?.specialty}
+                    {org_id ? orgInfo?.industry_name : providerInfo?.specialty}
                   </p>
                 </div>
               </div>
@@ -288,6 +315,7 @@ export const SetScheduleStep = ({
                   <Link href="/providers">Change</Link>
                 </Button>
               </RenderIf>
+
               <RenderIf condition={!isLoggedIn}>
                 <button
                   onClick={() => navigate.back()}
@@ -311,12 +339,13 @@ export const SetScheduleStep = ({
                   </p>
                 </div>
 
-                <Link
-                  href=""
-                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm"
+                <button
+                  type="button"
+                  onClick={() => navigate.back()}
+                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
                 >
                   Change
-                </Link>
+                </button>
               </div>
             </RenderIf>
           </div>
@@ -337,14 +366,26 @@ export const SetScheduleStep = ({
                     <FormItem>
                       <FormControl>
                         <SelectCmp
-                          selectItems={requestVariables[
-                            "service-offering"
-                          ]?.map((val: { name: string }, index: number) => {
-                            return {
-                              id: index,
-                              value: val?.name,
-                            };
-                          })}
+                          selectItems={
+                            account_service_type === "provider" &&
+                            user_type === "org"
+                              ? orgInfo?.service_data?.map(
+                                  (val: { name: string }, index: number) => {
+                                    return {
+                                      id: index,
+                                      value: val?.name,
+                                    };
+                                  }
+                                ) ?? []
+                              : providerInfo?.service_data?.map(
+                                  (val: { name: string }, index: number) => {
+                                    return {
+                                      id: index,
+                                      value: val?.name,
+                                    };
+                                  }
+                                ) ?? []
+                          }
                           onSelect={(val) => field.onChange(val)}
                           placeholder="Select Service"
                           {...field}
@@ -366,78 +407,76 @@ export const SetScheduleStep = ({
                 </p>
               </div>
 
-              <div className="border-t border-divider"></div>
+              <RenderIf
+                condition={
+                  !!familyFriendInfo &&
+                  !!familyFriendInfo?.familyfriend_id &&
+                  account_service_type !== "payer"
+                }
+              >
+                <div className="border-t border-divider"></div>
 
-              <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
-                <p className="font-medium text-sm text-brand-1">
-                  Payment Method
-                </p>
+                <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+                  <p className="font-medium text-sm text-brand-1">
+                    Payment Method
+                  </p>
 
-                <FormField
-                  control={form.control}
-                  name="paymentMethod"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex items-center gap-x-2">
-                          {paymentMethods.map(
-                            (method: {
-                              name: string;
-                              id: number;
-                              icon: any;
-                            }) => (
-                              <div
-                                key={method.id}
-                                onClick={() => {
-                                  if (
-                                    selectedPaymentMethod.includes(method.name)
-                                  ) {
-                                    const newVal = selectedPaymentMethod.filter(
-                                      (val) => val !== method.name
-                                    );
-                                    setSelectedPaymentMethod(newVal);
-                                    field.onChange(newVal);
-                                  } else {
-                                    const newVal = [
-                                      ...selectedPaymentMethod,
-                                      method.name,
-                                    ];
-                                    setSelectedPaymentMethod(newVal);
-                                    field.onChange(newVal);
-                                  }
-                                }}
-                                className="flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400"
-                              >
-                                {selectedPaymentMethod.includes(method.name) ? (
-                                  <Checkbox
-                                    checked={selectedPaymentMethod.includes(
-                                      method.name
-                                    )}
-                                  />
-                                ) : (
-                                  <method.icon className="stroke-brand-3 size-3.5" />
-                                )}
-
-                                <p
-                                  className={cn(
-                                    "text-sm",
-                                    selectedPaymentMethod.includes(method.name)
-                                      ? "text-button-primary"
-                                      : "text-brand-2"
-                                  )}
+                  <FormField
+                    control={form.control}
+                    name="paymentMethod"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex items-center gap-x-2">
+                            {paymentMethods.map(
+                              (method: {
+                                name: string;
+                                id: number;
+                                icon: any;
+                              }) => (
+                                <div
+                                  key={method.id}
+                                  onClick={() => {
+                                    setSelectedPaymentMethod(method.name);
+                                    field.onChange(method.name);
+                                  }}
+                                  className="flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400"
                                 >
-                                  {method.name}
-                                </p>
-                              </div>
-                            )
-                          )}
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                                  {selectedPaymentMethod.includes(
+                                    method.name
+                                  ) ? (
+                                    <Checkbox
+                                      checked={selectedPaymentMethod.includes(
+                                        method.name
+                                      )}
+                                    />
+                                  ) : (
+                                    <method.icon className="stroke-brand-3 size-3.5" />
+                                  )}
+
+                                  <p
+                                    className={cn(
+                                      "text-sm",
+                                      selectedPaymentMethod.includes(
+                                        method.name
+                                      )
+                                        ? "text-button-primary"
+                                        : "text-brand-2"
+                                    )}
+                                  >
+                                    {method.name}
+                                  </p>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </RenderIf>
 
               <div className="border-t border-divider"></div>
 

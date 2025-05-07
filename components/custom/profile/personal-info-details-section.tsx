@@ -2,12 +2,7 @@
 
 import { useRef, useState } from "react";
 import { IconPen, IconCamera } from "@/components/icons";
-import {
-  Button,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui";
+import { Button, Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { UpdateProfileDetailsModal } from "./update-profile-details-modal";
 import { useUploadAvatar } from "@/services/hooks/mutations/use-profile";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
@@ -52,7 +47,9 @@ export const PersonalInfoDetailsSection = () => {
                 src={
                   avatar instanceof File
                     ? URL.createObjectURL(avatar)
-                    : avatar || data?.avatar || "/placeholder.svg"
+                    : avatar ||
+                      data?.avatar ||
+                      "/assets/blank-profile-picture.png"
                 }
                 className="object-cover w-full h-full"
                 alt={`${data?.first_name} ${data?.last_name}`}
