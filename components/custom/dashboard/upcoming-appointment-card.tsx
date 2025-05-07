@@ -17,7 +17,10 @@ import {
 import { Button } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
-import { useCancelAppointment } from "@/services/hooks/mutations/use-appointment";
+import {
+  useCancelAppointment,
+  useCancelAppointmentWithoutNotice,
+} from "@/services/hooks/mutations/use-appointment";
 import { formatSessionDate } from "./appointments/details/appointment-details";
 import { formatApptTimeShort, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -31,6 +34,10 @@ export const UpcomingAppointmentCard = () => {
   const { mutate, isPending: isCancelling } = useCancelAppointment(() => {
     setOpenCancelModal(true);
   });
+  const { mutate: cancelAppointment, isPending: isRemoving } =
+    useCancelAppointmentWithoutNotice(() => {
+      setOpenCancelModal(false);
+    });
   const mostRecent = !!live?.length ? live?.[0] : data?.[0];
 
   const buttonCopy = {
@@ -40,7 +47,7 @@ export const UpcomingAppointmentCard = () => {
 
   const buttonState = useMemo(() => {
     return isCancelling ? "loading" : "idle";
-  }, [isPending]);
+  }, [isCancelling]);
 
   return (
     <AnimatePresence mode="popLayout">
@@ -153,7 +160,7 @@ export const UpcomingAppointmentCard = () => {
             </div>
           )}
 
-          <div className="flex justify-between lg:pt-5">
+          <div className="flex justify-between items-center lg:pt-5">
             <Button
               asChild
               variant="secondary"
@@ -175,7 +182,7 @@ export const UpcomingAppointmentCard = () => {
                     })
                   }
                   variant="outline"
-                  className="py-2 px-4 rounded-full w-41"
+                  className="py-2 px-4 rounded-full w-20"
                 >
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span
@@ -198,7 +205,12 @@ export const UpcomingAppointmentCard = () => {
             </RenderIf>
 
             <CancelAppointmentDialog
-              onCancel={() => {}}
+              onCancel={() =>
+                cancelAppointment({
+                  appointment_id: mostRecent?.appointment_id as string,
+                })
+              }
+              isRemoving={isRemoving}
               open={openCancelModal}
               onOpenChange={setOpenCancelModal}
             />

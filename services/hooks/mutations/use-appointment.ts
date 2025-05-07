@@ -79,7 +79,30 @@ export const useSubmitSessionRating = (
   });
 };
 
+
 export const useCancelAppointment = (
+  onSuccessCallback?: (res: any) => void
+) => {
+  // const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: cancelAppointment,
+    onSuccess: (res: any) => {
+      // toast.success("Appointment cancelled successfully.");
+      // queryClient.invalidateQueries([
+      //   "get-appointments",
+      // ] as InvalidateQueryFilters);
+      onSuccessCallback?.(res);
+    },
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.msg || "Failed."
+      );
+    },
+  });
+};
+
+
+export const useCancelAppointmentWithoutNotice = (
   onSuccessCallback?: (res: any) => void
 ) => {
   const queryClient = useQueryClient();
@@ -99,3 +122,7 @@ export const useCancelAppointment = (
     },
   });
 };
+
+
+
+
