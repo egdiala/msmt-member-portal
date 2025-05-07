@@ -13,7 +13,6 @@ import {
 import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
 import { AppointmentListMobile } from "./appointments-list-mobile";
 import { PaginationCmp, BreadcrumbCmp } from "@/components/shared";
-import { UpcomingAppointmentCard } from "../upcoming-appointment-card";
 import { getStatusBadge } from "./get-status-badge";
 import { Appointment } from "@/types/appointment";
 import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
@@ -30,7 +29,6 @@ export function AppointmentContainer() {
   const itemsPerPage = 10;
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
-  const [openCancelModal, setOpenCancelModal] = useState(false);
   const router = useRouter();
 
   const handleApplyFilters = (filters: Record<string, any>) => {
@@ -107,8 +105,8 @@ export function AppointmentContainer() {
         ]}
       />
 
-      <div className="w-full grid gap-y-4 lg:grid-cols-3 gap-x-6">
-        <Card className="p-3 md:p-6 shadow-none border-none lg:col-span-2">
+      <div className="w-full grid gap-y-4 gap-x-6">
+        <Card className="p-3 md:p-6 shadow-none border-none">
           <CardHeader className="gap-4 md:gap-5 pb-0">
             <CardTitle className="text-brand-1 font-bold text-base">
               Appointments
@@ -157,15 +155,8 @@ export function AppointmentContainer() {
             </CardContent>
           </RenderIf>
         </Card>
-        <div className="h-fit w-full lg:w-full col-span-1">
-          <UpcomingAppointmentCard onCancel={() => setOpenCancelModal(true)} />
-        </div>
       </div>
-      <CancelAppointmentDialog
-        onCancel={() => {}}
-        open={openCancelModal}
-        onOpenChange={setOpenCancelModal}
-      />
+
     </div>
   );
 }

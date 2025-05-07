@@ -2,34 +2,37 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { CancelAppointmentDialog } from "./appointments/cancel-appointments-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AnimatePresence, motion } from "motion/react";
 import {
   IconCalendarCheck2,
   IconClock,
   IconExternalLink,
-  IconHeart,
-  IconStarFull,
+  // IconHeart,
+  // IconStarFull,
 } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
+import { useCancelAppointment } from "@/services/hooks/mutations/use-appointment";
 import { formatSessionDate } from "./appointments/details/appointment-details";
 import { formatApptTimeShort, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { BLUR_VARIANTS } from "@/lib/constants";
+import { RenderIf } from "@/components/shared";
 
-export const UpcomingAppointmentCard = ({
-  onCancel,
-}: {
-  onCancel?: () => void;
-}) => {
-  const pathname = usePathname();
-  const isAppointmentPage = pathname.includes("/appointments");
+export const UpcomingAppointmentCard = () => {
+  const [openCancelModal, setOpenCancelModal] = useState(false);
   const { data, isPending } = useGetAppointments({ status: "1" });
-
-  const mostRecent = data?.[0];
+  const { data: live } = useGetAppointments({ status: "2" });
+  const [notice, setNotice] = useState("");
+  const { mutate, isPending: isCancelling } = useCancelAppointment((res) => {
+    setNotice(res);
+    setOpenCancelModal(true);
+  });
+  const mostRecent = !!live?.length ? live?.[0] : data?.[0];
 
   return (
     <AnimatePresence mode="popLayout">
@@ -94,13 +97,13 @@ export const UpcomingAppointmentCard = ({
                         {mostRecent?.provider_data?.specialty}
                       </p>
 
-                      <div className="flex gap-x-1 items-center">
+                      {/* <div className="flex gap-x-1 items-center">
                         <IconStarFull className="fill-actions-amber size-4" />
                         <p className="text-xs text-text-1">4.5</p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
-                  <IconHeart className="stroke-button-secondary size-4" />
+                  {/* <IconHeart className="stroke-button-secondary size-4" /> */}
                 </div>
 
                 <div className="border-b border-divider" />
@@ -143,35 +146,42 @@ export const UpcomingAppointmentCard = ({
           )}
 
           <div className="flex justify-between lg:pt-5">
-            {!isAppointmentPage ? (
+            <Button
+              asChild
+              variant="secondary"
+              className="text-button-primary gap-x-1"
+            >
+              <Link href="/appointments">
+                All Appointments
+                <IconExternalLink className="stroke-button-primary" />
+              </Link>
+            </Button>
+
+            <RenderIf condition={mostRecent?.status === 1}>
               <Button
-                asChild
-                variant="secondary"
-                className="text-button-primary gap-x-1"
+                onClick={() =>
+                  mutate({
+                    component: "notice",
+                    appointment_id: mostRecent?.appointment_id as string,
+                  })
+                }
+                variant="outline"
+                className="py-2 px-4"
               >
-                <Link href="/appointments">
-                  All Appointments
-                  <IconExternalLink className="stroke-button-primary" />
-                </Link>
+                Cancel
               </Button>
-            ) : (
-              <>
-                {false && (
-                  <>
-                    <Button
-                      onClick={() => onCancel?.()}
-                      variant="outline"
-                      className="py-2 px-4"
-                    >
-                      Cancel
-                    </Button>
-                    <Button asChild className="py-2 px-4">
-                      <Link href="/session">Join Session</Link>
-                    </Button>
-                  </>
-                )}
-              </>
-            )}
+            </RenderIf>
+            <RenderIf condition={!!live?.length}>
+              <Button asChild className="py-2 px-4">
+                <Link href="/session">Join Session</Link>
+              </Button>
+            </RenderIf>
+
+            <CancelAppointmentDialog
+              onCancel={() => {}}
+              open={openCancelModal}
+              onOpenChange={setOpenCancelModal}
+            />
           </div>
         </motion.div>
       )}
