@@ -82,13 +82,13 @@ export default function AppointmentDetails() {
             <div className="flex items-start relative">
               <div className="flex items-center flex-row gap-x-2 md:gap-x-3 w-full">
                 <div className="relative min-w-14 max-w-14 h-14 md:h-39 w-full md:min-w-39 md:max-w-39 rounded-xs overflow-hidden">
-                  <Avatar className="w-14 h-14 md:h-39 md:w-39 rounded-xs object-cover ">
+                  <Avatar className="w-14 h-14 md:h-39 md:w-39 !rounded-xs object-cover ">
                     <AvatarImage
                       src={data?.provider_data?.avatar}
                       alt={data?.provider_data?.name}
-                      className="rounded-xs object-cover w-full h-full"
+                      className="!rounded-xs !object-cover w-full h-full"
                     />
-                    <AvatarFallback>
+                    <AvatarFallback className="!rounded-xs">
                       {data?.provider_data?.name
                         .split(" ")
                         .map((word) => word[0])
@@ -159,7 +159,7 @@ export default function AppointmentDetails() {
                   </div>
                 </div>
               </div>
-              <Button asChild>
+              <Button variant={'secondary'} className="border-none bg-transparent hover:bg-transparent shadow-none" asChild>
                 <Link href={``}>
                   <IconExternalLink className="h-5 w-5 stroke-brand-3 absolute right-0 top-0" />
                 </Link>
