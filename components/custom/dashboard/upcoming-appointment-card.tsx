@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { Loader } from "@/components/shared/loader";
 import { CancelAppointmentDialog } from "./appointments/cancel-appointments-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AnimatePresence, motion } from "motion/react";
@@ -27,12 +28,19 @@ export const UpcomingAppointmentCard = () => {
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const { data, isPending } = useGetAppointments({ status: "1" });
   const { data: live } = useGetAppointments({ status: "2" });
-  const [notice, setNotice] = useState("");
-  const { mutate, isPending: isCancelling } = useCancelAppointment((res) => {
-    setNotice(res);
+  const { mutate, isPending: isCancelling } = useCancelAppointment(() => {
     setOpenCancelModal(true);
   });
   const mostRecent = !!live?.length ? live?.[0] : data?.[0];
+
+  const buttonCopy = {
+    idle: "Cancel",
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isCancelling ? "loading" : "idle";
+  }, [isPending]);
 
   return (
     <AnimatePresence mode="popLayout">
@@ -158,18 +166,30 @@ export const UpcomingAppointmentCard = () => {
             </Button>
 
             <RenderIf condition={mostRecent?.status === 1}>
-              <Button
-                onClick={() =>
-                  mutate({
-                    component: "notice",
-                    appointment_id: mostRecent?.appointment_id as string,
-                  })
-                }
-                variant="outline"
-                className="py-2 px-4"
-              >
-                Cancel
-              </Button>
+              <motion.div layout className="flex items-center justify-center">
+                <Button
+                  onClick={() =>
+                    mutate({
+                      component: "notice",
+                      appointment_id: mostRecent?.appointment_id as string,
+                    })
+                  }
+                  variant="outline"
+                  className="py-2 px-4 rounded-full w-41"
+                >
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.span
+                      transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                      initial={{ opacity: 0, y: -25 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 25 }}
+                      key={buttonState}
+                    >
+                      {buttonCopy[buttonState]}
+                    </motion.span>
+                  </AnimatePresence>
+                </Button>
+              </motion.div>
             </RenderIf>
             <RenderIf condition={!!live?.length}>
               <Button asChild className="py-2 px-4">

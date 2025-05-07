@@ -83,7 +83,6 @@ export const useCancelAppointment = (
   onSuccessCallback?: (res: any) => void
 ) => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: cancelAppointment,
     onSuccess: (res: any) => {
