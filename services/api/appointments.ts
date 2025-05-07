@@ -39,9 +39,10 @@ export const cancelAppointment = async ({
   const res = await axiosBookingService.delete(
     `/users/members/appointments/${appointment_id}`,
     {
-      data: { component: component },
+      data: {
+        ...(component && { component: component }),
+      },
     }
   );
   return res.data;
 };
-

@@ -15,7 +15,6 @@ import { AppointmentListMobile } from "./appointments-list-mobile";
 import { PaginationCmp, BreadcrumbCmp } from "@/components/shared";
 import { getStatusBadge } from "./get-status-badge";
 import { Appointment } from "@/types/appointment";
-import { CancelAppointmentDialog } from "./cancel-appointments-dialog";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
 import {
   formatApptDate,
@@ -120,7 +119,7 @@ export function AppointmentContainer() {
             />
           </CardHeader>
           <RenderIf condition={!isPending}>
-            <CardContent className="w-full flex flex-col min-h-[200px] gap-4 h-full justify-between">
+            <CardContent className="w-full flex flex-col min-h-[200px] gap-2 md:gap-4">
               <TableCmp
                 data={(appointments as Appointment[])?.map((apt) => ({
                   ...apt,
@@ -156,7 +155,6 @@ export function AppointmentContainer() {
           </RenderIf>
         </Card>
       </div>
-
     </div>
   );
 }

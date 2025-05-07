@@ -13,7 +13,7 @@ export function AppointmentListMobile({
   className,
 }: AppointmentListMobileProps) {
   return (
-    <div className={`md:hidden  space-y-2 ${className}`}>
+    <div className={`md:hidden  grid gap-2 ${className}`}>
       {appointments?.map((appointment) => (
         <Card
           appointment={appointment}
