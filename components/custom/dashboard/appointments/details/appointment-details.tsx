@@ -21,6 +21,8 @@ import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { enUS } from "date-fns/locale";
 import { useAddFavouriteProvider } from "@/services/hooks/mutations/use-providers";
+import { getStatusBadgeId } from "../get-status-badge";
+import Link from "next/link";
 
 export function formatSessionDate(dateStr: string): string {
   if (dateStr === "") return "";
@@ -132,28 +134,36 @@ export default function AppointmentDetails() {
                           </span>
                         </div>
                       </div>
-                      <RenderIf condition={data?.provider_data?.isfav_provider === false}>
-                      <Button
-                        variant={"secondary"}
-                        className="flex items-center gap-1.5 border-none shadow-none"
-                        disabled={isPending}
-                        onClick={() => mutate(data?.provider_id as string)}
+                      <RenderIf
+                        condition={
+                          data?.provider_data?.isfav_provider === false
+                        }
                       >
-                        {isPending ? (
-                          <Loader className="spinner size-4" />
-                        ) : (
-                          <IconStarFull className="stroke-brand-1 stroke-2 size-4" />
-                        )}
-                        <span className="font-semibold text-sm text-brand-1">
-                          Mark as Favourite
-                        </span>
-                      </Button>
+                        <Button
+                          variant={"secondary"}
+                          className="flex items-center gap-1.5 border-none shadow-none"
+                          disabled={isPending}
+                          onClick={() => mutate(data?.provider_id as string)}
+                        >
+                          {isPending ? (
+                            <Loader className="spinner size-4" />
+                          ) : (
+                            <IconStarFull className="stroke-brand-1 stroke-2 size-4" />
+                          )}
+                          <span className="font-semibold text-sm text-brand-1">
+                            Mark as Favourite
+                          </span>
+                        </Button>
                       </RenderIf>
                     </div>
                   </div>
                 </div>
               </div>
-              <IconExternalLink className="h-5 w-5 stroke-brand-3 absolute right-0 top-0" />
+              <Button asChild>
+                <Link href={``}>
+                  <IconExternalLink className="h-5 w-5 stroke-brand-3 absolute right-0 top-0" />
+                </Link>
+              </Button>
             </div>
 
             <div className="grid gap-3 md:hidden">
@@ -174,23 +184,25 @@ export default function AppointmentDetails() {
                     </span>
                   </div>
                 </div>
-            <RenderIf condition={data?.provider_data?.isfav_provider === false}>
-            <Button
-                  variant={"ghost"}
-                  className="flex !p-0 items-center gap-1.5 border-none shadow-none"
-                  disabled={isPending}
-                  onClick={() => mutate(data?.provider_id as string)}
+                <RenderIf
+                  condition={data?.provider_data?.isfav_provider === false}
                 >
-                  {isPending ? (
-                    <Loader className="spinner size-4" />
-                  ) : (
-                    <IconStarFull className="stroke-brand-1 stroke-2 size-4" />
-                  )}
-                  <span className="font-medium text-xs md:text-sm text-brand-1">
-                    Mark as Favourite
-                  </span>
-                </Button>
-            </RenderIf>
+                  <Button
+                    variant={"ghost"}
+                    className="flex !p-0 items-center gap-1.5 border-none shadow-none"
+                    disabled={isPending}
+                    onClick={() => mutate(data?.provider_id as string)}
+                  >
+                    {isPending ? (
+                      <Loader className="spinner size-4" />
+                    ) : (
+                      <IconStarFull className="stroke-brand-1 stroke-2 size-4" />
+                    )}
+                    <span className="font-medium text-xs md:text-sm text-brand-1">
+                      Mark as Favourite
+                    </span>
+                  </Button>
+                </RenderIf>
               </div>
             </div>
           </div>
@@ -217,15 +229,9 @@ export default function AppointmentDetails() {
               </div>
               <div>
                 <p className="text-sm text-brand-2 mb-1">Status</p>
-                <Badge
-                  className={`!font-normal !text-sm rounded-xs !py-0.5 !px-2 ${
-                    getSessionStatus(data?.status || 0) !== "Completed"
-                      ? "bg-actions-blue "
-                      : "bg-actions-green "
-                  }`}
-                >
-                  {getSessionStatus(data?.status || 0)}
-                </Badge>
+                <p className={`!font-normal !text-sm rounded-xs  `}>
+                  {getStatusBadgeId(getSessionStatus(data?.status || 0))}
+                </p>
               </div>
             </div>
 

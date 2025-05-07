@@ -28,3 +28,35 @@ export function getStatusBadge(status: string) {
       return status;
   }
 }
+
+export function getStatusBadgeId(status: string) {
+  switch (status) {
+    case "Upcoming":
+      return (
+        <span className="bg-[#0073C4] font-medium text-xs md:text-sm !py-0.5 !px-2">
+          Upcoming
+        </span>
+      );
+    case "Completed":
+    case "Live":
+      return (
+        <span className="bg-[#0AA571] font-medium text-xs md:text-sm text-white !py-0.5 !px-2">
+          Completed
+        </span>
+      );
+    case "Canceled":
+      return (
+        <span className="!bg-[#DD2418] font-medium text-xs md:text-sm !py-0.5 !px-2">
+          Canceled
+        </span>
+      );
+    case "Pending":
+      return (
+        <span className="bg-yellow-400 font-medium text-xs md:text-sm !py-0.5 !px-2">
+          Pending
+        </span>
+      );
+    default:
+      return status;
+  }
+}
