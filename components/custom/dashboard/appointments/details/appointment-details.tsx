@@ -155,9 +155,7 @@ export default function AppointmentDetails() {
                         </Button>
                       </RenderIf>
                       <RenderIf
-                        condition={
-                          data?.provider_data?.isfav_provider === true
-                        }
+                        condition={data?.provider_data?.isfav_provider === true}
                       >
                         <div className="flex items-center gap-1.5 border-none shadow-none">
                           <IconStarFull className="fill-brand-accent-2 stroke-2 size-4" />
@@ -214,6 +212,17 @@ export default function AppointmentDetails() {
                       Mark as Favourite
                     </span>
                   </Button>
+                </RenderIf>
+                <RenderIf
+                  condition={data?.provider_data?.isfav_provider === true}
+                >
+                  <div className="flex items-center gap-1.5 border-none shadow-none">
+                    <IconStarFull className="fill-brand-accent-2 stroke-2 size-4" />
+
+                    <span className="font-semibold text-sm text-brand-accent-2">
+                      Favourite
+                    </span>
+                  </div>
                 </RenderIf>
               </div>
             </div>
