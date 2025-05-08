@@ -15,7 +15,7 @@ export function getStatusBadge(status: string) {
     case "Canceled":
       return (
         <span className="text-[#DD2418] font-medium text-xs md:text-sm">
-          Cancelled
+          Canceled
         </span>
       );
     case "Pending":
