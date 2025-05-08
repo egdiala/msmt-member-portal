@@ -154,15 +154,28 @@ export default function AppointmentDetails() {
                           </span>
                         </Button>
                       </RenderIf>
+                      <RenderIf
+                        condition={
+                          data?.provider_data?.isfav_provider === true
+                        }
+                      >
+                        <div className="flex items-center gap-1.5 border-none shadow-none">
+                          <IconStarFull className="fill-brand-accent-2 stroke-2 size-4" />
+
+                          <span className="font-semibold text-sm text-brand-accent-2">
+                            Favourite
+                          </span>
+                        </div>
+                      </RenderIf>
                     </div>
                   </div>
                 </div>
               </div>
-              <Button variant={'secondary'} className="border-none bg-transparent hover:bg-transparent shadow-none" asChild>
+              {/* <Button variant={'secondary'} className="border-none bg-transparent hover:bg-transparent shadow-none" asChild>
                 <Link href={``}>
                   <IconExternalLink className="h-5 w-5 stroke-brand-3 absolute right-0 top-0" />
                 </Link>
-              </Button>
+              </Button> */}
             </div>
 
             <div className="grid gap-3 md:hidden">
