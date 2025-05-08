@@ -80,7 +80,7 @@ export default function AppointmentDetails() {
           <div className="p-3 md:p-6 grid gap-3 bg-blue-400 rounded-md">
             <div className="flex items-start relative">
               <div className="flex items-center flex-row gap-x-2 md:gap-x-3 w-full">
-                <div className="relative min-w-14 max-w-14 h-14 md:h-39 w-full md:min-w-39 md:max-w-39 rounded-xs overflow-hidden">
+                <div className="relative min-w-14 max-w-14 h-14 md:h-39 w-full md:min-w-39 md:max-w-39 !rounded-xs overflow-hidden">
                   <Avatar className="w-14 h-14 md:h-39 md:w-39 !rounded-xs object-cover ">
                     <AvatarImage
                       src={data?.provider_data?.avatar}
