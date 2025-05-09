@@ -164,6 +164,7 @@ export const ProvidersTable = () => {
   const { data: count } =
     useGetServiceProviders<FetchedServiceProvidersCountType>({
       component: "count",
+      ...filters,
     });
 
   const tableData = data?.map((provider) => {

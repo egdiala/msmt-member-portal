@@ -19,6 +19,8 @@ export type BookingQuestionnaireType = {
   }[];
 };
 
+
+
 export interface FetchedQuestionsForQuestionnaireType {
   question: string;
   option?: string[];

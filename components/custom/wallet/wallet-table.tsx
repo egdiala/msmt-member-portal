@@ -60,6 +60,7 @@ export const WalletTable = () => {
   const { data: walletTransactionsCount } =
     useGetWalletTransactions<FetchedWalletTransactionsCountType>({
       component: "count",
+      ...filters,
     });
 
   const [openFundWalletModal, setOpenFundWalletModal] = useState(false);

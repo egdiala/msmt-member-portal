@@ -8,8 +8,12 @@ import {
   isToday,
   parse,
   parseISO,
+  isYesterday,
   startOfMonth,
+  setHours,
+  setMinutes,
 } from "date-fns";
+
 import { LoginResponse } from "@/types/auth";
 import { UpdateProfileType } from "@/types/profile";
 import { FormOption } from "@/types/appointment";
@@ -64,6 +68,9 @@ export const getAdminData = () => {
 };
 
 export const createQueryString = (queryObject: Record<string, any>): string => {
+  if (!queryObject) {
+    throw Error("objectToQuery expects an object");
+  }
   const queryString = Object.entries(queryObject)
     .filter(
       // eslint-disable-next-line
@@ -106,7 +113,6 @@ export const formatTableDate = (date: string) => {
 
   return format(parsedDate, "MMM d • h:mmaaa");
 };
-
 
 export const convertToFormOptions = (
   options: string[],
@@ -193,16 +199,20 @@ export function formatTimeToHH(time: string): string {
   return format(timeObj, "HH"); // 'HH' gives the time in 24-hour format
 }
 
+export function formatApptTimeShort(hour: number): string {
+  const date = setMinutes(setHours(new Date(), hour), 0);
+  return format(date, "h:mm a");
+}
 
 type QuestionOption = {
   question: string;
   option?: string[];
-  option_type: 'radio' | 'checkbox';
+  option_type: "radio" | "checkbox";
   has_child?: boolean;
   child_question?: {
     question: string;
     option: string[];
-    option_type: 'radio' | 'checkbox';
+    option_type: "radio" | "checkbox";
   }[];
 };
 
@@ -218,19 +228,22 @@ type MappedData = {
   answer: AnswerValue;
 };
 
-export function mapAnswersToData(questions: QuestionOption[], answers: Answers): MappedData[] {
+export function mapAnswersToData(
+  questions: QuestionOption[],
+  answers: Answers
+): MappedData[] {
   const data: MappedData[] = [];
 
-  questions.forEach(q => {
+  questions.forEach((q) => {
     if (q.has_child && q.child_question) {
-      q.child_question.forEach(sub => {
+      q.child_question.forEach((sub) => {
         const key = sub.question.toLowerCase().replace(/ /g, "_");
         const answer = answers[key];
         if (answer !== undefined) {
           data.push({
             question: q.question,
             sub_question: sub.question,
-            answer
+            answer,
           });
         }
       });
@@ -244,11 +257,40 @@ export function mapAnswersToData(questions: QuestionOption[], answers: Answers):
       if (answer !== undefined) {
         data.push({
           question: q.question,
-          answer
+          answer,
         });
       }
     }
   });
 
   return data;
+}
+
+export function formatApptDate(dateStr: string): string {
+  const date = parseISO(dateStr);
+
+  if (isToday(date)) return "Today";
+  if (isYesterday(date)) return "Yesterday";
+  return format(date, "MMM d, yyyy");
+}
+
+export const isEmpty = (obj: unknown): boolean => {
+  return !obj || Object.keys(obj).length === 0;
+};
+
+export function getSessionStatus(statusCode: number | string): string {
+  switch (statusCode) {
+    case 1:
+      return "Upcoming";
+    case 2:
+      return "Live";
+    case 3:
+      return "Completed";
+    case 4:
+      return "Canceled";
+    case "":
+      return "All";
+    default:
+      return "Unknown";
+  }
 }

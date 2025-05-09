@@ -115,11 +115,6 @@ export const FAVOURITE_PROVIDERS_DATA = [
   },
 ];
 
-export const DASHBOARD_STATS_DATA = [
-  { id: 1, title: "Completed Appointments", value: 53 },
-  { id: 2, title: "Upcoming Appointments", value: 53 },
-  { id: 3, title: "Average Booking/Week", value: 3 },
-];
 
 export const TRANSACTIONS_DATA = [
   {

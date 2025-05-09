@@ -4,7 +4,12 @@ import {
   submitOrgBookingQuestionnaire,
   validateOrgBooking,
 } from "@/services/api/appointment";
-import { CompleteOrgBookingPayload } from "@/types/appointment";
+import { useQueryClient, InvalidateQueryFilters } from "@tanstack/react-query";
+import { submitSessionRating, cancelAppointment } from "@/services/api/appointments";
+import {
+  CompleteOrgBookingPayload,
+  SessionRatingPayload,
+} from "@/types/appointment";
 import { toast } from "sonner";
 import { BookingQuestionnaireType } from "@/types/booking";
 
@@ -52,3 +57,72 @@ export const useValidateOrgBooking = (fn?: (res: any) => void) => {
     },
   });
 };
+
+export const useSubmitSessionRating = (
+  onSuccessCallback?: (res: any) => void
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: SessionRatingPayload) => submitSessionRating(payload),
+    onSuccess: (res: any) => {
+      toast.success("Session review submitted!");
+      queryClient.invalidateQueries([
+        "get-appointments",
+      ] as InvalidateQueryFilters);
+      onSuccessCallback?.(res);
+    },
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.msg || "Failed to submit session rating."
+      );
+    },
+  });
+};
+
+
+export const useCancelAppointment = (
+  onSuccessCallback?: (res: any) => void
+) => {
+  // const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: cancelAppointment,
+    onSuccess: (res: any) => {
+      // toast.success("Appointment cancelled successfully.");
+      // queryClient.invalidateQueries([
+      //   "get-appointments",
+      // ] as InvalidateQueryFilters);
+      onSuccessCallback?.(res);
+    },
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.msg || "Failed."
+      );
+    },
+  });
+};
+
+
+export const useCancelAppointmentWithoutNotice = (
+  onSuccessCallback?: (res: any) => void
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: cancelAppointment,
+    onSuccess: (res: any) => {
+      toast.success("Appointment cancelled successfully.");
+      queryClient.invalidateQueries([
+        "get-appointments",
+      ] as InvalidateQueryFilters);
+      onSuccessCallback?.(res);
+    },
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.msg || "Failed to cancel appointment."
+      );
+    },
+  });
+};
+
+
+
+
