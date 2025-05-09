@@ -15,6 +15,8 @@ export const CompleteProfileHeader = () => {
     component: "count-status",
   });
 
+  console.log("total", total);
+
   const DASHBOARD_STATS_DATA = [
     {
       id: 1,
@@ -26,7 +28,7 @@ export const CompleteProfileHeader = () => {
       title: "Upcoming Appointments",
       value: (total as any)?.total_upcoming,
     },
-    { id: 3, title: "Average Booking/Week", value: 2 },
+    { id: 3, title: "Canceled Appointments", value: (total as any)?.total_cancel },
   ];
 
   return (

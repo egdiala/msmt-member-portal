@@ -54,13 +54,11 @@ export function AppointmentContainer() {
     const newFilters = { ...appliedFilters };
     delete newFilters[key];
     setAppliedFilters(newFilters);
-    // Force re-render the filter form to reset its state
     setFormKey(prevKey => prevKey + 1);
   };
 
   const handleClearAllFilters = () => {
-    setAppliedFilters({}); // Reset to empty object
-    // Force re-render the filter form to reset its state
+    setAppliedFilters({});
     setFormKey(prevKey => prevKey + 1);
   };
 
@@ -74,6 +72,9 @@ export function AppointmentContainer() {
 
   const { data: count } = useGetAppointments({
     component: "count",
+    start_date: appliedFilters.fromDate,
+    end_date: appliedFilters.toDate,
+    status: appliedFilters.status,
   });
 
   const appointments: Appointment[] | undefined = data?.map((item) => ({
@@ -115,7 +116,7 @@ export function AppointmentContainer() {
 
       <div className="w-full grid gap-y-4 gap-x-6">
         <Card className="p-3 md:p-6 shadow-none border-none">
-          <CardHeader className="gap-4 md:gap-5 pb-0">
+          <CardHeader className="gap-0 py-0 pt-6 !pb-0">
             <div className="flex items-center justify-between">
               <CardTitle className="text-brand-1 font-bold text-base">
                 Appointments
@@ -156,6 +157,7 @@ export function AppointmentContainer() {
                 totalPages={useGetTableTotalPages({
                   totalDataCount: (count as any)?.total ?? 0,
                   itemsPerPage: itemsPerPage,
+               
                 })}
                 onInputPage={(val) => handlePageChange(parseInt(val))}
               />

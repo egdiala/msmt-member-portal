@@ -31,7 +31,7 @@ export function AppliedFilters({
   };
 
   return (
-    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
+    <div className={`flex mt-4 md:mt-5 flex-wrap items-center gap-2 ${className}`}>
       <span className="text-sm text-brand-2">Filters applied:</span>
       <div className="flex flex-wrap gap-2 ">
         {Object.entries(filters).map(([key, value]) => {
