@@ -25,15 +25,18 @@ import { Loader } from "@/components/shared/loader";
 
 export function AppointmentContainer() {
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
+  const [formKey, setFormKey] = useState(0); // Add a key to force form re-render when filters are cleared
   const itemsPerPage = 10;
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   const handleApplyFilters = (filters: Record<string, any>) => {
+    // Only set non-empty filters
     const cleanFilters = Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(filters).filter(([_, value]) => value !== undefined)
+      Object.entries(filters).filter(([_, value]) => 
+        value !== undefined && value !== null && value !== ""
+      )
     );
     setAppliedFilters(cleanFilters);
   };
@@ -51,11 +54,16 @@ export function AppointmentContainer() {
     const newFilters = { ...appliedFilters };
     delete newFilters[key];
     setAppliedFilters(newFilters);
+    // Force re-render the filter form to reset its state
+    setFormKey(prevKey => prevKey + 1);
   };
 
   const handleClearAllFilters = () => {
-    setAppliedFilters({});
+    setAppliedFilters({}); // Reset to empty object
+    // Force re-render the filter form to reset its state
+    setFormKey(prevKey => prevKey + 1);
   };
+
   const { data, isPending } = useGetAppointments({
     page: currentPage.toString(),
     status: appliedFilters.status,
@@ -108,16 +116,20 @@ export function AppointmentContainer() {
       <div className="w-full grid gap-y-4 gap-x-6">
         <Card className="p-3 md:p-6 shadow-none border-none">
           <CardHeader className="gap-4 md:gap-5 pb-0">
-            <CardTitle className="text-brand-1 font-bold text-base">
-              Appointments
-            </CardTitle>
-            <AppointmentSearch onFilter={handleApplyFilters} />
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-brand-1 font-bold text-base">
+                Appointments
+              </CardTitle>
+              <AppointmentSearch key={formKey} onFilter={handleApplyFilters} />
+            </div>
 
-            <AppliedFilters
-              filters={appliedFilters}
-              onClearFilter={handleClearFilter}
-              onClearAll={handleClearAllFilters}
-            />
+            <RenderIf condition={Object.keys(appliedFilters).length > 0}>
+              <AppliedFilters
+                filters={appliedFilters}
+                onClearFilter={handleClearFilter}
+                onClearAll={handleClearAllFilters}
+              />
+            </RenderIf>
           </CardHeader>
           <RenderIf condition={!isPending}>
             <CardContent className="w-full flex flex-col min-h-[200px] gap-2 md:gap-4">

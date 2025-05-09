@@ -21,7 +21,6 @@ import { format, parseISO } from "date-fns";
 import { enUS } from "date-fns/locale";
 import { useAddFavouriteProvider } from "@/services/hooks/mutations/use-providers";
 import { getStatusBadgeId } from "../get-status-badge";
-import Link from "next/link";
 
 export function formatSessionDate(dateStr: string): string {
   if (dateStr === "") return "";
@@ -157,7 +156,7 @@ export default function AppointmentDetails() {
                       <RenderIf
                         condition={data?.provider_data?.isfav_provider === true}
                       >
-                        <div className="flex items-center gap-1.5 border-none shadow-none">
+                        <div className="flex items-center gap-1.5 border-none shadow-none pt-1.5">
                           <IconStarFull className="fill-brand-accent-2 stroke-2 size-4" />
 
                           <span className="font-semibold text-sm text-brand-accent-2">

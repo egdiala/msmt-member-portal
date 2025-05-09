@@ -24,6 +24,7 @@ import {
   DrawerContent,
   DrawerTrigger,
   DrawerClose,
+  DrawerTitle,
 } from "@/components/ui/drawer";
 import { DatePickerField } from "@/components/shared/date-picker-field";
 import {
@@ -73,19 +74,23 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
   const initialRender = useRef(true);
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const [isFormReset, setIsFormReset] = useState(false);
+
+  // Default form values
+  const defaultValues = {
+    dateFilter: "All Time",
+    status: undefined,
+    fromDate: undefined,
+    toDate: undefined,
+  };
 
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(FilterSchema),
     mode: "onChange",
-    defaultValues: {
-      dateFilter: undefined,
-      status: undefined,
-      fromDate: undefined,
-      toDate: undefined,
-    },
+    defaultValues,
   });
 
-  const { handleSubmit, formState, watch, setValue } = form;
+  const { handleSubmit, formState, watch, setValue, reset } = form;
   const { errors } = formState;
 
   const dateSelection = watch("dateFilter");
@@ -100,31 +105,46 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
         setValue("fromDate", startOfDay(new Date()));
         setValue("toDate", endOfDay(new Date()));
         break;
-      case "Month":
+      case "This Month":
         setValue("fromDate", startOfMonth(new Date()));
         setValue("toDate", endOfMonth(new Date()));
         break;
-      case "All":
+      case "All Time":
         setValue("fromDate", undefined);
         setValue("toDate", undefined);
         break;
-      case "Custom":
+      case "Custom Range":
         break;
     }
   }, [dateSelection, setValue]);
 
   const handleApplyFilters = handleSubmit((data) => {
+    // Don't include date fields if All Time is selected
     const formattedData: FormattedFilterValues = {
       status: data.status,
       fromDate: data.fromDate ? format(data.fromDate, "yyyy-MM-dd") : undefined,
       toDate: data.toDate ? format(data.toDate, "yyyy-MM-dd") : undefined,
     };
-    onApplyFilters(formattedData);
+    
+    // Remove undefined values
+    const cleanedData = Object.fromEntries(
+      Object.entries(formattedData).filter(([_, v]) => v !== undefined)
+    );
+    
+    onApplyFilters(cleanedData);
     setOpen(false);
   });
 
+  // Reset form when opened
+  useEffect(() => {
+    if (open) {
+      reset(defaultValues);
+    }
+  }, [open, reset]);
+
   const handleClose = () => {
-    form.reset();
+    // Reset form to initial values with All Time selected
+    reset(defaultValues);
     setOpen(false);
   };
 
@@ -151,22 +171,24 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
                     onValueChange={field.onChange}
                     className="gap-0"
                   >
-                    {["Today", "Month", "All", "Custom"].map((value) => (
-                      <div
-                        key={value}
-                        className="flex items-center space-x-2 px-2 py-2 md:py-3"
-                      >
-                        <RadioGroupItem value={value} id={value} />
-                        <Label htmlFor={value}>
-                          {value.charAt(0).toUpperCase() + value.slice(1)}
-                        </Label>
-                      </div>
-                    ))}
+                    {["Today", "This Month", "All Time", "Custom Range"].map(
+                      (value) => (
+                        <div
+                          key={value}
+                          className="flex items-center space-x-2 px-2 py-2 md:py-3"
+                        >
+                          <RadioGroupItem value={value} id={value} />
+                          <Label htmlFor={value}>
+                            {value.charAt(0).toUpperCase() + value.slice(1)}
+                          </Label>
+                        </div>
+                      )
+                    )}
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />
 
-                <RenderIf condition={field.value === "Custom"}>
+                <RenderIf condition={field.value === "Custom Range"}>
                   <div className="grid w-full mt-2 gap-y-2">
                     <FormField
                       control={form.control}
@@ -255,7 +277,7 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
           />
         </div>
 
-        <div className="flex items-center justify-end p-4 pt-5 gap-4">
+        <div className="flex items-center justify-end p-4 pt-5 gap-x-4">
           <Button
             variant="secondary"
             className="py-2 px-14"
@@ -286,6 +308,9 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
           </Button>
         </DrawerTrigger>
         <DrawerContent className="px-4 pb-6">
+          <DrawerTitle className="sr-only">
+            <h2 className="font-bold text-xl mb-1">Filter</h2>
+          </DrawerTitle>
           <div className="absolute right-4 top-4">
             <DrawerClose asChild>
               <Button variant="ghost" size="icon">
