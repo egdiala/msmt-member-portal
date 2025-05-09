@@ -10,3 +10,14 @@ export const requestLiveSession = async (
 
   return res.data;
 };
+
+export const updateAppointment = async (payload: {
+  appointment_id: string;
+}) => {
+  const res = await axiosBookingService.put(
+    "/users/members/appointments",
+    payload
+  );
+
+  return res.data;
+};
