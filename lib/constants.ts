@@ -1,4 +1,8 @@
 import { type ChartConfig } from "@/components/ui/chart";
+import { IconX, IconInstagram, IconFacebook } from "@/components/icons";
+import LandingPage1 from "../public/assets/landing1.png";
+import LandingPage2 from "../public/assets/landing2.png";
+import LandingPage3 from "../public/assets/landing3.png";
 
 export const NAV_ITEMS = [
   { id: 1, name: "Dashboard", href: "/home" },
@@ -134,3 +138,125 @@ export const WALLET_TRANSACTION_STATUS_FILTER_ENUM: Record<number, string> = {
   1: "Successful",
   2: "Failed",
 };
+
+export const LANDING_PAGE_LINKS = [
+  {
+    id: 1,
+    header: "Quick Links",
+    links: [
+      { id: 1, name: "Home", href: "https://themsmt.com/" },
+      { id: 2, name: "About Us", href: "https://themsmt.com/about-us-2/" },
+      { id: 3, name: "Services", href: "https://themsmt.com/services-client" },
+      { id: 4, name: "Resources", href: "https://themsmt.com/resources/" },
+      { id: 5, name: "FAQs", href: "https://themsmt.com/faqs/" },
+      { id: 6, name: "Contact Us", href: "https://themsmt.com/contact-us/" },
+      { id: 7, name: "Sign up/Login", href: "https://themsmt.com/get-started" },
+    ],
+  },
+  {
+    id: 2,
+    header: "Services Offered",
+    links: [
+      {
+        id: 1,
+        name: "Individual Therapy",
+        href: "https://themsmt.com/services-client",
+      },
+      {
+        id: 2,
+        name: "Family Therapy",
+        href: "https://themsmt.com/services-client",
+      },
+      {
+        id: 3,
+        name: "Group Therapy",
+        href: "https://themsmt.com/services-client",
+      },
+      {
+        id: 4,
+        name: "Medication Management",
+        href: "https://themsmt.com/services-client",
+      },
+      {
+        id: 5,
+        name: "Psychosocial Evaluations",
+        href: "https://themsmt.com/services-client",
+      },
+      {
+        id: 6,
+        name: "Psychiatric Evaluations",
+        href: "https://themsmt.com/services-client",
+      },
+      {
+        id: 7,
+        name: "Addiction Counselling",
+        href: "https://themsmt.com/services-client",
+      },
+    ],
+  },
+  {
+    id: 3,
+    header: "Get Involved",
+    links: [
+      { id: 1, name: "Join Our Team", href: "https://themsmt.com/providers" },
+      { id: 2, name: "Partnership", href: "https://themsmt.com/providers" },
+    ],
+  },
+  {
+    id: 4,
+    header: "Legal Information",
+    links: [
+      {
+        id: 1,
+        name: "Terms of Service",
+        href: "https://themsmt.com/terms-of-service/",
+      },
+      {
+        id: 2,
+        name: "Privacy Policy",
+        href: "https://themsmt.com/privacy-policy-2/",
+      },
+    ],
+    sub_section: {
+      header: "Follow us on",
+      links: [
+        { id: 1, icon: IconFacebook, href: "https://themsmt.com/#" },
+        { id: 2, icon: IconInstagram, href: "https://themsmt.com/#" },
+        { id: 3, icon: IconX, href: "https://themsmt.com/#" },
+      ],
+    },
+  },
+];
+
+export const MAIN_SECTION_INFO = [
+  {
+    id: 1,
+    header: "For Individuals",
+    description1: `You gain quick, confidential access to trusted mental health professionals through a simple platform.`,
+    description2: `Sign up to book a session or log in if you're already a member.`,
+    img: LandingPage1,
+    color: "bg-[#ACE6E6]",
+    bgImg: "../components/assets/BKG.png",
+  },
+  {
+    id: 2,
+    header: "For Organizations",
+    description1: `A dedicated solution for offering trusted mental health support to employees or clients.`,
+    description2: `Enjoy seamless onboarding and integrated care. Register your organization or log in if you're already a partner.`,
+    img: LandingPage2,
+    color: "bg-[#FFE5D2]",
+    bgImg: "../components/assets/BKG2.png",
+  },
+  {
+    id: 3,
+    header: "For Consultants",
+    description1: `Expand your practice with MSMT by connecting with patients seeking help.`,
+    description2: `Our streamlined system simplifies appointment management. Register to join or log in if you're already on board.`,
+    img: LandingPage3,
+    color: "bg-[#FFF7C0]",
+    bgImg: "../components/assets/BKG3.png",
+  },
+];
+
+export const TOAST_STYLING =
+  "flex items-center gap-x-2 p-3 !text-white rounded-lg";

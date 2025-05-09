@@ -38,7 +38,7 @@ export const TableCmp = ({
         </div>
       </RenderIf>
 
-      <RenderIf condition={!isLoading && data.length > 0}>
+      <RenderIf condition={!isLoading && data?.length > 0}>
         <Table className="hidden md:table w-full table-auto">
           <TableHeader>
             <TableRow>
@@ -67,7 +67,7 @@ export const TableCmp = ({
           </TableBody>
 
           <TableBody>
-            {data.map((datum) => (
+            {data?.map((datum) => (
               <TableRow
                 key={datum.id}
                 onClick={() => {
@@ -88,7 +88,7 @@ export const TableCmp = ({
         </Table>
       </RenderIf>
 
-      <RenderIf condition={!isLoading && data.length === 0}>
+      <RenderIf condition={!isLoading && data?.length === 0}>
         <EmptyState
           hasIcon
           title={emptyStateTitleText ?? ""}

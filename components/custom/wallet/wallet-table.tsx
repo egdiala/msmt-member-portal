@@ -27,7 +27,6 @@ import {
 } from "@/hooks/use-format-table-info";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { cn } from "@/lib/utils";
-import { TRANSACTIONS_DATA } from "@/lib/mock";
 import {
   WALLET_FILTER_KEY_MATCH,
   WALLET_TABLE_HEADERS,
@@ -61,6 +60,7 @@ export const WalletTable = () => {
   const { data: walletTransactionsCount } =
     useGetWalletTransactions<FetchedWalletTransactionsCountType>({
       component: "count",
+      ...filters,
     });
 
   const [openFundWalletModal, setOpenFundWalletModal] = useState(false);
@@ -252,8 +252,11 @@ export const WalletTable = () => {
       <RenderIf condition={!isLoadingWalletTransactions}>
         <RenderIf condition={tableData ? tableData?.length > 0 : false}>
           <div className="md:hidden grid gap-y-2">
-            {TRANSACTIONS_DATA.map((transaction) => (
-              <TransactionMobileCard key={transaction.id} {...transaction} />
+            {walletTransactions?.map((transaction) => (
+              <TransactionMobileCard
+                key={transaction.transaction_id}
+                {...transaction}
+              />
             ))}
           </div>
         </RenderIf>

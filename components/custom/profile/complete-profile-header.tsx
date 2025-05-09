@@ -2,15 +2,37 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
 import { IconTriangleAlert } from "@/components/icons";
 import { RenderIf } from "@/components/shared";
-import { DASHBOARD_STATS_DATA } from "@/lib/mock";
 import { hasCompletedBasicProfile } from "@/lib/utils";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { DashboardStatCard } from "../dashboard/dashboard-stat-card";
 
 export const CompleteProfileHeader = () => {
   const { data: profileData, isPending } = useGetProfile();
+  const { data: total, isLoading } = useGetAppointments({
+    component: "count-status",
+  });
+
+  const DASHBOARD_STATS_DATA = [
+    {
+      id: 1,
+      title: "Completed Appointments",
+      value: (total as any)?.total_completed,
+    },
+    {
+      id: 2,
+      title: "Upcoming Appointments",
+      value: (total as any)?.total_upcoming,
+    },
+    {
+      id: 3,
+      title: "Canceled Appointments",
+      value: (total as any)?.total_cancel,
+    },
+  ];
+
   return (
     <>
       <RenderIf
@@ -52,6 +74,7 @@ export const CompleteProfileHeader = () => {
             className={index === 0 ? "col-span-2 lg:col-span-1" : "col-span-1"}
           >
             <DashboardStatCard
+              isPending={isLoading}
               title={stat.title}
               value={stat.value}
               index={index}

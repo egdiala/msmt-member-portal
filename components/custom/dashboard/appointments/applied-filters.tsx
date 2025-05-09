@@ -1,7 +1,6 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
-import { capitalizeFirstLetter } from "@/lib/hooks";
+import { getSessionStatus } from "@/lib/utils";
+import { X } from "lucide-react";
 
 interface AppliedFiltersProps {
   filters: Record<string, any>;
@@ -20,42 +19,63 @@ export function AppliedFilters({
 
   if (!hasFilters) return null;
 
+  const formatFilterValue = (key: string, value: any) => {
+    if (key === "status") {
+      return getSessionStatus(Number(value));
+    }
+    return value;
+  };
+
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
-    <div
-      className={`flex justify-between md:justify-start gap-2 flex-wrap items-center text-sm ${className}`}
-    >
-      <div className="flex flex-col md:flex-row md:items-center gap-2">
-        <span className="text-brand-3 text-nowrap">Filters applied:</span>
-        <div className="flex items-center flex-wrap gap-2">
-          {Object.entries(filters).map(([key, value]) => {
-            if (!value) return null;
-            return (
-              <Badge
-                key={key}
-                variant="secondary"
-                className="flex items-center px-2 py-1 h-7 text-brand-accent-2"
+    <div className={`flex mt-4 md:mt-5 flex-wrap items-center gap-2 ${className}`}>
+      <span className="text-sm text-brand-2">Filters applied:</span>
+      <div className="flex flex-wrap gap-2 ">
+        {Object.entries(filters).map(([key, value]) => {
+          if (!value) return null;
+
+          const displayKey =
+            key === "fromDate"
+              ? "From"
+              : key === "toDate"
+              ? "To"
+              : capitalizeFirstLetter(key);
+
+          const displayValue = formatFilterValue(key, value);
+
+          return (
+            <Badge
+              key={key}
+              variant="outline"
+              className="flex items-center gap-1 py-1 px-2 bg-blue-400 border-none rounded-sm"
+            >
+              <span>
+                {displayKey}:{" "}
+                <span className="text-brand-accent-2">{displayValue}</span>
+              </span>
+              <button
+                onClick={() => onClearFilter(key)}
+                className="ml-1 rounded-full hover:bg-muted p-0.5"
+                aria-label={`Remove ${key} filter`}
               >
-                <span className="text-sm text-brand-2">
-                  {capitalizeFirstLetter(key)}:
-                </span>{" "}
-                {capitalizeFirstLetter(value)}
-                <button
-                  className="ml-1 text-brand-1 font-semibold "
-                  onClick={() => onClearFilter(key)}
-                >
-                  ×
-                </button>
-              </Badge>
-            );
-          })}
-        </div>
+                <X size={14} />
+              </button>
+            </Badge>
+          );
+        })}
       </div>
-      <button
-        className="text-brand-1 underline hover:text-brand-accent-2 cursor-pointer text-sm"
-        onClick={onClearAll}
-      >
-        Clear all filters
-      </button>
+
+      {hasFilters && (
+        <button
+          onClick={onClearAll}
+          className="text-sm text-primary hover:underline"
+        >
+          Clear all filters
+        </button>
+      )}
     </div>
   );
 }

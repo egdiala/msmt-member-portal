@@ -1,3 +1,4 @@
+import { ChildQuestion, FormQuestions } from "@/types/appointment";
 import * as z from "zod";
 
 export const passwordSchema = z
@@ -226,6 +227,46 @@ export const suspendMemberSchema = z.object({
   reason: z.string().min(2, "Reason must be atleast 2 characters"),
 });
 
+export const createAppointmentQuestionnaireSchema = (
+  questions: FormQuestions
+) => {
+  const schemaFields: Record<string, z.ZodType<any>> = {};
+
+  if (Array.isArray(questions)) {
+    questions.forEach((question) => {
+      const fieldName = getFieldNameFromQuestion(question.question);
+
+      if (question.has_child && question.child_question) {
+        question.child_question.forEach((childQ: ChildQuestion) => {
+          const childFieldName = getFieldNameFromQuestion(childQ.question);
+          schemaFields[childFieldName] = z
+            .string()
+            .min(1, { message: `${childQ.question} is required` });
+        });
+      } else {
+        if (question.option_type === "checkbox") {
+          schemaFields[fieldName] = z.array(z.string()).min(1, {
+            message: `${question.question} requires at least one selection`,
+          });
+        } else {
+          schemaFields[fieldName] = z
+            .string()
+            .min(1, { message: `${question.question} is required` });
+        }
+      }
+    });
+  }
+
+  return z.object(schemaFields);
+};
+
+function getFieldNameFromQuestion(question: string): string {
+  return question
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, "_");
+}
+
 export const appointmentQuestionnaireSchema = z.object({
   safePlace: z.string(),
   aloneWithSomeone: z.string(),
@@ -242,10 +283,59 @@ export const appointmentQuestionnaireSchema = z.object({
   sleepingHabits: z.string(),
 });
 
+export const setAppointmentSchedule = z.object({
+  service: z.string().nonempty("Required"),
+  paymentMethod: z.string().optional(),
+  appointmentDate: z.date(),
+  appointmentTime: z.string().nonempty("Required"),
+  communicationPreference: z.string().nonempty("Required"),
+  agreeToCancellation: z.boolean().refine((val) => val === true, {
+    message: "You must accept the cancellation and refund policy.",
+  }),
+});
+
 export const fundWalletSchema = z.object({
   amount: z.coerce.number().int().gte(1),
 });
 
 export const disableProfileSchema = z.object({
-  password: z.string().min(1, { message: 'Password is required' }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
+
+const childQuestionSchema = z.object({
+  question: z.string(),
+  option: z.array(z.string()),
+  option_type: z.literal("radio"),
+  answer: z.string().min(1, "This child question is required"),
+});
+
+const baseQuestionSchema = z.object({
+  question: z.string(),
+  option: z.array(z.string()).optional(),
+  option_type: z.string().optional(),
+  has_child: z.boolean(),
+});
+
+const radioQuestionSchema = baseQuestionSchema.extend({
+  option_type: z.literal("radio"),
+  has_child: z.literal(false),
+  answer: z.string().min(1, "This question is required"),
+});
+
+const checkboxQuestionSchema = baseQuestionSchema.extend({
+  option_type: z.literal("checkbox"),
+  has_child: z.literal(false),
+  answer: z.array(z.string()).min(1, "Select at least one option"),
+});
+
+const parentQuestionSchema = baseQuestionSchema.extend({
+  has_child: z.literal(true),
+  child_question: z.array(childQuestionSchema),
+  answer: z.string().optional(),
+});
+
+export const appointmentBookingQuestionnaireSchema = z.object({
+  questions: z.array(
+    z.union([radioQuestionSchema, checkboxQuestionSchema, parentQuestionSchema])
+  ),
 });

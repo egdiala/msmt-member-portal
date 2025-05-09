@@ -66,6 +66,10 @@ export const SingleOrganisationProviderContent = () => {
       member_id: userProfile?.user_id,
     });
 
+  const org_tier_id = userProfile?.org_data?.filter(
+    (val) => val?.org_id === id?.toString()
+  )?.[0]?.tier_id;
+
   const [filters, setFilters] = useState<Record<string, any>>({});
   const { data: requestVariables } = useMultipleRequestVariables([
     "service-offering",
@@ -110,6 +114,7 @@ export const SingleOrganisationProviderContent = () => {
   >({
     org_id: id!.toString(),
     ...(value ? { q: value } : {}),
+    ...(org_tier_id ? { tier_id: org_tier_id } : {}),
     ...filters,
   });
 
@@ -219,7 +224,7 @@ export const SingleOrganisationProviderContent = () => {
             </Avatar>
 
             <div className="grid gap-y-3 w-full items-center">
-              <div className="grid gap-y-1">
+              <div className="grid gap-y-1 capitalize">
                 <h3 className="text-lg md:text-xl font-bold text-brand-1">
                   {data?.name}
                 </h3>
@@ -264,7 +269,7 @@ export const SingleOrganisationProviderContent = () => {
 
           <div className="border border-divider rounded-lg px-4 md:px-5 py-4 grid gap-y-2">
             <p className="text-sm text-brand-2">About</p>
-            <p className="text-brand-1">{data?.description}</p>
+            <p className="text-brand-1">{data?.description ?? "N/A"}</p>
           </div>
 
           <div className="border border-divider rounded-lg px-3 md:px-5 py-4 grid gap-y-2">

@@ -131,11 +131,14 @@ export default function SignUp() {
                 name="dob"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <DatePickerField
-                      value={field.value}
-                      onChange={field.onChange}
-                      label="Date of Birth"
-                    />
+                    <FormControl>
+                      <DatePickerField
+                        value={field.value}
+                        onChange={field.onChange}
+                        label="Date of Birth"
+                      />
+                    </FormControl>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -208,10 +211,7 @@ export default function SignUp() {
           </div>
         </motion.div>
 
-        <motion.div
-          layout
-          className="flex justify-center space-x-6"
-        >
+        <motion.div layout className="flex justify-center space-x-6">
           <Button type="button" variant="secondary" className="rounded-full">
             Cancel
           </Button>

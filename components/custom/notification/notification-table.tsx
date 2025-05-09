@@ -71,11 +71,13 @@ export const NotificationTable = () => {
             {isUpdating ? (
               <Loader />
             ) : (
-              <div className="flex items-center gap-x-2">
-                {" "}
-                Mark all as read
-                <CheckCheck className="size-4 stroke-button-secondary" />
-              </div>
+              <RenderIf condition={Number(pages?.total) > 0}>
+                <div className="flex items-center gap-x-2">
+                  {" "}
+                  Mark all as read
+                  <CheckCheck className="size-4 stroke-button-secondary" />
+                </div>
+              </RenderIf>
             )}
           </Button>
         </div>

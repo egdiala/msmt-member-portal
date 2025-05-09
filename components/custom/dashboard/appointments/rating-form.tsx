@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useParams } from "next/navigation";
 import { Star } from "lucide-react";
+import { Loader } from "@/components/shared/loader";
+import { RadioGroup, RadioGroupItem } from "@/components/ui";
+import { AnimatePresence, motion } from "motion/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -21,16 +24,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { useSubmitSessionRating } from "@/services/hooks/mutations/use-appointment";
 
 // Define the form schema with Zod
 const formSchema = z.object({
-  sessionRatings: z.object({
-    great: z.boolean().default(false),
-    neutral: z.boolean().default(false),
-    notGreat: z.boolean().default(false),
-    heListens: z.boolean().default(false),
-    feelBetter: z.boolean().default(false),
-  }),
+  provider_on_time: z.string().min(1, "Please select an option"),
   starRating: z.number().min(1, "Please rate with at least 1 star").max(5),
   feedback: z.string().optional(),
 });
@@ -41,42 +39,46 @@ interface RatingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   personName?: string;
-  onSubmit?: (data: FormValues) => void;
 }
 
 export function RatingDialog({
   open,
   onOpenChange,
   personName = "Jide",
-  onSubmit,
 }: RatingDialogProps) {
-  const [rating, setRating] = useState<number>(3);
+  const { slug } = useParams();
+  const [rating, setRating] = useState<number>(0);
+  const { mutate, isPending } = useSubmitSessionRating(() =>
+    onOpenChange(false)
+  );
 
-  // Initialize the form
+  const buttonCopy = {
+    idle: " Submit Review",
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isPending ? "loading" : "idle";
+  }, [isPending]);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sessionRatings: {
-        great: false,
-        neutral: false,
-        notGreat: false,
-        heListens: false,
-        feelBetter: false,
-      },
+      provider_on_time: "",
 
       starRating: 3,
       feedback: "",
     },
   });
 
-  // Handle form submission
   function handleSubmit(data: FormValues) {
-    onSubmit?.(data);
-    console.log("Form submitted:", data);
-    onOpenChange(false);
+    mutate({
+      provider_on_time: data.provider_on_time,
+      comment: data.feedback!,
+      rating: `${data?.starRating.toString()} - 5`,
+      appointment_id: slug as string ,
+    });
   }
-
-  // Update star rating in form when stars are clicked
   const handleStarClick = (value: number) => {
     setRating(value);
     form.setValue("starRating", value, { shouldValidate: true });
@@ -97,128 +99,51 @@ export function RatingDialog({
             className="grid gap-6"
           >
             <div className="space-y-4">
-              <h3 className="text-base font-medium">
-                How was your session with {personName}?
-              </h3>
-
               <div className="flex flex-wrap gap-2">
                 <FormField
                   control={form.control}
-                  name="sessionRatings.great"
+                  name="provider_on_time"
                   render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2">
+                    <FormItem className="space-y-3">
+                      <h3 className="text-base font-medium">
+                        Was {personName} on time?
+                      </h3>
                       <FormControl>
-                        <Checkbox
-                          id="great"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          className="sr-only peer"
-                        />
-                      </FormControl>
-                      <label
-                        htmlFor="great"
-                        className="cursor-pointer rounded-full border border-muted bg-background px-4 py-2 text-sm font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5"
-                      >
-                        Great
-                      </label>
-                    </FormItem>
-                  )}
-                />
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex gap-4"
+                        >
+                          <FormItem className="flex items-center space-x-2">
+                            <label
+                              htmlFor="on-time-yes"
+                              className="flex items-center space-x-2 cursor-pointer rounded-full border border-muted bg-background px-4 py-2 text-sm font-medium peer-data-[state=checked]:border-brand-accent-2 peer-data-[state=checked]:bg-primary/5"
+                            >
+                              <FormControl>
+                                <RadioGroupItem value="yes" id="on-time-yes" />
+                              </FormControl>
+                              Yes
+                            </label>
+                          </FormItem>
 
-                <FormField
-                  control={form.control}
-                  name="sessionRatings.neutral"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2">
-                      <FormControl>
-                        <Checkbox
-                          id="neutral"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          className="sr-only peer"
-                        />
+                          <FormItem className="flex items-center space-x-2">
+                            <label
+                              htmlFor="on-time-no"
+                              className="flex items-center space-x-2 cursor-pointer rounded-full border border-muted bg-background px-4 py-2 text-sm font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5"
+                            >
+                              <FormControl>
+                                <RadioGroupItem value="no" id="on-time-no" />
+                              </FormControl>
+                              No
+                            </label>
+                          </FormItem>
+                        </RadioGroup>
                       </FormControl>
-                      <label
-                        htmlFor="neutral"
-                        className="cursor-pointer rounded-full border border-muted bg-background px-4 py-2 text-sm font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5"
-                      >
-                        Neutral
-                      </label>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="sessionRatings.notGreat"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2">
-                      <FormControl>
-                        <Checkbox
-                          id="notGreat"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          // className="sr-only peer"
-                        />
-                      </FormControl>
-                      <label
-                        htmlFor="notGreat"
-                        className="cursor-pointer rounded-full border border-muted bg-background px-4 py-2 text-sm font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5"
-                      >
-                        Not so great
-                      </label>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <FormField
-                control={form.control}
-                name="sessionRatings.heListens"
-                render={({ field }) => (
-                  <FormItem className="flex items-center space-x-2">
-                    <FormControl>
-                      <Checkbox
-                        id="heListens"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        // className="sr-only peer"
-                      />
-                    </FormControl>
-                    <label
-                      htmlFor="heListens"
-                      className="cursor-pointer rounded-full border border-muted bg-background px-4 py-2 text-sm font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5"
-                    >
-                      He listens
-                    </label>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="sessionRatings.feelBetter"
-                render={({ field }) => (
-                  <FormItem className="flex items-center space-x-2">
-                    <FormControl>
-                      <Checkbox
-                        id="feelBetter"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        // className="sr-only peer"
-                      />
-                    </FormControl>
-                    <label
-                      htmlFor="feelBetter"
-                      className="cursor-pointer rounded-full border border-muted bg-background px-4 py-2 text-sm font-medium peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5"
-                    >
-                      I feel better now
-                    </label>
-                  </FormItem>
-                )}
-              />
             </div>
 
             <FormField
@@ -240,7 +165,7 @@ export function RatingDialog({
                             <Star
                               className={`h-8 w-8 ${
                                 star <= rating
-                                  ? "fill-blue-500 text-blue-500"
+                                  ? "fill-brand-accent-2 text-brand-accent-2"
                                   : "fill-blue-100 text-blue-100"
                               }`}
                             />
@@ -271,13 +196,26 @@ export function RatingDialog({
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600"
-              size="lg"
-            >
-              Submit Review
-            </Button>
+            <motion.div layout className="flex items-center justify-center">
+              <Button
+                type="submit"
+                className="w-full"
+                size={"lg"}
+                disabled={isPending}
+              >
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                    initial={{ opacity: 0, y: -25 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 25 }}
+                    key={buttonState}
+                  >
+                    {buttonCopy[buttonState]}
+                  </motion.span>
+                </AnimatePresence>
+              </Button>
+            </motion.div>
           </form>
         </Form>
       </DialogContent>

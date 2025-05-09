@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Cookies from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import {
@@ -44,6 +45,7 @@ import { CalendarInput } from "../wallet/calendar-input";
 
 export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
+  const isLoggedIn = !!Cookies.get("authToken");
 
   const { data: requestVariables } = useMultipleRequestVariables([
     "service-offering",
@@ -162,6 +164,7 @@ export const ProvidersTable = () => {
   const { data: count } =
     useGetServiceProviders<FetchedServiceProvidersCountType>({
       component: "count",
+      ...filters,
     });
 
   const tableData = data?.map((provider) => {
@@ -443,16 +446,30 @@ export const ProvidersTable = () => {
             data={tableData ?? []}
             headers={PROVIDERS_TABLE_HEADERS}
             onClickRow={(row) => {
-              if (row.datum.provider_data.user_type.toLowerCase() === "org") {
-                router.push(
-                  `/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
-                );
-              } else if (
-                row.datum.provider_data.user_type.toLowerCase() === "provider"
-              ) {
-                router.push(
-                  `/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
-                );
+              if (isLoggedIn) {
+                if (row.datum.provider_data.user_type.toLowerCase() === "org") {
+                  router.push(
+                    `/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                  );
+                } else if (
+                  row.datum.provider_data.user_type.toLowerCase() === "provider"
+                ) {
+                  router.push(
+                    `/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                  );
+                }
+              } else {
+                if (row.datum.provider_data.user_type.toLowerCase() === "org") {
+                  router.push(
+                    `/complete-booking/providers/organisation/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                  );
+                } else if (
+                  row.datum.provider_data.user_type.toLowerCase() === "provider"
+                ) {
+                  router.push(
+                    `/complete-booking/providers/individual/${row.id}?type=${row.datum.provider_data.user_type}&service_type=${row.datum.provider_data.account_service_type}`
+                  );
+                }
               }
             }}
             isLoading={isLoading}
@@ -478,7 +495,7 @@ export const ProvidersTable = () => {
 
         <RenderIf condition={showGridView}>
           <RenderIf condition={isLoading}>
-            <div className="w-full h-full flex justify-center items-center">
+            <div className="w-full h-full min-h-[300px] flex justify-center items-center">
               <Loader />
             </div>
           </RenderIf>

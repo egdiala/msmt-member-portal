@@ -2,9 +2,11 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { differenceInYears } from "date-fns";
 import { AnimatePresence, motion } from "motion/react";
+import Cookies from "js-cookie";
+import { useStepper } from "@/contexts/StepperContext";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, Button } from "@/components/ui";
 import {
@@ -56,6 +58,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
     new Date(),
     new Date(data?.service_start_year ?? 0)
   );
+  const router = useRouter();
+  const isLoggedIn = !!Cookies.get("authToken");
+  const { setStep } = useStepper();
 
   const providerInfo = [
     {
@@ -143,7 +148,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
             </Avatar>
 
             <div className="grid gap-y-3 w-full">
-              <div className="grid gap-y-1">
+              <div className="grid gap-y-1 capitalize">
                 <h3 className="text-xl font-bold text-brand-1">{data?.name}</h3>
                 <p className="text-brand-2 capitalize">{data?.specialty}</p>
                 <div className="flex items-center gap-x-1 text-sm text-brand-1">
@@ -183,12 +188,32 @@ export const SingleOrganisationIndividualProviderContent = () => {
                   </AnimatePresence>
                 </Button>
 
-                <Button asChild className="hidden md:inline-flex">
-                  <Link href="/providers/book-appointment">
-                    <IconPlus className="stroke-white" />
-                    Book An Appointment
-                  </Link>
-                </Button>
+                <RenderIf condition={isLoggedIn}>
+                  <Button asChild className="hidden md:inline-flex">
+                    <Link
+                      href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
+                    >
+                      <IconPlus className="stroke-white" />
+                      Book An Appointment
+                    </Link>
+                  </Button>
+                </RenderIf>
+                <RenderIf condition={!isLoggedIn}>
+                  <Button
+                    asChild
+                    className="hidden md:inline-flex"
+                    onClick={() => {
+                      setStep(2);
+                    }}
+                  >
+                    <Link
+                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
+                    >
+                      <IconPlus className="stroke-white" />
+                      Book An Appointment
+                    </Link>
+                  </Button>
+                </RenderIf>
               </div>
             </div>
           </div>
@@ -267,12 +292,30 @@ export const SingleOrganisationIndividualProviderContent = () => {
             ))}
           </div>
 
-          <Button asChild className="flex md:hidden">
-            <Link href="/providers/book-appointment">
+          <RenderIf condition={isLoggedIn}>
+            <Button asChild className="flex md:hidden">
+              <Link
+                href={`/providers/book-appointment?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
+              >
+                <IconPlus className="stroke-white" />
+                Book An Appointment
+              </Link>
+            </Button>
+          </RenderIf>
+          <RenderIf condition={!isLoggedIn}>
+            <Button
+              className="flex md:hidden"
+              onClick={() => {
+                router.push(
+                  `/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`
+                );
+                setStep(2);
+              }}
+            >
               <IconPlus className="stroke-white" />
               Book An Appointment
-            </Link>
-          </Button>
+            </Button>
+          </RenderIf>
         </RenderIf>
       </div>
     </>

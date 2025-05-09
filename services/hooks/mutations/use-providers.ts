@@ -14,6 +14,7 @@ export const useAddFavouriteProvider = (fn?: (res: any) => void) => {
       toast.success("Successfully added this provider as your favourite!");
       queryClient.invalidateQueries({ queryKey: ["get-favourite-provider"] });
       queryClient.invalidateQueries({ queryKey: ["get-service-providers"] });
+      queryClient.invalidateQueries({ queryKey: ["get-appointments"] });
       fn?.(res);
     },
     onError: (err: any) => {

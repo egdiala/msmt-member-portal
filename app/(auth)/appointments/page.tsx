@@ -1,5 +1,10 @@
 import { AppointmentContainer } from "@/components/custom/dashboard/appointments/appointments-container";
+import { Suspense } from "react";
 
 export default function AppointmentPage() {
-  return <AppointmentContainer />;
+  return (
+    <Suspense>
+      <AppointmentContainer />
+    </Suspense>
+  );
 }
