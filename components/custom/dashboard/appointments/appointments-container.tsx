@@ -34,7 +34,7 @@ export function AppointmentContainer() {
   const handleApplyFilters = (filters: Record<string, any>) => {
     // Only set non-empty filters
     const cleanFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => 
+      Object.entries(filters).filter(([, value]) => 
         value !== undefined && value !== null && value !== ""
       )
     );

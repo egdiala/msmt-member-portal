@@ -74,7 +74,6 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
   const initialRender = useRef(true);
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
-  const [isFormReset, setIsFormReset] = useState(false);
 
   // Default form values
   const defaultValues = {
@@ -125,17 +124,16 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
       fromDate: data.fromDate ? format(data.fromDate, "yyyy-MM-dd") : undefined,
       toDate: data.toDate ? format(data.toDate, "yyyy-MM-dd") : undefined,
     };
-    
+
     // Remove undefined values
     const cleanedData = Object.fromEntries(
-      Object.entries(formattedData).filter(([_, v]) => v !== undefined)
+      Object.entries(formattedData).filter(([, v]) => v !== undefined)
     );
-    
+
     onApplyFilters(cleanedData);
     setOpen(false);
   });
 
-  // Reset form when opened
   useEffect(() => {
     if (open) {
       reset(defaultValues);
@@ -143,7 +141,6 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
   }, [open, reset]);
 
   const handleClose = () => {
-    // Reset form to initial values with All Time selected
     reset(defaultValues);
     setOpen(false);
   };

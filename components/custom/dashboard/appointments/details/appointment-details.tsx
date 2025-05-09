@@ -6,8 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   IconStarFull,
   IconCalendarCheck2,
-  IconClock,
-  IconExternalLink,
+  IconClock
 } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
