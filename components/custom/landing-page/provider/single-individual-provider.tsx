@@ -113,9 +113,7 @@ export const SingleIndividualProviderContent = () => {
                 <Button asChild className="hidden md:inline-flex">
                   <Link
                     href={
-                      isLoggedIn
-                        ? `/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`
-                        : "/sign-up"
+                      `/providers/book-appointment?provider_id=${id}&type=${user_type}&service_type=${account_service_type}`
                     }
                   >
                     <IconPlus className="stroke-white" />

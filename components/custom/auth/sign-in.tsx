@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
@@ -26,10 +26,12 @@ import { useLogin } from "@/services/hooks/mutations/use-auth";
 export default function SignIn() {
   const router = useRouter();
   const [ref, bounds] = useMeasure();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
 
   const { mutate, isPending } = useLogin((href) => {
-    router.push(href);
+    const callbackUrl = searchParams.get("callbackUrl");
+    router.push(callbackUrl || href);
   });
 
   const form = useForm<z.infer<typeof signInSchema>>({
