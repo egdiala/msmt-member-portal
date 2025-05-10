@@ -15,7 +15,7 @@ const publicRoutes = [
 export function middleware(request: NextRequest) {
   // Clone the request URL for modifications
   const url = request.nextUrl.clone();
-  const { pathname } = url;
+  const { pathname, search } = url;
 
   // Debug info
   console.log(`[Middleware] Path: ${pathname}`);
@@ -73,16 +73,15 @@ export function middleware(request: NextRequest) {
     const isNextInternal =
       pathname.startsWith("/_next") || pathname.includes(".");
 
-    if (!isAuthenticated && !isPublicRoute && !isNextInternal && pathname !== "/") {
+    if (!isAuthenticated && !isPublicRoute && !isNextInternal && pathname !== "/" && !pathname.startsWith("/available-providers")) {
       // console.log(
       //   `[Middleware] Unauthenticated user trying to access protected route`
       // );
-
+      const redirectUrl = new URL("/sign-in", url.origin);
       // Store the current URL as a query param for possible redirect after login
-      url.pathname = "/sign-in";
-      url.searchParams.set("callbackUrl", pathname);
+      redirectUrl.searchParams.set("callbackUrl", `${pathname}${search || ""}`)
 
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(redirectUrl);
     }
 
     // Otherwise, continue with the request
