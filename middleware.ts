@@ -8,7 +8,7 @@ const publicRoutes = [
   "/reset-password",
   "/set-password",
   "/verify-email",
-  "/start-session",
+  // "/start-session",
   "/verify-booking",
   "/complete-booking",
 ];

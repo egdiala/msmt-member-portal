@@ -19,7 +19,7 @@ export const useUpdateAppointment = (fn?: (res: any) => void) => {
   return useMutation({
     mutationFn: updateAppointment,
     onSuccess: (res: any) => {
-      toast.success("Appointment updated successfully!");
+      toast.success("Session Started!");
       fn?.(res);
     },
     onError: (err: any) => {

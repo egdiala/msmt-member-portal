@@ -8,30 +8,34 @@ import {
   IconShare2,
   IconVideo,
   IconEndCall,
+  IconUsers,
 } from "@/components/icons";
 
 interface MeetingViewProps {
-  initialAudioEnabled: boolean;
-  initialVideoEnabled: boolean;
+  isProvider?: boolean;
+  meetingId: string;
+  participantName?: string;
 }
 
 const Timer = () => {
   const [time, setTime] = useState(0);
-  
+
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime(prevTime => prevTime + 1);
+      setTime((prevTime) => prevTime + 1);
     }, 1000);
-    
+
     return () => clearInterval(timer);
   }, []);
-  
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
-  
+
   return (
     <div className="text-sm font-medium text-gray-700 flex items-center">
       <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
@@ -40,128 +44,248 @@ const Timer = () => {
   );
 };
 
-interface MeetingViewProps {
-  initialAudioEnabled: boolean;
-  initialVideoEnabled: boolean;
-  isProvider?: boolean;
-}
-
 const MeetingView: React.FC<MeetingViewProps> = ({
-  initialAudioEnabled,
-  initialVideoEnabled,
   isProvider = false,
+  meetingId,
+  participantName,
 }) => {
-  const [audioEnabled, setAudioEnabled] = useState<boolean>(initialAudioEnabled);
-  const [videoEnabled, setVideoEnabled] = useState<boolean>(initialVideoEnabled);
-  const [layout, setLayout] = useState<'grid' | 'focus'>('focus');
-  
-  const { join, leave, toggleMic, toggleWebcam, participants } = useMeeting({
+  // State variables
+  const [layout, setLayout] = useState<"grid" | "focus">("focus");
+  const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const meetingInitializedRef = useRef(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  // Use the VideoSDK hook with updated callbacks
+  const { 
+    join, 
+    leave, 
+    toggleMic, 
+    toggleWebcam, 
+    participants, 
+    localParticipant, 
+    localMicOn, 
+    localWebcamOn 
+  } = useMeeting({
     onMeetingJoined: () => {
       console.log("Meeting joined successfully");
+      setIsMeetingJoined(true);
     },
     onMeetingLeft: () => {
       console.log("Meeting left");
+      setIsMeetingJoined(false);
     },
     onError: (error) => {
-      console.log("Error in meeting:", error);
+      console.error("Error in meeting:", error);
     },
   });
 
   useEffect(() => {
-    join();
+    const handleBeforeUnload = () => {
+      if (isMeetingJoined) {
+        try {
+           leave();
+        } catch (error) {
+          console.error("Error leaving meeting:", error);
+        }
+      }
+    };
 
-    if (!initialAudioEnabled) {
-      toggleMic();
-    }
-
-    if (!initialVideoEnabled) {
-      toggleWebcam();
-    }
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      leave();
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      if (isMeetingJoined) {
+        try {
+          // leave();
+        } catch (error) {
+          console.error("Error leaving meeting during cleanup:", error);
+        }
+      }
     };
-  }, []);
+  }, [isMeetingJoined, leave]);
+
+  useEffect(() => {
+    if (!meetingInitializedRef.current && meetingId && !isMeetingJoined) {
+      meetingInitializedRef.current = true;
+      try {
+        join();
+        console.log("Joining meeting with ID:", meetingId);
+      } catch (error) {
+        console.error("Error joining meeting:", error);
+      }
+    }
+  }, [join, isMeetingJoined, meetingId]);
 
   const handleToggleAudio = () => {
-    toggleMic();
-    setAudioEnabled(!audioEnabled);
+    try {
+      console.log("Toggling microphone, current state:", localMicOn);
+      toggleMic();
+    } catch (error) {
+      console.error("Error toggling mic:", error);
+    }
   };
 
   const handleToggleVideo = () => {
-    toggleWebcam();
-    setVideoEnabled(!videoEnabled);
+    try {
+      console.log("Toggling webcam, current state:", localWebcamOn);
+      toggleWebcam();
+    } catch (error) {
+      console.error("Error toggling webcam:", error);
+    }
   };
 
   const handleEndCall = () => {
-    leave();
-    // Redirect to post-call page
-    window.location.href = '/call-ended';
+    try {
+      if (isMeetingJoined) {
+        leave();
+      }
+      // Redirect to post-call page
+      window.location.href = "/call-ended";
+    } catch (error) {
+      console.error("Error ending call:", error);
+      // Force redirect even if there was an error
+      window.location.href = "/call-ended";
+    }
   };
 
   const handleToggleLayout = () => {
-    setLayout(prev => prev === 'grid' ? 'focus' : 'grid');
+    setLayout((prev) => (prev === "grid" ? "focus" : "grid"));
   };
 
-  // Get array of participants
   const participantsArray = [...participants.values()];
-  
-  // For focus layout, determine which participant to focus on
-  const focusParticipant = isProvider 
-    ? participantsArray.find(p => p.id !== 'local') || participantsArray[0]
-    : participantsArray.find(p => p.id === 'local') || participantsArray[0];
-  
-  const otherParticipants = participantsArray.filter(p => p.id !== focusParticipant?.id);
+
+  const focusParticipant = isProvider
+    ? participantsArray.find((p) => p.id !== localParticipant?.id) || participantsArray[0]
+    : participantsArray.find((p) => p.id === localParticipant?.id) || participantsArray[0];
+
+  const otherParticipants = participantsArray.filter((p) =>
+    focusParticipant ? p.id !== focusParticipant.id : true
+  );
+
+  console.log("Participants:", participantsArray);
+  console.log("Focus participant:", focusParticipant);
+  console.log("Other participants:", otherParticipants);
+
+  if (!isMeetingJoined) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[60vh] bg-transparent">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-lg text-gray-700">Joining meeting...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg overflow-hidden shadow-lg">
+    <div className="flex flex-col h-full bg-gray-50 rounded-lg overflow-hidden shadow-lg">
       {/* Meeting header */}
-      <div className="flex justify-between items-center px-4 py-2 border-b">
-        <div className="flex items-center space-x-2">
-          {isProvider ? 
-            <span className="text-blue-600 font-semibold">Patient Session</span> :
-            <span className="text-blue-600 font-semibold">Provider Session</span>
-          }
-          <Timer />
+      <div className="flex justify-between items-center px-4 py-3 bg-white border-b">
+        <div className="flex items-center space-x-3">
+          <div>
+            <h1 className="text-lg font-semibold text-gray-900">
+              {isProvider ? "Patient Session" : "Provider Session"}
+            </h1>
+            <Timer />
+          </div>
         </div>
+        
+        {/* Add layout toggle button */}
         <button 
           onClick={handleToggleLayout}
-          className="text-gray-600 hover:text-gray-800"
+          className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
         >
-          {layout === 'grid' ? 'Focus View' : 'Grid View'}
+          <IconUsers className="w-5 h-5 stroke-brand-1" />
         </button>
       </div>
 
-      {/* Meeting content */}
+      {/* Meeting content - using the exact layout from the reference images */}
       <div className="flex-1 bg-gray-100 overflow-hidden relative">
-        {layout === 'focus' ? (
+        {layout === "focus" && (
           <div className="h-full flex flex-col">
-            {/* Main large video */}
-            <div className="flex-1 relative">
-              {focusParticipant && (
-                <ParticipantView
-                  key={focusParticipant.id}
-                  participantId={focusParticipant.id}
-                  large={true}
-                />
-              )}
-            </div>
-            
-            {/* Thumbnail row at bottom */}
-            <div className="h-24 flex gap-2 p-2 bg-gray-200">
-              {otherParticipants.map(participant => (
-                <div key={participant.id} className="h-full aspect-video">
-                  <ParticipantView
-                    participantId={participant.id}
-                    large={false}
-                  />
+            {isMobile ? (
+              <div className="h-full flex flex-col">
+                <div className="flex-1 relative">
+                  {focusParticipant && (
+                    <ParticipantView
+                      key={focusParticipant.id}
+                      participantId={focusParticipant.id}
+                      large={true}
+                    />
+                  )}
                 </div>
-              ))}
-            </div>
+                {otherParticipants.length > 0 && (
+                  <div className="flex flex-col p-2 gap-2">
+                    {otherParticipants.map((participant) => (
+                      <div
+                        key={participant.id}
+                        className="h-24 rounded-lg overflow-hidden"
+                      >
+                        <ParticipantView
+                          participantId={participant.id}
+                          large={false}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Desktop layout - main video with thumbnails on bottom */
+              <div className="h-full flex flex-col">
+                <div className="flex-1 relative">
+                  {focusParticipant && (
+                    <ParticipantView
+                      key={focusParticipant.id}
+                      participantId={focusParticipant.id}
+                      large={true}
+                    />
+                  )}
+                </div>
+                {otherParticipants.length > 0 && (
+                  <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2 ">
+                    {otherParticipants.map((participant) => (
+                      <div key={participant.id} className="h-full aspect-video">
+                        <ParticipantView
+                          participantId={participant.id}
+                          large={false}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2 h-full">
-            {participantsArray.map(participant => (
+        )}
+
+        {layout === "grid" && (
+          <div
+            className={`grid ${
+              participantsArray.length === 1
+                ? "grid-cols-1"
+                : participantsArray.length <= 2
+                ? "grid-cols-1 md:grid-cols-2"
+                : participantsArray.length <= 4
+                ? "grid-cols-2"
+                : "grid-cols-2 md:grid-cols-3"
+            } gap-2 p-2 h-full`}
+          >
+            {participantsArray.map((participant) => (
               <ParticipantView
                 key={participant.id}
                 participantId={participant.id}
@@ -172,81 +296,142 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         )}
       </div>
 
-      {/* Controls */}
-      <div className="flex justify-center items-center gap-4 p-3 bg-white border-t">
+      {/* Controls - designed to match the reference images */}
+      <div className="flex justify-center items-center gap-4 p-4 bg-white border-t">
         <button
           onClick={handleToggleAudio}
           className={`w-12 h-12 rounded-full flex items-center justify-center ${
-            audioEnabled ? 'bg-gray-200 text-gray-800' : 'bg-red-100 text-red-600'
-          }`}
-          aria-label={audioEnabled ? "Mute microphone" : "Unmute microphone"}
+            localMicOn
+              ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              : "bg-red-500 text-white hover:bg-red-600"
+          } transition-colors`}
+          aria-label={localMicOn ? "Mute microphone" : "Unmute microphone"}
         >
-          {audioEnabled ? <IconMic /> : <IconMicOff />}
+          {localMicOn ? (
+            <IconMic className="w-5 h-5 stroke-brand-1" />
+          ) : (
+            <IconMicOff className="w-5 h-5 stroke-white" />
+          )}
         </button>
-        
+
         <button
           onClick={handleToggleVideo}
           className={`w-12 h-12 rounded-full flex items-center justify-center ${
-            videoEnabled ? 'bg-gray-200 text-gray-800' : 'bg-red-100 text-red-600'
-          }`}
-          aria-label={videoEnabled ? "Turn off camera" : "Turn on camera"}
+            localWebcamOn
+              ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              : "bg-red-500 text-white hover:bg-red-600"
+          } transition-colors`}
+          aria-label={localWebcamOn ? "Turn off camera" : "Turn on camera"}
         >
-          {videoEnabled ? <IconVideo /> : <IconVideoOff />}
+          {localWebcamOn ? (
+            <IconVideo className="w-5 h-5 stroke-brand-1" />
+          ) : (
+            <IconVideoOff className="w-5 h-5 stroke-white" />
+          )}
         </button>
-        
+
         <button
           onClick={handleEndCall}
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500 text-white"
+          className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500 text-white hover:bg-red-600 transition-colors"
           aria-label="End call"
         >
-          <IconEndCall />
+          <IconEndCall className="w-5 h-5 stroke-white" />
         </button>
-        
-        {/* <button
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 text-gray-800"
-          aria-label="Chat"
-        >
-          <IconChat />
-        </button> */}
-        
+
         <button
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 text-gray-800"
+          className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
           aria-label="Share screen"
         >
-          <IconShare2 />
+          <IconShare2 className="w-5 h-5 stroke-brand-1" />
         </button>
       </div>
     </div>
   );
 };
 
-// Individual participant view component
-interface ParticipantViewProps {
-  participantId: string;
-  large?: boolean;
-}
+// Individual participant view component - fixed to handle streams correctly
+const ParticipantView = ({ participantId, large = false }) => {
+  const videoRef = useRef(null);
+  const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
+    useParticipant(participantId);
 
-const ParticipantView: React.FC<ParticipantViewProps> = ({ 
-  participantId,
-  large = false
-}) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } = useParticipant(participantId);
-
+  // Improved video stream handling
   useEffect(() => {
     if (webcamOn && webcamStream && videoRef.current) {
-      videoRef.current.srcObject = webcamStream;
+      try {
+        // Standard approach - try direct assignment first
+        videoRef.current.srcObject = webcamStream;
+        
+        // Ensure video is playing
+        videoRef.current.play().catch(err => {
+          console.warn("Auto-play prevented:", err);
+        });
+      } catch (err) {
+        console.error("Primary video setup failed:", err);
+        
+        // Browser compatibility fallback
+        try {
+          const mediaStream = new MediaStream();
+          
+          // Handle different stream structures
+          if (webcamStream instanceof MediaStream) {
+            webcamStream.getTracks().forEach(track => {
+              mediaStream.addTrack(track);
+            });
+          } else if (webcamStream && typeof webcamStream === "object") {
+            // Handle VideoSDK's custom stream format
+            const stream = webcamStream;
+            
+            if (stream.getVideoTracks && typeof stream.getVideoTracks === "function") {
+              stream.getVideoTracks().forEach(track => {
+                mediaStream.addTrack(track);
+              });
+            }
+          }
+          
+          videoRef.current.srcObject = mediaStream;
+          videoRef.current.play().catch(err => {
+            console.warn("Fallback auto-play prevented:", err);
+          });
+        } catch (fallbackErr) {
+          console.error("All video setup approaches failed:", fallbackErr);
+        }
+      }
+    } else if (videoRef.current) {
+      // Clear the video when webcam is off
+      if (videoRef.current.srcObject) {
+        videoRef.current.srcObject = null;
+      }
     }
-  }, [webcamStream, webcamOn]);
+    
+    // Cleanup function
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        try {
+          const tracks = videoRef.current.srcObject.getTracks();
+          tracks.forEach(track => {
+            // Don't stop tracks for local preview as it might affect other components
+            if (!isLocal) {
+              track.stop();
+            }
+          });
+        } catch (err) {
+          console.warn("Error cleaning up video tracks:", err);
+        }
+      }
+    };
+  }, [webcamStream, webcamOn, isLocal]);
 
   const name = displayName || (isLocal ? "You" : "User");
-  const role = name === "You" ? "You" : (name.includes("Provider") ? "Provider" : "Patient");
-  
-
+  const role = isLocal ? "You" : "Provider";
   const firstLetter = name.charAt(0).toUpperCase();
 
   return (
-    <div className={`relative rounded-lg overflow-hidden ${large ? 'h-full w-full' : 'h-full w-full'} bg-gray-800`}>
+    <div
+      className={`relative rounded-lg overflow-hidden ${
+        large ? "h-full w-full" : "h-full w-full"
+      } bg-gray-800`}
+    >
       {webcamOn ? (
         <video
           ref={videoRef}
@@ -268,11 +453,11 @@ const ParticipantView: React.FC<ParticipantViewProps> = ({
         <span>{name}</span>
         {!micOn && (
           <span className="ml-2 text-red-500">
-            <IconMicOff />
+            <IconMicOff className="w-4 h-4 stroke-white" />
           </span>
         )}
       </div>
-      
+
       {/* Role tag in top left */}
       <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-xs">
         {role}
