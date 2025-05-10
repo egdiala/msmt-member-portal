@@ -168,7 +168,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   };
 
   const participantsArray = [...participants.values()].filter(
-    (p) => p.mode === "CONFERENCE"
+    (p) => p.mode === "SEND_AND_RECV"
   );
 
   const focusParticipant = isProvider
@@ -355,7 +355,13 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 };
 
 // Individual participant view component - fixed to handle streams correctly
-const ParticipantView = ({ participantId, large = false }) => {
+const ParticipantView = ({
+  participantId,
+  large = false,
+}: {
+  participantId: string;
+  large: boolean;
+}) => {
   const videoRef = useRef(null);
   const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
     useParticipant(participantId);
@@ -363,7 +369,7 @@ const ParticipantView = ({ participantId, large = false }) => {
   useEffect(() => {
     if (webcamStream?.track instanceof MediaStreamTrack && videoRef.current) {
       const mediaStream = new MediaStream([webcamStream.track]);
-      videoRef.current.srcObject = mediaStream;
+      (videoRef.current as any).srcObject = mediaStream;
     }
   }, [webcamStream]);
   const name = displayName || (isLocal ? "You" : "User");
@@ -373,7 +379,7 @@ const ParticipantView = ({ participantId, large = false }) => {
   return (
     <div
       className={`relative rounded-lg overflow-hidden ${
-        large ? "h-full w-full" : "h-full w-full"
+        large ? "h-[80vh] w-full" : "h-full w-full"
       }`}
     >
       {webcamOn ? (
@@ -382,7 +388,7 @@ const ParticipantView = ({ participantId, large = false }) => {
           autoPlay
           playsInline
           muted={isLocal}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
         />
       ) : (
         <div className="flex items-center justify-center w-full h-full bg-gray-700 text-white">

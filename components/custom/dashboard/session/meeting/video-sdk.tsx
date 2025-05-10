@@ -30,7 +30,12 @@ interface DeviceInfo {
 
 // Device Selection Modal Component
 const DeviceSelectionModal: React.FC<{
-  onJoin: (audioDeviceId: string, videoDeviceId: string) => void;
+  onJoin: (
+    audioEnabled: boolean,
+    videoEnabled: boolean,
+    audioDeviceId?: string,
+    videoDeviceId?: string
+  ) => void;
   initialAudioEnabled: boolean;
   initialVideoEnabled: boolean;
 }> = ({ onJoin, initialAudioEnabled, initialVideoEnabled }) => {
@@ -46,7 +51,6 @@ const DeviceSelectionModal: React.FC<{
   const videoPreviewRef = React.useRef<HTMLVideoElement>(null);
   const deviceInitializedRef = React.useRef<boolean>(false);
 
-  // Request device permissions and get available devices
   useEffect(() => {
     const getDevices = async () => {
       // Prevent multiple executions
@@ -100,7 +104,6 @@ const DeviceSelectionModal: React.FC<{
     };
   }, []);
 
-  // Start video preview when device is selected
   useEffect(() => {
     const startVideoPreview = async () => {
       try {
@@ -132,10 +135,7 @@ const DeviceSelectionModal: React.FC<{
       videoStream.getTracks().forEach((track) => track.stop());
     }
 
-    onJoin(
-      audioEnabled ? selectedAudioDevice : "",
-      videoEnabled ? selectedVideoDevice : ""
-    );
+    onJoin(audioEnabled, videoEnabled);
   };
 
   return (
@@ -430,13 +430,13 @@ const VideoSDKApp: React.FC = () => {
   ]);
 
   const handleJoinWithDevices = (
-    audioDeviceId: string,
-    videoDeviceId: string,
     audioEnabled: boolean,
-    videoEnabled: boolean
+    videoEnabled: boolean,
+    audioDeviceId?: string,
+    videoDeviceId?: string
   ) => {
-    setSelectedAudioDeviceId(audioDeviceId);
-    setSelectedVideoDeviceId(videoDeviceId);
+    if (audioDeviceId) setSelectedAudioDeviceId(audioDeviceId);
+    if (videoDeviceId) setSelectedVideoDeviceId(videoDeviceId);
     setUserAudioEnabled(audioEnabled);
     setUserVideoEnabled(videoEnabled);
     setShowDeviceSelection(false);
@@ -520,14 +520,15 @@ const VideoSDKApp: React.FC = () => {
     );
   }
   // VideoSDK configuration
-  const { meetingId, token, participantName, participantRole } = meetingConfig;
+  const { meetingId, token, participantRole } = meetingConfig;
+  const participantName = meetingConfig.participantName || "Guest";
   const isProvider = participantRole === "Provider";
 
-  // Initialize with selected devices if available
   const configOptions = {
     meetingId,
     name: participantName,
-    mode: "CONFERENCE",
+    mode: "SEND_AND_RECV",
+    token,
     layout: "GRID",
     multiStream: true,
     micEnabled: userAudioEnabled,
@@ -541,7 +542,7 @@ const VideoSDKApp: React.FC = () => {
     <div className="flex flex-col h-full min-h-[70vh] bg-gray-50">
       <div className="flex-1 h-full mx-auto w-full">
         <MeetingProvider
-          config={configOptions}
+          config={configOptions as any}
           token={token}
           reinitialiseMeetingOnConfigChange={true}
           joinWithoutUserInteraction={true}
