@@ -41,7 +41,7 @@ export const BookAppointmentCard = () => {
             <div className="text-center">
               <h3 className="text-2xl text-text-bg-1">
                 {count?.total}
-                {count!.total > 200 ? "+" : ""}
+                {(count?.total || 0) > 200 ? "+" : ""}
               </h3>
               <p className="text-xs text-text-2 rounded-xl">
                 Provider{count!.total > 1 ? "s" : ""} available for you
