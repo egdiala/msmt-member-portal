@@ -73,7 +73,7 @@ export function middleware(request: NextRequest) {
     const isNextInternal =
       pathname.startsWith("/_next") || pathname.includes(".");
 
-    if (!isAuthenticated && !isPublicRoute && !isNextInternal) {
+    if (!isAuthenticated && !isPublicRoute && !isNextInternal && pathname !== "/") {
       // console.log(
       //   `[Middleware] Unauthenticated user trying to access protected route`
       // );
