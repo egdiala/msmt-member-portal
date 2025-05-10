@@ -674,11 +674,10 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
             {/** Button section */}
             <div className="grid grid-cols-2 md:flex md:items-center md:justify-end gap-x-5">
               <Button
-                type="button"
                 variant="secondary"
-                onClick={() => navigate.back()}
+                asChild
               >
-                Go Back
+                <Link href="/providers">Go Back</Link>
               </Button>
               <Button
                 type="submit"
