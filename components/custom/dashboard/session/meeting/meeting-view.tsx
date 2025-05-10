@@ -125,7 +125,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       const timeout = setTimeout(() => {
         join();
         console.log("Joining meeting with ID:", meetingId);
-      }, 100); 
+      }, 100);
 
       return () => clearTimeout(timeout);
     }
@@ -360,74 +360,12 @@ const ParticipantView = ({ participantId, large = false }) => {
   const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
     useParticipant(participantId);
 
-  // Improved video stream handling
   useEffect(() => {
-    if (webcamOn && webcamStream && videoRef.current) {
-      try {
-
-        videoRef.current.srcObject = webcamStream;
-        videoRef.current.play().catch((err) => {
-          console.warn("Auto-play prevented:", err);
-        });
-      } catch (err) {
-        console.error("Primary video setup failed:", err);
-
-        // Browser compatibility fallback
-        try {
-          const mediaStream = new MediaStream();
-
-          // Handle different stream structures
-          if (webcamStream instanceof MediaStream) {
-            webcamStream.getTracks().forEach((track) => {
-              mediaStream.addTrack(track);
-            });
-          } else if (webcamStream && typeof webcamStream === "object") {
-            // Handle VideoSDK's custom stream format
-            const stream = webcamStream;
-
-            if (
-              stream.getVideoTracks &&
-              typeof stream.getVideoTracks === "function"
-            ) {
-              stream.getVideoTracks().forEach((track) => {
-                mediaStream.addTrack(track);
-              });
-            }
-          }
-
-          videoRef.current.srcObject = mediaStream;
-          videoRef.current.play().catch((err) => {
-            console.warn("Fallback auto-play prevented:", err);
-          });
-        } catch (fallbackErr) {
-          console.error("All video setup approaches failed:", fallbackErr);
-        }
-      }
-    } else if (videoRef.current) {
-      // Clear the video when webcam is off
-      if (videoRef.current.srcObject) {
-        videoRef.current.srcObject = null;
-      }
+    if (webcamStream?.track instanceof MediaStreamTrack && videoRef.current) {
+      const mediaStream = new MediaStream([webcamStream.track]);
+      videoRef.current.srcObject = mediaStream;
     }
-
-    // Cleanup function
-    return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        try {
-          const tracks = videoRef.current.srcObject.getTracks();
-          tracks.forEach((track) => {
-            // Don't stop tracks for local preview as it might affect other components
-            if (!isLocal) {
-              track.stop();
-            }
-          });
-        } catch (err) {
-          console.warn("Error cleaning up video tracks:", err);
-        }
-      }
-    };
-  }, [webcamStream, webcamOn, isLocal]);
-
+  }, [webcamStream]);
   const name = displayName || (isLocal ? "You" : "User");
   const role = isLocal ? "You" : "Provider";
   const firstLetter = name.charAt(0).toUpperCase();
@@ -436,7 +374,7 @@ const ParticipantView = ({ participantId, large = false }) => {
     <div
       className={`relative rounded-lg overflow-hidden ${
         large ? "h-full w-full" : "h-full w-full"
-      } bg-gray-800`}
+      }`}
     >
       {webcamOn ? (
         <video
