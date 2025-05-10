@@ -526,8 +526,9 @@ const VideoSDKApp: React.FC = () => {
   // Initialize with selected devices if available
   const configOptions = {
     meetingId,
-    name: participantName || "User",
-    mode: "SEND_AND_RECV",
+    name: participantName,
+    mode: "CONFERENCE",
+    layout: "GRID",
     multiStream: true,
     micEnabled: userAudioEnabled,
     webcamEnabled: userVideoEnabled,
@@ -537,8 +538,8 @@ const VideoSDKApp: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full min-h-[60vh] bg-gray-50">
-      <div className="flex-1 p-4 h-full mx-auto w-full">
+    <div className="flex flex-col h-full min-h-[70vh] bg-gray-50">
+      <div className="flex-1 h-full mx-auto w-full">
         <MeetingProvider
           config={configOptions}
           token={token}

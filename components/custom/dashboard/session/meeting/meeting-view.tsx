@@ -70,15 +70,15 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   }, []);
 
   // Use the VideoSDK hook with updated callbacks
-  const { 
-    join, 
-    leave, 
-    toggleMic, 
-    toggleWebcam, 
-    participants, 
-    localParticipant, 
-    localMicOn, 
-    localWebcamOn 
+  const {
+    join,
+    leave,
+    toggleMic,
+    toggleWebcam,
+    participants,
+    localParticipant,
+    localMicOn,
+    localWebcamOn,
   } = useMeeting({
     onMeetingJoined: () => {
       console.log("Meeting joined successfully");
@@ -97,7 +97,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     const handleBeforeUnload = () => {
       if (isMeetingJoined) {
         try {
-           leave();
+          leave();
         } catch (error) {
           console.error("Error leaving meeting:", error);
         }
@@ -119,16 +119,17 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   }, [isMeetingJoined, leave]);
 
   useEffect(() => {
-    if (!meetingInitializedRef.current && meetingId && !isMeetingJoined) {
+    if (!meetingInitializedRef.current && meetingId) {
       meetingInitializedRef.current = true;
-      try {
+
+      const timeout = setTimeout(() => {
         join();
         console.log("Joining meeting with ID:", meetingId);
-      } catch (error) {
-        console.error("Error joining meeting:", error);
-      }
+      }, 100); 
+
+      return () => clearTimeout(timeout);
     }
-  }, [join, isMeetingJoined, meetingId]);
+  }, [meetingId]);
 
   const handleToggleAudio = () => {
     try {
@@ -166,11 +167,15 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     setLayout((prev) => (prev === "grid" ? "focus" : "grid"));
   };
 
-  const participantsArray = [...participants.values()];
+  const participantsArray = [...participants.values()].filter(
+    (p) => p.mode === "CONFERENCE"
+  );
 
   const focusParticipant = isProvider
-    ? participantsArray.find((p) => p.id !== localParticipant?.id) || participantsArray[0]
-    : participantsArray.find((p) => p.id === localParticipant?.id) || participantsArray[0];
+    ? participantsArray.find((p) => p.id !== localParticipant?.id) ||
+      participantsArray[0]
+    : participantsArray.find((p) => p.id === localParticipant?.id) ||
+      participantsArray[0];
 
   const otherParticipants = participantsArray.filter((p) =>
     focusParticipant ? p.id !== focusParticipant.id : true
@@ -203,9 +208,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
             <Timer />
           </div>
         </div>
-        
+
         {/* Add layout toggle button */}
-        <button 
+        <button
           onClick={handleToggleLayout}
           className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
         >
@@ -359,38 +364,39 @@ const ParticipantView = ({ participantId, large = false }) => {
   useEffect(() => {
     if (webcamOn && webcamStream && videoRef.current) {
       try {
-        // Standard approach - try direct assignment first
+
         videoRef.current.srcObject = webcamStream;
-        
-        // Ensure video is playing
-        videoRef.current.play().catch(err => {
+        videoRef.current.play().catch((err) => {
           console.warn("Auto-play prevented:", err);
         });
       } catch (err) {
         console.error("Primary video setup failed:", err);
-        
+
         // Browser compatibility fallback
         try {
           const mediaStream = new MediaStream();
-          
+
           // Handle different stream structures
           if (webcamStream instanceof MediaStream) {
-            webcamStream.getTracks().forEach(track => {
+            webcamStream.getTracks().forEach((track) => {
               mediaStream.addTrack(track);
             });
           } else if (webcamStream && typeof webcamStream === "object") {
             // Handle VideoSDK's custom stream format
             const stream = webcamStream;
-            
-            if (stream.getVideoTracks && typeof stream.getVideoTracks === "function") {
-              stream.getVideoTracks().forEach(track => {
+
+            if (
+              stream.getVideoTracks &&
+              typeof stream.getVideoTracks === "function"
+            ) {
+              stream.getVideoTracks().forEach((track) => {
                 mediaStream.addTrack(track);
               });
             }
           }
-          
+
           videoRef.current.srcObject = mediaStream;
-          videoRef.current.play().catch(err => {
+          videoRef.current.play().catch((err) => {
             console.warn("Fallback auto-play prevented:", err);
           });
         } catch (fallbackErr) {
@@ -403,13 +409,13 @@ const ParticipantView = ({ participantId, large = false }) => {
         videoRef.current.srcObject = null;
       }
     }
-    
+
     // Cleanup function
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         try {
           const tracks = videoRef.current.srcObject.getTracks();
-          tracks.forEach(track => {
+          tracks.forEach((track) => {
             // Don't stop tracks for local preview as it might affect other components
             if (!isLocal) {
               track.stop();
