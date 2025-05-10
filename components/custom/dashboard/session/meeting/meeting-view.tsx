@@ -263,7 +263,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                 {otherParticipants.length > 0 && (
                   <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2 ">
                     {otherParticipants.map((participant) => (
-                      <div key={participant.id} className="h-full aspect-video">
+                      <div key={participant.id} className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white ">
                         <ParticipantView
                           participantId={participant.id}
                           large={false}
@@ -307,7 +307,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           className={`w-12 h-12 rounded-full flex items-center justify-center ${
             localMicOn
               ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-              : "bg-red-500 text-white hover:bg-red-600"
+              : "bg-brand-accent-2 text-white hover:opacity-90"
           } transition-colors`}
           aria-label={localMicOn ? "Mute microphone" : "Unmute microphone"}
         >
@@ -323,7 +323,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           className={`w-12 h-12 rounded-full flex items-center justify-center ${
             localWebcamOn
               ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-              : "bg-red-500 text-white hover:bg-red-600"
+              : "bg-brand-accent-2 text-white hover:opacity-90"
           } transition-colors`}
           aria-label={localWebcamOn ? "Turn off camera" : "Turn on camera"}
         >
