@@ -69,7 +69,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     };
   }, []);
 
-  // Use the VideoSDK hook with updated callbacks
   const {
     join,
     leave,
@@ -354,7 +353,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   );
 };
 
-// Individual participant view component - fixed to handle streams correctly
 const ParticipantView = ({
   participantId,
   large = false,
@@ -408,7 +406,6 @@ const ParticipantView = ({
         )}
       </div>
 
-      {/* Role tag in top left */}
       <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-xs">
         {role}
       </div>
