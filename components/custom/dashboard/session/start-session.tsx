@@ -27,7 +27,7 @@ export function StartSession({ organization, provider }: SessionCardProps) {
   const user_id = searchParams.get("user_id");
   const appointment_id = searchParams.get("appointment_id");
   const { mutate } = useUpdateAppointment(() =>
-    router.push(`/start-session/provider_id=${appointment_id}&user_id=${user_id}`)
+    router.push(`/start-session?provider_id=${appointment_id}&user_id=${user_id}`)
   );
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
