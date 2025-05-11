@@ -12,12 +12,14 @@ interface DatePickerPopoverProps {
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
   label: string;
+  isDOB?: boolean;
 }
 
 export const DatePickerField: React.FC<DatePickerPopoverProps> = ({
   value,
   onChange,
   label,
+  isDOB,
 }) => {
   return (
     <Popover>
@@ -53,7 +55,9 @@ export const DatePickerField: React.FC<DatePickerPopoverProps> = ({
           className="border-none p-3"
           captionLayout="dropdown-buttons"
           fromYear={1920}
-          toYear={new Date().getFullYear()}
+          toYear={
+            isDOB ? new Date().getFullYear() - 19 : new Date().getFullYear()
+          }
           defaultMonth={value ?? new Date()}
           showOutsideDays={false}
         />

@@ -42,7 +42,7 @@ export default function VerifyEmail() {
     });
 
   const { mutate, isPending } = useCompleteRegister((path) => {
-    localStorage.removeItem("email_to_verify");
+    localStorage.removeItem("signup_details");
     router.push(path);
   });
 
@@ -52,11 +52,14 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     if (window !== undefined) {
-      setEmailToVerify(
-        isResetPassword
-          ? (localStorage.getItem("email-for-reset") as string)
-          : (localStorage.getItem("email_to_verify") as string)
-      );
+      if (isResetPassword) {
+        setEmailToVerify(localStorage.getItem("email-for-reset") as string);
+      } else {
+        const signUpDetails = JSON.parse(
+          localStorage.getItem("signup_details") as string
+        );
+        setEmailToVerify(signUpDetails?.email);
+      }
     }
     //eslint-disable-next-line
   }, []);
@@ -118,10 +121,10 @@ export default function VerifyEmail() {
           <div className="space-y-1">
             <p className="font-semibold text-left text-brand-1">Enter OTP</p>
             <span className="text-xs text-brand-2">
-              Please enter the 6-digit code has been sent to
+              Please enter the 6-digit code has been sent to{" "}
               {emailToVerify || ""}{" "}
               <Link
-                href="/reset-password"
+                href={"/sign-up"}
                 className="text-brand-accent-2 underline hover:opacity-80"
               >
                 Edit email

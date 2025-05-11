@@ -11,11 +11,11 @@ export const passwordSchema = z
   .refine(
     (password) => /[0-9]/.test(password),
     "Password must include at least one number"
-  )
-  .refine(
-    (password) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
-    "Password must include at least one special character"
   );
+// .refine(
+//   (password) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
+//   "Password must include at least one special character"
+// );
 
 export const signInSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),

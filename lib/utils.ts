@@ -89,7 +89,7 @@ export function hasCompletedBasicProfile(data?: UpdateProfileType): boolean {
 
   const {
     phone_number,
-    gender,
+    // gender,
     marital_status,
     origin_country,
     preferred_lan,
@@ -97,7 +97,7 @@ export function hasCompletedBasicProfile(data?: UpdateProfileType): boolean {
 
   return (
     Boolean(phone_number?.trim()) &&
-    Boolean(gender?.trim()) &&
+    // Boolean(gender?.trim()) &&
     Boolean(marital_status?.trim()) &&
     Boolean(origin_country?.trim()) &&
     Boolean(preferred_lan?.trim())

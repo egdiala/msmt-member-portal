@@ -27,7 +27,7 @@ export function SiteHeader() {
             <Image src="/assets/logo.svg" alt="Logo" width={40} height={40} />
           </Link>
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8 text-sm">
+          {/* <nav className="hidden md:flex items-center space-x-8 text-sm">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -42,7 +42,7 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-          </nav>
+          </nav> */}
         </div>
 
         {/* Desktop Auth Buttons */}
@@ -95,7 +95,7 @@ export function SiteHeader() {
               </Button>
             </div>
             <div className="flex flex-col text-center gap-8">
-              {navItems.map((item) => (
+              {/* {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -109,7 +109,7 @@ export function SiteHeader() {
                 >
                   {item.label}
                 </Link>
-              ))}
+              ))} */}
               <div className="flex flex-col  space-y-8">
                 <Link href="/sign-up" onClick={() => setOpen(false)}>
                   <Button className="w-full inline-block text-white">

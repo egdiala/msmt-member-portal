@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
@@ -8,6 +8,10 @@ import PasswordInput from "@/components/shared/password-input";
 import { IconEmail, IconCaseSensitive } from "@/components/icons";
 
 import { format } from "date-fns";
+import { AnimatePresence, motion } from "motion/react";
+import useMeasure from "react-use-measure";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,35 +22,52 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { FloatingInput } from "@/components/shared/floating-input";
-import { signUpSchema } from "@/lib/validations";
 import { Switch } from "@/components/ui/switch";
-import { AnimatePresence, motion } from "motion/react";
-import { useInitRegister } from "@/services/hooks/mutations/use-auth";
-import useMeasure from "react-use-measure";
 import { Loader } from "@/components/shared/loader";
-import { useRouter } from "next/navigation";
 import { DatePickerField } from "@/components/shared/date-picker-field";
+import { signUpSchema } from "@/lib/validations";
+import { useInitRegister } from "@/services/hooks/mutations/use-auth";
 
 export default function SignUp() {
   const router = useRouter();
   const [ref, bounds] = useMeasure();
   const { mutate, isPending } = useInitRegister(() => {
-    localStorage.setItem("email_to_verify", form.getValues("email"));
+    localStorage.setItem("signup_details", JSON.stringify(form.getValues()));
     router.push("/verify-email");
   });
+
+  const [prevSignUpDetails, setPrevSignUpDetails] = useState<
+    Record<string, string | boolean | Date>
+  >({});
+
+  useEffect(() => {
+    if (window !== undefined) {
+      const details = JSON.parse(
+        localStorage.getItem("signup_details") as string
+      );
+      setPrevSignUpDetails(details);
+    }
+  }, []);
 
   type SignUpFormValues = z.infer<typeof signUpSchema>;
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
-    mode: "onChange",
+    reValidateMode: "onChange",
+    mode: "all",
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      dob: undefined,
-      password: "",
-      terms: false,
+      first_name: prevSignUpDetails
+        ? (prevSignUpDetails?.first_name as string)
+        : "",
+      last_name: prevSignUpDetails
+        ? (prevSignUpDetails?.last_name as string)
+        : "",
+      email: prevSignUpDetails ? (prevSignUpDetails?.email as string) : "",
+      dob: prevSignUpDetails ? (prevSignUpDetails?.dob as Date) : undefined,
+      password: prevSignUpDetails
+        ? (prevSignUpDetails?.password as string)
+        : "",
+      terms: prevSignUpDetails ? (prevSignUpDetails?.terms as boolean) : false,
     },
   });
 
@@ -136,6 +157,7 @@ export default function SignUp() {
                         value={field.value}
                         onChange={field.onChange}
                         label="Date of Birth"
+                        isDOB
                       />
                     </FormControl>
 
@@ -192,7 +214,15 @@ export default function SignUp() {
                   <div className="flex flex-row items-center justify-between space-x-3 space-y-0 rounded-sm border-grey-400 bg-input-field py-2 px-3 text-brand-1">
                     <div className="leading-none">
                       <label className="text-xs font-medium">
-                        I accept the terms & conditions of this service
+                        I accept the{" "}
+                        <Link
+                          href="https://themsmt.com/terms-of-service/"
+                          target="_blank"
+                          className="underline"
+                        >
+                          terms & conditions
+                        </Link>{" "}
+                        of this service
                       </label>
                     </div>
                     <FormControl>
