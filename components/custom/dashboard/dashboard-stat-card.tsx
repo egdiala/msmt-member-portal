@@ -20,8 +20,8 @@ export const DashboardStatCard = ({
     <AnimatePresence mode="popLayout">
       {isPending ? (
         <motion.div
-          key="dashboardstat-card-skeleton-loader"
-          layoutId="favp-card"
+          key={`dashboardstat-card-skeleton-loader-${index}`}
+          layoutId={`favp-card-${index}`}
           className="order-1 col-span-1 xl:col-span-4 h-24"
           variants={BLUR_VARIANTS}
           animate="enter"
@@ -31,8 +31,8 @@ export const DashboardStatCard = ({
         </motion.div>
       ) : (
         <motion.div
-          key="favp-card"
-          layoutId="favp-card"
+          key={`favp-card-${index}`}
+          layoutId={`favp-card-${index}`}
           className="relative flex flex-col justify-center items-center py-4 md:py-6 gap-y-1 text-center bg-white rounded-lg px-6 overflow-hidden"
           variants={BLUR_VARIANTS}
           initial="initial"

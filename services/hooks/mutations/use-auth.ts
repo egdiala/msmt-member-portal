@@ -31,8 +31,9 @@ export const useCompleteRegister = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: completeRegister,
     onSuccess: ({ token, ...user  }: LoginResponse) => {
+      axiosInit(token);
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("token", token);
 
       // Set auth cookie for middleware with proper cookie settings
       // This should work in both development and production
@@ -47,12 +48,11 @@ export const useCompleteRegister = (fn?: (v: string) => void) => {
         sameSite: "lax",
       });
 
-      axiosInit(token);
-
       toast.success("Successful! Login to access your account");
       fn?.("/home");
     },
     onError: (err: any) => {
+      console.log(err);
       toast.error(err?.response?.data?.msg || "Something went wrong");
     },
   });
