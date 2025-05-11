@@ -76,7 +76,7 @@ export const CompleteProfileHeader = () => {
             <DashboardStatCard
               isPending={isLoading}
               title={stat.title}
-              value={stat.value}
+              value={stat.value || 0}
               index={index}
             />
           </div>
