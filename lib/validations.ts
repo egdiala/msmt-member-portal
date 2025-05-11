@@ -98,11 +98,11 @@ export const profileSecuritySchema = z
 export const editProfileDetailsSchema = z.object({
   preferredName: z
     .string()
-    .min(2, "Preferred name must be at least 2 characters")
+    // .min(2, "Preferred name must be at least 2 characters")
     .optional(),
   phoneNumber: z
     .string()
-    .min(8, "Phone number must be at least 8 characters")
+    // .min(8, "Phone number must be at least 8 characters")
     .optional(),
   religion: z
     .string()
