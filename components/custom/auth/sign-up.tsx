@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "motion/react";
 import useMeasure from "react-use-measure";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,43 +32,29 @@ import { useInitRegister } from "@/services/hooks/mutations/use-auth";
 export default function SignUp() {
   const router = useRouter();
   const [ref, bounds] = useMeasure();
+  const queryClient = useQueryClient();
+
   const { mutate, isPending } = useInitRegister(() => {
-    localStorage.setItem("signup_details", JSON.stringify(form.getValues()));
+    localStorage.setItem("email_to_verify", form.getValues("email"));
+    queryClient.setQueryData(["sign-up-details"], form.getValues());
     router.push("/verify-email");
   });
 
-  const [prevSignUpDetails, setPrevSignUpDetails] = useState<
-    Record<string, string | boolean | Date>
-  >({});
-
-  useEffect(() => {
-    if (window !== undefined) {
-      const details = JSON.parse(
-        localStorage.getItem("signup_details") as string
-      );
-      setPrevSignUpDetails(details);
-    }
-  }, []);
-
   type SignUpFormValues = z.infer<typeof signUpSchema>;
+
+  const signUpDetails: any = queryClient.getQueryData(["sign-up-details"]);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     reValidateMode: "onChange",
-    mode: "all",
+    mode: "onChange",
     defaultValues: {
-      first_name: prevSignUpDetails
-        ? (prevSignUpDetails?.first_name as string)
-        : "",
-      last_name: prevSignUpDetails
-        ? (prevSignUpDetails?.last_name as string)
-        : "",
-      email: prevSignUpDetails ? (prevSignUpDetails?.email as string) : "",
-      dob: prevSignUpDetails ? (prevSignUpDetails?.dob as Date) : undefined,
-      password: prevSignUpDetails
-        ? (prevSignUpDetails?.password as string)
-        : "",
-      terms: prevSignUpDetails ? (prevSignUpDetails?.terms as boolean) : false,
+      first_name: signUpDetails?.first_name || "",
+      last_name: signUpDetails?.last_name || "",
+      email: signUpDetails?.email || "",
+      dob: signUpDetails?.dob || undefined,
+      password: signUpDetails?.password || "",
+      terms: signUpDetails?.terms || false,
     },
   });
 

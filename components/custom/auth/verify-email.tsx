@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
 import { AnimatePresence, motion } from "motion/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,11 +39,14 @@ export default function VerifyEmail() {
   const { mutate: confirmOtp, isPending: isPendingOtpConfirmation } =
     useConfirmOtp((path) => {
       localStorage.setItem("otp-for-reset", form.getValues().otp);
+      queryClient.removeQueries({ queryKey: ["sign-up-details"] });
       router.push(path);
     });
 
+  const queryClient = useQueryClient();
+
   const { mutate, isPending } = useCompleteRegister((path) => {
-    localStorage.removeItem("signup_details");
+    localStorage.removeItem("email_to_verify");
     router.push(path);
   });
 
@@ -52,14 +56,11 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     if (window !== undefined) {
-      if (isResetPassword) {
-        setEmailToVerify(localStorage.getItem("email-for-reset") as string);
-      } else {
-        const signUpDetails = JSON.parse(
-          localStorage.getItem("signup_details") as string
-        );
-        setEmailToVerify(signUpDetails?.email);
-      }
+      setEmailToVerify(
+        isResetPassword
+          ? (localStorage.getItem("email-for-reset") as string)
+          : (localStorage.getItem("email_to_verify") as string)
+      );
     }
     //eslint-disable-next-line
   }, []);
@@ -124,7 +125,7 @@ export default function VerifyEmail() {
               Please enter the 6-digit code has been sent to{" "}
               {emailToVerify || ""}{" "}
               <Link
-                href={"/sign-up"}
+                href={isResetPassword ? "/reset-password" : "/sign-up"}
                 className="text-brand-accent-2 underline hover:opacity-80"
               >
                 Edit email
