@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -5,8 +8,8 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { FloatingInput } from "./floating-input";
 import { IconCalendar } from "@/components/icons";
+import { FloatingInput } from "./floating-input";
 
 interface DatePickerPopoverProps {
   value: Date | undefined;
@@ -21,8 +24,10 @@ export const DatePickerField: React.FC<DatePickerPopoverProps> = ({
   label,
   isDOB,
 }) => {
+  const [openCalendar, setOpenCalendar] = useState(false);
+
   return (
-    <Popover>
+    <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
       <PopoverTrigger asChild>
         <div className="relative cursor-pointer">
           <FloatingInput
@@ -46,7 +51,10 @@ export const DatePickerField: React.FC<DatePickerPopoverProps> = ({
         <Calendar
           mode="single"
           selected={value}
-          onSelect={onChange}
+          onSelect={(e) => {
+            onChange(e);
+            setOpenCalendar(false);
+          }}
           disabled={(date) => {
             const today = new Date();
             return date > today;
