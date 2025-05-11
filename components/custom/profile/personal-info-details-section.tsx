@@ -43,11 +43,15 @@ export const PersonalInfoDetailsSection = () => {
     }
   };
 
-  useEffect(() => {
-    if (hasntCompletedProfile) {
-      setOpenUpdateProfileDetailsModal(true);
-    }
-  }, []);
+  useEffect(
+    () => {
+      if (hasntCompletedProfile) {
+        setOpenUpdateProfileDetailsModal(true);
+      }
+    },
+    // eslint-disable-next-line
+    []
+  );
 
   return (
     <div className="border border-divider rounded-lg p-4 md:py-4 md:px-6 w-full grid gap-y-6">
