@@ -44,7 +44,7 @@ export const BookAppointmentCard = () => {
                 {(count?.total || 0) > 200 ? "+" : ""}
               </h3>
               <p className="text-xs text-text-2 rounded-xl">
-                Provider{count!.total > 1 ? "s" : ""} available for you
+                Provider{(count?.total || 0) > 1 ? "s" : ""} available for you
               </p>
             </div>
             <Button asChild className="w-full">
