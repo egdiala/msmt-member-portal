@@ -56,7 +56,7 @@ export const DatePickerField: React.FC<DatePickerPopoverProps> = ({
           captionLayout="dropdown-buttons"
           fromYear={1920}
           toYear={
-            isDOB ? new Date().getFullYear() - 19 : new Date().getFullYear()
+            isDOB ? new Date().getFullYear() - 18 : new Date().getFullYear()
           }
           defaultMonth={value ?? new Date()}
           showOutsideDays={false}

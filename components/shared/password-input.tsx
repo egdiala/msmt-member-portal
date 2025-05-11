@@ -66,9 +66,14 @@ const passwordRequirements: PasswordRequirement[] = [
   //     /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
   // },
   {
-    id: "uppercaseLowercase",
-    label: "Uppercase and lowercase",
-    validator: (password) => /[a-z]/.test(password) && /[A-Z]/.test(password),
+    id: "uppercase",
+    label: "Atleast One uppercase",
+    validator: (password) => /[A-Z]/.test(password),
+  },
+  {
+    id: "lowercase",
+    label: "Atleast One lowercase",
+    validator: (password) => /[a-z]/.test(password),
   },
   {
     id: "number",
@@ -134,7 +139,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
         <RenderIf condition={showRequirements}>
           <div className="">
             <RadioGroup
-              className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-2"
+              className="grid sm:grid-cols-[auto_1fr] gap-x-5 gap-y-2"
               value={requirementStatus.find((r) => r.isValid)?.id || ""}
               onValueChange={() => {}}
             >
