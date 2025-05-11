@@ -1,8 +1,10 @@
 "use client";
 
+import { useMemo, useRef, useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "motion/react";
 import { useGetDefinedVariables } from "@/hooks/use-get-variables";
 import { IconCamera, IconPhone, IconUserRound } from "@/components/icons";
 import {
@@ -15,16 +17,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
+import { Loader } from "@/components/shared/loader";
 import { editProfileDetailsSchema } from "@/lib/validations";
-import { FloatingInput, SelectCmp, Modal } from "../../shared";
 import { UpdateProfileType } from "@/types/profile";
 import {
   useUpdateProfile,
   useUploadAvatar,
 } from "@/services/hooks/mutations/use-profile";
-import { AnimatePresence, motion } from "motion/react";
-import { Loader } from "@/components/shared/loader";
-import { useMemo, useRef, useState } from "react";
+import { FloatingInput, SelectCmp, Modal } from "../../shared";
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;

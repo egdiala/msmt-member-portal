@@ -3,21 +3,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { IconHamMenu } from "@/components/icons";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "About", href: "/about" },
-  { label: "Find Consultant", href: "/find-consultant" },
-  { label: "Lorem", href: "/lorem" },
-];
+// const navItems = [
+//   { label: "About", href: "/about" },
+//   { label: "Find Consultant", href: "/find-consultant" },
+//   { label: "Lorem", href: "/lorem" },
+// ];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#F3F5F9] lg:border-b lg:bg-background">
