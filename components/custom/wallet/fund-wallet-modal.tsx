@@ -75,6 +75,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
   const { data: userProfile } = useGetProfile();
 
   const { mutate, isPending } = useInitFundWallet((res) => {
+    onClose();
     setConfig((prev) => ({
       ...prev,
       reference: res?.transaction_id,

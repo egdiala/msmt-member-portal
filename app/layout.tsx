@@ -115,7 +115,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn(alliance.className, "antialiased")}>
         <QueryProvider>{children}</QueryProvider>
         <Toaster
@@ -124,6 +124,7 @@ export default function RootLayout({
             classNames: {
               error: `${TOAST_STYLING} !bg-status-danger`,
               success: `${TOAST_STYLING} !bg-actions-green`,
+              info: `${TOAST_STYLING} !bg-white`,
             },
           }}
         />
