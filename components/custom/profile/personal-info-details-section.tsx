@@ -16,7 +16,11 @@ export const PersonalInfoDetailsSection = () => {
 
 
   const personalInfo = [
-    { id: 1, key: "Phone number", value: data?.phone_number || "_" },
+    {
+      id: 1,
+      key: "Phone number",
+      value: `+${data?.phone_prefix || ""}${data?.phone_number}` || "_",
+    },
     { id: 2, key: "Religion", value: data?.religion || "_" },
     { id: 3, key: "Gender", value: data?.gender || "_" },
     { id: 4, key: "Marital Status", value: data?.marital_status || "_" },

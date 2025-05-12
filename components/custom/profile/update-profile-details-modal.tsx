@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "motion/react";
 import { useGetDefinedVariables } from "@/hooks/use-get-variables";
-import { IconCamera, IconPhone, IconUserRound } from "@/components/icons";
+import { IconCamera, IconUserRound } from "@/components/icons";
 import {
   Avatar,
   AvatarImage,
@@ -25,6 +25,8 @@ import {
   useUploadAvatar,
 } from "@/services/hooks/mutations/use-profile";
 import { FloatingInput, SelectCmp, Modal } from "../../shared";
+import { PhoneInputWithLabel } from "@/components/shared/phone-input";
+
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;
@@ -51,6 +53,7 @@ export const UpdateProfileDetailsModal = ({
     mode: "onChange",
     defaultValues: {
       preferredName: data?.nickname || "",
+      phone_prefix: data?.phone_prefix || "",
       phoneNumber: data?.phone_number || "",
       religion: data?.religion || "",
       gender: data?.gender || "",
@@ -63,6 +66,7 @@ export const UpdateProfileDetailsModal = ({
   async function onSubmit(values: z.infer<typeof editProfileDetailsSchema>) {
     await updateProfile({
       preferred_lan: values.preferredLanguage,
+      phone_prefix: values.phone_prefix,
       nickname: values.preferredName,
       phone_number: values.phoneNumber,
       religion: values.religion,
@@ -138,6 +142,7 @@ export const UpdateProfileDetailsModal = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-y-6">
           <div className="grid gap-y-4">
+
             <FormField
               control={form.control}
               name="religion"
@@ -247,16 +252,17 @@ export const UpdateProfileDetailsModal = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="relative">
-                      <FloatingInput
-                        label="Phone number (Optional)"
-                        className="pr-10"
-                        {...field}
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                        <IconPhone className="h-4 w-4" />
-                      </div>
-                    </div>
+                    <PhoneInputWithLabel
+                      value={field.value!}
+                      onChange={(value) => {
+                        field.onChange(value);
+                      }}
+                      onCountryChange={(value) => {
+                        form.setValue("phone_prefix", value);
+                      }}
+                      defaultCountry="NG"
+                      placeholder="Phone Number (Optional)"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
