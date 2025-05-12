@@ -42,7 +42,9 @@ export default function SignUp() {
 
   type SignUpFormValues = z.infer<typeof signUpSchema>;
 
-  const signUpDetails: SignUpFormValues | undefined = queryClient.getQueryData(["sign-up-details"]);
+  const signUpDetails: SignUpFormValues | undefined = queryClient.getQueryData([
+    "sign-up-details",
+  ]);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -229,12 +231,9 @@ export default function SignUp() {
         </motion.div>
 
         <motion.div layout className="flex justify-center space-x-6">
-          <Button type="button" variant="secondary" className="rounded-full">
-            Cancel
-          </Button>
           <Button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || !form.formState.isValid}
             className="rounded-full w-21"
           >
             <AnimatePresence mode="popLayout" initial={false}>
