@@ -7,7 +7,6 @@ import { ChevronDownIcon } from "lucide-react";
 import * as RPNInput from "react-phone-number-input";
 import countryNames from "react-phone-number-input/locale/en.json";
 import { cn } from "@/lib/utils";
-import { on } from "events";
 
 export type PhoneInputWithLabelProps = {
   value: string;
