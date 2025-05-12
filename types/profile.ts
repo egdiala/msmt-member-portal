@@ -7,6 +7,9 @@ type ContactPersonType = {
 };
 
 export type UpdateProfileType = {
+  first_name?: string;
+  last_name?: string;
+  avatar?: string;
   phone_number?: string;
   phone_prefix?: string;
   gender?: string;

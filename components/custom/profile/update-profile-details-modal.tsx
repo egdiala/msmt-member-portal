@@ -1,11 +1,15 @@
 "use client";
 
+import { useMemo, useRef, useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "motion/react";
 import { useGetDefinedVariables } from "@/hooks/use-get-variables";
-import { IconPhone, IconUserRound } from "@/components/icons";
+import { IconCamera, IconPhone, IconUserRound } from "@/components/icons";
 import {
+  Avatar,
+  AvatarImage,
   Button,
   Form,
   FormControl,
@@ -13,30 +17,34 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
-import { editProfileDetailsSchema } from "@/lib/validations";
-import { FloatingInput, SelectCmp, Modal } from "../../shared";
-import { UpdateProfileType } from "@/types/profile";
-import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
-import { AnimatePresence, motion } from "motion/react";
 import { Loader } from "@/components/shared/loader";
-import { useMemo } from "react";
+import { editProfileDetailsSchema } from "@/lib/validations";
+import { UpdateProfileType } from "@/types/profile";
+import {
+  useUpdateProfile,
+  useUploadAvatar,
+} from "@/services/hooks/mutations/use-profile";
+import { FloatingInput, SelectCmp, Modal } from "../../shared";
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;
+  handleSuccess: () => void;
   isOpen: boolean;
   data: Partial<UpdateProfileType>;
 }
 export const UpdateProfileDetailsModal = ({
   handleClose,
+  handleSuccess,
   isOpen,
   data,
 }: IUpdateProfileDetailsModal) => {
   const { mutateAsync: updateProfile, isPending } = useUpdateProfile(() =>
-    handleClose()
+    handleSuccess()
   );
 
   const { requestVariables, variableList, countryList } =
     useGetDefinedVariables();
+  const countryListArray = countryList ? countryList : [];
 
   const form = useForm<z.infer<typeof editProfileDetailsSchema>>({
     resolver: zodResolver(editProfileDetailsSchema),
@@ -58,7 +66,10 @@ export const UpdateProfileDetailsModal = ({
       nickname: values.preferredName,
       phone_number: values.phoneNumber,
       religion: values.religion,
-      gender: values.gender?.toLowerCase(),
+      gender:
+        values.gender?.toLowerCase() === "prefer not to say"
+          ? ""
+          : values.gender?.toLowerCase(),
       marital_status: values.maritalStatus,
       origin_country: values.country,
     });
@@ -73,13 +84,141 @@ export const UpdateProfileDetailsModal = ({
     return isPending ? "loading" : "idle";
   }, [isPending]);
 
+  const [avatar, setAvatar] = useState<File | string | undefined>(undefined);
+  const { mutateAsync: uploadAvatar, isPending: isLoading } = useUploadAvatar();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatar(file);
+      try {
+        await uploadAvatar(file);
+      } catch (error) {
+        console.error("Failed to upload avatar", error);
+      }
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
       <h2 className="font-bold text-lg md:text-2xl">Profile Details</h2>
 
+      <div className="flex flex-col gap-2 justify-center items-center">
+        <Avatar className="h-25 w-25 rounded-full">
+          <AvatarImage
+            src={
+              avatar instanceof File
+                ? URL.createObjectURL(avatar)
+                : avatar || data?.avatar || "/assets/blank-profile-picture.png"
+            }
+            className="object-cover w-full h-full"
+            alt={`${data?.first_name} ${data?.last_name}`}
+          />
+        </Avatar>
+
+        <button
+          className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isLoading}
+        >
+          <IconCamera className="stroke-text-tertiary size-4" />
+          {isLoading ? "Uploading..." : "Upload Profile Picture"}
+        </button>
+
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileChange}
+        />
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-y-6">
           <div className="grid gap-y-4">
+            <FormField
+              control={form.control}
+              name="religion"
+              render={({ field }) => (
+                <SelectCmp
+                  selectItems={
+                    variableList
+                      ? variableList(requestVariables?.["religion-list"])
+                      : []
+                  }
+                  onSelect={field.onChange}
+                  placeholder={"Religion"}
+                  {...field}
+                />
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <SelectCmp
+                  selectItems={[
+                    { value: "male", id: 1 },
+                    { value: "female", id: 2 },
+                    { value: "prefer not to say", id: 3 },
+                  ]}
+                  onSelect={field.onChange}
+                  placeholder={"Gender"}
+                  {...field}
+                />
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="maritalStatus"
+              render={({ field }) => (
+                <SelectCmp
+                  selectItems={
+                    variableList
+                      ? variableList(requestVariables?.["marital-status"])
+                      : []
+                  }
+                  onSelect={field.onChange}
+                  placeholder={"Marital Status"}
+                  {...field}
+                />
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <SelectCmp
+                  selectItems={[...countryListArray]}
+                  placeholder={"Country"}
+                  onSelect={field.onChange}
+                  {...field}
+                />
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="preferredLanguage"
+              render={({ field }) => (
+                <SelectCmp
+                  selectItems={
+                    variableList
+                      ? variableList(requestVariables?.["preferred-lan"])
+                      : []
+                  }
+                  onSelect={field.onChange}
+                  placeholder={"Preferred Language"}
+                  {...field}
+                />
+              )}
+            />
+
             <FormField
               control={form.control}
               name="preferredName"
@@ -88,7 +227,7 @@ export const UpdateProfileDetailsModal = ({
                   <FormControl>
                     <div className="relative">
                       <FloatingInput
-                        label="Preferred Name"
+                        label="Preferred Name (Optional)"
                         className="pr-10"
                         {...field}
                       />
@@ -110,7 +249,7 @@ export const UpdateProfileDetailsModal = ({
                   <FormControl>
                     <div className="relative">
                       <FloatingInput
-                        label="Phone number"
+                        label="Phone number (Optional)"
                         className="pr-10"
                         {...field}
                       />
@@ -121,80 +260,6 @@ export const UpdateProfileDetailsModal = ({
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="religion"
-              render={({ field }) => (
-                <SelectCmp
-                  selectItems={variableList(
-                    requestVariables?.["religion-list"]
-                  )}
-                  onSelect={field.onChange}
-                  placeholder={"Religion"}
-                  {...field}
-                />
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <SelectCmp
-                  selectItems={[
-                    { value: "male", id: 1 },
-                    { value: "female", id: 2 },
-                  ]}
-                  onSelect={field.onChange}
-                  placeholder={"Gender"}
-                  {...field}
-                />
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="maritalStatus"
-              render={({ field }) => (
-                <SelectCmp
-                  selectItems={variableList(
-                    requestVariables?.["marital-status"]
-                  )}
-                  onSelect={field.onChange}
-                  placeholder={"Marital Status"}
-                  {...field}
-                />
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <SelectCmp
-                  selectItems={[...countryList]}
-                  placeholder={"Country"}
-                  onSelect={field.onChange}
-                  {...field}
-                />
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="preferredLanguage"
-              render={({ field }) => (
-                <SelectCmp
-                  selectItems={[
-                    ...variableList(requestVariables?.["preferred-lan"]),
-                  ]}
-                  onSelect={field.onChange}
-                  placeholder={"Preferred Language"}
-                  {...field}
-                />
               )}
             />
           </div>
