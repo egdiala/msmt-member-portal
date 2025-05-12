@@ -100,6 +100,7 @@ export const editProfileDetailsSchema = z.object({
     .string()
     .min(2, "Preferred name must be at least 2 characters")
     .optional(),
+  phone_prefix: z.string().optional(),
   phoneNumber: z
     .string()
     .min(8, "Phone number must be at least 8 characters")
@@ -189,6 +190,9 @@ export const contactPersonDetailsSchema = z.object({
   lastName: z
     .string()
     .min(2, "Last name must be at least 2 characters")
+    .optional(),
+  phone_prefix: z
+    .string()
     .optional(),
   phoneNumber: z
     .string()

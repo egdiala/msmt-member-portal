@@ -19,6 +19,7 @@ import { Loader } from "@/components/shared/loader";
 import { addMemberSchema } from "@/lib/validations";
 import { useAddFamilyOrFriend } from "@/services/hooks/mutations/use-family-and-friends";
 import { FloatingInput, Modal, SelectCmp } from "../../shared";
+import { PhoneInputWithLabel } from "@/components/shared/phone-input";
 
 interface IAddMemberModal {
   handleClose: () => void;
@@ -155,10 +156,12 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                   <FormItem className="w-full">
                     <FormControl>
                       <div className="relative">
-                        <FloatingInput
-                          label="Phone Number"
-                          className="pr-10"
-                          {...field}
+                        <PhoneInputWithLabel
+                          placeholder="Enter Phone Number"
+                          value={field.value!}
+                          onChange={(val) =>
+                            field.onChange("phone_number", val)
+                          }
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
                           <IconPhone className="h-4 w-4" />
