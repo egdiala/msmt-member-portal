@@ -11,11 +11,11 @@ export const passwordSchema = z
   .refine(
     (password) => /[0-9]/.test(password),
     "Password must include at least one number"
-  )
-  .refine(
-    (password) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
-    "Password must include at least one special character"
   );
+// .refine(
+//   (password) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
+//   "Password must include at least one special character"
+// );
 
 export const signInSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -98,12 +98,12 @@ export const profileSecuritySchema = z
 export const editProfileDetailsSchema = z.object({
   preferredName: z
     .string()
-    .min(2, "Preferred name must be at least 2 characters")
+    // .min(2, "Preferred name must be at least 2 characters")
     .optional(),
   phone_prefix: z.string().optional(),
   phoneNumber: z
     .string()
-    .min(8, "Phone number must be at least 8 characters")
+    // .min(8, "Phone number must be at least 8 characters")
     .optional(),
   religion: z
     .string()

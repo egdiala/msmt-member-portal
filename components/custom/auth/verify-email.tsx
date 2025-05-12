@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
 import { AnimatePresence, motion } from "motion/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,20 +27,26 @@ import { verifyEmailSchema } from "@/lib/validations";
 import {
   useCompleteRegister,
   useConfirmOtp,
+  useInitRegister,
   useResendOtp,
 } from "@/services/hooks/mutations/use-auth";
+import { InitRegisterType } from "@/types/auth";
+import { format } from "date-fns";
 
 export default function VerifyEmail() {
   const searchParams = useSearchParams();
   const isResetPassword = searchParams.get("isResetPassword");
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { mutate: confirmOtp, isPending: isPendingOtpConfirmation } =
     useConfirmOtp((path) => {
       localStorage.setItem("otp-for-reset", form.getValues().otp);
+      queryClient.removeQueries({ queryKey: ["sign-up-details"] });
       router.push(path);
     });
+
 
   const { mutate, isPending } = useCompleteRegister((path) => {
     localStorage.removeItem("email_to_verify");
@@ -97,9 +104,21 @@ export default function VerifyEmail() {
   }, [isPending, isPendingOtpConfirmation]);
 
   const { mutate: resendOtp, isPending: isResendingOtp } = useResendOtp();
+  const { mutate: submitRegister, isPending: isResendingRegisterForm } = useInitRegister();
 
   const handleResendCode = async () => {
-    resendOtp({ email: emailToVerify });
+    if (!isResetPassword) {
+      const signUpDetails: InitRegisterType | undefined = queryClient.getQueryData(["sign-up-details"]);
+      submitRegister({
+        first_name: signUpDetails?.first_name || "",
+        last_name: signUpDetails?.last_name || "",
+        email: signUpDetails?.email || "",
+        dob: format(signUpDetails?.dob || new Date(), "yyyy-MM-dd"),
+        password: signUpDetails?.password || "",
+      });
+    } else {
+      resendOtp({ email: emailToVerify });
+    }
   };
 
   const resendOtpButtonCopy = {
@@ -108,8 +127,8 @@ export default function VerifyEmail() {
   };
 
   const resendOtpButtonState = useMemo(() => {
-    return isResendingOtp ? "loading" : "idle";
-  }, [isResendingOtp]);
+    return (isResendingOtp || isResendingRegisterForm) ? "loading" : "idle";
+  }, [isResendingRegisterForm, isResendingOtp]);
 
   return (
     <Form {...form}>
@@ -118,10 +137,10 @@ export default function VerifyEmail() {
           <div className="space-y-1">
             <p className="font-semibold text-left text-brand-1">Enter OTP</p>
             <span className="text-xs text-brand-2">
-              Please enter the 6-digit code has been sent to
+              Please enter the 5-digit code has been sent to{" "}
               {emailToVerify || ""}{" "}
               <Link
-                href="/reset-password"
+                href={isResetPassword ? "/reset-password" : "/sign-up"}
                 className="text-brand-accent-2 underline hover:opacity-80"
               >
                 Edit email
@@ -169,7 +188,7 @@ export default function VerifyEmail() {
                 variant="link"
                 className="text-brand-2 underline p-0 h-auto"
                 onClick={handleResendCode}
-                disabled={isResendingOtp}
+                disabled={isResendingOtp || isResendingRegisterForm}
               >
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span
@@ -189,7 +208,7 @@ export default function VerifyEmail() {
         <div className="flex justify-center">
           <Button
             type="submit"
-            disabled={isPending || isPendingOtpConfirmation}
+            disabled={isPending || isPendingOtpConfirmation || isResendingRegisterForm}
             className="rounded-full w-27.5"
           >
             <AnimatePresence mode="popLayout" initial={false}>
