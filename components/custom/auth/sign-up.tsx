@@ -42,7 +42,7 @@ export default function SignUp() {
 
   type SignUpFormValues = z.infer<typeof signUpSchema>;
 
-  const signUpDetails: any = queryClient.getQueryData(["sign-up-details"]);
+  const signUpDetails: SignUpFormValues | undefined = queryClient.getQueryData(["sign-up-details"]);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),

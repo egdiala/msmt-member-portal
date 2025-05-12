@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { IconPen, IconCamera } from "@/components/icons";
+import { IconPen } from "@/components/icons";
 import { Button, Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { hasCompletedBasicProfile } from "@/lib/utils";
-import { useUploadAvatar } from "@/services/hooks/mutations/use-profile";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { UpdateProfileDetailsModal } from "./update-profile-details-modal";
 
@@ -15,9 +14,6 @@ export const PersonalInfoDetailsSection = () => {
   const { data } = useGetProfile();
   const hasntCompletedProfile = !hasCompletedBasicProfile(data!);
 
-  const [avatar, setAvatar] = useState<File | string | undefined>(undefined);
-  const { mutateAsync: uploadAvatar, isPending: isLoading } = useUploadAvatar();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const personalInfo = [
     { id: 1, key: "Phone number", value: data?.phone_number || "_" },
@@ -31,17 +27,6 @@ export const PersonalInfoDetailsSection = () => {
   const [openUpdateProfileDetailsModal, setOpenUpdateProfileDetailsModal] =
     useState(false);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAvatar(file);
-      try {
-        await uploadAvatar(file);
-      } catch (error) {
-        console.error("Failed to upload avatar", error);
-      }
-    }
-  };
 
   useEffect(
     () => {
@@ -60,13 +45,7 @@ export const PersonalInfoDetailsSection = () => {
           <div className="flex flex-col gap-y-3">
             <Avatar className="h-25 w-25 rounded-full">
               <AvatarImage
-                src={
-                  avatar instanceof File
-                    ? URL.createObjectURL(avatar)
-                    : avatar ||
-                      data?.avatar ||
-                      "/assets/blank-profile-picture.png"
-                }
+                src={data?.avatar || "/assets/blank-profile-picture.png"}
                 className="object-cover w-full h-full"
                 alt={`${data?.first_name} ${data?.last_name}`}
               />
@@ -75,23 +54,6 @@ export const PersonalInfoDetailsSection = () => {
                 {data?.last_name?.charAt(0)}
               </AvatarFallback>
             </Avatar>
-
-            <button
-              className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isLoading}
-            >
-              <IconCamera className="stroke-text-tertiary size-4" />
-              {isLoading ? "Uploading..." : "Upload Profile Picture"}
-            </button>
-
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={handleFileChange}
-            />
           </div>
 
           <div className="grid gap-y-0.5">
@@ -123,7 +85,14 @@ export const PersonalInfoDetailsSection = () => {
         data={data!}
         key={data ? "Data is Loading" : "Data Loaded"}
         handleClose={() => {
-          router.push("/home");
+          setOpenUpdateProfileDetailsModal(false);
+        }}
+        handleSuccess={() => {
+          if (hasntCompletedProfile) {
+            router.push("/home");
+          } else {
+            setOpenUpdateProfileDetailsModal(false);
+          }
         }}
         isOpen={openUpdateProfileDetailsModal}
       />

@@ -28,16 +28,18 @@ import { FloatingInput, SelectCmp, Modal } from "../../shared";
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;
+  handleSuccess: () => void;
   isOpen: boolean;
   data: Partial<UpdateProfileType>;
 }
 export const UpdateProfileDetailsModal = ({
   handleClose,
+  handleSuccess,
   isOpen,
   data,
 }: IUpdateProfileDetailsModal) => {
   const { mutateAsync: updateProfile, isPending } = useUpdateProfile(() =>
-    handleClose()
+    handleSuccess()
   );
 
   const { requestVariables, variableList, countryList } =
@@ -225,7 +227,7 @@ export const UpdateProfileDetailsModal = ({
                   <FormControl>
                     <div className="relative">
                       <FloatingInput
-                        label="Preferred Name"
+                        label="Preferred Name (Optional)"
                         className="pr-10"
                         {...field}
                       />
@@ -247,7 +249,7 @@ export const UpdateProfileDetailsModal = ({
                   <FormControl>
                     <div className="relative">
                       <FloatingInput
-                        label="Phone number"
+                        label="Phone number (Optional)"
                         className="pr-10"
                         {...field}
                       />
