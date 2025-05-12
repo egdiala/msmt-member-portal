@@ -123,12 +123,15 @@ export default function SignIn() {
                 </FormItem>
               )}
             />
-            <Link
-              href="/reset-password"
-              className="text-sm text-brand-1 underline transition-colors font-medium hover:opacity-80 "
-            >
-              Reset password
-            </Link>
+
+            <div className="w-full flex justify-end">
+              <Link
+                href="/reset-password"
+                className="text-sm text-brand-1 underline transition-colors font-medium hover:opacity-80"
+              >
+                Forgot password
+              </Link>
+            </div>
           </div>
         </motion.div>
 
