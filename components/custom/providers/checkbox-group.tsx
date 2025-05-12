@@ -7,6 +7,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Control } from "react-hook-form";
 import { FormOption } from "@/types/appointment";
+import { Label } from "@/components/ui/label";
 
 interface CheckboxGroupProps {
   name: string;
@@ -42,6 +43,7 @@ export const CheckboxGroup = ({
                 >
                   {/* Only the checkbox has the handler now */}
                   <Checkbox
+                    id={option.name}
                     checked={field.value?.includes(option.value)}
                     onCheckedChange={(checked) => {
                       const currentValues = Array.isArray(field.value)
@@ -55,7 +57,7 @@ export const CheckboxGroup = ({
                       field.onChange(updatedValues);
                     }}
                   />
-                  <p className="text-sm text-brand-2">{option.value}</p>
+                  <Label htmlFor={option.name} className="text-sm text-brand-2 cursor-pointer">{option.value}</Label>
                 </div>
               ))}
             </div>
