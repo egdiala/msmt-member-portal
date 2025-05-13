@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { RenderIf } from "@/components/shared";
 import { Loader } from "@/components/shared/loader";
 import { Avatar, AvatarImage } from "@/components/ui";
@@ -19,8 +20,9 @@ export const MyOrganisationsContent = () => {
       <RenderIf condition={!isLoading}>
         <div className="grid gap-4 md:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {data?.org_data?.map((provider) => (
-            <div
+            <Link
               key={provider?.org_id}
+              href={`/providers/organisation/${provider?.org_id}?type=org&service_type=payer`}
               className="border border-divider rounded-lg p-1 grid gap-y-2"
             >
               <Avatar className="rounded-sm w-full h-20 md:h-32">
@@ -40,7 +42,7 @@ export const MyOrganisationsContent = () => {
                   {provider?.industry_name}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </RenderIf>

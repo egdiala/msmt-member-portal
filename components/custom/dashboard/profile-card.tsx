@@ -84,14 +84,18 @@ export const ProfileCard = () => {
                   <TooltipProvider key={organisation?.id}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Avatar className="-ml-4">
-                          <AvatarImage
-                            src={
-                              organisation?.icon ||
-                              "/assets/blank-profile-picture.png"
-                            }
-                          />
-                        </Avatar>
+                        <Link
+                          href={`/providers/organisation/${organisation?.id}?type=org&service_type=payer`}
+                        >
+                          <Avatar className="-ml-4">
+                            <AvatarImage
+                              src={
+                                organisation?.icon ||
+                                "/assets/blank-profile-picture.png"
+                              }
+                            />
+                          </Avatar>
+                        </Link>
                       </TooltipTrigger>
 
                       <TooltipContent>
