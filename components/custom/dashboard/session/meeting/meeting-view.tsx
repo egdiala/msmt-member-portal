@@ -38,7 +38,7 @@ const Timer = () => {
   };
 
   return (
-    <div className="text-sm md:text-lg  font-semibold text-[#001933] py-1.5 px-2 border border-brand-accent-2 rounded-full flex items-center">
+    <div className="text-sm md:text-lg bg-gray-100 font-semibold text-[#001933] py-1.5 px-2 border border-brand-accent-2 rounded-full flex items-center">
       <IconClock className="w-4 h-4 md:w-6 md:h-6 mr-1 stroke-brand-1" />
       {formatTime(time)}
     </div>
@@ -171,13 +171,13 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   );
 
   const focusParticipant = isProvider
-    ? participantsArray.find((p) => p.id !== localParticipant?.id) ||
+    ? participantsArray.find((p) => p.id === localParticipant?.id) ||
       participantsArray[0]
-    : participantsArray.find((p) => p.id === localParticipant?.id) ||
+    : participantsArray.find((p) => p.id !== localParticipant?.id) ||
       participantsArray[0];
 
   const otherParticipants = participantsArray.filter((p) =>
-    focusParticipant ? p.id !== focusParticipant.id : true
+    focusParticipant ? p.id !== focusParticipant.id : false
   );
 
   console.log("Participants:", participantsArray);
@@ -204,7 +204,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           onClick={handleToggleLayout}
           className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
         >
-          <IconUsers className="w-5 h-5 stroke-brand-1" />
+          <IconUsers className="md:w-5 w-4 md:h-5 h-4 stroke-brand-1" />
         </button>
       </div>
 
@@ -221,22 +221,23 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                       large={true}
                     />
                   )}
+
+                  {otherParticipants.length > 0 && (
+                    <div className="flex flex-col p-2 gap-2 absolute top-2 right-2">
+                      {otherParticipants.map((participant) => (
+                        <div
+                          key={participant.id}
+                          className="h-24 border-2 border-white rounded-lg overflow-hidden"
+                        >
+                          <ParticipantView
+                            participantId={participant.id}
+                            large={false}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {otherParticipants.length > 0 && (
-                  <div className="flex flex-col p-2 gap-2">
-                    {otherParticipants.map((participant) => (
-                      <div
-                        key={participant.id}
-                        className="h-24 rounded-lg overflow-hidden"
-                      >
-                        <ParticipantView
-                          participantId={participant.id}
-                          large={false}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             ) : (
               /* Desktop layout - main video with thumbnails on bottom */
@@ -291,58 +292,58 @@ const MeetingView: React.FC<MeetingViewProps> = ({
             ))}
           </div>
         )}
-      </div>
 
-      <div className="flex justify-between w-full items-center gap-4 p-2 bg-transparent">
-        <button
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
-          aria-label="Share screen"
-        >
-          <IconShare2 className="w-5 h-5 stroke-brand-1" />
-        </button>
-        <div className="flex justify-center items-center gap-4 ">
+        <div className="flex absolute inset-x-0 bottom-0 justify-between w-full items-center gap-4 p-2 bg-transparent">
           <button
-            onClick={handleToggleAudio}
-            className={`w-12 h-12 rounded-full flex items-center justify-center ${
-              localMicOn
-                ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                : "bg-brand-accent-2 text-white hover:opacity-90"
-            } transition-colors`}
-            aria-label={localMicOn ? "Mute microphone" : "Unmute microphone"}
+            className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
+            aria-label="Share screen"
           >
-            {localMicOn ? (
-              <IconMic className="w-5 h-5 stroke-brand-1" />
-            ) : (
-              <IconMicOff className="w-5 h-5 stroke-white" />
-            )}
+            <IconShare2 className="md:w-5 w-4 md:h-5 h-4 stroke-brand-1" />
           </button>
+          <div className="flex justify-center items-center gap-4 ">
+            <button
+              onClick={handleToggleAudio}
+              className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                localMicOn
+                  ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  : "bg-brand-accent-2 text-white hover:opacity-90"
+              } transition-colors`}
+              aria-label={localMicOn ? "Mute microphone" : "Unmute microphone"}
+            >
+              {localMicOn ? (
+                <IconMic className="md:w-5 w-4 md:h-5 h-4 stroke-brand-1" />
+              ) : (
+                <IconMicOff className="md:w-5 w-4 md:h-5 h-4 stroke-white" />
+              )}
+            </button>
 
-          <button
-            onClick={handleToggleVideo}
-            className={`w-12 h-12 rounded-full flex items-center justify-center ${
-              localWebcamOn
-                ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                : "bg-brand-accent-2 text-white hover:opacity-90"
-            } transition-colors`}
-            aria-label={localWebcamOn ? "Turn off camera" : "Turn on camera"}
-          >
-            {localWebcamOn ? (
-              <IconVideo className="w-5 h-5 stroke-brand-1" />
-            ) : (
-              <IconVideoOff className="w-5 h-5 stroke-white" />
-            )}
-          </button>
+            <button
+              onClick={handleToggleVideo}
+              className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                localWebcamOn
+                  ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  : "bg-brand-accent-2 text-white hover:opacity-90"
+              } transition-colors`}
+              aria-label={localWebcamOn ? "Turn off camera" : "Turn on camera"}
+            >
+              {localWebcamOn ? (
+                <IconVideo className="md:w-5 w-4 md:h-5 h-4 stroke-brand-1" />
+              ) : (
+                <IconVideoOff className="md:w-5 w-4 md:h-5 h-4 stroke-white" />
+              )}
+            </button>
 
-          <button
-            onClick={handleEndCall}
-            className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500 text-white hover:bg-red-600 transition-colors"
-            aria-label="End call"
-          >
-            <IconEndCall className="w-5 h-5 stroke-white" />
-          </button>
+            <button
+              onClick={handleEndCall}
+              className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500 text-white hover:bg-red-600 transition-colors"
+              aria-label="End call"
+            >
+              <IconEndCall className="md:w-5 w-4 md:h-5 h-4 stroke-white" />
+            </button>
+          </div>
+
+          <Timer />
         </div>
-
-        <Timer />
       </div>
     </div>
   );
@@ -359,7 +360,7 @@ const ParticipantView = ({
   const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
     useParticipant(participantId);
 
-    console.log(micStream, "MIC STREAM")
+  console.log(micStream, "MIC STREAM");
 
   useEffect(() => {
     if (webcamStream?.track instanceof MediaStreamTrack && videoRef.current) {

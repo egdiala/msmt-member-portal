@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
-import { useUpdateAppointment } from "@/services/hooks/mutations/use-session";
+import Link from "next/link";
 
 interface SessionCardProps {
   organization: {
@@ -26,9 +26,6 @@ export function StartSession({ organization, provider }: SessionCardProps) {
 
   const user_id = searchParams.get("user_id");
   const appointment_id = searchParams.get("appointment_id");
-  const { mutate } = useUpdateAppointment(() =>
-    router.push(`/start-session?provider_id=${appointment_id}&user_id=${user_id}`)
-  );
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
       <div className="text-center">
@@ -54,13 +51,12 @@ export function StartSession({ organization, provider }: SessionCardProps) {
         >
           Go to Home
         </Button>
-        <Button
-          className="h-12 flex-1 md:flex-none py-3 px-4"
-          onClick={() => {
-            mutate({ appointment_id: appointment_id as string });
-          }}
-        >
-          Join Session
+        <Button className="h-12 flex-1 md:flex-none py-3 px-4" asChild>
+          <Link
+            href={`/start-session?user_id=${user_id}&provider_id=${appointment_id}`}
+          >
+            Join Session
+          </Link>
         </Button>
       </div>
     </div>
