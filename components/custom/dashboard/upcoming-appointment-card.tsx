@@ -41,7 +41,7 @@ export const UpcomingAppointmentCard = () => {
     useCancelAppointmentWithoutNotice(() => {
       setOpenCancelModal(false);
     });
-  const { mutate: updateAppointment } = useUpdateAppointment(() =>
+  useUpdateAppointment(() =>
     router.push("/session")
   );
   const mostRecent = !!live?.length ? data?.[0] : live?.[0];

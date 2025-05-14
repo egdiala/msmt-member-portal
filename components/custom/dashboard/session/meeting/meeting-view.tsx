@@ -48,7 +48,6 @@ const Timer = () => {
 const MeetingView: React.FC<MeetingViewProps> = ({
   isProvider = false,
   meetingId,
-  participantName,
 }) => {
   // State variables
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
