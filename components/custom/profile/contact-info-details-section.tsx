@@ -12,7 +12,12 @@ export const ContactInfoDetailsSection = () => {
     {
       id: 2,
       key: "Phone number",
-      value: data?.contact_person?.phone_number || "_",
+      value:
+        data?.contact_person && Object.keys(data?.contact_person)?.length === 0
+          ? "-"
+          : `+${data?.contact_person?.phone_prefix || ""}${
+              data?.contact_person?.phone_number
+            }` || "_",
     },
     { id: 3, key: "Email", value: data?.contact_person?.email || "_" },
     {
@@ -46,7 +51,9 @@ export const ContactInfoDetailsSection = () => {
         {contactPerson.map((info) => (
           <div key={info.id}>
             <h4 className="text-text-2 text-sm">{info.key}</h4>
-            <p className="text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis">{info.value}</p>
+            <p className="text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+              {info.value}
+            </p>
           </div>
         ))}
       </div>

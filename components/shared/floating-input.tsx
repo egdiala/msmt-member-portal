@@ -14,8 +14,7 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
     { className, label, id: propsId, type, value, defaultValue, ...props },
     ref
   ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [isFocused, setIsFocused] = React.useState(false);
+    const [, setIsFocused] = React.useState(false);
     const [hasValue, setHasValue] = React.useState(false);
     const inputId = React.useId();
     const id = propsId || inputId;

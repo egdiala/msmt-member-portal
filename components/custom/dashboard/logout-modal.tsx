@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { Button } from "@/components/ui";
 import { Modal } from "@/components/shared";
+import { getQueryClient } from "@/config/get-query-client";
 
 interface ILogoutModal {
   handleClose: () => void;
@@ -11,10 +12,13 @@ interface ILogoutModal {
 }
 export const LogoutModal = ({ handleClose, isOpen }: ILogoutModal) => {
   const router = useRouter();
+  const queryClientConfig = getQueryClient();
 
   const handleLogout = () => {
     // Clear localStorage
     localStorage.clear();
+
+    queryClientConfig.clear();
 
     // Clear auth cookie - multiple methods to ensure it's cleared
     document.cookie =

@@ -2,13 +2,13 @@ import {
   CompleteOrgBookingPayload,
   RequestOrgBookingPayload,
 } from "@/types/appointment";
-import { axiosBookingService } from "../axios-instance";
+import { axiosPublicBookingService } from "../axios-instance";
 import { BookingQuestionnaireType } from "@/types/booking";
 
 export const completeOrgBooking = async (
   payload: CompleteOrgBookingPayload
 ) => {
-  const res = await axiosBookingService.put(
+  const res = await axiosPublicBookingService.put(
     "/users/requests/org-bookings",
     payload
   );
@@ -16,8 +16,8 @@ export const completeOrgBooking = async (
 };
 
 export const getBookOrganization = async (booking_link: string) => {
-  const res = await axiosBookingService.get(
-    `/users/requests/org-bookings/${booking_link}`
+  const res = await axiosPublicBookingService.get(
+    `/users/requests/org-bookings?booking_link=${booking_link}`
   );
   return res.data;
 };
@@ -26,7 +26,7 @@ export const submitOrgBookingQuestionnaire = async (
   payload: BookingQuestionnaireType
 ) => {
   const { appointment_id, data } = payload;
-  const res = await axiosBookingService.patch(
+  const res = await axiosPublicBookingService.patch(
     `/users/requests/org-bookings/${appointment_id}`,
     { data: data }
   );
@@ -34,7 +34,7 @@ export const submitOrgBookingQuestionnaire = async (
 };
 
 export const validateOrgBooking = async (payload: RequestOrgBookingPayload) => {
-  const res = await axiosBookingService.post(
+  const res = await axiosPublicBookingService.post(
     "/users/requests/org-bookings",
     payload
   );

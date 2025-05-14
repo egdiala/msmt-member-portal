@@ -3,21 +3,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { IconHamMenu } from "@/components/icons";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "About", href: "/about" },
-  { label: "Find Consultant", href: "/find-consultant" },
-  { label: "Lorem", href: "/lorem" },
-];
+// const navItems = [
+//   { label: "About", href: "/about" },
+//   { label: "Find Consultant", href: "/find-consultant" },
+//   { label: "Lorem", href: "/lorem" },
+// ];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#F3F5F9] lg:border-b lg:bg-background">
@@ -27,7 +27,7 @@ export function SiteHeader() {
             <Image src="/assets/logo.svg" alt="Logo" width={40} height={40} />
           </Link>
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8 text-sm">
+          {/* <nav className="hidden md:flex items-center space-x-8 text-sm">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -42,7 +42,7 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-          </nav>
+          </nav> */}
         </div>
 
         {/* Desktop Auth Buttons */}
@@ -95,7 +95,7 @@ export function SiteHeader() {
               </Button>
             </div>
             <div className="flex flex-col text-center gap-8">
-              {navItems.map((item) => (
+              {/* {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -109,7 +109,7 @@ export function SiteHeader() {
                 >
                   {item.label}
                 </Link>
-              ))}
+              ))} */}
               <div className="flex flex-col  space-y-8">
                 <Link href="/sign-up" onClick={() => setOpen(false)}>
                   <Button className="w-full inline-block text-white">

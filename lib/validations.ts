@@ -11,17 +11,17 @@ export const passwordSchema = z
   .refine(
     (password) => /[0-9]/.test(password),
     "Password must include at least one number"
-  )
-  .refine(
-    (password) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
-    "Password must include at least one special character"
   );
+// .refine(
+//   (password) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
+//   "Password must include at least one special character"
+// );
 
 export const signInSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
+    .min(6, { message: "Password must be at least 6 characters" }),
 });
 
 export const resetPasswordSchema = z.object({
@@ -98,11 +98,12 @@ export const profileSecuritySchema = z
 export const editProfileDetailsSchema = z.object({
   preferredName: z
     .string()
-    .min(2, "Preferred name must be at least 2 characters")
+    // .min(2, "Preferred name must be at least 2 characters")
     .optional(),
+  phone_prefix: z.string().optional(),
   phoneNumber: z
     .string()
-    .min(8, "Phone number must be at least 8 characters")
+    // .min(8, "Phone number must be at least 8 characters")
     .optional(),
   religion: z
     .string()
@@ -190,6 +191,7 @@ export const contactPersonDetailsSchema = z.object({
     .string()
     .min(2, "Last name must be at least 2 characters")
     .optional(),
+  phone_prefix: z.string().optional(),
   phoneNumber: z
     .string()
     .min(8, "Phone number must be at least 8 characters")
@@ -215,9 +217,10 @@ export const addMemberSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
+  phone_prefix: z.string().optional(),
   phone_number: z
     .string()
-    .min(11, "Phone number must be at least 11 characters")
+    .min(8, "Phone number must be at least 8 characters")
     .optional(),
   gender: z.string().min(2, "Gender must be at least 2 characters"),
   relationship: z.string().min(2, "Relationship must be at least 2 characters"),

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import type * as z from "zod";
 import useMeasure from "react-use-measure";
 import { AnimatePresence, motion } from "motion/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,17 +26,22 @@ import { useForgotPassword } from "@/services/hooks/mutations/use-auth";
 export default function ResetPassword() {
   const router = useRouter();
   const [ref, bounds] = useMeasure();
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useForgotPassword((href) => {
     localStorage.setItem("email-for-reset", form.getValues().email);
+    queryClient.setQueryData(["reset-email"], form.getValues("email"));
     router.push(href);
   });
 
+  const resetEmail = queryClient.getQueryData(["reset-email"]) as string;
+
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
+    reValidateMode: "onChange",
     mode: "onChange",
     defaultValues: {
-      email: "",
+      email: resetEmail || "",
     },
   });
 
@@ -44,7 +50,7 @@ export default function ResetPassword() {
   }
 
   const buttonCopy = {
-    idle: "Send Password",
+    idle: "Send OTP",
     loading: <Loader className="spinner size-4" />,
   };
 

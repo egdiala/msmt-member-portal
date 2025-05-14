@@ -38,3 +38,18 @@ export interface FetchedQuestionnaireSchemaType
   extends FetchedQuestionsForQuestionnaireType {
   answer: string | string[];
 }
+
+export interface BookOrgDetails {
+  member_org_id: string;
+  service_offer_id: string;
+  tier_id: string;
+  status: 0 | 1;
+  org_data: {
+    name: string;
+    avatar: string;
+    industry_id: string;
+    org_id: string;
+    industry_name: string;
+  };
+  member_first_name: string;
+}
