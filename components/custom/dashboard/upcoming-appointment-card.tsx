@@ -22,7 +22,7 @@ import {
   useCancelAppointment,
   useCancelAppointmentWithoutNotice,
 } from "@/services/hooks/mutations/use-appointment";
-import { useUpdateAppointment } from "@/services/hooks/mutations/use-session";
+import { useStartSession } from "@/services/hooks/mutations/use-session";
 import { formatSessionDate } from "./appointments/details/appointment-details";
 import { formatApptTimeShort, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -41,10 +41,10 @@ export const UpcomingAppointmentCard = () => {
     useCancelAppointmentWithoutNotice(() => {
       setOpenCancelModal(false);
     });
-  const { mutate: updateAppointment } = useUpdateAppointment(() =>
-    router.push("/session")
-  );
-  const mostRecent = !!live?.length ? data?.[0] : live?.[0];
+  // const { mutate: updateAppointment } = useUpdateAppointment(() =>
+  //   router.push("/session")
+  // );
+  const mostRecent = !!live?.length ? data?.[4] : live?.[0];
 
   const buttonCopy = {
     idle: "Cancel",

@@ -17,7 +17,7 @@ export const requestLiveSession = async (
   return res.data;
 };
 
-export const updateAppointment = async (payload: {
+export const startSession = async (payload: {
   appointment_id: string;
 }) => {
   const res = await axiosBookingService.put(
