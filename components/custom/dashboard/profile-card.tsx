@@ -4,18 +4,27 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { IconExternalLink, IconLogOut } from "@/components/icons";
-import { Avatar, AvatarFallback, AvatarImage, Button } from "@/components/ui";
-import { useGetProfile } from "@/services/hooks/queries/use-profile";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LogoutModal } from "./logout-modal";
 import { RenderIf } from "@/components/shared";
 import { EmptyState } from "@/components/shared/empty-state";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
+import { LogoutModal } from "./logout-modal";
 
 export const ProfileCard = () => {
   const { data, isLoading } = useGetProfile();
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
-  const organizationsData = data?.org_data?.map((val) => {
+  const organizationsData = data?.org_data?.slice(0, 3)?.map((val) => {
     return {
       id: val?.org_id,
       name: val?.name,
@@ -69,27 +78,40 @@ export const ProfileCard = () => {
           <div className="flex flex-col gap-y-1 flex-1">
             <h4 className="text-text-2 text-xs">Your organisation(s)</h4>
 
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap px-3">
               <RenderIf condition={!!organizationsData?.length}>
                 {organizationsData?.map((organisation) => (
-                  <Link
-                    key={organisation.id}
-                    href={`/providers/organisation/${organisation?.id}?type=org&service_type=payer`}
-                    className="cursor-pointer"
-                  >
-                    <div className="py-1 px-2 flex items-center gap-x-1 border border-grey-400 rounded-sm">
-                      <Avatar>
-                        <AvatarImage
-                          src={
-                            organisation?.icon ||
-                            "/assets/blank-profile-picture.png"
-                          }
-                        />
-                      </Avatar>
-                      <p className="text-xs text-text-2">{organisation.name}</p>
-                    </div>
-                  </Link>
+                  <TooltipProvider key={organisation?.id}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href={`/providers/organisation/${organisation?.id}?type=org&service_type=payer`}
+                        >
+                          <Avatar className="-ml-4">
+                            <AvatarImage
+                              src={
+                                organisation?.icon ||
+                                "/assets/blank-profile-picture.png"
+                              }
+                            />
+                          </Avatar>
+                        </Link>
+                      </TooltipTrigger>
+
+                      <TooltipContent>
+                        <p className="capitalize">{organisation?.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 ))}
+
+                <RenderIf condition={data ? data?.org_data?.length > 3 : false}>
+                  <Button variant="secondary" asChild className="-ml-5 z-10">
+                    <Link href="/my-organisations">
+                      <IconExternalLink className="stroke-button-primary" />
+                    </Link>
+                  </Button>
+                </RenderIf>
               </RenderIf>
 
               <RenderIf condition={organizationsData?.length === 0}>

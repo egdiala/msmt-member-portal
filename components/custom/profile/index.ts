@@ -7,3 +7,4 @@ export * from "./contact-info-details-section";
 export * from "./delete-account-section";
 export * from "./complete-profile-form";
 export * from "./complete-profile-header";
+export * from "./my-organisations";
