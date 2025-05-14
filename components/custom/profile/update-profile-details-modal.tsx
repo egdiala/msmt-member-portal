@@ -260,6 +260,7 @@ export const UpdateProfileDetailsModal = ({
                       onCountryChange={(value) => {
                         form.setValue("phone_prefix", value);
                       }}
+                      phonePrefix={form.getValues("phone_prefix")}
                       defaultCountry="NG"
                       placeholder="Phone Number (Optional)"
                     />

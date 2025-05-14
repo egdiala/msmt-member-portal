@@ -7,6 +7,7 @@ import { Button, Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { hasCompletedBasicProfile } from "@/lib/utils";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { UpdateProfileDetailsModal } from "./update-profile-details-modal";
+import { formatPhoneNumberIntl } from 'react-phone-number-input'
 
 export const PersonalInfoDetailsSection = () => {
   const router = useRouter();
@@ -18,10 +19,7 @@ export const PersonalInfoDetailsSection = () => {
     {
       id: 1,
       key: "Phone number",
-      value:
-        data?.phone_prefix === "" && data?.phone_number === ""
-          ? "-"
-          : `+${data?.phone_prefix || ""}${data?.phone_number}` || "_",
+      value: formatPhoneNumberIntl(`+${data?.phone_prefix || ""}${data?.phone_number}`) || "_",
     },
     { id: 2, key: "Religion", value: data?.religion || "_" },
     { id: 3, key: "Gender", value: data?.gender || "_" },
