@@ -298,7 +298,7 @@ export const setAppointmentSchedule = z.object({
 });
 
 export const fundWalletSchema = z.object({
-  amount: z.coerce.number().int().gte(1),
+  amount: z.coerce.number().int().gte(1, "Enter an amount of at least 1"),
 });
 
 export const disableProfileSchema = z.object({

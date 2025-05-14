@@ -68,8 +68,8 @@ export const ProfileCard = () => {
             </Avatar>
 
             <div className="grid gap-y-0.5">
-              <h2 className="text-text-2 font-semibold">
-                {data?.first_name} {data?.last_name}
+              <h2 className="text-text-2 font-semibold capitalize">
+                {data?.nickname || `${data?.first_name} ${data?.last_name}`}
               </h2>
               <p className="text-text-tertiary text-xs">{data?.email}</p>
             </div>

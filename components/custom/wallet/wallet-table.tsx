@@ -205,7 +205,7 @@ export const WalletTable = () => {
           >
             <IconHandCoins className="stroke-white hidden md:inline-flex" />
             <IconPlus className="stroke-white md:hidden" />
-            Fund Wallet
+            Buy Units
           </Button>
         </div>
       </div>
