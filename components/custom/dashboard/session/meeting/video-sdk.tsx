@@ -158,7 +158,7 @@ const DeviceSelectionModal: React.FC<{
               <label
                 htmlFor="toggle-audio"
                 className={`block h-6 rounded-full cursor-pointer transition-colors ${
-                  audioEnabled ? "bg-blue-500" : "bg-gray-300"
+                  audioEnabled ? "bg-brand-accent-2" : "bg-gray-300"
                 }`}
               >
                 <span
@@ -204,7 +204,7 @@ const DeviceSelectionModal: React.FC<{
               <label
                 htmlFor="toggle-video"
                 className={`block h-6 rounded-full cursor-pointer transition-colors ${
-                  videoEnabled ? "bg-blue-500" : "bg-gray-300"
+                  videoEnabled ? "bg-brand-accent-2" : "bg-gray-300"
                 }`}
               >
                 <span
@@ -257,7 +257,7 @@ const DeviceSelectionModal: React.FC<{
         <div className="flex justify-end">
           <button
             onClick={handleJoin}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-brand-accent-2 text-white rounded "
           >
             Join Now
           </button>
@@ -279,8 +279,8 @@ const VideoSDKApp: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showDeviceSelection, setShowDeviceSelection] =
     useState<boolean>(false);
-  const [userAudioEnabled, setUserAudioEnabled] = useState<boolean>(true);
-  const [userVideoEnabled, setUserVideoEnabled] = useState<boolean>(true);
+  const [userAudioEnabled, setUserAudioEnabled] = useState<boolean>(false);
+  const [userVideoEnabled, setUserVideoEnabled] = useState<boolean>(false);
   const [selectedAudioDeviceId, setSelectedAudioDeviceId] =
     useState<string>("");
   const [selectedVideoDeviceId, setSelectedVideoDeviceId] =
@@ -305,8 +305,8 @@ const VideoSDKApp: React.FC = () => {
 
         setMeetingConfig({
           meetingId: data.meeting_id,
-          enableAudio: data.enableAudio,
-          enableVideo: data.enableVideo,
+          enableAudio: userAudioEnabled,
+          enableVideo: userVideoEnabled,
           token: data?.token,
           participantName: data.isHost
             ? data?.provider_name
@@ -331,7 +331,6 @@ const VideoSDKApp: React.FC = () => {
     const initializeMediaDevices = async () => {
       if (meetingJoined && meetingConfig && !mediaInitialized) {
         try {
-          // Pre-initialize media devices
           if (selectedVideoDeviceId && userVideoEnabled) {
             try {
               console.log("Initializing video device:", selectedVideoDeviceId);
@@ -345,7 +344,6 @@ const VideoSDKApp: React.FC = () => {
                 constraints
               );
 
-              // Verify we got tracks
               if (videoStream.getVideoTracks().length === 0) {
                 console.warn(
                   "No video tracks in stream, falling back to default camera"
@@ -361,7 +359,6 @@ const VideoSDKApp: React.FC = () => {
                 );
               }
 
-              // Release resources
               videoStream.getTracks().forEach((track) => track.stop());
             } catch (err) {
               console.warn(
@@ -369,7 +366,7 @@ const VideoSDKApp: React.FC = () => {
                 err
               );
               try {
-                // Try with any available camera
+            
                 const fallbackStream =
                   await navigator.mediaDevices.getUserMedia({ video: true });
                 fallbackStream.getTracks().forEach((track) => track.stop());
@@ -458,7 +455,7 @@ const VideoSDKApp: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-full min-h-[60vh] w-full">
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
-          <div className="text-red-500 mb-4">
+          <div className="text-red-500 mb-4 mx-auto">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="48"
@@ -479,7 +476,7 @@ const VideoSDKApp: React.FC = () => {
           <p className="text-gray-700 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-brand-accent-2 text-white rounded-lg hover:bg-blue-700"
           >
             Try Again
           </button>
@@ -539,7 +536,7 @@ const VideoSDKApp: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full min-h-[70vh] bg-gray-50">
+    <div className="flex flex-col h-full ">
       <div className="flex-1 h-full mx-auto w-full">
         <MeetingProvider
           config={configOptions as any}
