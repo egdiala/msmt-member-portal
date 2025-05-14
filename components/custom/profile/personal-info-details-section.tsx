@@ -1,16 +1,24 @@
 "use client";
-
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IconPen } from "@/components/icons";
 import { Button, Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { hasCompletedBasicProfile } from "@/lib/utils";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { UpdateProfileDetailsModal } from "./update-profile-details-modal";
-import { formatPhoneNumberIntl } from 'react-phone-number-input'
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 export const PersonalInfoDetailsSection = () => {
   const router = useRouter();
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
 
   const { data } = useGetProfile();
   const hasntCompletedProfile = !hasCompletedBasicProfile(data!);
@@ -19,7 +27,10 @@ export const PersonalInfoDetailsSection = () => {
     {
       id: 1,
       key: "Phone number",
-      value: formatPhoneNumberIntl(`+${data?.phone_prefix || ""}${data?.phone_number}`) || "_",
+      value:
+        formatPhoneNumberIntl(
+          `+${data?.phone_prefix || ""}${data?.phone_number}`
+        ) || "_",
     },
     { id: 2, key: "Religion", value: data?.religion || "_" },
     { id: 3, key: "Gender", value: data?.gender || "_" },
@@ -46,7 +57,10 @@ export const PersonalInfoDetailsSection = () => {
       <div className="flex justify-between">
         <div className="grid gap-y-4">
           <div className="flex flex-col gap-y-3">
-            <Avatar className="h-25 w-25 rounded-full">
+            <Avatar
+              className="h-22 w-22 rounded-full border-2 border-white cursor-pointer transition-all duration-75 hover:scale-105 shadow-md "
+              onClick={() => setImageDialogOpen(true)}
+            >
               <AvatarImage
                 src={data?.avatar || "/assets/blank-profile-picture.png"}
                 className="object-cover w-full h-full"
@@ -99,6 +113,27 @@ export const PersonalInfoDetailsSection = () => {
         }}
         isOpen={openUpdateProfileDetailsModal}
       />
+
+      <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
+        <DialogContent className="sm:max-w-sm md:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Profile Photo</DialogTitle>
+            <DialogDescription>
+              {data?.first_name || "_"} {data?.last_name || "_"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center justify-center p-2">
+            <div className="relative w-full aspect-square max-h-[60vh] overflow-hidden rounded-md">
+              <Image
+                fill
+                src={data?.avatar || "/assets/blank-profile-picture.png"}
+                alt={`${data?.first_name} ${data?.last_name}`}
+                className="object-contain w-full h-full"
+              />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
