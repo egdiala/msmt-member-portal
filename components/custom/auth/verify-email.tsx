@@ -47,7 +47,6 @@ export default function VerifyEmail() {
       router.push(path);
     });
 
-
   const { mutate, isPending } = useCompleteRegister((path) => {
     localStorage.removeItem("email_to_verify");
     router.push(path);
@@ -104,11 +103,13 @@ export default function VerifyEmail() {
   }, [isPending, isPendingOtpConfirmation]);
 
   const { mutate: resendOtp, isPending: isResendingOtp } = useResendOtp();
-  const { mutate: submitRegister, isPending: isResendingRegisterForm } = useInitRegister();
+  const { mutate: submitRegister, isPending: isResendingRegisterForm } =
+    useInitRegister();
 
   const handleResendCode = async () => {
     if (!isResetPassword) {
-      const signUpDetails: InitRegisterType | undefined = queryClient.getQueryData(["sign-up-details"]);
+      const signUpDetails: InitRegisterType | undefined =
+        queryClient.getQueryData(["sign-up-details"]);
       submitRegister({
         first_name: signUpDetails?.first_name || "",
         last_name: signUpDetails?.last_name || "",
@@ -127,7 +128,7 @@ export default function VerifyEmail() {
   };
 
   const resendOtpButtonState = useMemo(() => {
-    return (isResendingOtp || isResendingRegisterForm) ? "loading" : "idle";
+    return isResendingOtp || isResendingRegisterForm ? "loading" : "idle";
   }, [isResendingRegisterForm, isResendingOtp]);
 
   return (
@@ -138,7 +139,7 @@ export default function VerifyEmail() {
             <p className="font-semibold text-left text-brand-1">Enter OTP</p>
             <span className="text-xs text-brand-2">
               Please enter the 5-digit code has been sent to{" "}
-              {emailToVerify || ""}{" "}
+              <b>{emailToVerify || ""}</b>{" "}
               <Link
                 href={isResetPassword ? "/reset-password" : "/sign-up"}
                 className="text-brand-accent-2 underline hover:opacity-80"
@@ -208,7 +209,9 @@ export default function VerifyEmail() {
         <div className="flex justify-center">
           <Button
             type="submit"
-            disabled={isPending || isPendingOtpConfirmation || isResendingRegisterForm}
+            disabled={
+              isPending || isPendingOtpConfirmation || isResendingRegisterForm
+            }
             className="rounded-full w-27.5"
           >
             <AnimatePresence mode="popLayout" initial={false}>

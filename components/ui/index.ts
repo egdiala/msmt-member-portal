@@ -21,3 +21,4 @@ export * from "./card";
 export * from "./chart";
 export * from "./drawer";
 export * from "./checkbox";
+export * from "./tooltip";
