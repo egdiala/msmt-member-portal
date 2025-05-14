@@ -14,12 +14,14 @@ export const PersonalInfoDetailsSection = () => {
   const { data } = useGetProfile();
   const hasntCompletedProfile = !hasCompletedBasicProfile(data!);
 
-
   const personalInfo = [
     {
       id: 1,
       key: "Phone number",
-      value: `+${data?.phone_prefix || ""}${data?.phone_number}` || "_",
+      value:
+        data?.phone_prefix === "" && data?.phone_number === ""
+          ? "-"
+          : `+${data?.phone_prefix || ""}${data?.phone_number}` || "_",
     },
     { id: 2, key: "Religion", value: data?.religion || "_" },
     { id: 3, key: "Gender", value: data?.gender || "_" },
@@ -30,7 +32,6 @@ export const PersonalInfoDetailsSection = () => {
 
   const [openUpdateProfileDetailsModal, setOpenUpdateProfileDetailsModal] =
     useState(false);
-
 
   useEffect(
     () => {
