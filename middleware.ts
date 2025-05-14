@@ -8,10 +8,14 @@ const publicRoutes = [
   "/reset-password",
   "/set-password",
   "/verify-email",
-  // "/start-session",
+];
+
+const publicSessionRoutes = [
+  "/start-session",
   "/verify-booking",
   "/complete-booking",
-];
+  "/providers",
+]
 
 export function middleware(request: NextRequest) {
   // Clone the request URL for modifications
@@ -30,7 +34,7 @@ export function middleware(request: NextRequest) {
     // CASE 1: Authenticated user trying to access public routes (sign-in, etc.)
     if (
       isAuthenticated &&
-      publicRoutes.some((route) => pathname.startsWith(route) || pathname === "/")
+      publicRoutes.some((route) => pathname.startsWith(route) || pathname === "/") && !publicSessionRoutes.some((route) => pathname.startsWith(route))
     ) {
       // console.log(
       //   `[Middleware] Authenticated user trying to access public route`
@@ -67,11 +71,11 @@ export function middleware(request: NextRequest) {
     }
 
     // CASE 2: Unauthenticated user trying to access protected routes
-    const isPublicRoute = publicRoutes.some((route) =>
+    const isPublicRoute = [...publicRoutes, ...publicSessionRoutes].some((route) =>
       pathname.startsWith(route)
     );
     const isNextInternal =
-      pathname.startsWith("/_next") || pathname.includes(".");
+      pathname.startsWith("/_next") || pathname.includes(".")
 
     if (!isAuthenticated && !isPublicRoute && !isNextInternal && pathname === "/") {
       // console.log(

@@ -1,18 +1,9 @@
-import axios from "axios";
-import { axiosBookingService } from "../axios-instance";
+import { axiosBookingService, axiosPublicBookingService } from "../axios-instance";
 
 export const requestLiveSession = async (
   payload: LiveSessionRequestPayload
 ) => {
-  const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_MSMT_BOOKING_SERVICE_URL}/users/requests/live-sessions`,
-    payload,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_REQUEST_VARIABLES_TOKEN}`,
-      },
-    }
-  );
+  const res = await axiosPublicBookingService.post("users/requests/live-sessions", payload);
 
   return res.data;
 };

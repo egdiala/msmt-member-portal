@@ -31,6 +31,7 @@ import {
 export const SingleOrganisationIndividualProviderContent = () => {
   const { id, uid } = useParams();
   const searchParams = useSearchParams();
+  const booking_link = searchParams.get("booking_link") as string | undefined;
   const org_user_type = searchParams.get("type") as "provider" | "org";
   const user_type = searchParams.get("user_type") as "provider" | "org";
   const account_type = searchParams.get("service_type") as "provider" | "payer";
@@ -160,33 +161,35 @@ export const SingleOrganisationIndividualProviderContent = () => {
               <div className="border-t border-divider"></div>
 
               <div className="flex items-center justify-between">
-                <Button
-                  variant={data?.isfav_provider ? "default" : "ghost"}
-                  className={cn(
-                    "p-0 font-semibold min-w-42",
-                    data?.isfav_provider
-                      ? "stroke-white"
-                      : "stroke-brand-btn-secondary hover:stroke-white"
-                  )}
-                  disabled={isPending || isRemovingFavourite}
-                  onClick={handleMarkAsFavourite}
-                >
-                  <AnimatePresence mode="popLayout" initial={false}>
-                    <motion.span
-                      transition={{
-                        type: "spring",
-                        duration: 0.3,
-                        bounce: 0,
-                      }}
-                      initial={{ opacity: 0, y: -25 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 25 }}
-                      key={buttonState}
-                    >
-                      {buttonCopy[buttonState]}
-                    </motion.span>
-                  </AnimatePresence>
-                </Button>
+                <RenderIf condition={isLoggedIn}>
+                  <Button
+                    variant={data?.isfav_provider ? "default" : "ghost"}
+                    className={cn(
+                      "p-0 font-semibold min-w-42",
+                      data?.isfav_provider
+                        ? "stroke-white"
+                        : "stroke-brand-btn-secondary hover:stroke-white"
+                    )}
+                    disabled={isPending || isRemovingFavourite}
+                    onClick={handleMarkAsFavourite}
+                  >
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      <motion.span
+                        transition={{
+                          type: "spring",
+                          duration: 0.3,
+                          bounce: 0,
+                        }}
+                        initial={{ opacity: 0, y: -25 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 25 }}
+                        key={buttonState}
+                      >
+                        {buttonCopy[buttonState]}
+                      </motion.span>
+                    </AnimatePresence>
+                  </Button>
+                </RenderIf>
 
                 <RenderIf condition={isLoggedIn}>
                   <Button asChild className="hidden md:inline-flex">
@@ -201,13 +204,13 @@ export const SingleOrganisationIndividualProviderContent = () => {
                 <RenderIf condition={!isLoggedIn}>
                   <Button
                     asChild
-                    className="hidden md:inline-flex"
+                    className="hidden md:inline-flex ml-auto"
                     onClick={() => {
                       setStep(2);
                     }}
                   >
                     <Link
-                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`}
+                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}${booking_link ? `&booking_link=${booking_link}` : ""}`}
                     >
                       <IconPlus className="stroke-white" />
                       Book An Appointment

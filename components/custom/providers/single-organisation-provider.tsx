@@ -47,7 +47,7 @@ import {
 import { FilterOrganisationsProvidersPopover } from "./filter-organisations-providers-popover";
 import { SingleProviderCard } from "./single-provider-card";
 
-export const SingleOrganisationProviderContent = () => {
+export const SingleOrganisationProviderContent = ({ isPublic }: { isPublic?: boolean }) => {
   const { id } = useParams();
 
   const searchParams = useSearchParams();
@@ -65,10 +65,6 @@ export const SingleOrganisationProviderContent = () => {
       account_service_type: account_type,
       member_id: userProfile?.user_id,
     });
-
-  const org_tier_id = userProfile?.org_data?.filter(
-    (val) => val?.org_id === id?.toString()
-  )?.[0]?.tier_id;
 
   const [filters, setFilters] = useState<Record<string, any>>({});
   const { data: requestVariables } = useMultipleRequestVariables([
@@ -114,7 +110,7 @@ export const SingleOrganisationProviderContent = () => {
   >({
     org_id: id!.toString(),
     ...(value ? { q: value } : {}),
-    ...(org_tier_id ? { tier_id: org_tier_id } : {}),
+    member_id: userProfile?.user_id,
     ...filters,
   });
 
@@ -266,38 +262,39 @@ export const SingleOrganisationProviderContent = () => {
               </RenderIf>
             </div>
           </div>
+          <RenderIf condition={!isPublic}>
+            <div className="border border-divider rounded-lg px-4 md:px-5 py-4 grid gap-y-2">
+              <p className="text-sm text-brand-2">About</p>
+              <p className="text-brand-1">{data?.description ?? "N/A"}</p>
+            </div>
 
-          <div className="border border-divider rounded-lg px-4 md:px-5 py-4 grid gap-y-2">
-            <p className="text-sm text-brand-2">About</p>
-            <p className="text-brand-1">{data?.description ?? "N/A"}</p>
-          </div>
+            <div className="border border-divider rounded-lg px-3 md:px-5 py-4 grid gap-y-2">
+              <p className="text-brand-2 text-sm">Services</p>
 
-          <div className="border border-divider rounded-lg px-3 md:px-5 py-4 grid gap-y-2">
-            <p className="text-brand-2 text-sm">Services</p>
+              <div className="flex gap-4 flex-wrap">
+                {data?.service_data?.map((service) => (
+                  <div
+                    key={service?.service_offer_id}
+                    className="rounded-full bg-grey-400 px-4 py-2.5 capitalize"
+                  >
+                    {service?.name}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-            <div className="flex gap-4 flex-wrap">
-              {data?.service_data?.map((service) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {cardStats.map((stat) => (
                 <div
-                  key={service?.service_offer_id}
-                  className="rounded-full bg-grey-400 px-4 py-2.5 capitalize"
+                  key={stat.id}
+                  className="grid gap-2 border border-divider rounded-lg px-5 py-4"
                 >
-                  {service?.name}
+                  <p className="text-brand-2 text-sm">{stat.title}</p>
+                  <p className="text-lg text-brand-1 font-medium">{stat.value}</p>
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {cardStats.map((stat) => (
-              <div
-                key={stat.id}
-                className="grid gap-2 border border-divider rounded-lg px-5 py-4"
-              >
-                <p className="text-brand-2 text-sm">{stat.title}</p>
-                <p className="text-lg text-brand-1 font-medium">{stat.value}</p>
-              </div>
-            ))}
-          </div>
+          </RenderIf>
         </RenderIf>
       </div>
 
@@ -381,7 +378,7 @@ export const SingleOrganisationProviderContent = () => {
             data={tableData ?? []}
             headers={PROVIDERS_TABLE_HEADERS}
             isLoading={isLoading}
-            emptyStateTitleText="There are no providers yet"
+            emptyStateTitleText={(providersCount?.total || 0) > 0 ? "Only members of this organisation can view the providers" : "There are no providers yet"}
           />
 
           <RenderIf condition={tableData?.length !== 0}>
@@ -417,8 +414,8 @@ export const SingleOrganisationProviderContent = () => {
           <RenderIf condition={!isLoading}>
             <RenderIf condition={tableData?.length === 0}>
               <EmptyState
-                title="Organization providers"
-                subtitle="There are no providers yet"
+                title={(providersCount?.total || 0) > 0 ? `Only members of ${data?.name} can view and book providers` : "Organization providers"}
+                subtitle={(providersCount?.total || 0) > 0 ? "" : "There are no providers yet"}
                 hasIcon
               />
             </RenderIf>

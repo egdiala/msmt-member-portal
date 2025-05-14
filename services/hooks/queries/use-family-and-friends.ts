@@ -22,13 +22,13 @@ export const useGetFamilyAndFriends = <T>(
 };
 
 export const useGetSingleFamilyOrFriend = <T>(
-  query: FetchFamilyAndFriendsQuery
+  query: FetchFamilyAndFriendsQuery, config?: any
 ) => {
   return useQuery({
+    ...config,
     queryKey: ["get-single-family-or-friend", query],
     queryFn: () => getSingleFamilyOrFriend(query),
-    select: (res) => res?.data as T,
-    enabled: !!query.familyfriend_id,
+    select: (res: any) => res?.data as T,
     retry: false,
     throwOnError(error: any) {
       toast.error(error?.response?.data?.msg || "Something went wrong");

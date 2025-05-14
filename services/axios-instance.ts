@@ -11,6 +11,13 @@ export const axiosBookingService: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_MSMT_BOOKING_SERVICE_URL,
   headers: {
     "Content-Type": "application/json",
+  },
+});
+
+export const axiosPublicBookingService: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_MSMT_BOOKING_SERVICE_URL,
+  headers: {
+    "Content-Type": "application/json",
     Authorization: `Bearer ${process.env.NEXT_PUBLIC_REQUEST_VARIABLES_TOKEN}`,
   },
 });
