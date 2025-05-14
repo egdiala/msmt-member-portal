@@ -9,6 +9,7 @@ import {
   IconVideo,
   IconEndCall,
   IconUsers,
+  IconClock,
 } from "@/components/icons";
 
 interface MeetingViewProps {
@@ -37,8 +38,8 @@ const Timer = () => {
   };
 
   return (
-    <div className="text-sm font-medium text-gray-700 flex items-center">
-      <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+    <div className="text-sm md:text-lg  font-semibold text-[#001933] py-1.5 px-2 border border-brand-accent-2 rounded-full flex items-center">
+      <IconClock className="w-4 h-4 md:w-6 md:h-6 mr-1 stroke-brand-1" />
       {formatTime(time)}
     </div>
   );
@@ -186,9 +187,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
   if (!isMeetingJoined) {
     return (
-      <div className="flex items-center justify-center h-full min-h-[60vh] bg-transparent">
+      <div className="flex items-center justify-center h-full  bg-transparent">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent-2 mb-4"></div>
           <p className="text-lg text-gray-700">Joining meeting...</p>
         </div>
       </div>
@@ -196,18 +197,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 rounded-lg overflow-hidden shadow-lg">
+    <div className="flex flex-col h-full  rounded-lg overflow-hidden">
       {/* Meeting header */}
-      <div className="flex justify-between items-center px-4 py-3 bg-white border-b">
-        <div className="flex items-center space-x-3">
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900">
-              {isProvider ? "Patient Session" : "Provider Session"}
-            </h1>
-            <Timer />
-          </div>
-        </div>
-
+      <div className="flex justify-end items-center py-2">
         {/* Add layout toggle button */}
         <button
           onClick={handleToggleLayout}
@@ -217,8 +209,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         </button>
       </div>
 
-      {/* Meeting content - using the exact layout from the reference images */}
-      <div className="flex-1 bg-gray-100 overflow-hidden relative">
+      <div className="flex-1  overflow-hidden relative">
         {layout === "focus" && (
           <div className="h-full flex flex-col">
             {isMobile ? (
@@ -263,7 +254,10 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                 {otherParticipants.length > 0 && (
                   <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2 ">
                     {otherParticipants.map((participant) => (
-                      <div key={participant.id} className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white ">
+                      <div
+                        key={participant.id}
+                        className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white "
+                      >
                         <ParticipantView
                           participantId={participant.id}
                           large={false}
@@ -300,54 +294,56 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         )}
       </div>
 
-      {/* Controls - designed to match the reference images */}
-      <div className="flex justify-center items-center gap-4 p-4 bg-white border-t">
-        <button
-          onClick={handleToggleAudio}
-          className={`w-12 h-12 rounded-full flex items-center justify-center ${
-            localMicOn
-              ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-              : "bg-brand-accent-2 text-white hover:opacity-90"
-          } transition-colors`}
-          aria-label={localMicOn ? "Mute microphone" : "Unmute microphone"}
-        >
-          {localMicOn ? (
-            <IconMic className="w-5 h-5 stroke-brand-1" />
-          ) : (
-            <IconMicOff className="w-5 h-5 stroke-white" />
-          )}
-        </button>
-
-        <button
-          onClick={handleToggleVideo}
-          className={`w-12 h-12 rounded-full flex items-center justify-center ${
-            localWebcamOn
-              ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-              : "bg-brand-accent-2 text-white hover:opacity-90"
-          } transition-colors`}
-          aria-label={localWebcamOn ? "Turn off camera" : "Turn on camera"}
-        >
-          {localWebcamOn ? (
-            <IconVideo className="w-5 h-5 stroke-brand-1" />
-          ) : (
-            <IconVideoOff className="w-5 h-5 stroke-white" />
-          )}
-        </button>
-
-        <button
-          onClick={handleEndCall}
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500 text-white hover:bg-red-600 transition-colors"
-          aria-label="End call"
-        >
-          <IconEndCall className="w-5 h-5 stroke-white" />
-        </button>
-
+      <div className="flex justify-between w-full items-center gap-4 p-2 bg-transparent">
         <button
           className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
           aria-label="Share screen"
         >
           <IconShare2 className="w-5 h-5 stroke-brand-1" />
         </button>
+        <div className="flex justify-center items-center gap-4 ">
+          <button
+            onClick={handleToggleAudio}
+            className={`w-12 h-12 rounded-full flex items-center justify-center ${
+              localMicOn
+                ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                : "bg-brand-accent-2 text-white hover:opacity-90"
+            } transition-colors`}
+            aria-label={localMicOn ? "Mute microphone" : "Unmute microphone"}
+          >
+            {localMicOn ? (
+              <IconMic className="w-5 h-5 stroke-brand-1" />
+            ) : (
+              <IconMicOff className="w-5 h-5 stroke-white" />
+            )}
+          </button>
+
+          <button
+            onClick={handleToggleVideo}
+            className={`w-12 h-12 rounded-full flex items-center justify-center ${
+              localWebcamOn
+                ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                : "bg-brand-accent-2 text-white hover:opacity-90"
+            } transition-colors`}
+            aria-label={localWebcamOn ? "Turn off camera" : "Turn on camera"}
+          >
+            {localWebcamOn ? (
+              <IconVideo className="w-5 h-5 stroke-brand-1" />
+            ) : (
+              <IconVideoOff className="w-5 h-5 stroke-white" />
+            )}
+          </button>
+
+          <button
+            onClick={handleEndCall}
+            className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500 text-white hover:bg-red-600 transition-colors"
+            aria-label="End call"
+          >
+            <IconEndCall className="w-5 h-5 stroke-white" />
+          </button>
+        </div>
+
+        <Timer />
       </div>
     </div>
   );
@@ -364,6 +360,8 @@ const ParticipantView = ({
   const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
     useParticipant(participantId);
 
+    console.log(micStream, "MIC STREAM")
+
   useEffect(() => {
     if (webcamStream?.track instanceof MediaStreamTrack && videoRef.current) {
       const mediaStream = new MediaStream([webcamStream.track]);
@@ -377,7 +375,7 @@ const ParticipantView = ({
   return (
     <div
       className={`relative rounded-lg overflow-hidden ${
-        large ? "h-[80vh] w-full" : "h-full w-full"
+        large ? "h-full w-full" : "h-full w-full"
       }`}
     >
       {webcamOn ? (
@@ -389,15 +387,15 @@ const ParticipantView = ({
           className="w-full h-full object-cover object-center"
         />
       ) : (
-        <div className="flex items-center justify-center w-full h-full bg-gray-700 text-white">
-          <div className="w-20 h-20 flex items-center justify-center bg-blue-600 rounded-full text-3xl font-medium">
+        <div className="flex items-center justify-center w-full h-full bg-blue-400 text-white">
+          <div className="w-20 h-20 flex items-center justify-center bg-brand-accent-2 rounded-full text-3xl font-medium">
             {firstLetter}
           </div>
         </div>
       )}
 
       {/* Participant info overlay */}
-      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm flex items-center">
+      <div className="absolute bottom-2 left-2 bg-brand-accent-2 bg-opacity-50 text-white px-3 py-1 rounded-full text-sm flex items-center">
         <span>{name}</span>
         {!micOn && (
           <span className="ml-2 text-red-500">
