@@ -225,7 +225,11 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
               Cancel
             </Button>
 
-            <Button type="submit" className="w-28">
+            <Button
+              type="submit"
+              className="w-28"
+              disabled={isPending || !form.formState.isValid}
+            >
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span
                   transition={{ type: "spring", duration: 0.3, bounce: 0 }}

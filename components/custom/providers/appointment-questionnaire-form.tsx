@@ -115,10 +115,10 @@ export const FillAppointmentQuestionnaireForm = ({
               <h2 className="font-bold text-xl md:text-2xl">
                 Appointment questionnaire
               </h2>
-              <p className="text-brand-2 text-sm">
+              {/* <p className="text-brand-2 text-sm">
                 Fill in your details to book sessions and enjoy a seamless
                 experience
-              </p>
+              </p> */}
             </div>
 
             <div className="grid gap-y-5">

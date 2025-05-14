@@ -41,7 +41,7 @@ export const UpcomingAppointmentCard = () => {
   const mostRecent = !!live?.length ? live?.[0] : data?.[0];
 
   const buttonCopy = {
-    idle: "Cancel",
+    idle: "Cancel Appointment",
     loading: <Loader className="spinner size-4" />,
   };
 
@@ -182,7 +182,7 @@ export const UpcomingAppointmentCard = () => {
                     })
                   }
                   variant="outline"
-                  className="py-2 px-4 rounded-full w-20"
+                  className="py-2 px-4 rounded-full w-40"
                 >
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span

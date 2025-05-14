@@ -112,7 +112,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
   }
 
   const [ref, bounds] = useMeasure();
-  const formAmount = form.watch("amount")
+  const formAmount = form.watch("amount");
 
   const buttonCopy = {
     idle: "Buy Unit",
@@ -125,7 +125,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
 
   return (
     <Modal isOpen={isOpen} handleClose={onClose} className="grid gap-y-6">
-      <h3 className="font-bold text-2xl">Fund Wallet</h3>
+      <h3 className="font-bold text-2xl">Buy Units</h3>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-y-6">
@@ -163,9 +163,14 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
                     : ""}
                 </p>
                 <div className="flex items-center gap-x-1">
-                  <p className="text-brand-2 text-xs">{formatNumberWithCommas(formAmount)} will get you</p>
+                  <p className="text-brand-2 text-xs">
+                    {formatNumberWithCommas(formAmount)} will get you
+                  </p>
                   <p className="font-medium text-sm text-brand-1">
-                    {Intl.NumberFormat("en-US").format((userProfile?.funding_unitrate || 0) * formAmount)} units
+                    {Intl.NumberFormat("en-US").format(
+                      (userProfile?.funding_unitrate || 0) * formAmount
+                    )}{" "}
+                    units
                   </p>
                 </div>
               </div>

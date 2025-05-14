@@ -26,7 +26,7 @@ export function CancelAppointmentDialog({
   isRemoving,
 }: CancelAppointmentDialogProps) {
   const buttonCopy = {
-    idle: "Cancel Appointment",
+    idle: "Cancel",
     loading: <Loader className="spinner size-4" />,
   };
 
@@ -41,8 +41,8 @@ export function CancelAppointmentDialog({
             Cancel Appointment ?
           </DialogTitle>
           <DialogDescription className="text-left text-sm text-brand-1">
-            This action would cancel appoint and You would need to reschedule
-            appointment again to see a provider
+            This action will cancel your appointment, and you’ll need to
+            reschedule to see a provider.
           </DialogDescription>
         </DialogHeader>
 
@@ -52,7 +52,7 @@ export function CancelAppointmentDialog({
             className="flex-1"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            Back
           </Button>
 
           <motion.div layout className="flex items-center justify-center">
@@ -61,7 +61,7 @@ export function CancelAppointmentDialog({
                 if (onCancel) onCancel();
               }}
               variant="outline"
-              className="flex-1"
+              className="flex-1 w-40"
             >
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span
