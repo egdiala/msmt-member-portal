@@ -21,7 +21,7 @@ export const signInSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
+    .min(6, { message: "Password must be at least 6 characters" }),
 });
 
 export const resetPasswordSchema = z.object({
@@ -191,9 +191,7 @@ export const contactPersonDetailsSchema = z.object({
     .string()
     .min(2, "Last name must be at least 2 characters")
     .optional(),
-  phone_prefix: z
-    .string()
-    .optional(),
+  phone_prefix: z.string().optional(),
   phoneNumber: z
     .string()
     .min(8, "Phone number must be at least 8 characters")

@@ -13,9 +13,11 @@ export const ContactInfoDetailsSection = () => {
       id: 2,
       key: "Phone number",
       value:
-        `+${data?.contact_person?.phone_prefix || ""}${
-          data?.contact_person?.phone_number
-        }` || "_",
+        data?.contact_person && Object.keys(data?.contact_person)?.length === 0
+          ? "-"
+          : `+${data?.contact_person?.phone_prefix || ""}${
+              data?.contact_person?.phone_number
+            }` || "_",
     },
     { id: 3, key: "Email", value: data?.contact_person?.email || "_" },
     {
