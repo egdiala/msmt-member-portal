@@ -25,7 +25,10 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("rounded-md bg-background shadow-md max-h-full overflow-visible", className)}
+      className={cn(
+        "rounded-md bg-background shadow-md max-h-full overflow-visible",
+        className
+      )}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4 overflow-visible",
@@ -47,7 +50,7 @@ function Calendar({
         cell: cn(
           "h-9 w-9 relative p-0 text-center text-sm cursor-pointer",
           "transition-colors duration-200 ease-in-out",
-          "[&:has([aria-selected])]:bg-accent [&:has([aria-selected])]:text-accent-foreground",
+          "[&:has([aria-selected])]:bg-inherit [&:has([aria-selected])]:text-accent-foreground",
           "[&:has([aria-selected].day-range-end)]:rounded-r-md",
           "[&:has([aria-selected].day-range-start)]:rounded-l-md",
           "[&:has([aria-selected])]:font-bold",
@@ -55,11 +58,11 @@ function Calendar({
         ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal rounded-full hover:bg-muted/30 focus:outline-none"
+          "h-9 w-9 p-0 font-normal rounded-full hover:bg-button-primary hover:text-white focus:outline-none"
         ),
         day_range_end: "day-range-end",
         day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+          "bg-primary text-primary-foreground bg-inherit hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
         day_today: "bg-accent text-accent-foreground",
         day_outside:
           "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",

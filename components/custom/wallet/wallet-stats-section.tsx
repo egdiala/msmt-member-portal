@@ -15,7 +15,7 @@ export const WalletStatsSection = () => {
     {
       id: 1,
       title: "Unit Balance",
-      value: formatNumberWithCommas(
+      value: new Intl.NumberFormat("en-US").format(
         walletTransactionsStats?.total_balance || 0
       ),
       bg: "bg-grey-400",

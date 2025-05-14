@@ -76,14 +76,14 @@ export const UpcomingAppointmentCard = () => {
           initial="initial"
           animate="enter"
           exit="exit"
-          className="max-w-full grid gap-y-4 order-1 md:order-2 col-span-1 xl:col-span-4 bg-white rounded-2xl p-3 md:p-6 w-full"
+          className="max-w-full flex flex-col gap-y-4 order-1 md:order-2 col-span-1 xl:col-span-4 bg-white rounded-2xl p-3 md:p-6 w-full"
         >
-          <h3 className="text-text-2 text-sm font-semibold">
+          <h3 className="text-text-2 text-sm font-semibold h-fit">
             Upcoming appointment
           </h3>
 
           {isEmpty(mostRecent) && !data?.length ? (
-            <div className="flex flex-col items-center w-full h-full">
+            <div className="flex md:h-3/4 flex-col gap-y-3 md:gap-y-4 justify-center">
               <EmptyState
                 hasIcon
                 title="You don't have upcoming appointments"
@@ -91,8 +91,8 @@ export const UpcomingAppointmentCard = () => {
               />
             </div>
           ) : (
-            <div className="grid gap-y-4">
-              <div className="bg-input-field rounded-lg grid gap-y-3 p-3">
+            <div className="grid content-start flex-1 gap-y-4">
+              <div className="bg-input-field rounded-lg h-fit grid gap-y-3 p-3">
                 <div className="flex justify-between">
                   <div className="flex gap-x-2 items-start">
                     <Avatar className="h-11 w-11 rounded-full">
@@ -178,7 +178,7 @@ export const UpcomingAppointmentCard = () => {
             </div>
           )}
 
-          <div className="flex justify-between items-center lg:pt-5">
+          <div className="flex justify-between items-end">
             <Button
               asChild
               variant="secondary"

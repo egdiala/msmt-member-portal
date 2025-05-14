@@ -59,16 +59,21 @@ const passwordRequirements: PasswordRequirement[] = [
     label: "Must be 6 characters",
     validator: (password) => password.length >= 6,
   },
+  // {
+  //   id: "specialChar",
+  //   label: "At least One special character",
+  //   validator: (password) =>
+  //     /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
+  // },
   {
-    id: "specialChar",
-    label: "At least One special character",
-    validator: (password) =>
-      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password),
+    id: "uppercase",
+    label: "Atleast One uppercase",
+    validator: (password) => /[A-Z]/.test(password),
   },
   {
-    id: "uppercaseLowercase",
-    label: "Uppercase and lowercase",
-    validator: (password) => /[a-z]/.test(password) && /[A-Z]/.test(password),
+    id: "lowercase",
+    label: "Atleast One lowercase",
+    validator: (password) => /[a-z]/.test(password),
   },
   {
     id: "number",

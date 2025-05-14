@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "motion/react";
 import useMeasure from "react-use-measure";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconEmail, IconPhone, IconUserRound } from "@/components/icons";
+import { IconEmail, IconUserRound } from "@/components/icons";
 import {
   Button,
   Form,
@@ -19,6 +19,7 @@ import { Loader } from "@/components/shared/loader";
 import { addMemberSchema } from "@/lib/validations";
 import { useAddFamilyOrFriend } from "@/services/hooks/mutations/use-family-and-friends";
 import { FloatingInput, Modal, SelectCmp } from "../../shared";
+import { PhoneInputWithLabel } from "@/components/shared/phone-input";
 
 interface IAddMemberModal {
   handleClose: () => void;
@@ -38,12 +39,17 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
     defaultValues: {
       first_name: "",
       last_name: "",
+      phone_prefix: "",
       phone_number: "",
       gender: "",
       email: "",
       relationship: "",
     },
   });
+
+  useEffect(() => {
+    form.register("phone_prefix");
+  }, [form]);
 
   async function onSubmit({
     first_name,
@@ -58,7 +64,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
       last_name,
       email,
       gender: gender.toLowerCase(),
-      phone_number,
+      phone_number: `${phone_number}`,
       relationship: relationship.toLowerCase() === "family" ? "1" : "2",
     });
   }
@@ -154,16 +160,16 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormControl>
-                      <div className="relative">
-                        <FloatingInput
-                          label="Phone Number"
-                          className="pr-10"
-                          {...field}
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                          <IconPhone className="h-4 w-4" />
-                        </div>
-                      </div>
+                      <PhoneInputWithLabel
+                        value={field.value!}
+                        onChange={(val) => field.onChange(val)}
+                        onCountryChange={(value) =>
+                          form.setValue("phone_prefix", value)
+                        }
+                        defaultCountry="NG"
+                        phonePrefix={form.getValues("phone_prefix")}
+                        placeholder="Phone Number"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

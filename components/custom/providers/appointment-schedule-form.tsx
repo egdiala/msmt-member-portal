@@ -1,7 +1,7 @@
 "use client";
 
 import Cookies from "js-cookie";
-import { Dispatch, SetStateAction, useState, useMemo } from "react";
+import { Dispatch, SetStateAction, useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
@@ -63,12 +63,19 @@ import {
 import { useCompleteOrgBooking } from "@/services/hooks/mutations/use-appointment";
 import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-and-friends";
 import { FetchedPaymentOptionFamilyType } from "@/types/family-and-friends";
+import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
+import type { FetchedWalletTransactionsStatsType } from "@/types/wallet";
+import { toast } from "sonner";
+import { FundWalletModal } from "../wallet/fund-wallet-modal";
 
 interface ISetScheduleStep {
   setStep: Dispatch<SetStateAction<string | number>>;
 }
 export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
   const navigate = useRouter();
+  const { data: walletCountStatus } = useGetWalletTransactions<FetchedWalletTransactionsStatsType>({
+    component: "count-status",
+  });
 
   const searchParams = useSearchParams();
   const provider_id = searchParams.get("provider_id") as string;
@@ -105,6 +112,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
   ];
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("Wallet");
+  const [openFundWalletModal, setOpenFundWalletModal] = useState(false);
 
   const isLoggedIn = Cookies.get("authToken");
 
@@ -216,10 +224,10 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
       service_offer_id:
         account_service_type === "provider" && user_type === "org"
           ? orgInfo?.service_data?.filter(
-              (val: { name: string }) => val.name === values.service
+              (val: { name: string }) => val.name === values.service.split(" - ")[0]
             )[0]?.service_offer_id ?? ""
           : providerInfo?.service_data?.filter(
-              (val: { name: string }) => val.name === values.service
+              (val: { name: string }) => val.name === values.service.split(" - ")[0]
             )[0]?.service_offer_id ?? "",
       appt_date: format(values.appointmentDate, "yyyy-MM-dd"),
       appt_time:
@@ -255,6 +263,27 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
   const buttonState = useMemo(() => {
     return isPending || isSubmitting ? "loading" : "idle";
   }, [isPending, isSubmitting]);
+
+  const formService = form.watch("service")
+  const formPaymentMethod = form.watch("paymentMethod")
+  
+  useEffect(() => {
+    form.setValue("paymentMethod", "Wallet")
+  },[])
+
+  useEffect(() => {
+    const serviceAmount = parseInt(formService.split(" - ")?.[1]?.replace(/,/g, "")?.split(".")?.[0]?.substring(1))
+    if (formService && (serviceAmount > (walletCountStatus?.total_balance || 0)) && formPaymentMethod && formPaymentMethod.toLowerCase() === "wallet") {
+      toast.info(() => (
+        <div className="grid gap-4 text-grey-200">
+          <p>Insufficient balance. Please top up your wallet.</p>
+          <Button type="button" onClick={() => setOpenFundWalletModal(true)}>
+            Top Up Wallet
+          </Button>
+        </div>
+      ), { icon: <></>})
+    }
+  }, [formService, walletCountStatus?.total_balance, formPaymentMethod])
 
   return (
     <div className="min-h-full pb-12 grid gap-y-4">
@@ -370,23 +399,25 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
                             account_service_type === "provider" &&
                             user_type === "org"
                               ? orgInfo?.service_data?.map(
-                                  (val: { name: string }, index: number) => {
+                                (val: { name: string; amount: number }, index: number) => {
                                     return {
                                       id: index,
-                                      value: val?.name,
+                                      value: `${val?.name} - ${formatNumberWithCommas(val?.amount)}`,
                                     };
                                   }
                                 ) ?? []
                               : providerInfo?.service_data?.map(
-                                  (val: { name: string }, index: number) => {
+                                (val: { name: string; amount: number; }, index: number) => {
                                     return {
                                       id: index,
-                                      value: val?.name,
+                                      value: `${val?.name} - ${formatNumberWithCommas(val?.amount)}`,
                                     };
                                   }
                                 ) ?? []
                           }
-                          onSelect={(val) => field.onChange(val)}
+                          onSelect={(val) => {
+                            field.onChange(val)
+                          }}
                           placeholder="Select Service"
                           {...field}
                         />
@@ -400,9 +431,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
               <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
                 <p className="text-sm">Charge</p>
                 <p className="text-lg">
-                  {formatNumberWithCommas(
-                    providerInfo ? providerInfo?.charge_from : 0
-                  )}
+                  {form.watch("service").split(" - ")[1] || formatNumberWithCommas(0)}
                   /hr
                 </p>
               </div>
@@ -442,13 +471,9 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
                                   }}
                                   className="flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400"
                                 >
-                                  {selectedPaymentMethod.includes(
-                                    method.name
-                                  ) ? (
+                                  {selectedPaymentMethod.toLowerCase() === method.name.toLowerCase() ? (
                                     <Checkbox
-                                      checked={selectedPaymentMethod.includes(
-                                        method.name
-                                      )}
+                                      checked={selectedPaymentMethod.toLowerCase() === method.name.toLowerCase()}
                                     />
                                   ) : (
                                     <method.icon className="stroke-brand-3 size-3.5" />
@@ -457,9 +482,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
                                   <p
                                     className={cn(
                                       "text-sm",
-                                      selectedPaymentMethod.includes(
-                                        method.name
-                                      )
+                                      selectedPaymentMethod.toLowerCase() === method.name.toLowerCase()
                                         ? "text-button-primary"
                                         : "text-brand-2"
                                     )}
@@ -488,7 +511,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
                     <FormControl>
                       <div className="flex justify-between items-center bg-input-field px-3 py-2 rounded-sm">
                         <p className="text-xs font-medium text-brand-1">
-                          I agree to cancellation and refund policy
+                          I agree to <Link href="https://themsmt.com/terms-of-service/" target="_blank" className="underline">cancellation and refund policy</Link>
                         </p>
 
                         <Switch
@@ -681,7 +704,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
               </Button>
               <Button
                 type="submit"
-                disabled={isPending || isSubmitting}
+                disabled={!form.formState.isValid || isPending || isSubmitting}
                 className="w-29"
               >
                 <AnimatePresence mode="popLayout" initial={false}>
@@ -700,6 +723,11 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
           </form>
         </Form>
       </RenderIf>
+
+      <FundWalletModal
+        isOpen={openFundWalletModal}
+        handleClose={() => setOpenFundWalletModal(false)}
+      />
     </div>
   );
 };

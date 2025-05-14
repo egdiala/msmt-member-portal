@@ -8,8 +8,7 @@ export default function SignUpPage() {
         <div className="space-y-2 text-center">
           <h1 className="text-lg lg:text-2xl font-bold">Create an Account</h1>
           <p className="text-sm text-muted-foreground">
-            Find expert support, schedule sessions, or grow your practice. Sign
-            up in minutes.
+            Find expert support with mental health professionals.
           </p>
         </div>
 
@@ -28,5 +27,5 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -23,6 +23,7 @@ import {
   useCompleteFundWallet,
 } from "@/services/hooks/mutations/use-wallet";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
+import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 
 interface IFundWalletModal {
   isOpen: boolean;
@@ -75,6 +76,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
   const { data: userProfile } = useGetProfile();
 
   const { mutate, isPending } = useInitFundWallet((res) => {
+    onClose();
     setConfig((prev) => ({
       ...prev,
       reference: res?.transaction_id,
@@ -110,6 +112,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
   }
 
   const [ref, bounds] = useMeasure();
+  const formAmount = form.watch("amount")
 
   const buttonCopy = {
     idle: "Buy Unit",
@@ -160,9 +163,9 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
                     : ""}
                 </p>
                 <div className="flex items-center gap-x-1">
-                  <p className="text-brand-2 text-xs">₦12 will get you</p>
+                  <p className="text-brand-2 text-xs">{formatNumberWithCommas(formAmount)} will get you</p>
                   <p className="font-medium text-sm text-brand-1">
-                    {userProfile ? userProfile?.funding_unitrate * 12 : 0} units
+                    {Intl.NumberFormat("en-US").format((userProfile?.funding_unitrate || 0) * formAmount)} units
                   </p>
                 </div>
               </div>

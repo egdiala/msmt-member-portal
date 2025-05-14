@@ -7,7 +7,7 @@ export default function SignInPage() {
       <div className="space-y-1 text-center">
         <h1 className="lg:text-2xl font-bold">Sign In</h1>
         <p className="text-sm text-brand-2">
-          Welcome Back to Care That Fits Your Life
+          Welcome back to care that fits your life
         </p>
       </div>
       <SignIn />
@@ -23,6 +23,5 @@ export default function SignInPage() {
         </Link>
       </div>
     </div>
-
-  )
+  );
 }

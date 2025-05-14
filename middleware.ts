@@ -30,8 +30,7 @@ export function middleware(request: NextRequest) {
     // CASE 1: Authenticated user trying to access public routes (sign-in, etc.)
     if (
       isAuthenticated &&
-      publicRoutes.some((route) => pathname.startsWith(route)) &&
-      pathname !== "/"
+      publicRoutes.some((route) => pathname.startsWith(route) || pathname === "/")
     ) {
       // console.log(
       //   `[Middleware] Authenticated user trying to access public route`
@@ -74,13 +73,13 @@ export function middleware(request: NextRequest) {
     const isNextInternal =
       pathname.startsWith("/_next") || pathname.includes(".");
 
-    if (!isAuthenticated && !isPublicRoute && !isNextInternal && pathname !== "/" && !pathname.startsWith("/available-providers")) {
+    if (!isAuthenticated && !isPublicRoute && !isNextInternal && pathname === "/") {
       // console.log(
       //   `[Middleware] Unauthenticated user trying to access protected route`
       // );
       const redirectUrl = new URL("/sign-in", url.origin);
       // Store the current URL as a query param for possible redirect after login
-      redirectUrl.searchParams.set("callbackUrl", `${pathname}${search || ""}`)
+      redirectUrl.searchParams.set("callbackUrl", `/home${search || ""}`)
 
       return NextResponse.redirect(redirectUrl);
     }

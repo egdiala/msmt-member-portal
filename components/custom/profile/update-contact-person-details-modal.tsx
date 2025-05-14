@@ -11,12 +11,13 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
-import { IconEmail, IconPhone, IconUserRound } from "@/components/icons";
+import { IconEmail, IconUserRound } from "@/components/icons";
 import { contactPersonDetailsSchema } from "@/lib/validations";
 import { FloatingInput, Modal } from "../../shared";
 import { UpdateProfileType } from "@/types/profile";
 import { useUpdateProfile } from "@/services/hooks/mutations/use-profile";
 import { capitalizeFirstLetter } from "@/lib/hooks";
+import { PhoneInputWithLabel } from "@/components/shared/phone-input";
 
 interface IUpdateContactPersonDetailsModal {
   handleClose: () => void;
@@ -35,6 +36,7 @@ export const UpdateContactPersonDetailsModal = ({
     resolver: zodResolver(contactPersonDetailsSchema),
     defaultValues: {
       firstName: data?.contact_person?.name?.split(" ")[0] || "",
+      phone_prefix: data?.contact_person?.phone_prefix || "",
       lastName: data?.contact_person?.name?.split(" ")[1] || " ",
       phoneNumber: data?.contact_person?.phone_number || "",
       email: data?.contact_person?.email || "",
@@ -50,17 +52,14 @@ export const UpdateContactPersonDetailsModal = ({
         )} ${capitalizeFirstLetter(values.lastName)}`,
         phone_number: values.phoneNumber,
         email: values.email,
+        phone_prefix: values.phone_prefix,
         relationship: values.relationship,
       },
     });
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="grid gap-y-6"
-    >
+    <Modal isOpen={isOpen} handleClose={handleClose} className="grid gap-y-6">
       <h2 className="font-bold text-lg md:text-2xl">
         Update Contact Person Details
       </h2>
@@ -118,16 +117,18 @@ export const UpdateContactPersonDetailsModal = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="relative">
-                      <FloatingInput
-                        label="Phone number"
-                        className="pr-10"
-                        {...field}
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                        <IconPhone className="h-4 w-4" />
-                      </div>
-                    </div>
+                    <PhoneInputWithLabel
+                      value={field.value!}
+                      onChange={(value) => {
+                        field.onChange(value);
+                      }}
+                      onCountryChange={(value) => {
+                        form.setValue("phone_prefix", value);
+                      }}
+                      defaultCountry="NG"
+                      phonePrefix={form.getValues("phone_prefix")}
+                      placeholder="Phone Number"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
