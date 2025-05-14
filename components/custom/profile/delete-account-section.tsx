@@ -14,8 +14,8 @@ export const DeleteAccountSection = () => {
           Delete Account
         </h2>
         <p className="text-xs md:text-sm text-text-2">
-          This will permanently remove your details from MSMT. You'll need to
-          sign up again to use the platform.
+          {`This will permanently remove your details from MSMT. You'll need to
+          sign up again to use the platform.`}
         </p>
       </div>
 
