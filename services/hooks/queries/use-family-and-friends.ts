@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
+import { UndefinedInitialDataOptions, useQuery } from "@tanstack/react-query";
 import {
   getFamilyAndFriends,
   getSingleFamilyOrFriend,
@@ -22,11 +22,11 @@ export const useGetFamilyAndFriends = <T>(
 };
 
 export const useGetSingleFamilyOrFriend = <T>(
-  query: FetchFamilyAndFriendsQuery, config?: any
+  query: FetchFamilyAndFriendsQuery, config?: Partial<UndefinedInitialDataOptions<any, Error, T, string[]>>
 ) => {
   return useQuery({
     ...config,
-    queryKey: ["get-single-family-or-friend", query],
+    queryKey: ["get-single-family-or-friend", query as any],
     queryFn: () => getSingleFamilyOrFriend(query),
     select: (res: any) => res?.data as T,
     retry: false,
