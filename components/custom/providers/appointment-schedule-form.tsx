@@ -70,14 +70,16 @@ import { FundWalletModal } from "../wallet/fund-wallet-modal";
 
 interface ISetScheduleStep {
   setStep: Dispatch<SetStateAction<string | number>>;
+  isPublic?: boolean;
 }
-export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
+export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const navigate = useRouter();
   const { data: walletCountStatus } = useGetWalletTransactions<FetchedWalletTransactionsStatsType>({
     component: "count-status",
-  });
+  }, { enabled: !isPublic });
 
   const searchParams = useSearchParams();
+  const booking_link = searchParams.get("booking_link") as string | undefined;
   const provider_id = searchParams.get("provider_id") as string;
   const org_id = searchParams.get("org_id") as string;
   const user_type = searchParams.get("type") as "provider" | "org";
@@ -89,7 +91,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
     useGetSingleFamilyOrFriend<FetchedPaymentOptionFamilyType>({
       familyfriend_id: provider_id,
       component: "payment-option",
-    });
+    }, { enabled: isPublic ? false : !!provider_id });
 
   const { data: providerInfo, isLoading: isLoadingProviderInfo } =
     useGetServiceProviders<FetchSingleProvider>({
@@ -106,7 +108,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
 
   const paymentMethods = [
     { id: 1, name: "Wallet", icon: IconWallet },
-    ...(familyFriendInfo && familyFriendInfo?.familyfriend_id
+    ...(familyFriendInfo && (familyFriendInfo as FetchedPaymentOptionFamilyType)?.familyfriend_id
       ? [{ id: 2, name: "Family", icon: IconUsers }]
       : []),
   ];
@@ -239,7 +241,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
         | "audio",
       time_zone: new Date().getTimezoneOffset()?.toString(),
       ...(selectedPaymentMethod === "Family"
-        ? { familyuser_id: familyFriendInfo?.familyfriend_id }
+        ? { familyuser_id: (familyFriendInfo as FetchedPaymentOptionFamilyType)?.familyfriend_id }
         : {}),
       ...(account_service_type === "provider"
         ? { org_provider_id: orgInfo?.user_id }
@@ -251,7 +253,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
     if (!!isLoggedIn) {
       mutate(dataToBeSent);
     } else {
-      completeOrgBooking({ ...dataToBeSent, booking_link: "" });
+      completeOrgBooking({ ...dataToBeSent, booking_link: booking_link ? booking_link : "" });
     }
   }
 
@@ -273,7 +275,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
 
   useEffect(() => {
     const serviceAmount = parseInt(formService.split(" - ")?.[1]?.replace(/,/g, "")?.split(".")?.[0]?.substring(1))
-    if (formService && (serviceAmount > (walletCountStatus?.total_balance || 0)) && formPaymentMethod && formPaymentMethod.toLowerCase() === "wallet") {
+    if (!isPublic && formService && (serviceAmount > ((walletCountStatus as FetchedWalletTransactionsStatsType)?.total_balance || 0)) && formPaymentMethod && formPaymentMethod.toLowerCase() === "wallet") {
       toast.info(() => (
         <div className="grid gap-4 text-grey-200">
           <p>Insufficient balance. Please top up your wallet.</p>
@@ -283,7 +285,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
         </div>
       ), { icon: <></>})
     }
-  }, [formService, walletCountStatus?.total_balance, formPaymentMethod])
+  }, [formService, formPaymentMethod, walletCountStatus, isPublic])
 
   return (
     <div className="min-h-full pb-12 grid gap-y-4">
@@ -439,7 +441,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
               <RenderIf
                 condition={
                   !!familyFriendInfo &&
-                  !!familyFriendInfo?.familyfriend_id &&
+                  !!(familyFriendInfo as FetchedPaymentOptionFamilyType)?.familyfriend_id &&
                   account_service_type !== "payer"
                 }
               >
@@ -725,6 +727,7 @@ export const SetScheduleStep = ({ setStep }: ISetScheduleStep) => {
       </RenderIf>
 
       <FundWalletModal
+        isPublic={isPublic}
         isOpen={openFundWalletModal}
         handleClose={() => setOpenFundWalletModal(false)}
       />

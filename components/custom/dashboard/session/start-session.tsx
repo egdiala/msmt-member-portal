@@ -1,9 +1,9 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
-
+import { useUpdateAppointment } from "@/services/hooks/mutations/use-session";
 
 interface SessionCardProps {
   organization: {
@@ -22,7 +22,13 @@ interface SessionCardProps {
 
 export function StartSession({ organization, provider }: SessionCardProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  const user_id = searchParams.get("user_id");
+  const appointment_id = searchParams.get("appointment_id");
+  const { mutate } = useUpdateAppointment(() =>
+    router.push(`/start-session?provider_id=${appointment_id}&user_id=${user_id}`)
+  );
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
       <div className="text-center">
@@ -51,7 +57,7 @@ export function StartSession({ organization, provider }: SessionCardProps) {
         <Button
           className="h-12 flex-1 md:flex-none py-3 px-4"
           onClick={() => {
-          router.push('/start-session')
+            mutate({ appointment_id: appointment_id as string });
           }}
         >
           Join Session

@@ -28,6 +28,7 @@ import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 interface IFundWalletModal {
   isOpen: boolean;
   handleClose: () => void;
+  isPublic?: boolean;
 }
 
 async function loadPaystackHook() {
@@ -36,7 +37,7 @@ async function loadPaystackHook() {
   return customHook;
 }
 
-export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
+export const FundWalletModal = ({ isOpen, handleClose, isPublic }: IFundWalletModal) => {
   const [config, setConfig] = useState({
     reference: "",
     email: "",
@@ -73,7 +74,7 @@ export const FundWalletModal = ({ isOpen, handleClose }: IFundWalletModal) => {
     onClose();
   });
 
-  const { data: userProfile } = useGetProfile();
+  const { data: userProfile } = useGetProfile({ enabled: !isPublic });
 
   const { mutate, isPending } = useInitFundWallet((res) => {
     onClose();

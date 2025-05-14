@@ -1,16 +1,14 @@
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQuery, useQueries, UndefinedInitialDataOptions } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { RequestVariableComponent, UserProfileType } from "@/types/profile";
 import { getProfile, getRequestsVariables } from "@/services/api/profile";
-import type { QueryResponseType } from "@/types/utils";
 
-export const useGetProfile = () => {
-  return useQuery<QueryResponseType<UserProfileType>, Error, UserProfileType>({
+export const useGetProfile = (config?: Partial<UndefinedInitialDataOptions<any, Error, UserProfileType, string[]>>) => {
+  return useQuery({
     queryKey: ["get-profile"],
     queryFn: getProfile,
-    select: (res) => {
-      return res.data;
-    },
+    select: (res) => res.data as UserProfileType,
+    ...config
   });
 };
 

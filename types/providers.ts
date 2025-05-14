@@ -24,6 +24,7 @@ export interface FetchOrganizationProvidersQuery {
   page?: string;
   org_id: string;
   tier_id?: string;
+  member_id?: string;
   service_cat_id?: string; // for provider type
   service_offer_id?: string; // for service type
   gender?: string;

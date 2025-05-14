@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { Suspense } from "react";
 import { StartSession } from "@/components/custom/dashboard/session/start-session";
 
 const SessionPage = () => {
@@ -18,10 +20,12 @@ const SessionPage = () => {
   };
 
   return (
-    <StartSession
-      provider={session.provider}
-      organization={session.organization}
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <StartSession
+        provider={session.provider}
+        organization={session.organization}
+      />
+    </Suspense>
   );
 };
 

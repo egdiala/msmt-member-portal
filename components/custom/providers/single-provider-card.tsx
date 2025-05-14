@@ -21,12 +21,13 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const { id } = useParams();
   const searchParams = useSearchParams();
   const user_type = searchParams.get("type") as "provider" | "org";
+  const booking_link = searchParams.get("booking_link") as string | undefined;
 
   const path = usePathname();
 
   const ProviderSpecialtyInfo = () => {
     return (
-      <p className="text-[8px] md:text-xs text-brand-2 capitalize">
+      <p className="text-xs md:text-sm text-brand-2 capitalize">
         {provider?.provider_data?.industry_name ||
           provider?.provider_data?.specialty}
       </p>
@@ -41,13 +42,13 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
         provider?.provider_data?.user_type.toLowerCase() === "org" &&
         !user_type
       ) {
-        return `/complete-booking/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`;
+        return `/complete-booking/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}${booking_link ? `&booking_link=${booking_link}` : ""}`;
       } else if (
         provider?.provider_data?.user_type.toLowerCase() === "provider"
       ) {
-        return `/complete-booking/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}`;
+        return `/complete-booking/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}${booking_link ? `&booking_link=${booking_link}` : ""}`;
       } else {
-        return `/complete-booking/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}&user_type=provider&user_service_type=provider`;
+        return `/complete-booking/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}&user_type=provider&user_service_type=provider${booking_link ? `&booking_link=${booking_link}` : ""}`;
       }
     } else {
       if (
@@ -123,7 +124,7 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
 
       <div className="grid gap-y-4 py-1 px-0.5">
         <div className="grid gap-y-0.5">
-          <h2 className="font-medium text-brand-1 text-[10px] md:text-base capitalize">
+          <h2 className="font-medium text-brand-1 text-xs md:text-base capitalize">
             {provider?.provider_data?.name}
           </h2>
 
