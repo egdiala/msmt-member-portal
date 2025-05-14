@@ -13,7 +13,7 @@ export const ContactInfoDetailsSection = () => {
       id: 2,
       key: "Phone number",
       value:
-        Object.keys(data?.contact_person as object)?.length === 0
+        data?.contact_person && Object.keys(data?.contact_person)?.length === 0
           ? "-"
           : `+${data?.contact_person?.phone_prefix || ""}${
               data?.contact_person?.phone_number
