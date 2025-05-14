@@ -15,7 +15,6 @@ export const PersonalInfoDetailsSection = () => {
   const { data } = useGetProfile();
   const hasntCompletedProfile = !hasCompletedBasicProfile(data!);
 
-
   const personalInfo = [
     {
       id: 1,
@@ -31,7 +30,6 @@ export const PersonalInfoDetailsSection = () => {
 
   const [openUpdateProfileDetailsModal, setOpenUpdateProfileDetailsModal] =
     useState(false);
-
 
   useEffect(
     () => {

@@ -52,7 +52,7 @@ export default function VerifyEmail() {
     router.push(path);
   });
 
-  const [timeLeft, setTimeLeft] = useState(1200);
+  const [timeLeft, setTimeLeft] = useState(120);
 
   const [emailToVerify, setEmailToVerify] = useState("");
 
@@ -85,6 +85,14 @@ export default function VerifyEmail() {
     return () => clearTimeout(timer);
   }, [timeLeft]);
 
+  const timerTextToBeDisplayed = `${
+    timeLeft / 60 >= 1
+      ? `${parseInt((timeLeft / 60)?.toString())}${
+          timeLeft / 60 >= 2 ? "mins" : "min"
+        }`
+      : ""
+  }${timeLeft % 60 > 0 ? ` ${timeLeft % 60}s` : ""}`;
+
   async function onSubmit(values: z.infer<typeof verifyEmailSchema>) {
     if (isResetPassword) {
       confirmOtp({ ...values, email: emailToVerify });
@@ -110,15 +118,21 @@ export default function VerifyEmail() {
     if (!isResetPassword) {
       const signUpDetails: InitRegisterType | undefined =
         queryClient.getQueryData(["sign-up-details"]);
-      submitRegister({
-        first_name: signUpDetails?.first_name || "",
-        last_name: signUpDetails?.last_name || "",
-        email: signUpDetails?.email || "",
-        dob: format(signUpDetails?.dob || new Date(), "yyyy-MM-dd"),
-        password: signUpDetails?.password || "",
-      });
+      submitRegister(
+        {
+          first_name: signUpDetails?.first_name || "",
+          last_name: signUpDetails?.last_name || "",
+          email: signUpDetails?.email || "",
+          dob: format(signUpDetails?.dob || new Date(), "yyyy-MM-dd"),
+          password: signUpDetails?.password || "",
+        },
+        { onSuccess: () => setTimeLeft(120) }
+      );
     } else {
-      resendOtp({ email: emailToVerify });
+      resendOtp(
+        { email: emailToVerify },
+        { onSuccess: () => setTimeLeft(120) }
+      );
     }
   };
 
@@ -180,7 +194,7 @@ export default function VerifyEmail() {
               <p className="text-sm text-brand-2">
                 Resend code in{" "}
                 <span className="no-underline text-brand-2 font-bold">
-                  {timeLeft}s
+                  {timerTextToBeDisplayed}
                 </span>
               </p>
             ) : (
