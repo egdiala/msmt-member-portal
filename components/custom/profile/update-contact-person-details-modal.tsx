@@ -126,6 +126,7 @@ export const UpdateContactPersonDetailsModal = ({
                         form.setValue("phone_prefix", value);
                       }}
                       defaultCountry="NG"
+                      phonePrefix={form.getValues("phone_prefix")}
                       placeholder="Phone Number"
                     />
                   </FormControl>

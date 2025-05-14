@@ -53,7 +53,7 @@ export default function VerifyEmail() {
     router.push(path);
   });
 
-  const [timeLeft, setTimeLeft] = useState(31);
+  const [timeLeft, setTimeLeft] = useState(1200);
 
   const [emailToVerify, setEmailToVerify] = useState("");
 
