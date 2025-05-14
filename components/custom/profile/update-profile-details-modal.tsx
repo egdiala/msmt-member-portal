@@ -179,7 +179,7 @@ export const UpdateProfileDetailsModal = ({
                     selectItems={[
                       { value: "Male", id: 1 },
                       { value: "Female", id: 2 },
-                      { value: "prefer not to say", id: 3 },
+                      { value: "Prefer not to say", id: 3 },
                     ]}
                     lowercase={false}
                     onSelect={field.onChange}
