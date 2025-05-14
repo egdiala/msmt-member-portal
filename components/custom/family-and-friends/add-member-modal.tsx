@@ -58,14 +58,13 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
     gender,
     phone_number,
     relationship,
-    phone_prefix,
   }: z.infer<typeof addMemberSchema>) {
     mutate({
       first_name,
       last_name,
       email,
       gender: gender.toLowerCase(),
-      phone_number: `${phone_prefix}${phone_number}`,
+      phone_number: `${phone_number}`,
       relationship: relationship.toLowerCase() === "family" ? "1" : "2",
     });
   }
