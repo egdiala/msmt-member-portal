@@ -18,7 +18,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader } from "@/components/shared/loader";
 import { AnimatePresence, motion } from "motion/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,13 +36,14 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const VerifyBooking = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const { data, status, error } = useGetBookOrganization(token as string)
+  const { data, status } = useGetBookOrganization(token as string)
   const { mutate, isPending } = useValidateOrgBooking(() => {
     localStorage.setItem("booking-link", token!);
+    router.push(`/organisation/${data?.org_data?.org_id}?type=org&service_type=payer&booking_link=${token}`)
   });
-console.log(error)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
