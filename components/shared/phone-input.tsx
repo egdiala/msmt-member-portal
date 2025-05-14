@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import type React from "react";
 import { ChevronDownIcon } from "lucide-react";
 import * as RPNInput from "react-phone-number-input";
+import countryNames from "react-phone-number-input/locale/en.json";
 
 import { useId, useState, useEffect } from "react";
 import { IconPhone } from "../icons";
@@ -16,8 +17,6 @@ export type PhoneInputWithLabelProps = {
   defaultCountry?: RPNInput.Country;
   phonePrefix?: string;
 };
-
-
 
 // Floating label component
 interface FloatingLabelProps {
@@ -156,6 +155,7 @@ export const findCountryByDialCode = (
         const countryDialCode = RPNInput.getCountryCallingCode(country);
         return countryDialCode === cleanDialCode;
       } catch (error) {
+        console.error(error);
         return false;
       }
     });
@@ -167,7 +167,6 @@ export const findCountryByDialCode = (
 
 export const getCountryOptions = () => {
   const validCountries = RPNInput.getCountries();
-  const countryNames = require("react-phone-number-input/locale/en.json");
 
   return Object.entries(countryNames)
     .filter(([code]) => validCountries.includes(code as RPNInput.Country))
@@ -190,7 +189,6 @@ export const BasePhoneInput = ({
   const [isFocused, setIsFocused] = useState(false);
   const [hasValue, setHasValue] = useState(!!value);
 
-
   const initialCountry = phonePrefix
     ? findCountryByDialCode(phonePrefix) || defaultCountry
     : defaultCountry;
@@ -207,11 +205,9 @@ export const BasePhoneInput = ({
     }
   }, [phonePrefix]);
 
-
   useEffect(() => {
     setHasValue(!!value);
   }, [value]);
-
 
   useEffect(() => {
     if (onCountryChange) {
@@ -276,8 +272,6 @@ export const BasePhoneInput = ({
     </div>
   );
 };
-
-
 
 export const PhoneInputWithLabel = (props: PhoneInputWithLabelProps) => {
   return <BasePhoneInput {...props} />;
