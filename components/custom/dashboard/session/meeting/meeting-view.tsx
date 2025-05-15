@@ -77,7 +77,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
     setIsLeaving(true);
     try {
-      await leave();
+      // await leave();
       console.log("Meeting left successfully");
 
       if (redirectTimeoutRef.current) {
