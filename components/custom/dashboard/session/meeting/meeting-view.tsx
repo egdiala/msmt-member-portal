@@ -242,7 +242,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
             ) : (
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-                  {/* Show local participant if alone, otherwise show the other participant */}
+              
                   {isAloneInMeeting ? (
                     localParticipant && (
                       <ParticipantView
@@ -257,10 +257,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                     />
                   ) : null}
 
-                  {/* Only show small self-view if not alone */}
-                  {!isAloneInMeeting && localParticipant && (
-                    <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2">
-                      <div className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white">
+                  <RenderIf condition={!isAloneInMeeting && !!localParticipant}>
+                    <div className="h-48 flex w-52 absolute top-2 right-2">
+                      <div className="h-full w-full border-2 rounded-lg overflow-hidden border-white">
                         <ParticipantView
                           key={localParticipant.id}
                           participantId={localParticipant.id}
@@ -268,7 +267,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                         />
                       </div>
                     </div>
-                  )}
+                  </RenderIf>
                 </div>
               </div>
             )}

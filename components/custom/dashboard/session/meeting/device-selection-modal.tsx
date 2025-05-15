@@ -24,53 +24,106 @@ const DeviceSelectionModal: React.FC<{
   const [videoEnabled, setVideoEnabled] =
     useState<boolean>(initialVideoEnabled);
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  const [permissionError, setPermissionError] = useState<string | null>(null);
+  const [deviceLoadingComplete, setDeviceLoadingComplete] =
+    useState<boolean>(false);
   const videoPreviewRef = useRef<HTMLVideoElement>(null);
   const deviceInitializedRef = useRef<boolean>(false);
 
-  useEffect(() => {
-    const getDevices = async () => {
-      if (deviceInitializedRef.current) return;
-      deviceInitializedRef.current = true;
+  // Function to safely get media devices
+  const getDevices = async () => {
+    if (deviceInitializedRef.current) return;
+    deviceInitializedRef.current = true;
+    setPermissionError(null);
 
-      try {
-        await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    try {
+      let devices = await navigator.mediaDevices.enumerateDevices();
 
-        // Get all devices
-        const devices = await navigator.mediaDevices.enumerateDevices();
+      let audioPermissionGranted = false;
+      let videoPermissionGranted = false;
 
-        const audioInputs = devices
-          .filter((device) => device.kind === "audioinput")
-          .map((device) => ({
-            deviceId: device.deviceId,
-            label:
-              device.label || `Microphone ${device.deviceId.slice(0, 5)}...`,
-          }));
-
-        const videoInputs = devices
-          .filter((device) => device.kind === "videoinput")
-          .map((device) => ({
-            deviceId: device.deviceId,
-            label: device.label || `Camera ${device.deviceId.slice(0, 5)}...`,
-          }));
-
-        setAudioDevices(audioInputs);
-        setVideoDevices(videoInputs);
-
-        if (audioInputs.length > 0) {
-          setSelectedAudioDevice(audioInputs[0].deviceId);
+      if (audioEnabled) {
+        try {
+          const audioStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false,
+          });
+          audioPermissionGranted = true;
+          // Keep stream active until we're done with device enumeration
+          setTimeout(() => {
+            audioStream.getTracks().forEach((track) => track.stop());
+          }, 500);
+        } catch (e) {
+          console.warn("Could not get audio permissions:", e);
         }
-
-        if (videoInputs.length > 0) {
-          setSelectedVideoDevice(videoInputs[0].deviceId);
-        }
-      } catch (err) {
-        console.error("Error getting media devices:", err);
-        // If permission denied, still allow the user to join without selecting devices
       }
-    };
 
-    getDevices();
+      if (videoEnabled) {
+        try {
+          const videoStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: true,
+          });
+          videoPermissionGranted = true;
+          // Keep stream active until we're done with device enumeration
+          setTimeout(() => {
+            videoStream.getTracks().forEach((track) => track.stop());
+          }, 500);
+        } catch (e) {
+          console.warn("Could not get video permissions:", e);
+        }
+      }
 
+      if (audioPermissionGranted || videoPermissionGranted) {
+        devices = await navigator.mediaDevices.enumerateDevices();
+      }
+
+      // Process available devices
+      const audioInputs = devices
+        .filter((device) => device.kind === "audioinput")
+        .map((device) => ({
+          deviceId: device.deviceId,
+          label: device.label || `Microphone ${device.deviceId.slice(0, 5)}...`,
+        }));
+
+      const videoInputs = devices
+        .filter((device) => device.kind === "videoinput")
+        .map((device) => ({
+          deviceId: device.deviceId,
+          label: device.label || `Camera ${device.deviceId.slice(0, 5)}...`,
+        }));
+
+      setAudioDevices(audioInputs);
+      setVideoDevices(videoInputs);
+
+      if (audioInputs.length > 0) {
+        setSelectedAudioDevice(audioInputs[0].deviceId);
+      }
+
+      if (videoInputs.length > 0) {
+        setSelectedVideoDevice(videoInputs[0].deviceId);
+      }
+
+      // Only show error if we needed permissions but didn't get them
+      if (
+        (audioEnabled && !audioPermissionGranted) ||
+        (videoEnabled && !videoPermissionGranted)
+      ) {
+        setPermissionError(
+          "Unable to access camera/microphone. Please grant permissions when prompted."
+        );
+      }
+    } catch (err) {
+      console.error("Error getting media devices:", err);
+      setPermissionError(
+        "Unable to access camera/microphone. Please check permissions."
+      );
+    } finally {
+      setDeviceLoadingComplete(true);
+    }
+  };
+
+  useEffect(() => {
     return () => {
       if (videoStream) {
         videoStream.getTracks().forEach((track) => track.stop());
@@ -78,30 +131,54 @@ const DeviceSelectionModal: React.FC<{
     };
   }, []);
 
+  const initializeDevices = () => {
+    deviceInitializedRef.current = false;
+    getDevices();
+  };
+
+  // Handle video preview
   useEffect(() => {
     const startVideoPreview = async () => {
       try {
-        // Stop any existing tracks
         if (videoStream) {
           videoStream.getTracks().forEach((track) => track.stop());
           setVideoStream(null);
         }
 
         if (videoEnabled && selectedVideoDevice && videoPreviewRef.current) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: { exact: selectedVideoDevice } },
-          });
+          let stream;
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: { deviceId: { ideal: selectedVideoDevice } },
+            });
+          } catch (err) {
+            console.log(
+              "Failed with selected device, trying default camera",
+              err
+            );
+            // If that fails, try with default camera
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: true,
+            });
+          }
 
-          videoPreviewRef.current.srcObject = stream;
-          setVideoStream(stream);
+          if (videoPreviewRef.current) {
+            videoPreviewRef.current.srcObject = stream;
+            setVideoStream(stream);
+          }
         }
       } catch (err) {
         console.error("Error starting video preview:", err);
+        setPermissionError(
+          "Could not start camera preview. Please check permissions."
+        );
       }
     };
 
-    startVideoPreview();
-  }, [selectedVideoDevice, videoEnabled]);
+    if (deviceLoadingComplete && videoEnabled && selectedVideoDevice) {
+      startVideoPreview();
+    }
+  }, [selectedVideoDevice, videoEnabled, deviceLoadingComplete]);
 
   const handleJoin = () => {
     // Stop the preview stream
@@ -109,7 +186,17 @@ const DeviceSelectionModal: React.FC<{
       videoStream.getTracks().forEach((track) => track.stop());
     }
 
-    onJoin(audioEnabled, videoEnabled);
+    onJoin(
+      audioEnabled && audioDevices.length > 0,
+      videoEnabled && videoDevices.length > 0,
+      audioEnabled && audioDevices.length > 0 ? selectedAudioDevice : undefined,
+      videoEnabled && videoDevices.length > 0 ? selectedVideoDevice : undefined
+    );
+  };
+
+  const requestPermissions = async () => {
+    deviceInitializedRef.current = false;
+    await getDevices();
   };
 
   return (
@@ -117,121 +204,134 @@ const DeviceSelectionModal: React.FC<{
       <div className="bg-white rounded-lg p-6 w-full max-w-lg">
         <h2 className="text-xl font-semibold mb-4">Join Meeting</h2>
 
-        {/* Audio Device Selection */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <label className="font-medium">Audio</label>
-            <div className="relative inline-block w-12 align-middle select-none">
-              <input
-                type="checkbox"
-                checked={audioEnabled}
-                onChange={() => setAudioEnabled((prev) => !prev)}
-                className="sr-only"
-                id="toggle-audio"
-              />
-              <label
-                htmlFor="toggle-audio"
-                className={`block h-6 rounded-full cursor-pointer transition-colors ${
-                  audioEnabled ? "bg-brand-accent-2" : "bg-gray-300"
-                }`}
-              >
-                <span
-                  className={`block h-6 w-6 rounded-full bg-white shadow transform transition-transform ${
-                    audioEnabled ? "translate-x-6" : "translate-x-0"
-                  }`}
-                ></span>
-              </label>
-            </div>
-          </div>
-
-          {audioEnabled && (
-            <select
-              value={selectedAudioDevice}
-              onChange={(e) => setSelectedAudioDevice(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-              disabled={!audioEnabled}
+        {!deviceLoadingComplete ? (
+          <div className="mb-6 text-left">
+            <p className="mb-4">
+              To join with audio/video, your browser needs permission to access
+              your camera and microphone.
+            </p>
+            <button
+              onClick={initializeDevices}
+              className="px-4 py-2 bg-brand-accent-2 text-white rounded hover:bg-blue-700"
             >
-              {audioDevices.map((device) => (
-                <option key={device.deviceId} value={device.deviceId}>
-                  {device.label}
-                </option>
-              ))}
-              {audioDevices.length === 0 && (
-                <option value="">No microphones available</option>
-              )}
-            </select>
-          )}
-        </div>
-
-        {/* Video Device Selection */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <label className="font-medium">Video</label>
-            <div className="relative inline-block w-12 align-middle select-none">
-              <input
-                type="checkbox"
-                checked={videoEnabled}
-                onChange={() => setVideoEnabled((prev) => !prev)}
-                className="sr-only"
-                id="toggle-video"
-              />
-              <label
-                htmlFor="toggle-video"
-                className={`block h-6 rounded-full cursor-pointer transition-colors ${
-                  videoEnabled ? "bg-brand-accent-2" : "bg-gray-300"
-                }`}
-              >
-                <span
-                  className={`block h-6 w-6 rounded-full bg-white shadow transform transition-transform ${
-                    videoEnabled ? "translate-x-6" : "translate-x-0"
-                  }`}
-                ></span>
-              </label>
-            </div>
+              Set Up Audio & Video
+            </button>
           </div>
-
-          {videoEnabled && (
-            <>
-              <select
-                value={selectedVideoDevice}
-                onChange={(e) => setSelectedVideoDevice(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded mb-2"
-                disabled={!videoEnabled}
-              >
-                {videoDevices.map((device) => (
-                  <option key={device.deviceId} value={device.deviceId}>
-                    {device.label}
-                  </option>
-                ))}
-                {videoDevices.length === 0 && (
-                  <option value="">No cameras available</option>
-                )}
-              </select>
-
-              {/* Video Preview */}
-              <div className="w-full aspect-video bg-gray-200 rounded overflow-hidden">
-                {videoEnabled ? (
-                  <video
-                    ref={videoPreviewRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-gray-500">Camera off</span>
-                  </div>
-                )}
+        ) : (
+          <>
+            {permissionError && (
+              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                <p>{permissionError}</p>
+                <button
+                  onClick={initializeDevices}
+                  className="mt-2 px-3 py-1 bg-red-600 text-white rounded text-sm"
+                >
+                  Try Again
+                </button>
               </div>
-            </>
-          )}
-        </div>
+            )}
+
+            {/* Audio Device Selection */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <label className="font-medium">Audio</label>
+                <button
+                  onClick={() => setAudioEnabled(!audioEnabled)}
+                  className={`relative inline-flex items-center h-6 rounded-full w-12 transition-colors focus:outline-none ${
+                    audioEnabled ? "bg-brand-accent-2" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                      audioEnabled ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {audioEnabled && (
+                <select
+                  value={selectedAudioDevice}
+                  onChange={(e) => setSelectedAudioDevice(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded"
+                  disabled={!audioEnabled}
+                >
+                  {audioDevices.length > 0 ? (
+                    audioDevices.map((device) => (
+                      <option key={device.deviceId} value={device.deviceId}>
+                        {device.label}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">No microphones available</option>
+                  )}
+                </select>
+              )}
+            </div>
+
+            {/* Video Device Selection */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <label className="font-medium">Video</label>
+                <button
+                  onClick={() => setVideoEnabled(!videoEnabled)}
+                  className={`relative inline-flex items-center h-6 rounded-full w-12 transition-colors focus:outline-none ${
+                    videoEnabled ? "bg-brand-accent-2" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                      videoEnabled ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {videoEnabled && (
+                <>
+                  <select
+                    value={selectedVideoDevice}
+                    onChange={(e) => setSelectedVideoDevice(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-2"
+                    disabled={!videoEnabled}
+                  >
+                    {videoDevices.length > 0 ? (
+                      videoDevices.map((device) => (
+                        <option key={device.deviceId} value={device.deviceId}>
+                          {device.label}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">No cameras available</option>
+                    )}
+                  </select>
+
+                  {/* Video Preview */}
+                  <div className="w-full aspect-video bg-gray-200 rounded overflow-hidden">
+                    {videoEnabled ? (
+                      <video
+                        ref={videoPreviewRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-gray-500">Camera off</span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        )}
 
         <div className="flex justify-end">
           <button
             onClick={handleJoin}
-            className="px-4 py-2 bg-brand-accent-2 text-white rounded "
+            className="px-4 py-2 bg-brand-accent-2 text-white rounded hover:bg-blue-700"
           >
             Join Now
           </button>

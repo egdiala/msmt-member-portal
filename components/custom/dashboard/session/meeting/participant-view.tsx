@@ -36,8 +36,6 @@ const ParticipantView = ({
 
           if (micStream.track instanceof MediaStreamTrack) {
             mediaStream.addTrack(micStream.track);
-
-            // Always set a fresh srcObject
             audioRef.current.srcObject = mediaStream;
 
             audioRef.current.play().catch((error) => {
@@ -72,13 +70,10 @@ const ParticipantView = ({
     if (videoRef.current) {
       if (webcamStream && webcamOn) {
         try {
-          // Create a new MediaStream for each new video track
           const mediaStream = new MediaStream();
 
           if (webcamStream.track instanceof MediaStreamTrack) {
             mediaStream.addTrack(webcamStream.track);
-
-            // Always set a fresh srcObject
             videoRef.current.srcObject = mediaStream;
 
             videoRef.current.play().catch((error) => {
