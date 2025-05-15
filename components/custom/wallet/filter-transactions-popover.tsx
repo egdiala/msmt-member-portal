@@ -11,11 +11,10 @@ import {
   PopoverTrigger,
   Drawer,
   DrawerPortal,
-  RadioGroup,
   DrawerClose,
   DrawerTitle,
 } from "@/components/ui";
-import { RadioButton } from "@/components/shared";
+import { SelectCmp } from "@/components/shared";
 import {
   TRANSACTION_STATUS_ENUM,
   TRANSACTION_TYPE_ENUM,
@@ -49,89 +48,84 @@ const FilterContent = ({
   setCustomDate: (val: any) => void;
 }) => {
   return (
-    <div className="p-6 grid gap-y-5 w-full">
-      <h3 className="font-bold text-xl text-brand-1">Filter</h3>
+    <div className="p-6 flex flex-col justify-between gap-y-5 md:gap-y-1 w-full">
+      <div className="grid gap-y-5 w-full">
+        <h3 className="font-bold text-xl text-brand-1">Filter</h3>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-        <div className="grid gap-y-1">
-          <h5 className="uppercase text-xs text-brand-2">Date</h5>
+        <div className="grid gap-8 content-start">
+          <div className="grid gap-y-1 content-start">
+            <h5 className="uppercase text-xs text-brand-2">Date</h5>
 
-          <div className="grid gap-y-1">
-            <RadioGroup
-              defaultValue={selected.value}
-              onValueChange={(e) => setSelected({ value: e })}
-            >
-              {dateFilters?.map((option: any) => {
-                return (
-                  <RadioButton
-                    key={option.id}
-                    isActive={selected.value.label === option.value.label}
-                    option={option}
-                  />
-                );
+            <SelectCmp
+              selectItems={dateFilters?.map((val: any, index: number) => {
+                return {
+                  id: index,
+                  value: val?.name,
+                };
               })}
-            </RadioGroup>
+              onSelect={(val) => setSelected(val)}
+              value={selected}
+              placeholder="Select date"
+            />
+
+            {selected === "Custom" && (
+              <div className="grid gap-y-1">
+                <CalendarInput
+                  value={selected?.value?.start}
+                  onChange={(e) => {
+                    setCustomDate({ start: e, end: selected?.value?.end });
+                  }}
+                  label="From"
+                />
+
+                <CalendarInput
+                  value={selected?.value?.end}
+                  onChange={(e) => {
+                    setCustomDate({
+                      start: selected?.value?.start,
+                      end: e,
+                    });
+                  }}
+                  label="To"
+                />
+              </div>
+            )}
           </div>
 
-          {selected.value.label === "custom-range" && (
-            <div className="grid gap-y-1">
-              <CalendarInput
-                value={selected.value.start}
-                onChange={(e) => {
-                  setCustomDate({ start: e, end: selected.value.end });
-                }}
-                label="From"
-              />
+          <div className="grid gap-y-1 content-start">
+            <h5 className="uppercase text-xs text-brand-2">Type</h5>
 
-              <CalendarInput
-                value={selected.value.end}
-                onChange={(e) => {
-                  setCustomDate({
-                    start: selected.value.start,
-                    end: e,
-                  });
-                }}
-                label="To"
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="grid gap-y-1 content-start">
-          <h5 className="uppercase text-xs text-brand-2">Type</h5>
-
-          <div className="grid gap-y-1">
-            <RadioGroup
-              defaultValue={selectedTypeOption}
-              onValueChange={(e) => setSelectedTypeOption(e)}
-            >
-              {TRANSACTIONS_FILTER_TYPE_OPTIONS.map((type) => (
-                <RadioButton
-                  key={type.id}
-                  isActive={selectedTypeOption === type.value}
-                  option={type}
-                />
-              ))}
-            </RadioGroup>
+            <SelectCmp
+              selectItems={TRANSACTIONS_FILTER_TYPE_OPTIONS?.map(
+                (val, index) => {
+                  return {
+                    id: index,
+                    value: val?.name,
+                  };
+                }
+              )}
+              onSelect={(val) => setSelectedTypeOption(val)}
+              value={selectedTypeOption === "" ? "All" : selectedTypeOption}
+              placeholder="Select type"
+            />
           </div>
-        </div>
 
-        <div className="grid gap-y-1 content-start">
-          <h5 className="uppercase text-xs text-brand-2">Status</h5>
+          <div className="grid gap-y-1 content-start">
+            <h5 className="uppercase text-xs text-brand-2">Status</h5>
 
-          <div className="grid gap-y-1">
-            <RadioGroup
-              defaultValue={selectedStatusOption}
-              onValueChange={(e) => setSelectedStatusOption(e)}
-            >
-              {TRANSACTIONS_FILTER_STATUS_OPTIONS.map((status) => (
-                <RadioButton
-                  key={status.id}
-                  isActive={selectedStatusOption === status.value}
-                  option={status}
-                />
-              ))}
-            </RadioGroup>
+            <SelectCmp
+              selectItems={TRANSACTIONS_FILTER_STATUS_OPTIONS?.map(
+                (val, index) => {
+                  return {
+                    id: index,
+                    value: val?.name,
+                  };
+                }
+              )}
+              onSelect={(val) => setSelectedStatusOption(val)}
+              value={selectedStatusOption === "" ? "All" : selectedStatusOption}
+              placeholder="Select status"
+            />
           </div>
         </div>
       </div>
@@ -186,18 +180,33 @@ export const FilterTransactionsPopover = ({
   };
 
   const applyFilter = () => {
+    const dateFilter =
+      selected !== "Custom"
+        ? {
+            start: dateFilters?.filter(
+              (val: { name: string }) => val?.name === selected
+            )[0]?.value?.start,
+            end: dateFilters?.filter(
+              (val: { name: string }) => val?.name === selected
+            )[0]?.value?.end,
+          }
+        : { start: selected?.value?.start, end: selected?.value?.end };
+
     setFilters({
-      ...(selected.value.start
-        ? { start_date: format(selected.value.start, "yyyy-MM-dd") }
+      ...(selected !== "All Time"
+        ? { start_date: format(dateFilter?.start, "yyyy-MM-dd") }
         : {}),
-      ...(selected.value.end
-        ? { end_date: format(selected.value.end, "yyyy-MM-dd") }
+      ...(selected !== "All Time"
+        ? { end_date: format(dateFilter?.end, "yyyy-MM-dd") }
         : {}),
       ...(transactionTypeFilter
-        ? { transaction_type: TRANSACTION_TYPE_ENUM[transactionTypeFilter] }
+        ? {
+            transaction_type:
+              TRANSACTION_TYPE_ENUM[transactionTypeFilter?.toLowerCase()],
+          }
         : {}),
       ...(statusFilter
-        ? { status: TRANSACTION_STATUS_ENUM[statusFilter] }
+        ? { status: TRANSACTION_STATUS_ENUM[statusFilter?.toLowerCase()] }
         : {}),
     });
 
@@ -222,7 +231,7 @@ export const FilterTransactionsPopover = ({
           <PopoverContent
             sideOffset={10}
             className={cn(
-              "w-144 h-100 overflow-y-scroll pb-10 relative border-none shadow-modal-shadow bg-white hidden md:flex p-0",
+              "w-144 h-fit overflow-y-scroll pb-10 relative border-none shadow-modal-shadow bg-white hidden md:flex p-0",
               isDeduction
                 ? "right-13 xl:right-18"
                 : "right-40 lg:right-48 xl:right-54"
