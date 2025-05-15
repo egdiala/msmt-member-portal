@@ -47,7 +47,11 @@ import {
 import { FilterOrganisationsProvidersPopover } from "./filter-organisations-providers-popover";
 import { SingleProviderCard } from "./single-provider-card";
 
-export const SingleOrganisationProviderContent = ({ isPublic }: { isPublic?: boolean }) => {
+export const SingleOrganisationProviderContent = ({
+  isPublic,
+}: {
+  isPublic?: boolean;
+}) => {
   const { id } = useParams();
 
   const searchParams = useSearchParams();
@@ -290,7 +294,9 @@ export const SingleOrganisationProviderContent = ({ isPublic }: { isPublic?: boo
                   className="grid gap-2 border border-divider rounded-lg px-5 py-4"
                 >
                   <p className="text-brand-2 text-sm">{stat.title}</p>
-                  <p className="text-lg text-brand-1 font-medium">{stat.value}</p>
+                  <p className="text-lg text-brand-1 font-medium">
+                    {stat.value}
+                  </p>
                 </div>
               ))}
             </div>
@@ -303,38 +309,48 @@ export const SingleOrganisationProviderContent = ({ isPublic }: { isPublic?: boo
           <h3 className="font-bold text-brand-1">Providers</h3>
         </RenderIf>
 
-        <div className="flex flex-col md:flex-row gap-3 items-end md:items-center justify-between">
-          <Searchbar onChange={onChangeHandler} placeholder="Search" />
+        <RenderIf
+          condition={
+            (providersCount?.total || 0) > 0 || tableData?.length === 0
+              ? false
+              : true
+          }
+        >
+          <div className="flex flex-col md:flex-row gap-3 items-end md:items-center justify-between">
+            <Searchbar onChange={onChangeHandler} placeholder="Search" />
 
-          <div className="flex items-center gap-x-2">
-            <Button
-              variant="outline"
-              className="hidden md:inline-flex w-fit h-fit py-2 px-3 rounded-2xl"
-              onClick={() => setShowGridView(!showGridView)}
-            >
-              <RenderIf condition={showGridView}>
-                <IconList2 className="stroke-brand-btn-secondary size-4" />
-              </RenderIf>
+            <div className="flex items-center gap-x-2">
+              <Button
+                variant="outline"
+                className="hidden md:inline-flex w-fit h-fit py-2 px-3 rounded-2xl"
+                onClick={() => setShowGridView(!showGridView)}
+              >
+                <RenderIf condition={showGridView}>
+                  <IconList2 className="stroke-brand-btn-secondary size-4" />
+                </RenderIf>
 
-              <RenderIf condition={!showGridView}>
-                <IconList className="stroke-brand-btn-secondary size-4" />
-              </RenderIf>
-            </Button>
+                <RenderIf condition={!showGridView}>
+                  <IconList className="stroke-brand-btn-secondary size-4" />
+                </RenderIf>
+              </Button>
 
-            <FilterOrganisationsProvidersPopover
-              setFilters={setFilters}
-              requestVariables={requestVariables}
-              selectedService={selectedService}
-              selectedCommunicationPreference={selectedCommunicationPreference}
-              selectedApptDate={selectedApptDate}
-              setSelectedService={setSelectedService}
-              setSelectedCommunicationPreference={
-                setSelectedCommunicationPreference
-              }
-              setSelectedApptDate={setSelectedApptDate}
-            />
+              <FilterOrganisationsProvidersPopover
+                setFilters={setFilters}
+                requestVariables={requestVariables}
+                selectedService={selectedService}
+                selectedCommunicationPreference={
+                  selectedCommunicationPreference
+                }
+                selectedApptDate={selectedApptDate}
+                setSelectedService={setSelectedService}
+                setSelectedCommunicationPreference={
+                  setSelectedCommunicationPreference
+                }
+                setSelectedApptDate={setSelectedApptDate}
+              />
+            </div>
           </div>
-        </div>
+        </RenderIf>
 
         <RenderIf condition={Object.keys(filters)?.length > 0}>
           <div className="flex flex-col md:flex-row flex-wrap justify-between items-end">
@@ -378,7 +394,11 @@ export const SingleOrganisationProviderContent = ({ isPublic }: { isPublic?: boo
             data={tableData ?? []}
             headers={PROVIDERS_TABLE_HEADERS}
             isLoading={isLoading}
-            emptyStateTitleText={(providersCount?.total || 0) > 0 ? "Only members of this organisation can view the providers" : "There are no providers yet"}
+            emptyStateTitleText={
+              (providersCount?.total || 0) > 0
+                ? "Only members of this organisation can view the providers"
+                : "There are no providers yet"
+            }
           />
 
           <RenderIf condition={tableData?.length !== 0}>
@@ -414,8 +434,16 @@ export const SingleOrganisationProviderContent = ({ isPublic }: { isPublic?: boo
           <RenderIf condition={!isLoading}>
             <RenderIf condition={tableData?.length === 0}>
               <EmptyState
-                title={(providersCount?.total || 0) > 0 ? `Only members of ${data?.name} can view and book providers` : "Organization providers"}
-                subtitle={(providersCount?.total || 0) > 0 ? "" : "There are no providers yet"}
+                title={
+                  (providersCount?.total || 0) > 0
+                    ? `Only members of ${data?.name} can view and book providers`
+                    : "Organization providers"
+                }
+                subtitle={
+                  (providersCount?.total || 0) > 0
+                    ? ""
+                    : "There are no providers yet"
+                }
                 hasIcon
               />
             </RenderIf>
