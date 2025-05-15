@@ -273,9 +273,8 @@ const VideoSDKApp: React.FC = () => {
 
         console.log("Meeting details:", data)
 
-
+        // Use provider_name if is_host is true, otherwise use member_name
         const displayName = data?.is_host ? data?.provider_name : data?.member_name
-        console.log("Display name:", displayName)
 
         setMeetingConfig({
           meetingId: data.meeting_id,
@@ -473,11 +472,11 @@ const VideoSDKApp: React.FC = () => {
   console.log(meetingConfig.participantName, "Participant Name")
   const isProvider = participantRole === "Provider"
 
-
+  // Add displayName explicitly to ensure it's properly set
   const configOptions = {
     meetingId,
     name: participantName,
-    displayName: participantName, 
+    displayName: participantName, // Add this line to explicitly set displayName
     mode: "SEND_AND_RECV",
     token,
     layout: "GRID",
