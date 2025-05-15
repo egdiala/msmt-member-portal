@@ -470,31 +470,99 @@ const ParticipantView = ({
   // Handle microphone audio stream
   useEffect(() => {
     if (micStream && audioRef.current) {
-      const mediaStream = new MediaStream();
+      try {
+        if (!audioRef.current.srcObject) {
+          const mediaStream = new MediaStream();
 
-      if (micStream.track instanceof MediaStreamTrack) {
-        mediaStream.addTrack(micStream.track);
-        audioRef.current.srcObject = mediaStream;
-        audioRef.current.play().catch((error) => {
-          console.error("Error playing audio:", error);
-        });
+          if (micStream.track instanceof MediaStreamTrack) {
+            mediaStream.addTrack(micStream.track);
+            audioRef.current.srcObject = mediaStream;
+
+            const playPromise = audioRef.current.play();
+
+            if (playPromise !== undefined) {
+              playPromise
+                .then(() => {
+                  // Audio is playing successfully
+                })
+                .catch((error) => {
+                  if (error.name !== "AbortError") {
+                    console.error("Error playing audio:", error);
+                  }
+                });
+            }
+          }
+        } else if (micStream.track instanceof MediaStreamTrack) {
+          const existingStream = audioRef.current.srcObject as MediaStream;
+          const existingTracks = existingStream.getAudioTracks();
+
+          if (existingTracks.length > 0) {
+            existingStream.removeTrack(existingTracks[0]);
+          }
+
+          existingStream.addTrack(micStream.track);
+        }
+      } catch (error) {
+        console.error("Error setting up audio stream:", error);
       }
     }
+
+    // Cleanup function to stop audio when unmounting
+    return () => {
+      if (audioRef.current && audioRef.current.srcObject) {
+        const mediaStream = audioRef.current.srcObject as MediaStream;
+        mediaStream.getTracks().forEach((track) => track.stop());
+        audioRef.current.srcObject = null;
+      }
+    };
   }, [micStream]);
 
-  // Handle webcam video stream
   useEffect(() => {
     if (webcamStream && videoRef.current) {
-      const mediaStream = new MediaStream();
+      try {
+        if (!videoRef.current.srcObject) {
+          const mediaStream = new MediaStream();
 
-      if (webcamStream.track instanceof MediaStreamTrack) {
-        mediaStream.addTrack(webcamStream.track);
-        videoRef.current.srcObject = mediaStream;
-        videoRef.current.play().catch((error) => {
-          console.error("Error playing video:", error);
-        });
+          if (webcamStream.track instanceof MediaStreamTrack) {
+            mediaStream.addTrack(webcamStream.track);
+            videoRef.current.srcObject = mediaStream;
+
+            const playPromise = videoRef.current.play();
+
+            if (playPromise !== undefined) {
+              playPromise
+                .then(() => {
+                  // Video is playing successfully
+                })
+                .catch((error) => {
+                  if (error.name !== "AbortError") {
+                    console.error("Error playing video:", error);
+                  }
+                });
+            }
+          }
+        } else if (webcamStream.track instanceof MediaStreamTrack) {
+          const existingStream = videoRef.current.srcObject as MediaStream;
+          const existingTracks = existingStream.getVideoTracks();
+
+          if (existingTracks.length > 0) {
+            existingStream.removeTrack(existingTracks[0]);
+          }
+
+          existingStream.addTrack(webcamStream.track);
+        }
+      } catch (error) {
+        console.error("Error setting up video stream:", error);
       }
     }
+
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const mediaStream = videoRef.current.srcObject as MediaStream;
+        mediaStream.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+    };
   }, [webcamStream]);
 
   return (
