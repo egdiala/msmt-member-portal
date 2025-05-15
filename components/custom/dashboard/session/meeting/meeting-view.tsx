@@ -427,7 +427,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       <RatingDialog
         open={open}
         onOpenChange={setOpen}
-        personName={data?.provider_data?.name}
+        personName={"John Doe"}
       />
     </div>
   );
