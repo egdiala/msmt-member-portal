@@ -17,6 +17,7 @@ interface MeetingViewProps {
   isProvider?: boolean;
   meetingId: string;
   participantName?: string;
+  onMeetingLeft?: () => void; 
 }
 
 const Timer = () => {
@@ -49,14 +50,15 @@ const Timer = () => {
 const MeetingView: React.FC<MeetingViewProps> = ({
   isProvider = false,
   meetingId,
+  onMeetingLeft,
 }) => {
-  // State variables
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
   const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isLeaving, setIsLeaving] = useState<boolean>(false);
   const meetingInitializedRef = useRef(false);
+  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check if device is mobile
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -69,6 +71,30 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       window.removeEventListener("resize", checkMobile);
     };
   }, []);
+
+
+  const leaveMeetingSafely = async () => {
+    if (isLeaving) return; 
+    
+    setIsLeaving(true);
+    try {
+      await leave();
+      console.log("Meeting left successfully");
+      
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
+      
+      if (onMeetingLeft) {
+        onMeetingLeft();
+      }
+    } catch (error) {
+      console.error("Error leaving meeting:", error);
+    } finally {
+      setIsMeetingJoined(false);
+      setIsLeaving(false);
+    }
+  };
 
   const {
     join,
@@ -85,39 +111,51 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       setIsMeetingJoined(true);
     },
     onMeetingLeft: () => {
-      console.log("Meeting left");
+      console.log("Meeting left from SDK callback");
       setIsMeetingJoined(false);
+      
+      if (onMeetingLeft) {
+        onMeetingLeft();
+      }
     },
     onError: (error) => {
       console.error("Error in meeting:", error);
     },
   });
 
+
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (isMeetingJoined) {
+    const handleBeforeUnload = (event: any) => {
+      if (isMeetingJoined && !isLeaving) {
         try {
+       
           leave();
+          console.log("Meeting left during page unload");
         } catch (error) {
-          console.error("Error leaving meeting:", error);
+          console.error("Error leaving meeting during unload:", error);
         }
       }
+      
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
+    // Component cleanup function
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      if (isMeetingJoined) {
-        try {
-          // leave();
-        } catch (error) {
-          console.error("Error leaving meeting during cleanup:", error);
-        }
+      
+      // Leave meeting when component unmounts if still joined
+      if (isMeetingJoined && !isLeaving) {
+        console.log("Leaving meeting during component cleanup");
+        leaveMeetingSafely();
       }
     };
-  }, [isMeetingJoined, leave]);
+  }, [isMeetingJoined, isLeaving, leave]);
 
+  // Join meeting on component initialization
   useEffect(() => {
     if (!meetingInitializedRef.current && meetingId) {
       meetingInitializedRef.current = true;
@@ -129,7 +167,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
       return () => clearTimeout(timeout);
     }
-  }, [meetingId]);
+  }, [meetingId, join]);
 
   const handleToggleAudio = () => {
     try {
@@ -149,13 +187,17 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     }
   };
 
-  const handleEndCall = () => {
+  const handleEndCall = async () => {
     try {
+      // First leave the meeting properly
       if (isMeetingJoined) {
-        // leave();
+        await leaveMeetingSafely();
       }
-      // Redirect to post-call page
-      window.location.href = "/call-ended";
+      
+      // Then redirect with a small delay to ensure leave completes
+      redirectTimeoutRef.current = setTimeout(() => {
+        window.location.href = "/call-ended";
+      }, 300);
     } catch (error) {
       console.error("Error ending call:", error);
       // Force redirect even if there was an error
@@ -173,10 +215,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     const allParticipants = [...participants.values()];
 
     const activeParticipants = allParticipants.filter((p) => {
-      return (
-        p.mode === "SEND_AND_RECV" &&
-        (p.id === localParticipant?.id || p.webcamOn || p.micOn)
-      );
+      return p.mode === "SEND_AND_RECV";
     });
 
     return activeParticipants;
@@ -187,7 +226,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     setActiveParticipantCount(activeParticipants.length);
     console.log("Active participants:", activeParticipants);
   }, [participants, localParticipant]);
-
 
   const activeParticipantsArray = getActiveParticipants();
 
@@ -204,15 +242,8 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     (p) => p.id !== focusParticipant?.id
   );
 
-
+  console.log("Focus participant:", localParticipant, participants);
   const isAloneInMeeting = activeParticipantsArray.length <= 1;
-
-  // Log for debugging
-  console.log("Local participant:", localParticipant);
-  console.log("Active participants:", activeParticipantsArray);
-  console.log("Focus participant:", focusParticipant);
-  console.log("Other participants:", otherParticipants);
-  console.log("Is alone in meeting:", isAloneInMeeting);
 
   return (
     <div className="flex flex-col h-full rounded-lg overflow-hidden">
@@ -302,7 +333,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           </div>
         )}
 
-        {/* Update your grid layout similarly... */}
         {layout === "grid" && (
           <div
             className={`grid ${
@@ -369,6 +399,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
               onClick={handleEndCall}
               className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500 text-white hover:bg-red-600 transition-colors"
               aria-label="End call"
+              disabled={isLeaving}
             >
               <IconEndCall className="md:w-5 w-4 md:h-5 h-4 stroke-white" />
             </button>
