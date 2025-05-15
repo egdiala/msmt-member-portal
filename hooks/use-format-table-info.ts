@@ -8,7 +8,7 @@ export const formatTableDate = (date: string) => {
   if (isToday(parsedDate)) {
     formattedDate = `Today • ${format(parsedDate, "h:mmaaa")}`;
   } else {
-    formattedDate = format(parsedDate, "MMM d • h:mmaaa"); // fallback format
+    formattedDate = format(parsedDate, "dd/MM/yyyy • h:mmaaa"); // fallback format
   }
 
   return formattedDate;

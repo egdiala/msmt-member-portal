@@ -175,7 +175,8 @@ export const ProvidersTable = () => {
       specialty: (
         <p className="capitalize">
           {provider?.provider_data?.specialty ||
-            provider?.provider_data?.industry_name}
+            provider?.provider_data?.industry_name ||
+            "N/A"}
         </p>
       ),
       rating: provider?.provider_data?.rating,
