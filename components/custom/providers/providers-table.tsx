@@ -150,7 +150,12 @@ export const ProvidersTable = () => {
 
   const { data, isLoading } = useGetServiceProviders<
     FetchedServiceProvidersType[]
-  >({ ...(value ? { q: value?.toString() } : {}), ...filters });
+  >({
+    ...(value ? { q: value?.toString() } : {}),
+    ...filters,
+    item_per_page: itemsPerPage?.toString(),
+    page: page?.toString(),
+  });
 
   const handlePageChange = (page: number) => {
     if (!isNaN(page)) {
