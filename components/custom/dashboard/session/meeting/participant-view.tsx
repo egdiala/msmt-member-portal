@@ -1,47 +1,36 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-
+import Image from "next/image";
 import { useParticipant } from "@videosdk.live/react-sdk";
 import { IconMic, IconMicOff } from "@/components/icons";
 
 const ParticipantView = ({
   participantId,
   large = false,
-  isProvider,
 }: {
   participantId: string;
   large: boolean;
-  isProvider: boolean;
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
-    useParticipant(participantId);
+  const {
+    webcamStream,
+    micStream,
+    webcamOn,
+    micOn,
+    displayName,
+    isLocal,
+    metaData,
+  } = useParticipant(participantId);
 
-  // Get participant name from various sources
-  const meetingProviderData =
-    typeof document !== "undefined"
-      ? document
-          .querySelector("[data-participant-name]")
-          ?.getAttribute("data-participant-name")
-      : null;
-  const storedName =
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("videosdk-participant-name")
-      : null;
-
-  const name = isLocal
-    ? storedName || meetingProviderData || displayName || "You"
-    : displayName;
+  const name = isLocal ? metaData?.name || displayName || "You" : displayName;
 
   const role = isLocal ? "You" : name;
-  const firstLetter = (name?.charAt(0) || "?").toUpperCase();
 
   useEffect(() => {
     if (audioRef.current) {
       if (micStream && micOn) {
         try {
-          // Create a new MediaStream for each new audio track
           const mediaStream = new MediaStream();
 
           if (micStream.track instanceof MediaStreamTrack) {
@@ -60,7 +49,6 @@ const ParticipantView = ({
           console.error("Error setting up audio stream:", error);
         }
       } else {
-        // Clean up when mic is turned off
         if (audioRef.current.srcObject) {
           const mediaStream = audioRef.current.srcObject as MediaStream;
           mediaStream.getTracks().forEach((track) => track.stop());
@@ -79,7 +67,6 @@ const ParticipantView = ({
     };
   }, [micStream, micOn, participantId]);
 
-  // Handle webcam video stream
   useEffect(() => {
     if (videoRef.current) {
       if (webcamStream && webcamOn) {
@@ -124,37 +111,52 @@ const ParticipantView = ({
 
   return (
     <div
-      className={`relative rounded-lg overflow-hidden ${
+      className={`rounded-lg overflow-hidden ${
         large ? "h-full w-full" : "h-full w-full"
       }`}
     >
       {webcamOn ? (
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted={isLocal}
-          className="w-full h-full object-cover object-center"
-        />
+        <div className="full h-full relative">
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted={isLocal}
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center">
+            <span>{role}</span>
+
+            <span className="ml-2 text-red-500">
+              {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
+              {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
+            </span>
+          </div>
+        </div>
       ) : (
         <div className="flex items-center justify-center w-full h-full bg-blue-400 text-white">
-          <div className="w-20 h-20 flex items-center justify-center bg-brand-accent-2 rounded-full text-3xl font-medium">
-            {firstLetter}
+          <div className="h-60 w-60 rounded-2xl relative">
+            <Image
+              src={metaData?.avatar || "/assets/user.png"}
+              alt={name}
+              width={240}
+              height={240}
+              className="w-full h-full object-cover rounded-2xl"
+            />
+
+            <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center">
+              <span>{role}</span>
+
+              <span className="ml-2 text-red-500">
+                {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
+                {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
+              </span>
+            </div>
           </div>
         </div>
       )}
 
       {micOn && !isLocal && <audio ref={audioRef} autoPlay />}
-
-      {/* Participant info overlay */}
-      <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center">
-        <span>{role}</span>
-
-        <span className="ml-2 text-red-500">
-          {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
-          {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
-        </span>
-      </div>
     </div>
   );
 };

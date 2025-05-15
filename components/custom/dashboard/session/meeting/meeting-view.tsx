@@ -27,7 +27,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMountedRef = useRef(true);
 
-  // Save participant name to localStorage if provided
   useEffect(() => {
     if (participantName) {
       window.localStorage.setItem("videosdk-participant-name", participantName);
@@ -122,7 +121,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     };
   }, [isMeetingJoined, isLeaving, leave]);
 
-  // Cleanup on component unmount
   useEffect(() => {
     return () => {
       componentMountedRef.current = false;
@@ -188,6 +186,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   };
 
   const activeParticipantsArray = getActiveParticipants();
+  console.log("Active participants:", activeParticipantsArray);
   const isAloneInMeeting = activeParticipantsArray.length <= 1;
   const focusParticipant = (() => {
     if (isAloneInMeeting) {
@@ -240,18 +239,15 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                       <ParticipantView
                         participantId={localParticipant.id}
                         large={true}
-                        isProvider={isProvider}
                       />
                     )
                   ) : otherParticipants?.[0] ? (
                     <ParticipantView
                       participantId={otherParticipants[0].id}
                       large={true}
-                      isProvider={isProvider}
                     />
                   ) : null}
 
-                  {/* Only show the small self-view if not alone */}
                   {!isAloneInMeeting && localParticipant && (
                     <div className="flex flex-col p-2 gap-2 absolute top-2 right-2">
                       <div className="h-32 w-40 border-2 border-white rounded-lg overflow-hidden">
@@ -259,7 +255,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                           key={localParticipant.id}
                           participantId={localParticipant.id}
                           large={false}
-                          isProvider={isProvider}
                         />
                       </div>
                     </div>
@@ -275,14 +270,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                       <ParticipantView
                         participantId={localParticipant.id}
                         large={true}
-                        isProvider={isProvider}
                       />
                     )
                   ) : otherParticipants.length > 0 ? (
                     <ParticipantView
                       participantId={otherParticipants[0].id}
                       large={true}
-                      isProvider={isProvider}
                     />
                   ) : null}
 
@@ -294,7 +287,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                           key={localParticipant.id}
                           participantId={localParticipant.id}
                           large={false}
-                          isProvider={isProvider}
                         />
                       </div>
                     </div>
@@ -323,7 +315,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                   key={participant.id}
                   participantId={participant.id}
                   large={false}
-                  isProvider={isProvider}
                 />
               ))}
             </div>
