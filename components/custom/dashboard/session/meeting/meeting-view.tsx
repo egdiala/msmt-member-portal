@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { RatingDialog } from "../../appointments/rating-form";
-import { useMeeting, useParticipant } from "@videosdk.live/react-sdk";
+import { useMeeting } from "@videosdk.live/react-sdk";
 import {
   IconMic,
   IconMicOff,
@@ -12,6 +11,7 @@ import {
   IconUsers,
   IconClock,
 } from "@/components/icons";
+import { ParticipantView } from "./participant-view";
 import { RenderIf } from "@/components/shared";
 
 interface MeetingViewProps {
@@ -58,7 +58,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isLeaving, setIsLeaving] = useState<boolean>(false);
-  const [open, setOpen] = useState(false);
   const meetingInitializedRef = useRef(false);
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMountedRef = useRef(true);
@@ -174,7 +173,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       meetingInitializedRef.current = true;
       const timeout = setTimeout(() => {
         join();
-      }, 500);
+      }, 500); // Increased from 100ms to 500ms for better reliability
       return () => clearTimeout(timeout);
     }
   }, [meetingId, join]);
@@ -424,183 +423,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           <Timer />
         </div>
       </div>
-      <RatingDialog
-        open={open}
-        onOpenChange={setOpen}
-        personName={"John Doe"}
-      />
     </div>
   );
 };
-
-const ParticipantView = ({
-  participantId,
-  large = false,
-  isProvider,
-}: {
-  participantId: string;
-  large: boolean;
-  isProvider: boolean;
-}) => {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
-    useParticipant(participantId);
-
-  // Get participant name from various sources
-  const meetingProviderData =
-    typeof document !== "undefined"
-      ? document
-          .querySelector("[data-participant-name]")
-          ?.getAttribute("data-participant-name")
-      : null;
-  const storedName =
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("videosdk-participant-name")
-      : null;
-
-  const name = isLocal
-    ? storedName || meetingProviderData || displayName || "You"
-    : displayName || "Participant";
-
-  const activeRole = isProvider ? "Provider" : "Patient";
-  const role = isLocal ? "You" : activeRole;
-  const firstLetter = (name?.charAt(0) || "?").toUpperCase();
-
-  // Handle microphone audio stream
-  useEffect(() => {
-    if (micStream && audioRef.current) {
-      try {
-        if (!audioRef.current.srcObject) {
-          const mediaStream = new MediaStream();
-
-          if (micStream.track instanceof MediaStreamTrack) {
-            mediaStream.addTrack(micStream.track);
-            audioRef.current.srcObject = mediaStream;
-
-            const playPromise = audioRef.current.play();
-
-            if (playPromise !== undefined) {
-              playPromise
-                .then(() => {
-                  // Audio is playing successfully
-                })
-                .catch((error) => {
-                  if (error.name !== "AbortError") {
-                    console.error("Error playing audio:", error);
-                  }
-                });
-            }
-          }
-        } else if (micStream.track instanceof MediaStreamTrack) {
-          const existingStream = audioRef.current.srcObject as MediaStream;
-          const existingTracks = existingStream.getAudioTracks();
-
-          if (existingTracks.length > 0) {
-            existingStream.removeTrack(existingTracks[0]);
-          }
-
-          existingStream.addTrack(micStream.track);
-        }
-      } catch (error) {
-        console.error("Error setting up audio stream:", error);
-      }
-    }
-
-    // Cleanup function to stop audio when unmounting
-    return () => {
-      if (audioRef.current && audioRef.current.srcObject) {
-        const mediaStream = audioRef.current.srcObject as MediaStream;
-        mediaStream.getTracks().forEach((track) => track.stop());
-        audioRef.current.srcObject = null;
-      }
-    };
-  }, [micStream]);
-
-  useEffect(() => {
-    if (webcamStream && videoRef.current) {
-      try {
-        if (!videoRef.current.srcObject) {
-          const mediaStream = new MediaStream();
-
-          if (webcamStream.track instanceof MediaStreamTrack) {
-            mediaStream.addTrack(webcamStream.track);
-            videoRef.current.srcObject = mediaStream;
-
-            const playPromise = videoRef.current.play();
-
-            if (playPromise !== undefined) {
-              playPromise
-                .then(() => {
-                  // Video is playing successfully
-                })
-                .catch((error) => {
-                  if (error.name !== "AbortError") {
-                    console.error("Error playing video:", error);
-                  }
-                });
-            }
-          }
-        } else if (webcamStream.track instanceof MediaStreamTrack) {
-          const existingStream = videoRef.current.srcObject as MediaStream;
-          const existingTracks = existingStream.getVideoTracks();
-
-          if (existingTracks.length > 0) {
-            existingStream.removeTrack(existingTracks[0]);
-          }
-
-          existingStream.addTrack(webcamStream.track);
-        }
-      } catch (error) {
-        console.error("Error setting up video stream:", error);
-      }
-    }
-
-    return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const mediaStream = videoRef.current.srcObject as MediaStream;
-        mediaStream.getTracks().forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
-      }
-    };
-  }, [webcamStream]);
-
-  return (
-    <div
-      className={`relative rounded-lg overflow-hidden ${
-        large ? "h-full w-full" : "h-full w-full"
-      }`}
-    >
-      {webcamOn ? (
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted={isLocal}
-          className="w-full h-full object-cover object-center"
-        />
-      ) : (
-        <div className="flex items-center justify-center w-full h-full bg-blue-400 text-white">
-          <div className="w-20 h-20 flex items-center justify-center bg-brand-accent-2 rounded-full text-3xl font-medium">
-            {firstLetter}
-          </div>
-        </div>
-      )}
-
-      {micOn && !isLocal && <audio ref={audioRef} autoPlay />}
-
-      {/* Participant info overlay */}
-      <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center">
-        <span>{role}</span>
-
-        <span className="ml-2 text-red-500">
-          {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
-          {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
-        </span>
-      </div>
-    </div>
-  );
-};
-
 export default MeetingView;
-export { ParticipantView };
