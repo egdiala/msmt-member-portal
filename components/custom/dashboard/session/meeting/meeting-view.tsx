@@ -385,10 +385,20 @@ const ParticipantView = ({
   large: boolean;
 }) => {
   const videoRef = useRef(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
     useParticipant(participantId);
 
-  console.log(micStream, "MIC STREAM");
+  useEffect(() => {
+    if (micStream?.track instanceof MediaStreamTrack && audioRef.current) {
+      const mediaStream = new MediaStream([micStream.track]);
+      audioRef.current.srcObject = mediaStream;
+    }
+  }, [micStream]);
+
+  if (!participantId) {
+    return null;
+  }
 
   useEffect(() => {
     if (webcamStream?.track instanceof MediaStreamTrack && videoRef.current) {
@@ -421,6 +431,7 @@ const ParticipantView = ({
           </div>
         </div>
       )}
+      {micOn && !isLocal && <audio ref={audioRef} autoPlay />}
 
       {/* Participant info overlay */}
       <div className="absolute bottom-2 left-2 bg-brand-accent-2 bg-opacity-50 text-white px-3 py-1 rounded-full text-sm flex items-center">
