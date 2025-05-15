@@ -7,6 +7,8 @@ import { ChartContainer } from "@/components/ui/chart";
 import { IconExternalLink } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RenderIf } from "@/components/shared";
+import { EmptyState } from "@/components/shared/empty-state";
 import { BLUR_VARIANTS, CHART_CONFIG, COLORS } from "@/lib/constants";
 import { useGetFamilyAndFriends } from "@/services/hooks/queries/use-family-and-friends";
 import {
@@ -38,7 +40,7 @@ export const FamilyAndFriendsCard = () => {
 
   return (
     <AnimatePresence mode="popLayout">
-      {(isLoading || countLoading) ? (
+      {isLoading || countLoading ? (
         <motion.div
           key="ff-card-skeleton-loader"
           layoutId="ff-card"
@@ -72,23 +74,33 @@ export const FamilyAndFriendsCard = () => {
 
           <div className="w-full hidden md:inline">
             <div className="flex flex-col justify-between items-center gap-y-7 w-full relative">
-              <div className="flex w-full justify-center items-center relative">
-                <ChartContainer config={CHART_CONFIG} className="h-40 w-40">
-                  <PieChart width={400} height={900}>
-                    <Pie
-                      data={familyAndFriendsChartData}
-                      labelLine={false}
-                      innerRadius={65}
-                      outerRadius={70}
-                      dataKey="value"
-                      height={600}
-                    >
-                      {familyAndFriendsChartData.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
+              <RenderIf condition={!count?.total}>
+                <div className="py-10">
+                  <EmptyState
+                    title=""
+                    subtitle="Your family & friends chart will appear here."
+                    hasIcon
+                  />
+                </div>
+              </RenderIf>
+              <RenderIf condition={!!count?.total}>
+                <div className="flex w-full justify-center items-center relative">
+                  <ChartContainer config={CHART_CONFIG} className="h-40 w-40">
+                    <PieChart width={400} height={900}>
+                      <Pie
+                        data={familyAndFriendsChartData}
+                        labelLine={false}
+                        innerRadius={65}
+                        outerRadius={70}
+                        dataKey="value"
+                        height={600}
+                      >
+                        {familyAndFriendsChartData.map((_, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        ))}
                         <Label
                           content={({ viewBox }) => {
                             if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -115,19 +127,15 @@ export const FamilyAndFriendsCard = () => {
                                     {(count?.total ?? 0).toLocaleString()}
                                   </tspan>
                                 </text>
-                              )
+                              );
                             }
                           }}
                         />
-                    </Pie>
-                  </PieChart>
-                </ChartContainer>
-
-                {/* <div className="absolute w-full flex flex-col justify-center items-center">
-                  <p className="text-xs text-brand-3">Total</p>
-                  <h4 className="text-xl text-brand-1">{count?.total ?? 0}</h4>
-                </div> */}
-              </div>
+                      </Pie>
+                    </PieChart>
+                  </ChartContainer>
+                </div>
+              </RenderIf>
 
               <div className="px-15 xl:px-5 flex justify-between w-full py-0">
                 <div className="flex gap-x-2 items-center">
