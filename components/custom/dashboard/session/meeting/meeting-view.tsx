@@ -17,7 +17,7 @@ interface MeetingViewProps {
   isProvider?: boolean;
   meetingId: string;
   participantName?: string;
-  onMeetingLeft?: () => void; 
+  onMeetingLeft?: () => void;
 }
 
 const Timer = () => {
@@ -72,19 +72,18 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     };
   }, []);
 
-
   const leaveMeetingSafely = async () => {
-    if (isLeaving) return; 
-    
+    if (isLeaving) return;
+
     setIsLeaving(true);
     try {
       await leave();
       console.log("Meeting left successfully");
-      
+
       if (redirectTimeoutRef.current) {
         clearTimeout(redirectTimeoutRef.current);
       }
-      
+
       if (onMeetingLeft) {
         onMeetingLeft();
       }
@@ -113,7 +112,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     onMeetingLeft: () => {
       console.log("Meeting left from SDK callback");
       setIsMeetingJoined(false);
-      
+
       if (onMeetingLeft) {
         onMeetingLeft();
       }
@@ -123,22 +122,20 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     },
   });
 
-
   useEffect(() => {
     const handleBeforeUnload = (event: any) => {
       if (isMeetingJoined && !isLeaving) {
         try {
-       
-          leave();
+          // leave();
           console.log("Meeting left during page unload");
         } catch (error) {
           console.error("Error leaving meeting during unload:", error);
         }
       }
-      
+
       event.preventDefault();
-      event.returnValue = '';
-      return '';
+      event.returnValue = "";
+      return "";
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -146,8 +143,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     // Component cleanup function
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      
-      // Leave meeting when component unmounts if still joined
       if (isMeetingJoined && !isLeaving) {
         console.log("Leaving meeting during component cleanup");
         leaveMeetingSafely();
@@ -189,12 +184,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
   const handleEndCall = async () => {
     try {
-      // First leave the meeting properly
       if (isMeetingJoined) {
         await leaveMeetingSafely();
       }
-      
-      // Then redirect with a small delay to ensure leave completes
       redirectTimeoutRef.current = setTimeout(() => {
         window.location.href = "/call-ended";
       }, 300);
@@ -224,7 +216,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   useEffect(() => {
     const activeParticipants = getActiveParticipants();
     setActiveParticipantCount(activeParticipants.length);
-    console.log("Active participants:", activeParticipants);
   }, [participants, localParticipant]);
 
   const activeParticipantsArray = getActiveParticipants();
@@ -242,9 +233,10 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     (p) => p.id !== focusParticipant?.id
   );
 
-  console.log("Focus participant:", localParticipant, participants);
   const isAloneInMeeting = activeParticipantsArray.length <= 1;
 
+
+  console.log(participants, "PARTICIPANMTS")
   return (
     <div className="flex flex-col h-full rounded-lg overflow-hidden">
       {/* Meeting header */}
