@@ -443,7 +443,7 @@ const ParticipantView = ({
   const name = isLocal ? storedName || meetingProviderData || displayName || "You" : displayName || "Participant"
 
 
-  const role = isLocal ? "You" : "Provider"
+  const role = isLocal ? "You" : name
   const firstLetter = (name?.charAt(0) || "?").toUpperCase()
 
   useEffect(() => {
