@@ -6,7 +6,7 @@ const MyOrganisations = () => {
     <div className="grid gap-y-4">
       <BreadcrumbCmp
         breadcrumbItems={[
-          { id: 1, name: "Home" },
+          { id: 1, name: "Home", href: "/home" },
           { id: 2, name: "My Organisations" },
         ]}
       />
