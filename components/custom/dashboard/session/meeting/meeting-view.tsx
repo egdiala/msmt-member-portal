@@ -167,42 +167,69 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     setLayout((prev) => (prev === "grid" ? "focus" : "grid"));
   };
 
-  console.log("Layout:", localParticipant);
+  const [activeParticipantCount, setActiveParticipantCount] = useState(0);
 
-  const participantsArray = [...participants.values()].filter(
-    (p) => p.mode === "SEND_AND_RECV"
+  const getActiveParticipants = () => {
+    const allParticipants = [...participants.values()];
+
+    const activeParticipants = allParticipants.filter((p) => {
+      return (
+        p.mode === "SEND_AND_RECV" &&
+        (p.id === localParticipant?.id || p.webcamOn || p.micOn)
+      );
+    });
+
+    return activeParticipants;
+  };
+
+  useEffect(() => {
+    const activeParticipants = getActiveParticipants();
+    setActiveParticipantCount(activeParticipants.length);
+    console.log("Active participants:", activeParticipants);
+  }, [participants, localParticipant]);
+
+  // Update your participant arrays
+  const activeParticipantsArray = getActiveParticipants();
+
+  // If there are no other active participants, ensure the local participant is used for the focus view
+  const focusParticipant =
+    activeParticipantsArray.length > 1
+      ? isProvider
+        ? activeParticipantsArray.find((p) => p.id !== localParticipant?.id) ||
+          localParticipant
+        : activeParticipantsArray.find((p) => p.id === localParticipant?.id) ||
+          activeParticipantsArray[0]
+      : localParticipant;
+
+  const otherParticipants = activeParticipantsArray.filter(
+    (p) => p.id !== focusParticipant?.id
   );
 
-  const focusParticipant = isProvider
-    ? participantsArray.find((p) => p.id === localParticipant?.id) ||
-      participantsArray[0]
-    : participantsArray.find((p) => p.id === localParticipant?.id) ||
-      participantsArray[0];
+  // Use this for rendering
+  const isAloneInMeeting = activeParticipantsArray.length <= 1;
 
-  const otherParticipants = participantsArray.filter((p) =>
-    focusParticipant ? p.id !== focusParticipant.id : false
-  );
-
-  console.log("Participants:", participantsArray);
+  // Log for debugging
+  console.log("Local participant:", localParticipant);
+  console.log("Active participants:", activeParticipantsArray);
   console.log("Focus participant:", focusParticipant);
   console.log("Other participants:", otherParticipants);
+  console.log("Is alone in meeting:", isAloneInMeeting);
 
-  if (!isMeetingJoined) {
-    return (
-      <div className="flex items-center justify-center h-full  bg-transparent">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent-2 mb-4"></div>
-          <p className="text-lg text-gray-700">Joining meeting...</p>
-        </div>
-      </div>
-    );
-  }
+  // Rest of your existing code...
 
+  // Then modify your layout rendering to handle the case when user is alone
   return (
-    <div className="flex flex-col h-full  rounded-lg overflow-hidden">
+    <div className="flex flex-col h-full rounded-lg overflow-hidden">
       {/* Meeting header */}
-      <div className="flex justify-end items-center py-2">
-        {/* Add layout toggle button */}
+      <div className="flex justify-between items-center py-2">
+        {/* Display waiting message when alone */}
+        {isAloneInMeeting && (
+          <div className="text-center bg-blue-50 text-blue-700 py-2 px-4 rounded-lg">
+            Waiting for others to join...
+          </div>
+        )}
+
+        {/* Layout toggle button */}
         <button
           onClick={handleToggleLayout}
           className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -211,74 +238,88 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         </button>
       </div>
 
-      <div className="flex-1  overflow-hidden relative">
+      <div className="flex-1 overflow-hidden relative">
         {layout === "focus" && (
           <div className="h-full flex flex-col">
             {isMobile ? (
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-                  {otherParticipants[0] && (
+                  {/* Show only the local participant if alone */}
+                  {isAloneInMeeting ? (
                     <ParticipantView
-                      participantId={otherParticipants[0].id}
+                      participantId={localParticipant?.id}
                       large={true}
                     />
-                  )}
-                  <div className="flex flex-col p-2 gap-2 absolute top-2 right-2">
-                    <div className="h-24 border-2 border-white rounded-lg overflow-hidden">
-                      <ParticipantView
-                        key={focusParticipant.id}
-                        participantId={focusParticipant.id}
-                        large={false}
-                      />
+                  ) : otherParticipants?.[0] ? (
+                    <ParticipantView
+                      participantId={otherParticipants[0]?.id}
+                      large={true}
+                    />
+                  ) : null}
+
+                  {/* Only show the small self-view if not alone */}
+                  {!isAloneInMeeting && (
+                    <div className="flex flex-col p-2 gap-2 absolute top-2 right-2">
+                      <div className="h-24 border-2 border-white rounded-lg overflow-hidden">
+                        <ParticipantView
+                          key={localParticipant?.id}
+                          participantId={localParticipant?.id}
+                          large={false}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             ) : (
               /* Desktop layout - main video with thumbnails on bottom */
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-                  <RenderIf condition={otherParticipants.length > 0}>
+                  {/* Show local participant if alone, otherwise show the other participant */}
+                  {isAloneInMeeting ? (
                     <ParticipantView
-                      participantId={otherParticipants[0].id}
+                      participantId={localParticipant?.id}
                       large={true}
                     />
-                  </RenderIf>
+                  ) : otherParticipants.length > 0 ? (
+                    <ParticipantView
+                      participantId={otherParticipants[0]?.id}
+                      large={true}
+                    />
+                  ) : null}
                 </div>
 
-                <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2 ">
-                  {focusParticipant && (
-                    <div
-                      key={otherParticipants[0].id}
-                      className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white "
-                    >
-                      {" "}
+                {/* Only show the small self-view if not alone */}
+                {!isAloneInMeeting && (
+                  <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2">
+                    <div className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white">
                       <ParticipantView
-                        key={focusParticipant.id}
-                        participantId={focusParticipant.id}
-                        large={true}
+                        key={localParticipant?.id}
+                        participantId={localParticipant?.id}
+                        large={false}
                       />
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
 
+        {/* Update your grid layout similarly... */}
         {layout === "grid" && (
           <div
             className={`grid ${
-              participantsArray.length === 1
+              activeParticipantsArray.length === 1
                 ? "grid-cols-1"
-                : participantsArray.length <= 2
+                : activeParticipantsArray.length <= 2
                 ? "grid-cols-1 md:grid-cols-2"
-                : participantsArray.length <= 4
+                : activeParticipantsArray.length <= 4
                 ? "grid-cols-2"
                 : "grid-cols-2 md:grid-cols-3"
             } gap-2 p-2 h-full`}
           >
-            {participantsArray.map((participant) => (
+            {activeParticipantsArray.map((participant) => (
               <ParticipantView
                 key={participant.id}
                 participantId={participant.id}
