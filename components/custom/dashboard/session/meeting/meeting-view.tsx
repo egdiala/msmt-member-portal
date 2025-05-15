@@ -167,27 +167,42 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     setLayout((prev) => (prev === "grid" ? "focus" : "grid"));
   };
 
-  const [activeParticipantCount, setActiveParticipantCount] = useState(0);
+  // Modified: Count all participants instead of only those with webcam/mic on
+  const getAllParticipants = () => {
+    return [...participants.values()];
+  };
 
+  // Get both active and inactive participants for display purposes
   const getActiveParticipants = () => {
     const allParticipants = [...participants.values()];
-
+    
+    // Consider a participant active if they have webcam/mic on OR if they're the local participant
     const activeParticipants = allParticipants.filter((p) => {
-      return (
-        p.mode === "SEND_AND_RECV" &&
-        (p.id === localParticipant?.id || p.webcamOn || p.micOn)
-      );
+      // Include participants with webcam/mic on
+      return p.webcamOn || p.micOn || p.id === localParticipant?.id;
     });
 
     return activeParticipants;
   };
 
+  // This flag determines whether to show the "waiting" message
+  // Changed to check if there's only one actual participant connected
+  const [isAloneInMeeting, setIsAloneInMeeting] = useState(true);
+
   useEffect(() => {
+    const allParticipants = getAllParticipants();
     const activeParticipants = getActiveParticipants();
-    setActiveParticipantCount(activeParticipants.length);
-    console.log("Active participants:", activeParticipants);
+    
+    console.log("All participants count:", allParticipants.length);
+    console.log("Active participants count:", activeParticipants.length);
+
+    // We're alone if there's exactly 1 total participant (just us)
+    setIsAloneInMeeting(allParticipants.length <= 1);
+    
   }, [participants, localParticipant]);
 
+  // Get all participants for proper display
+  const allParticipantsArray = getAllParticipants();
   const activeParticipantsArray = getActiveParticipants();
 
   const focusParticipant =
@@ -203,11 +218,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     (p) => p.id !== focusParticipant?.id
   );
 
-  // Use this for rendering
-  const isAloneInMeeting = activeParticipantsArray.length <= 1;
-
   // Log for debugging
   console.log("Local participant:", localParticipant);
+  console.log("All participants:", allParticipantsArray);
   console.log("Active participants:", activeParticipantsArray);
   console.log("Focus participant:", focusParticipant);
   console.log("Other participants:", otherParticipants);
@@ -218,9 +231,13 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       {/* Meeting header */}
       <div className="flex justify-between items-center py-2">
         {/* Display waiting message when alone */}
-        {isAloneInMeeting && (
+        {isAloneInMeeting ? (
           <div className="text-center bg-blue-50 text-blue-700 py-2 px-4 rounded-lg">
-            Waiting for {isProvider ? "Patient" : "Provider"} to join...
+            Waiting for {isProvider ? 'Patient' : 'Provider'} to join...
+          </div>
+        ) : (
+          <div className="text-center bg-green-50 text-green-700 py-2 px-4 rounded-lg">
+            Call in progress - {allParticipantsArray.length} participants connected
           </div>
         )}
 
@@ -239,18 +256,23 @@ const MeetingView: React.FC<MeetingViewProps> = ({
             {isMobile ? (
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-                  {/* Show only the local participant if alone */}
+                  {/* Show local participant if alone, otherwise show another participant */}
                   {isAloneInMeeting ? (
                     <ParticipantView
                       participantId={localParticipant?.id}
                       large={true}
                     />
-                  ) : otherParticipants?.[0] ? (
+                  ) : otherParticipants.length > 0 ? (
                     <ParticipantView
                       participantId={otherParticipants[0]?.id}
                       large={true}
                     />
-                  ) : null}
+                  ) : (
+                    <ParticipantView
+                      participantId={allParticipantsArray.find(p => p.id !== localParticipant?.id)?.id || localParticipant?.id}
+                      large={true}
+                    />
+                  )}
 
                   {/* Only show the small self-view if not alone */}
                   {!isAloneInMeeting && (
@@ -267,8 +289,10 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                 </div>
               </div>
             ) : (
+              /* Desktop layout - main video with thumbnails on bottom */
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
+                  {/* Show local participant if alone, otherwise show the other participant */}
                   {isAloneInMeeting ? (
                     <ParticipantView
                       participantId={localParticipant?.id}
@@ -279,9 +303,16 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                       participantId={otherParticipants[0]?.id}
                       large={true}
                     />
-                  ) : null}
+                  ) : (
+                    // Fallback to showing any other participant if none are "active"
+                    <ParticipantView
+                      participantId={allParticipantsArray.find(p => p.id !== localParticipant?.id)?.id || localParticipant?.id}
+                      large={true}
+                    />
+                  )}
                 </div>
 
+                {/* Only show the small self-view if not alone */}
                 {!isAloneInMeeting && (
                   <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2">
                     <div className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white">
@@ -298,20 +329,20 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           </div>
         )}
 
-        {/* Update your grid layout similarly... */}
+        {/* Grid layout */}
         {layout === "grid" && (
           <div
             className={`grid ${
-              activeParticipantsArray.length === 1
+              allParticipantsArray.length === 1
                 ? "grid-cols-1"
-                : activeParticipantsArray.length <= 2
+                : allParticipantsArray.length <= 2
                 ? "grid-cols-1 md:grid-cols-2"
-                : activeParticipantsArray.length <= 4
+                : allParticipantsArray.length <= 4
                 ? "grid-cols-2"
                 : "grid-cols-2 md:grid-cols-3"
             } gap-2 p-2 h-full`}
           >
-            {activeParticipantsArray.map((participant) => (
+            {allParticipantsArray.map((participant) => (
               <ParticipantView
                 key={participant.id}
                 participantId={participant.id}
@@ -385,20 +416,10 @@ const ParticipantView = ({
   large: boolean;
 }) => {
   const videoRef = useRef(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
     useParticipant(participantId);
 
-  useEffect(() => {
-    if (micStream?.track instanceof MediaStreamTrack && audioRef.current) {
-      const mediaStream = new MediaStream([micStream.track]);
-      audioRef.current.srcObject = mediaStream;
-    }
-  }, [micStream]);
-
-  if (!participantId) {
-    return null;
-  }
+  console.log(micStream, "MIC STREAM");
 
   useEffect(() => {
     if (webcamStream?.track instanceof MediaStreamTrack && videoRef.current) {
@@ -431,7 +452,6 @@ const ParticipantView = ({
           </div>
         </div>
       )}
-      {micOn && !isLocal && <audio ref={audioRef} autoPlay />}
 
       {/* Participant info overlay */}
       <div className="absolute bottom-2 left-2 bg-brand-accent-2 bg-opacity-50 text-white px-3 py-1 rounded-full text-sm flex items-center">
