@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMeeting } from "@videosdk.live/react-sdk";
 import { IconUsers } from "@/components/icons";
 import { ParticipantView } from "./participant-view";
@@ -17,13 +18,17 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   meetingId,
   onMeetingLeft,
 }) => {
+  const searchParams = useSearchParams();
+  const user_id = searchParams.get("user_id");
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
   const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+
   const [isLeaving, setIsLeaving] = useState<boolean>(false);
   const meetingInitializedRef = useRef(false);
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMountedRef = useRef(true);
+  const router = useRouter();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -153,12 +158,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
       if (componentMountedRef.current) {
         redirectTimeoutRef.current = setTimeout(() => {
-          window.location.href = "/call-ended";
+          router.push("/home");
         }, 300);
       }
     } catch (error) {
       console.error("Error ending call:", error);
-      window.location.href = "/call-ended";
+      router.push("/home");
     }
   };
 
@@ -175,15 +180,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const activeParticipantsArray = getActiveParticipants();
   console.log("Active participants:", activeParticipantsArray);
   const isAloneInMeeting = activeParticipantsArray.length <= 1;
-  const focusParticipant = (() => {
-    if (isAloneInMeeting) {
-      return localParticipant;
-    }
-  })();
 
   const otherParticipants = activeParticipantsArray.filter(
-    (p) => p?.id !== focusParticipant?.id
+    (p) => p?.id !== user_id
   );
+
+  console.log(otherParticipants, "OTHER");
 
   return (
     <div className="flex flex-col h-full rounded-lg overflow-hidden">
@@ -217,9 +219,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                         large={true}
                       />
                     )
-                  ) : otherParticipants?.[0] ? (
+                  ) : otherParticipants?.[1] ? (
                     <ParticipantView
-                      participantId={otherParticipants[0].id}
+                      participantId={otherParticipants[0]?.id}
                       large={true}
                     />
                   ) : null}
@@ -250,7 +252,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                     )
                   ) : otherParticipants.length > 0 ? (
                     <ParticipantView
-                      participantId={otherParticipants[0].id}
+                      participantId={otherParticipants[0]?.id}
                       large={true}
                     />
                   ) : null}
