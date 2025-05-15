@@ -216,29 +216,21 @@ const MeetingView: React.FC<MeetingViewProps> = ({
             {isMobile ? (
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-                  {focusParticipant && (
+                  {otherParticipants[0] && (
                     <ParticipantView
-                      key={focusParticipant.id}
-                      participantId={focusParticipant.id}
+                      participantId={otherParticipants[0].id}
                       large={true}
                     />
                   )}
-
-                  {otherParticipants.length > 0 && (
-                    <div className="flex flex-col p-2 gap-2 absolute top-2 right-2">
-                      {otherParticipants.map((participant) => (
-                        <div
-                          key={participant.id}
-                          className="h-24 border-2 border-white rounded-lg overflow-hidden"
-                        >
-                          <ParticipantView
-                            participantId={participant.id}
-                            large={false}
-                          />
-                        </div>
-                      ))}
+                  <div className="flex flex-col p-2 gap-2 absolute top-2 right-2">
+                    <div className="h-24 border-2 border-white rounded-lg overflow-hidden">
+                      <ParticipantView
+                        key={focusParticipant.id}
+                        participantId={focusParticipant.id}
+                        large={false}
+                      />
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             ) : (
