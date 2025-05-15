@@ -53,12 +53,10 @@ const DeviceSelectionModal: React.FC<{
 
   useEffect(() => {
     const getDevices = async () => {
-      // Prevent multiple executions
       if (deviceInitializedRef.current) return;
       deviceInitializedRef.current = true;
 
       try {
-        // Request permissions first
         await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
 
         // Get all devices
@@ -303,15 +301,17 @@ const VideoSDKApp: React.FC = () => {
         });
         const data = response.data;
 
+        console.log("Meeting details:", data);
+
         setMeetingConfig({
           meetingId: data.meeting_id,
           enableAudio: userAudioEnabled,
           enableVideo: userVideoEnabled,
           token: data?.token,
-          participantName: data.isHost
+          participantName: data?.is_host === true
             ? data?.provider_name
             : data?.member_name,
-          participantRole: data.isHost ? "Provider" : "Patient",
+          participantRole: data?.is_host ? "Provider" : "Patient",
         });
         setIsLoading(false);
         setShowDeviceSelection(true);
@@ -366,7 +366,6 @@ const VideoSDKApp: React.FC = () => {
                 err
               );
               try {
-            
                 const fallbackStream =
                   await navigator.mediaDevices.getUserMedia({ video: true });
                 fallbackStream.getTracks().forEach((track) => track.stop());
@@ -519,6 +518,7 @@ const VideoSDKApp: React.FC = () => {
   // VideoSDK configuration
   const { meetingId, token, participantRole } = meetingConfig;
   const participantName = meetingConfig.participantName || "Guest";
+  console.log(meetingConfig.participantName, "Participant Name");
   const isProvider = participantRole === "Provider";
 
   const configOptions = {
