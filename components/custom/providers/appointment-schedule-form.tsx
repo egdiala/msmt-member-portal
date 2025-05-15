@@ -409,7 +409,11 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
 
                 <button
                   type="button"
-                  onClick={() => navigate.back()}
+                  onClick={() =>
+                    navigate.push(
+                      `/providers/organisation/${orgInfo?.user_id}?type=${user_type}&service_type=${account_service_type}`
+                    )
+                  }
                   className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
                 >
                   Change
