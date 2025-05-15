@@ -303,13 +303,8 @@ const VideoSDKApp: React.FC = () => {
           token={token}
           reinitialiseMeetingOnConfigChange={true}
           joinWithoutUserInteraction={true}
-          data-participant-name={participantName}
         >
-          <MeetingView
-            meetingId={meetingId}
-            participantName={participantName}
-            isProvider={isProvider}
-          />
+          <MeetingView meetingId={meetingId} isProvider={isProvider} />
         </MeetingProvider>
       </div>
     </div>

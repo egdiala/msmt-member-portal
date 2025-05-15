@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useParticipant } from "@videosdk.live/react-sdk";
 import { IconMic, IconMicOff } from "@/components/icons";
+import { cn } from "@/lib/utils";
 
 const ParticipantView = ({
   participantId,
@@ -57,7 +58,7 @@ const ParticipantView = ({
       }
     }
 
-    // Clean up function
+
     return () => {
       if (audioRef.current && audioRef.current.srcObject) {
         const mediaStream = audioRef.current.srcObject as MediaStream;
@@ -90,7 +91,7 @@ const ParticipantView = ({
           console.error("Error setting up video stream:", error);
         }
       } else {
-        // Clean up when webcam is turned off
+ 
         if (videoRef.current.srcObject) {
           const mediaStream = videoRef.current.srcObject as MediaStream;
           mediaStream.getTracks().forEach((track) => track.stop());
@@ -99,7 +100,6 @@ const ParticipantView = ({
       }
     }
 
-    // Clean up function
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const mediaStream = videoRef.current.srcObject as MediaStream;
@@ -135,22 +135,24 @@ const ParticipantView = ({
         </div>
       ) : (
         <div className="flex items-center justify-center w-full h-full bg-blue-400 text-white">
-          <div className="h-60 w-60 rounded-2xl relative">
-            <Image
-              src={metaData?.avatar || "/assets/user.png"}
-              alt={name}
-              width={240}
-              height={240}
-              className="w-full h-full object-cover rounded-2xl"
-            />
+          <div className={cn(audioRef && micOn && "p-2  rounded-2xl overflow-hidden ring-4 ring-brand-accent-2 ring-opacity-60")}>
+            <div className="h-52 w-52 rounded-2xl relative">
+              <Image
+                src={metaData?.avatar || "/assets/user.png"}
+                alt={name}
+                width={208}
+                height={208}
+                className="w-full h-full object-cover rounded-2xl"
+              />
 
-            <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center">
-              <span>{role}</span>
+              <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center">
+                <span>{role}</span>
 
-              <span className="ml-2 text-red-500">
-                {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
-                {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
-              </span>
+                <span className="ml-2 text-red-500">
+                  {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
+                  {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
+                </span>
+              </div>
             </div>
           </div>
         </div>

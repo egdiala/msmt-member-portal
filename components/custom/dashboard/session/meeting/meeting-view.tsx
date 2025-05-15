@@ -5,18 +5,16 @@ import { IconUsers } from "@/components/icons";
 import { ParticipantView } from "./participant-view";
 import { RenderIf } from "@/components/shared";
 import ToolBar from "./tool-bar";
+import { RatingDialog } from "../../appointments/rating-form";
 
 interface MeetingViewProps {
   isProvider?: boolean;
   meetingId: string;
-  participantName?: string;
   onMeetingLeft?: () => void;
 }
 
 const MeetingView: React.FC<MeetingViewProps> = ({
-  isProvider = false,
   meetingId,
-  participantName,
   onMeetingLeft,
 }) => {
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
@@ -26,12 +24,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const meetingInitializedRef = useRef(false);
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMountedRef = useRef(true);
-
-  useEffect(() => {
-    if (participantName) {
-      window.localStorage.setItem("videosdk-participant-name", participantName);
-    }
-  }, [participantName]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -53,7 +45,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     setIsLeaving(true);
     try {
       await leave();
-      console.log("Meeting left successfully");
 
       if (redirectTimeoutRef.current) {
         clearTimeout(redirectTimeoutRef.current);
@@ -81,11 +72,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     localWebcamOn,
   } = useMeeting({
     onMeetingJoined: () => {
-      console.log("Meeting joined successfully");
       setIsMeetingJoined(true);
     },
     onMeetingLeft: () => {
-      console.log("Meeting left from SDK callback");
       setIsMeetingJoined(false);
 
       if (onMeetingLeft && componentMountedRef.current) {
@@ -97,13 +86,11 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     },
   });
 
-  // Handle beforeunload event for page navigation
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (isMeetingJoined && !isLeaving) {
         try {
           leave();
-          console.log("Meeting left during page unload");
         } catch (error) {
           console.error("Error leaving meeting during unload:", error);
         }
@@ -192,15 +179,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     if (isAloneInMeeting) {
       return localParticipant;
     }
-
-    if (isProvider) {
-      return (
-        activeParticipantsArray.find((p) => p.id !== localParticipant?.id) ||
-        localParticipant
-      );
-    } else {
-      return localParticipant || activeParticipantsArray[0];
-    }
   })();
 
   const otherParticipants = activeParticipantsArray.filter(
@@ -211,7 +189,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     <div className="flex flex-col h-full rounded-lg overflow-hidden">
       {/* Meeting header */}
       <div className="flex justify-between items-center py-2">
-        {/* Display waiting message when alone */}
         <RenderIf condition={isAloneInMeeting}>
           <div className="text-center bg-blue-50 text-blue-700 py-2 px-4 rounded-lg">
             Waiting for others to join...
@@ -233,7 +210,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
             {isMobile ? (
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-                  {/* Show only the local participant if alone */}
                   {isAloneInMeeting ? (
                     localParticipant && (
                       <ParticipantView
@@ -332,6 +308,11 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           handleToggleVideo={handleToggleVideo}
         />
       </div>
+      {/* <RatingDialog
+        open={open}
+        onOpenChange={setOpen}
+        personName={data?.provider_data?.name}
+      /> */}
     </div>
   );
 };
