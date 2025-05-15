@@ -53,7 +53,7 @@ export function StartSession({ organization, provider }: SessionCardProps) {
         </Button>
         <Button className="h-12 flex-1 md:flex-none py-3 px-4" asChild>
           <Link
-            href={`/start-session?user_id=${user_id}&provider_id=${appointment_id}`}
+            href={`/start-session?user_id=${user_id}&appointment_id=${appointment_id}`}
           >
             Join Session
           </Link>

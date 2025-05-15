@@ -151,7 +151,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const handleEndCall = () => {
     try {
       if (isMeetingJoined) {
-        leave();
+        // leave();
       }
       // Redirect to post-call page
       window.location.href = "/call-ended";
@@ -166,6 +166,8 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     setLayout((prev) => (prev === "grid" ? "focus" : "grid"));
   };
 
+  console.log("Layout:", localParticipant);
+
   const participantsArray = [...participants.values()].filter(
     (p) => p.mode === "SEND_AND_RECV"
   );
@@ -173,7 +175,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const focusParticipant = isProvider
     ? participantsArray.find((p) => p.id === localParticipant?.id) ||
       participantsArray[0]
-    : participantsArray.find((p) => p.id !== localParticipant?.id) ||
+    : participantsArray.find((p) => p.id === localParticipant?.id) ||
       participantsArray[0];
 
   const otherParticipants = participantsArray.filter((p) =>

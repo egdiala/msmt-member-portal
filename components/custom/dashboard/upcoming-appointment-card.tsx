@@ -27,10 +27,12 @@ import { formatApptTimeShort, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { BLUR_VARIANTS } from "@/lib/constants";
 import { RenderIf } from "@/components/shared";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 export const UpcomingAppointmentCard = () => {
   const [openCancelModal, setOpenCancelModal] = useState(false);
-  const { data, isPending } = useGetAppointments({ status: "1" });
+  const {data: account} = useGetProfile()
+   const { data, isPending } = useGetAppointments({ status: "1" });
   const router = useRouter();
   const { data: live } = useGetAppointments({ status: "2" });
   const { mutate, isPending: isCancelling } = useCancelAppointment(() => {
@@ -44,8 +46,8 @@ export const UpcomingAppointmentCard = () => {
   //   router.push("/session")
   // );
 
-  console.log("live", data);
-  const mostRecent = !!live?.length ? data?.[4] : live?.[0];
+  console.log("live", data, account?.user_id);
+  const mostRecent = !live?.length ? data?.[0] : live?.[0];
 
   const buttonCopy = {
     idle: "Cancel",
@@ -167,7 +169,7 @@ export const UpcomingAppointmentCard = () => {
                       className="inline-block"
                     >
                       <Link
-                        href={`/session?user_id=${mostRecent?.provider_data?.user_id}&provider_id=${mostRecent?.provider_id}&appointment_id=${mostRecent?.appointment_id}`}
+                        href={`/session?user_id=${account?.user_id}&provider_id=${mostRecent?.provider_id}&appointment_id=${mostRecent?.appointment_id}`}
                         className="underline"
                       >
                         Join now
