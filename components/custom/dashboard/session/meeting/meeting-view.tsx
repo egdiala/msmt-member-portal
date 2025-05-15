@@ -11,6 +11,7 @@ import {
   IconUsers,
   IconClock,
 } from "@/components/icons";
+import { RenderIf } from "@/components/shared";
 
 interface MeetingViewProps {
   isProvider?: boolean;
@@ -237,29 +238,29 @@ const MeetingView: React.FC<MeetingViewProps> = ({
               /* Desktop layout - main video with thumbnails on bottom */
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-                  {focusParticipant && (
+                  <RenderIf condition={otherParticipants.length > 0}>
                     <ParticipantView
-                      key={focusParticipant.id}
-                      participantId={focusParticipant.id}
+                      participantId={otherParticipants[0].id}
                       large={true}
                     />
+                  </RenderIf>
+                </div>
+
+                <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2 ">
+                  {focusParticipant && (
+                    <div
+                      key={otherParticipants[0].id}
+                      className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white "
+                    >
+                      {" "}
+                      <ParticipantView
+                        key={focusParticipant.id}
+                        participantId={focusParticipant.id}
+                        large={true}
+                      />
+                    </div>
                   )}
                 </div>
-                {otherParticipants.length > 0 && (
-                  <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2 ">
-                    {otherParticipants.map((participant) => (
-                      <div
-                        key={participant.id}
-                        className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white "
-                      >
-                        <ParticipantView
-                          participantId={participant.id}
-                          large={false}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
           </div>
