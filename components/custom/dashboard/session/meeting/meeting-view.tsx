@@ -167,18 +167,35 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     setLayout((prev) => (prev === "grid" ? "focus" : "grid"));
   };
 
-  // Modified: Count all participants instead of only those with webcam/mic on
+  // Debug the participants to identify duplicates
+  useEffect(() => {
+    console.log("Raw participants Map:", participants);
+    const participantIds = new Set([...participants.keys()]);
+    console.log("Unique participant IDs:", participantIds);
+  }, [participants]);
+
+  // Count participants properly to avoid duplicates
   const getAllParticipants = () => {
-    return [...participants.values()];
+    const uniqueParticipants = new Map();
+    for (const [id, participant] of participants.entries()) {
+      if (!uniqueParticipants.has(id)) {
+        uniqueParticipants.set(id, participant);
+      }
+    }
+
+    return [...uniqueParticipants.values()];
   };
 
-  // Get both active and inactive participants for display purposes
+  console.log("Unique participants count:", getAllParticipants().length);
+  console.log("All participants:", getAllParticipants());
+  console.log("Participants Map:", participants);
+
+  // Get active participants (those with webcam/mic on)
   const getActiveParticipants = () => {
-    const allParticipants = [...participants.values()];
-    
+    const allParticipants = getAllParticipants();
+
     // Consider a participant active if they have webcam/mic on OR if they're the local participant
     const activeParticipants = allParticipants.filter((p) => {
-      // Include participants with webcam/mic on
       return p.webcamOn || p.micOn || p.id === localParticipant?.id;
     });
 
@@ -186,19 +203,15 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   };
 
   // This flag determines whether to show the "waiting" message
-  // Changed to check if there's only one actual participant connected
   const [isAloneInMeeting, setIsAloneInMeeting] = useState(true);
 
   useEffect(() => {
     const allParticipants = getAllParticipants();
-    const activeParticipants = getActiveParticipants();
-    
-    console.log("All participants count:", allParticipants.length);
-    console.log("Active participants count:", activeParticipants.length);
 
-    // We're alone if there's exactly 1 total participant (just us)
+    console.log("Unique participants count:", allParticipants.length);
+
+    // We're alone if there's exactly 1 total unique participant (just us)
     setIsAloneInMeeting(allParticipants.length <= 1);
-    
   }, [participants, localParticipant]);
 
   // Get all participants for proper display
@@ -233,11 +246,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         {/* Display waiting message when alone */}
         {isAloneInMeeting ? (
           <div className="text-center bg-blue-50 text-blue-700 py-2 px-4 rounded-lg">
-            Waiting for {isProvider ? 'Patient' : 'Provider'} to join...
+            Waiting for {isProvider ? "Patient" : "Provider"} to join...
           </div>
         ) : (
           <div className="text-center bg-green-50 text-green-700 py-2 px-4 rounded-lg">
-            Call in progress - {allParticipantsArray.length} participants connected
+            Call in progress - {activeParticipantsArray.length} participants
+            connected
           </div>
         )}
 
@@ -269,7 +283,11 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                     />
                   ) : (
                     <ParticipantView
-                      participantId={allParticipantsArray.find(p => p.id !== localParticipant?.id)?.id || localParticipant?.id}
+                      participantId={
+                        allParticipantsArray.find(
+                          (p) => p.id !== localParticipant?.id
+                        )?.id || localParticipant?.id
+                      }
                       large={true}
                     />
                   )}
@@ -306,7 +324,11 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                   ) : (
                     // Fallback to showing any other participant if none are "active"
                     <ParticipantView
-                      participantId={allParticipantsArray.find(p => p.id !== localParticipant?.id)?.id || localParticipant?.id}
+                      participantId={
+                        allParticipantsArray.find(
+                          (p) => p.id !== localParticipant?.id
+                        )?.id || localParticipant?.id
+                      }
                       large={true}
                     />
                   )}
@@ -333,16 +355,16 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         {layout === "grid" && (
           <div
             className={`grid ${
-              allParticipantsArray.length === 1
+              activeParticipantsArray.length === 1
                 ? "grid-cols-1"
-                : allParticipantsArray.length <= 2
+                : activeParticipantsArray.length <= 2
                 ? "grid-cols-1 md:grid-cols-2"
-                : allParticipantsArray.length <= 4
+                : activeParticipantsArray.length <= 4
                 ? "grid-cols-2"
                 : "grid-cols-2 md:grid-cols-3"
             } gap-2 p-2 h-full`}
           >
-            {allParticipantsArray.map((participant) => (
+            {activeParticipantsArray.map((participant) => (
               <ParticipantView
                 key={participant.id}
                 participantId={participant.id}
