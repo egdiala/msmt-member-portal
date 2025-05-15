@@ -188,10 +188,8 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     console.log("Active participants:", activeParticipants);
   }, [participants, localParticipant]);
 
-  // Update your participant arrays
   const activeParticipantsArray = getActiveParticipants();
 
-  // If there are no other active participants, ensure the local participant is used for the focus view
   const focusParticipant =
     activeParticipantsArray.length > 1
       ? isProvider
@@ -215,9 +213,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   console.log("Other participants:", otherParticipants);
   console.log("Is alone in meeting:", isAloneInMeeting);
 
-  // Rest of your existing code...
-
-  // Then modify your layout rendering to handle the case when user is alone
   return (
     <div className="flex flex-col h-full rounded-lg overflow-hidden">
       {/* Meeting header */}
@@ -225,7 +220,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         {/* Display waiting message when alone */}
         {isAloneInMeeting && (
           <div className="text-center bg-blue-50 text-blue-700 py-2 px-4 rounded-lg">
-            Waiting for others to join...
+            Waiting for {isProvider ? "Patient" : "Provider"} to join...
           </div>
         )}
 
