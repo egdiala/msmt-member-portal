@@ -1,6 +1,7 @@
-"use client";
-import React, { useState, useEffect, useRef } from "react";
-import { useMeeting, useParticipant } from "@videosdk.live/react-sdk";
+"use client"
+import type React from "react"
+import { useState, useEffect, useRef } from "react"
+import { useMeeting, useParticipant } from "@videosdk.live/react-sdk"
 import {
   IconMic,
   IconMicOff,
@@ -10,234 +11,257 @@ import {
   IconEndCall,
   IconUsers,
   IconClock,
-} from "@/components/icons";
-import { RenderIf } from "@/components/shared";
+} from "@/components/icons"
 
 interface MeetingViewProps {
-  isProvider?: boolean;
-  meetingId: string;
-  participantName?: string;
+  isProvider?: boolean
+  meetingId: string
+  participantName?: string
 }
 
 const Timer = () => {
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(0)
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime((prevTime) => prevTime + 1);
-    }, 1000);
+      setTime((prevTime) => prevTime + 1)
+    }, 1000)
 
-    return () => clearInterval(timer);
-  }, []);
+    return () => clearInterval(timer)
+  }, [])
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
+  }
 
   return (
     <div className="text-sm md:text-lg bg-gray-100 font-semibold text-[#001933] py-1.5 px-2 border border-brand-accent-2 rounded-full flex items-center">
       <IconClock className="w-4 h-4 md:w-6 md:h-6 mr-1 stroke-brand-1" />
       {formatTime(time)}
     </div>
-  );
-};
+  )
+}
 
-const MeetingView: React.FC<MeetingViewProps> = ({
-  isProvider = false,
-  meetingId,
-}) => {
+const MeetingView: React.FC<MeetingViewProps> = ({ isProvider = false, meetingId, participantName }) => {
   // State variables
-  const [layout, setLayout] = useState<"grid" | "focus">("focus");
-  const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-  const meetingInitializedRef = useRef(false);
+  const [layout, setLayout] = useState<"grid" | "focus">("focus")
+  const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false)
+  const [isMobile, setIsMobile] = useState<boolean>(false)
+  const meetingInitializedRef = useRef(false)
+  // Add a state to track real participant count
+  const [realParticipantCount, setRealParticipantCount] = useState(0)
+  // Track participants who have actually joined with video/audio
+  const [activeParticipantIds, setActiveParticipantIds] = useState<Set<string>>(new Set())
 
   // Check if device is mobile
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+      setIsMobile(window.innerWidth < 768)
+    }
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
 
     return () => {
-      window.removeEventListener("resize", checkMobile);
-    };
-  }, []);
+      window.removeEventListener("resize", checkMobile)
+    }
+  }, [])
 
-  const {
-    join,
-    leave,
-    toggleMic,
-    toggleWebcam,
-    participants,
-    localParticipant,
-    localMicOn,
-    localWebcamOn,
-  } = useMeeting({
-    onMeetingJoined: () => {
-      console.log("Meeting joined successfully");
-      setIsMeetingJoined(true);
-    },
-    onMeetingLeft: () => {
-      console.log("Meeting left");
-      setIsMeetingJoined(false);
-    },
-    onError: (error) => {
-      console.error("Error in meeting:", error);
-    },
-  });
+  const { join, leave, toggleMic, toggleWebcam, participants, localParticipant, localMicOn, localWebcamOn } =
+    useMeeting({
+      onMeetingJoined: () => {
+        console.log("Meeting joined successfully")
+        setIsMeetingJoined(true)
+        // When we join, we know there's at least 1 participant (us)
+        setRealParticipantCount(1)
+        if (localParticipant) {
+          setActiveParticipantIds((prev) => {
+            const newSet = new Set(prev)
+            newSet.add(localParticipant.id)
+            return newSet
+          })
+        }
+      },
+      onMeetingLeft: () => {
+        console.log("Meeting left")
+        setIsMeetingJoined(false)
+        setRealParticipantCount(0)
+        setActiveParticipantIds(new Set())
+      },
+      onError: (error) => {
+        console.error("Error in meeting:", error)
+      },
+      // Add these handlers to track real participants
+      onParticipantJoined: (participant) => {
+        console.log("Participant joined:", participant)
+        // Only count if it's not us
+        if (participant.id !== localParticipant?.id) {
+          setRealParticipantCount((prev) => prev + 1)
+          setActiveParticipantIds((prev) => {
+            const newSet = new Set(prev)
+            newSet.add(participant.id)
+            return newSet
+          })
+        }
+      },
+      onParticipantLeft: (participant) => {
+        console.log("Participant left:", participant)
+        // Only decrement if it's not us
+        if (participant.id !== localParticipant?.id) {
+          setRealParticipantCount((prev) => Math.max(0, prev - 1))
+          setActiveParticipantIds((prev) => {
+            const newSet = new Set(prev)
+            newSet.delete(participant.id)
+            return newSet
+          })
+        }
+      },
+    })
 
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (isMeetingJoined) {
         try {
-          leave();
+          leave()
         } catch (error) {
-          console.error("Error leaving meeting:", error);
+          console.error("Error leaving meeting:", error)
         }
       }
-    };
+    }
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload)
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload)
       if (isMeetingJoined) {
         try {
-          // leave();
+          leave()
         } catch (error) {
-          console.error("Error leaving meeting during cleanup:", error);
+          console.error("Error leaving meeting during cleanup:", error)
         }
       }
-    };
-  }, [isMeetingJoined, leave]);
+    }
+  }, [isMeetingJoined, leave])
 
   useEffect(() => {
     if (!meetingInitializedRef.current && meetingId) {
-      meetingInitializedRef.current = true;
+      meetingInitializedRef.current = true
 
       const timeout = setTimeout(() => {
-        join();
-        console.log("Joining meeting with ID:", meetingId);
-      }, 100);
+        join()
+        console.log("Joining meeting with ID:", meetingId)
+      }, 100)
 
-      return () => clearTimeout(timeout);
+      return () => clearTimeout(timeout)
     }
-  }, [meetingId]);
+  }, [meetingId])
 
   const handleToggleAudio = () => {
     try {
-      console.log("Toggling microphone, current state:", localMicOn);
-      toggleMic();
+      console.log("Toggling microphone, current state:", localMicOn)
+      toggleMic()
     } catch (error) {
-      console.error("Error toggling mic:", error);
+      console.error("Error toggling mic:", error)
     }
-  };
+  }
 
   const handleToggleVideo = () => {
     try {
-      console.log("Toggling webcam, current state:", localWebcamOn);
-      toggleWebcam();
+      console.log("Toggling webcam, current state:", localWebcamOn)
+      toggleWebcam()
     } catch (error) {
-      console.error("Error toggling webcam:", error);
+      console.error("Error toggling webcam:", error)
     }
-  };
+  }
 
   const handleEndCall = () => {
     try {
       if (isMeetingJoined) {
-        // leave();
+        leave()
       }
       // Redirect to post-call page
-      window.location.href = "/call-ended";
+      window.location.href = "/call-ended"
     } catch (error) {
-      console.error("Error ending call:", error);
+      console.error("Error ending call:", error)
       // Force redirect even if there was an error
-      window.location.href = "/call-ended";
+      window.location.href = "/call-ended"
     }
-  };
+  }
 
   const handleToggleLayout = () => {
-    setLayout((prev) => (prev === "grid" ? "focus" : "grid"));
-  };
+    setLayout((prev) => (prev === "grid" ? "focus" : "grid"))
+  }
 
   // Debug the participants to identify duplicates
   useEffect(() => {
-    console.log("Raw participants Map:", participants);
-    const participantIds = new Set([...participants.keys()]);
-    console.log("Unique participant IDs:", participantIds);
-  }, [participants]);
+    console.log("Raw participants Map:", participants)
+    const participantIds = new Set([...participants.keys()])
+    console.log("Unique participant IDs:", participantIds)
+    console.log("Active participant IDs:", activeParticipantIds)
+    console.log("Real participant count:", realParticipantCount)
+  }, [participants, activeParticipantIds, realParticipantCount])
 
   // Count participants properly to avoid duplicates
   const getAllParticipants = () => {
-    const uniqueParticipants = new Map();
+    // Filter participants to only include those in our active set
+    const uniqueParticipants = new Map()
     for (const [id, participant] of participants.entries()) {
-      if (!uniqueParticipants.has(id)) {
-        uniqueParticipants.set(id, participant);
+      // Only include participants that are in our active set
+      // or the local participant (which is always active)
+      if (activeParticipantIds.has(id) || id === localParticipant?.id) {
+        uniqueParticipants.set(id, participant)
       }
     }
 
-    return [...uniqueParticipants.values()];
-  };
+    return [...uniqueParticipants.values()]
+  }
 
-  console.log("Unique participants count:", getAllParticipants().length);
-  console.log("All participants:", getAllParticipants());
-  console.log("Participants Map:", participants);
+  console.log("Unique participants count:", getAllParticipants().length)
+  console.log("All participants:", getAllParticipants())
+  console.log("Participants Map:", participants)
 
   // Get active participants (those with webcam/mic on)
   const getActiveParticipants = () => {
-    const allParticipants = getAllParticipants();
+    const allParticipants = getAllParticipants()
 
     // Consider a participant active if they have webcam/mic on OR if they're the local participant
     const activeParticipants = allParticipants.filter((p) => {
-      return p.webcamOn || p.micOn || p.id === localParticipant?.id;
-    });
+      return p.webcamOn || p.micOn || p.id === localParticipant?.id
+    })
 
-    return activeParticipants;
-  };
+    return activeParticipants
+  }
 
   // This flag determines whether to show the "waiting" message
-  const [isAloneInMeeting, setIsAloneInMeeting] = useState(true);
+  const [isAloneInMeeting, setIsAloneInMeeting] = useState(true)
 
   useEffect(() => {
-    const allParticipants = getAllParticipants();
-
-    console.log("Unique participants count:", allParticipants.length);
-
-    // We're alone if there's exactly 1 total unique participant (just us)
-    setIsAloneInMeeting(allParticipants.length <= 1);
-  }, [participants, localParticipant]);
+    // Use our real participant count instead of the participants Map
+    setIsAloneInMeeting(realParticipantCount <= 1)
+  }, [realParticipantCount])
 
   // Get all participants for proper display
-  const allParticipantsArray = getAllParticipants();
-  const activeParticipantsArray = getActiveParticipants();
+  const allParticipantsArray = getAllParticipants()
+  const activeParticipantsArray = getActiveParticipants()
 
   const focusParticipant =
     activeParticipantsArray.length > 1
       ? isProvider
-        ? activeParticipantsArray.find((p) => p.id !== localParticipant?.id) ||
-          localParticipant
-        : activeParticipantsArray.find((p) => p.id === localParticipant?.id) ||
-          activeParticipantsArray[0]
-      : localParticipant;
+        ? activeParticipantsArray.find((p) => p.id !== localParticipant?.id) || localParticipant
+        : activeParticipantsArray.find((p) => p.id === localParticipant?.id) || activeParticipantsArray[0]
+      : localParticipant
 
-  const otherParticipants = activeParticipantsArray.filter(
-    (p) => p.id !== focusParticipant?.id
-  );
+  const otherParticipants = activeParticipantsArray.filter((p) => p.id !== focusParticipant?.id)
 
   // Log for debugging
-  console.log("Local participant:", localParticipant);
-  console.log("All participants:", allParticipantsArray);
-  console.log("Active participants:", activeParticipantsArray);
-  console.log("Focus participant:", focusParticipant);
-  console.log("Other participants:", otherParticipants);
-  console.log("Is alone in meeting:", isAloneInMeeting);
+  console.log("Local participant:", localParticipant)
+  console.log("All participants:", allParticipantsArray)
+  console.log("Active participants:", activeParticipantsArray)
+  console.log("Focus participant:", focusParticipant)
+  console.log("Other participants:", otherParticipants)
+  console.log("Is alone in meeting:", isAloneInMeeting)
 
   return (
     <div className="flex flex-col h-full rounded-lg overflow-hidden">
@@ -250,16 +274,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           </div>
         ) : (
           <div className="text-center bg-green-50 text-green-700 py-2 px-4 rounded-lg">
-            Call in progress - {activeParticipantsArray.length} participants
-            connected
+            Call in progress - {realParticipantCount} participants connected
           </div>
         )}
 
         {/* Layout toggle button */}
-        <button
-          onClick={handleToggleLayout}
-          className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
-        >
+        <button onClick={handleToggleLayout} className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700">
           <IconUsers className="md:w-5 w-4 md:h-5 h-4 stroke-brand-1" />
         </button>
       </div>
@@ -272,21 +292,13 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                 <div className="flex-1 relative">
                   {/* Show local participant if alone, otherwise show another participant */}
                   {isAloneInMeeting ? (
-                    <ParticipantView
-                      participantId={localParticipant?.id}
-                      large={true}
-                    />
+                    <ParticipantView participantId={localParticipant?.id} large={true} />
                   ) : otherParticipants.length > 0 ? (
-                    <ParticipantView
-                      participantId={otherParticipants[0]?.id}
-                      large={true}
-                    />
+                    <ParticipantView participantId={otherParticipants[0]?.id} large={true} />
                   ) : (
                     <ParticipantView
                       participantId={
-                        allParticipantsArray.find(
-                          (p) => p.id !== localParticipant?.id
-                        )?.id || localParticipant?.id
+                        allParticipantsArray.find((p) => p.id !== localParticipant?.id)?.id || localParticipant?.id
                       }
                       large={true}
                     />
@@ -307,27 +319,17 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                 </div>
               </div>
             ) : (
-              /* Desktop layout - main video with thumbnails on bottom */
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-                  {/* Show local participant if alone, otherwise show the other participant */}
                   {isAloneInMeeting ? (
-                    <ParticipantView
-                      participantId={localParticipant?.id}
-                      large={true}
-                    />
+                    <ParticipantView participantId={localParticipant?.id} large={true} />
                   ) : otherParticipants.length > 0 ? (
-                    <ParticipantView
-                      participantId={otherParticipants[0]?.id}
-                      large={true}
-                    />
+                    <ParticipantView participantId={otherParticipants[0]?.id} large={true} />
                   ) : (
                     // Fallback to showing any other participant if none are "active"
                     <ParticipantView
                       participantId={
-                        allParticipantsArray.find(
-                          (p) => p.id !== localParticipant?.id
-                        )?.id || localParticipant?.id
+                        allParticipantsArray.find((p) => p.id !== localParticipant?.id)?.id || localParticipant?.id
                       }
                       large={true}
                     />
@@ -338,11 +340,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                 {!isAloneInMeeting && (
                   <div className="h-32 flex w-52 absolute top-2 right-2 gap-2 p-2">
                     <div className="h-full aspect-video border-2 rounded-lg overflow-hidden border-white">
-                      <ParticipantView
-                        key={localParticipant?.id}
-                        participantId={localParticipant?.id}
-                        large={false}
-                      />
+                      <ParticipantView key={localParticipant?.id} participantId={localParticipant?.id} large={false} />
                     </div>
                   </div>
                 )}
@@ -355,21 +353,17 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         {layout === "grid" && (
           <div
             className={`grid ${
-              activeParticipantsArray.length === 1
+              allParticipantsArray.length === 1
                 ? "grid-cols-1"
-                : activeParticipantsArray.length <= 2
-                ? "grid-cols-1 md:grid-cols-2"
-                : activeParticipantsArray.length <= 4
-                ? "grid-cols-2"
-                : "grid-cols-2 md:grid-cols-3"
+                : allParticipantsArray.length <= 2
+                  ? "grid-cols-1 md:grid-cols-2"
+                  : allParticipantsArray.length <= 4
+                    ? "grid-cols-2"
+                    : "grid-cols-2 md:grid-cols-3"
             } gap-2 p-2 h-full`}
           >
-            {activeParticipantsArray.map((participant) => (
-              <ParticipantView
-                key={participant.id}
-                participantId={participant.id}
-                large={false}
-              />
+            {allParticipantsArray.map((participant) => (
+              <ParticipantView key={participant.id} participantId={participant.id} large={false} />
             ))}
           </div>
         )}
@@ -427,38 +421,47 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const ParticipantView = ({
   participantId,
   large = false,
 }: {
-  participantId: string;
-  large: boolean;
+  participantId: string
+  large: boolean
 }) => {
-  const videoRef = useRef(null);
-  const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } =
-    useParticipant(participantId);
+  const videoRef = useRef(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const { webcamStream, micStream, webcamOn, micOn, displayName, isLocal } = useParticipant(participantId)
 
-  console.log(micStream, "MIC STREAM");
+
+  const meetingProviderData = document.querySelector("[data-participant-name]")?.getAttribute("data-participant-name")
+  const storedName = window.localStorage.getItem("videosdk-participant-name")
+
+ 
+  const name = isLocal ? storedName || meetingProviderData || displayName || "You" : displayName || "Participant"
+
+
+  const role = isLocal ? "You" : "Provider"
+  const firstLetter = (name?.charAt(0) || "?").toUpperCase()
+
+  useEffect(() => {
+    if (micStream?.track instanceof MediaStreamTrack && audioRef.current) {
+      const mediaStream = new MediaStream([micStream.track])
+      audioRef.current.srcObject = mediaStream
+    }
+  }, [micStream])
 
   useEffect(() => {
     if (webcamStream?.track instanceof MediaStreamTrack && videoRef.current) {
-      const mediaStream = new MediaStream([webcamStream.track]);
-      (videoRef.current as any).srcObject = mediaStream;
+      const mediaStream = new MediaStream([webcamStream.track])
+      ;(videoRef.current as any).srcObject = mediaStream
     }
-  }, [webcamStream]);
-  const name = displayName || (isLocal ? "You" : "User");
-  const role = isLocal ? "You" : "Provider";
-  const firstLetter = name.charAt(0).toUpperCase();
+  }, [webcamStream])
 
   return (
-    <div
-      className={`relative rounded-lg overflow-hidden ${
-        large ? "h-full w-full" : "h-full w-full"
-      }`}
-    >
+    <div className={`relative rounded-lg overflow-hidden ${large ? "h-full w-full" : "h-full w-full"}`}>
       {webcamOn ? (
         <video
           ref={videoRef}
@@ -489,8 +492,8 @@ const ParticipantView = ({
         {role}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MeetingView;
-export { ParticipantView };
+export default MeetingView
+export { ParticipantView }

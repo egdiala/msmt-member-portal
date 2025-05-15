@@ -1,140 +1,128 @@
-"use client";
-import { useSearchParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
-import { requestLiveSession } from "@/services/api/session";
+"use client"
+import { useSearchParams } from "next/navigation"
+import React, { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
+import { requestLiveSession } from "@/services/api/session"
 
-const MeetingProvider = dynamic(
-  () => import("@videosdk.live/react-sdk").then((mod) => mod.MeetingProvider),
-  { ssr: false }
-);
+const MeetingProvider = dynamic(() => import("@videosdk.live/react-sdk").then((mod) => mod.MeetingProvider), {
+  ssr: false,
+})
 
-const MeetingView = dynamic(
-  () => import("./meeting-view").then((mod) => mod.default),
-  { ssr: false }
-);
+const MeetingView = dynamic(() => import("./meeting-view").then((mod) => mod.default), { ssr: false })
 
 interface MeetingConfig {
-  meetingId: string;
-  enableAudio: boolean;
-  enableVideo: boolean;
-  token: string;
-  participantName?: string;
-  participantRole?: "Provider" | "Patient";
+  meetingId: string
+  enableAudio: boolean
+  enableVideo: boolean
+  token: string
+  participantName?: string
+  participantRole?: "Provider" | "Patient"
 }
 
 interface DeviceInfo {
-  deviceId: string;
-  label: string;
+  deviceId: string
+  label: string
 }
 
 // Device Selection Modal Component
 const DeviceSelectionModal: React.FC<{
-  onJoin: (
-    audioEnabled: boolean,
-    videoEnabled: boolean,
-    audioDeviceId?: string,
-    videoDeviceId?: string
-  ) => void;
-  initialAudioEnabled: boolean;
-  initialVideoEnabled: boolean;
+  onJoin: (audioEnabled: boolean, videoEnabled: boolean, audioDeviceId?: string, videoDeviceId?: string) => void
+  initialAudioEnabled: boolean
+  initialVideoEnabled: boolean
 }> = ({ onJoin, initialAudioEnabled, initialVideoEnabled }) => {
-  const [audioDevices, setAudioDevices] = useState<DeviceInfo[]>([]);
-  const [videoDevices, setVideoDevices] = useState<DeviceInfo[]>([]);
-  const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>("");
-  const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>("");
-  const [audioEnabled, setAudioEnabled] =
-    useState<boolean>(initialAudioEnabled);
-  const [videoEnabled, setVideoEnabled] =
-    useState<boolean>(initialVideoEnabled);
-  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
-  const videoPreviewRef = React.useRef<HTMLVideoElement>(null);
-  const deviceInitializedRef = React.useRef<boolean>(false);
+  const [audioDevices, setAudioDevices] = useState<DeviceInfo[]>([])
+  const [videoDevices, setVideoDevices] = useState<DeviceInfo[]>([])
+  const [selectedAudioDevice, setSelectedAudioDevice] = useState<string>("")
+  const [selectedVideoDevice, setSelectedVideoDevice] = useState<string>("")
+  const [audioEnabled, setAudioEnabled] = useState<boolean>(initialAudioEnabled)
+  const [videoEnabled, setVideoEnabled] = useState<boolean>(initialVideoEnabled)
+  const [videoStream, setVideoStream] = useState<MediaStream | null>(null)
+  const videoPreviewRef = React.useRef<HTMLVideoElement>(null)
+  const deviceInitializedRef = React.useRef<boolean>(false)
 
   useEffect(() => {
     const getDevices = async () => {
-      if (deviceInitializedRef.current) return;
-      deviceInitializedRef.current = true;
+      if (deviceInitializedRef.current) return
+      deviceInitializedRef.current = true
 
       try {
-        await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
 
         // Get all devices
-        const devices = await navigator.mediaDevices.enumerateDevices();
+        const devices = await navigator.mediaDevices.enumerateDevices()
 
         const audioInputs = devices
           .filter((device) => device.kind === "audioinput")
           .map((device) => ({
             deviceId: device.deviceId,
-            label:
-              device.label || `Microphone ${device.deviceId.slice(0, 5)}...`,
-          }));
+            label: device.label || `Microphone ${device.deviceId.slice(0, 5)}...`,
+          }))
 
         const videoInputs = devices
           .filter((device) => device.kind === "videoinput")
           .map((device) => ({
             deviceId: device.deviceId,
             label: device.label || `Camera ${device.deviceId.slice(0, 5)}...`,
-          }));
+          }))
 
-        setAudioDevices(audioInputs);
-        setVideoDevices(videoInputs);
+        setAudioDevices(audioInputs)
+        setVideoDevices(videoInputs)
 
         if (audioInputs.length > 0) {
-          setSelectedAudioDevice(audioInputs[0].deviceId);
+          setSelectedAudioDevice(audioInputs[0].deviceId)
         }
 
         if (videoInputs.length > 0) {
-          setSelectedVideoDevice(videoInputs[0].deviceId);
+          setSelectedVideoDevice(videoInputs[0].deviceId)
         }
       } catch (err) {
-        console.error("Error getting media devices:", err);
+        console.error("Error getting media devices:", err)
         // If permission denied, still allow the user to join without selecting devices
       }
-    };
+    }
 
-    getDevices();
+    getDevices()
 
     return () => {
       if (videoStream) {
-        videoStream.getTracks().forEach((track) => track.stop());
+        videoStream.getTracks().forEach((track) => track.stop())
       }
-    };
-  }, []);
+    }
+  }, [])
 
   useEffect(() => {
     const startVideoPreview = async () => {
       try {
         // Stop any existing tracks
         if (videoStream) {
-          videoStream.getTracks().forEach((track) => track.stop());
-          setVideoStream(null);
+          videoStream.getTracks().forEach((track) => track.stop())
+          setVideoStream(null)
         }
 
         if (videoEnabled && selectedVideoDevice && videoPreviewRef.current) {
           const stream = await navigator.mediaDevices.getUserMedia({
             video: { deviceId: { exact: selectedVideoDevice } },
-          });
+          })
 
-          videoPreviewRef.current.srcObject = stream;
-          setVideoStream(stream);
+          videoPreviewRef.current.srcObject = stream
+          setVideoStream(stream)
         }
       } catch (err) {
-        console.error("Error starting video preview:", err);
+        console.error("Error starting video preview:", err)
       }
-    };
+    }
 
-    startVideoPreview();
-  }, [selectedVideoDevice, videoEnabled]);
+    startVideoPreview()
+  }, [selectedVideoDevice, videoEnabled])
 
   const handleJoin = () => {
     // Stop the preview stream
     if (videoStream) {
-      videoStream.getTracks().forEach((track) => track.stop());
+      videoStream.getTracks().forEach((track) => track.stop())
     }
 
-    onJoin(audioEnabled, videoEnabled);
-  };
+    onJoin(audioEnabled, videoEnabled)
+  }
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
@@ -180,9 +168,7 @@ const DeviceSelectionModal: React.FC<{
                   {device.label}
                 </option>
               ))}
-              {audioDevices.length === 0 && (
-                <option value="">No microphones available</option>
-              )}
+              {audioDevices.length === 0 && <option value="">No microphones available</option>}
             </select>
           )}
         </div>
@@ -227,21 +213,13 @@ const DeviceSelectionModal: React.FC<{
                     {device.label}
                   </option>
                 ))}
-                {videoDevices.length === 0 && (
-                  <option value="">No cameras available</option>
-                )}
+                {videoDevices.length === 0 && <option value="">No cameras available</option>}
               </select>
 
               {/* Video Preview */}
               <div className="w-full aspect-video bg-gray-200 rounded overflow-hidden">
                 {videoEnabled ? (
-                  <video
-                    ref={videoPreviewRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="w-full h-full object-cover"
-                  />
+                  <video ref={videoPreviewRef} autoPlay playsInline muted className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <span className="text-gray-500">Camera off</span>
@@ -253,79 +231,81 @@ const DeviceSelectionModal: React.FC<{
         </div>
 
         <div className="flex justify-end">
-          <button
-            onClick={handleJoin}
-            className="px-4 py-2 bg-brand-accent-2 text-white rounded "
-          >
+          <button onClick={handleJoin} className="px-4 py-2 bg-brand-accent-2 text-white rounded ">
             Join Now
           </button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Component to fetch meeting details from backend
 const VideoSDKApp: React.FC = () => {
-  const searchParams = useSearchParams();
-  const user_id = searchParams.get("user_id");
-  const appointment_id = searchParams.get("appointment_id");
-  const [meetingConfig, setMeetingConfig] = useState<MeetingConfig | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showDeviceSelection, setShowDeviceSelection] =
-    useState<boolean>(false);
-  const [userAudioEnabled, setUserAudioEnabled] = useState<boolean>(false);
-  const [userVideoEnabled, setUserVideoEnabled] = useState<boolean>(false);
-  const [selectedAudioDeviceId, setSelectedAudioDeviceId] =
-    useState<string>("");
-  const [selectedVideoDeviceId, setSelectedVideoDeviceId] =
-    useState<string>("");
-  const [meetingJoined, setMeetingJoined] = useState<boolean>(false);
-  const [mediaInitialized, setMediaInitialized] = useState<boolean>(false);
-  const apiCallMadeRef = React.useRef<boolean>(false);
+  const searchParams = useSearchParams()
+  const user_id = searchParams.get("user_id")
+  const appointment_id = searchParams.get("appointment_id")
+  const [meetingConfig, setMeetingConfig] = useState<MeetingConfig | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const [showDeviceSelection, setShowDeviceSelection] = useState<boolean>(false)
+  const [userAudioEnabled, setUserAudioEnabled] = useState<boolean>(false)
+  const [userVideoEnabled, setUserVideoEnabled] = useState<boolean>(false)
+  const [selectedAudioDeviceId, setSelectedAudioDeviceId] = useState<string>("")
+  const [selectedVideoDeviceId, setSelectedVideoDeviceId] = useState<string>("")
+  const [meetingJoined, setMeetingJoined] = useState<boolean>(false)
+  const [mediaInitialized, setMediaInitialized] = useState<boolean>(false)
+  const apiCallMadeRef = React.useRef<boolean>(false)
 
   useEffect(() => {
     const fetchMeetingDetails = async () => {
       // Prevent multiple API calls
-      if (apiCallMadeRef.current) return;
-      apiCallMadeRef.current = true;
+      if (apiCallMadeRef.current) return
+      apiCallMadeRef.current = true
 
       try {
-        setIsLoading(true);
+        setIsLoading(true)
         const response = await requestLiveSession({
           appointment_id: appointment_id as string,
           user_id: user_id as string,
-        });
-        const data = response.data;
+        })
+        const data = response.data
 
-        console.log("Meeting details:", data);
+        console.log("Meeting details:", data)
+
+
+        const displayName = data?.is_host ? data?.provider_name : data?.member_name
+        console.log("Display name:", displayName)
 
         setMeetingConfig({
           meetingId: data.meeting_id,
           enableAudio: userAudioEnabled,
           enableVideo: userVideoEnabled,
           token: data?.token,
-          participantName: data?.is_host === true
-            ? data?.provider_name
-            : data?.member_name,
+          participantName: displayName,
           participantRole: data?.is_host ? "Provider" : "Patient",
-        });
-        setIsLoading(false);
-        setShowDeviceSelection(true);
+        })
+
+        console.log("Setting participant name to:", displayName)
+
+        // Store the name in localStorage for persistence
+        if (displayName) {
+          window.localStorage.setItem("videosdk-participant-name", displayName)
+        }
+
+        setIsLoading(false)
+        setShowDeviceSelection(true)
       } catch (err) {
-        console.error("Error fetching meeting details:", err);
-        setError("Failed to fetch meeting details. Please try again.");
-        setIsLoading(false);
+        console.error("Error fetching meeting details:", err)
+        setError("Failed to fetch meeting details. Please try again.")
+        setIsLoading(false)
       }
-    };
+    }
 
     if (appointment_id && user_id) {
-      fetchMeetingDetails();
+      fetchMeetingDetails()
     }
-  }, [appointment_id, user_id]);
+  }, [appointment_id, user_id])
 
   useEffect(() => {
     const initializeMediaDevices = async () => {
@@ -333,48 +313,30 @@ const VideoSDKApp: React.FC = () => {
         try {
           if (selectedVideoDeviceId && userVideoEnabled) {
             try {
-              console.log("Initializing video device:", selectedVideoDeviceId);
+              console.log("Initializing video device:", selectedVideoDeviceId)
               const constraints = {
-                video: selectedVideoDeviceId
-                  ? { deviceId: { exact: selectedVideoDeviceId } }
-                  : true,
-              };
-
-              const videoStream = await navigator.mediaDevices.getUserMedia(
-                constraints
-              );
-
-              if (videoStream.getVideoTracks().length === 0) {
-                console.warn(
-                  "No video tracks in stream, falling back to default camera"
-                );
-                const defaultStream = await navigator.mediaDevices.getUserMedia(
-                  { video: true }
-                );
-                defaultStream.getTracks().forEach((track) => track.stop());
-              } else {
-                console.log(
-                  "Successfully initialized video device with tracks:",
-                  videoStream.getVideoTracks().length
-                );
+                video: selectedVideoDeviceId ? { deviceId: { exact: selectedVideoDeviceId } } : true,
               }
 
-              videoStream.getTracks().forEach((track) => track.stop());
+              const videoStream = await navigator.mediaDevices.getUserMedia(constraints)
+
+              if (videoStream.getVideoTracks().length === 0) {
+                console.warn("No video tracks in stream, falling back to default camera")
+                const defaultStream = await navigator.mediaDevices.getUserMedia({ video: true })
+                defaultStream.getTracks().forEach((track) => track.stop())
+              } else {
+                console.log("Successfully initialized video device with tracks:", videoStream.getVideoTracks().length)
+              }
+
+              videoStream.getTracks().forEach((track) => track.stop())
             } catch (err) {
-              console.warn(
-                "Error initializing specific video device, falling back to default:",
-                err
-              );
+              console.warn("Error initializing specific video device, falling back to default:", err)
               try {
-                const fallbackStream =
-                  await navigator.mediaDevices.getUserMedia({ video: true });
-                fallbackStream.getTracks().forEach((track) => track.stop());
+                const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true })
+                fallbackStream.getTracks().forEach((track) => track.stop())
               } catch (fallbackErr) {
-                console.error(
-                  "Failed to initialize any video device:",
-                  fallbackErr
-                );
-                setUserVideoEnabled(false);
+                console.error("Failed to initialize any video device:", fallbackErr)
+                setUserVideoEnabled(false)
               }
             }
           }
@@ -382,39 +344,32 @@ const VideoSDKApp: React.FC = () => {
           // Similar improvement for audio
           if (selectedAudioDeviceId && userAudioEnabled) {
             try {
-              console.log("Initializing audio device:", selectedAudioDeviceId);
+              console.log("Initializing audio device:", selectedAudioDeviceId)
               const audioStream = await navigator.mediaDevices.getUserMedia({
                 audio: { deviceId: { exact: selectedAudioDeviceId } },
-              });
-              audioStream.getTracks().forEach((track) => track.stop());
+              })
+              audioStream.getTracks().forEach((track) => track.stop())
             } catch (err) {
-              console.warn(
-                "Error initializing specific audio device, falling back to default:",
-                err
-              );
+              console.warn("Error initializing specific audio device, falling back to default:", err)
               try {
-                const fallbackStream =
-                  await navigator.mediaDevices.getUserMedia({ audio: true });
-                fallbackStream.getTracks().forEach((track) => track.stop());
+                const fallbackStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+                fallbackStream.getTracks().forEach((track) => track.stop())
               } catch (fallbackErr) {
-                console.error(
-                  "Failed to initialize any audio device:",
-                  fallbackErr
-                );
-                setUserAudioEnabled(false);
+                console.error("Failed to initialize any audio device:", fallbackErr)
+                setUserAudioEnabled(false)
               }
             }
           }
 
-          setMediaInitialized(true);
+          setMediaInitialized(true)
         } catch (err) {
-          console.error("Error during media initialization:", err);
-          setMediaInitialized(true);
+          console.error("Error during media initialization:", err)
+          setMediaInitialized(true)
         }
       }
-    };
+    }
 
-    initializeMediaDevices();
+    initializeMediaDevices()
   }, [
     meetingJoined,
     meetingConfig,
@@ -423,21 +378,21 @@ const VideoSDKApp: React.FC = () => {
     userAudioEnabled,
     userVideoEnabled,
     mediaInitialized,
-  ]);
+  ])
 
   const handleJoinWithDevices = (
     audioEnabled: boolean,
     videoEnabled: boolean,
     audioDeviceId?: string,
-    videoDeviceId?: string
+    videoDeviceId?: string,
   ) => {
-    if (audioDeviceId) setSelectedAudioDeviceId(audioDeviceId);
-    if (videoDeviceId) setSelectedVideoDeviceId(videoDeviceId);
-    setUserAudioEnabled(audioEnabled);
-    setUserVideoEnabled(videoEnabled);
-    setShowDeviceSelection(false);
-    setMeetingJoined(true);
-  };
+    if (audioDeviceId) setSelectedAudioDeviceId(audioDeviceId)
+    if (videoDeviceId) setSelectedVideoDeviceId(videoDeviceId)
+    setUserAudioEnabled(audioEnabled)
+    setUserVideoEnabled(videoEnabled)
+    setShowDeviceSelection(false)
+    setMeetingJoined(true)
+  }
 
   if (isLoading) {
     return (
@@ -447,7 +402,7 @@ const VideoSDKApp: React.FC = () => {
           <p className="text-lg text-gray-700">Setting up your meeting...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -481,19 +436,16 @@ const VideoSDKApp: React.FC = () => {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   if (!meetingConfig) {
     return (
       <div className="flex items-center justify-center h-full min-h-[60vh] w-full">
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
-          <h2 className="text-xl font-semibold mb-2">
-            No Meeting Configuration
-          </h2>
+          <h2 className="text-xl font-semibold mb-2">No Meeting Configuration</h2>
           <p className="text-gray-700 mb-4">
-            Unable to retrieve meeting details. Please check your connection and
-            try again.
+            Unable to retrieve meeting details. Please check your connection and try again.
           </p>
           <button
             onClick={() => window.location.reload()}
@@ -503,7 +455,7 @@ const VideoSDKApp: React.FC = () => {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   if (showDeviceSelection) {
@@ -513,17 +465,19 @@ const VideoSDKApp: React.FC = () => {
         initialAudioEnabled={meetingConfig.enableAudio}
         initialVideoEnabled={meetingConfig.enableVideo}
       />
-    );
+    )
   }
   // VideoSDK configuration
-  const { meetingId, token, participantRole } = meetingConfig;
-  const participantName = meetingConfig.participantName || "Guest";
-  console.log(meetingConfig.participantName, "Participant Name");
-  const isProvider = participantRole === "Provider";
+  const { meetingId, token, participantRole } = meetingConfig
+  const participantName = meetingConfig.participantName || "Guest"
+  console.log(meetingConfig.participantName, "Participant Name")
+  const isProvider = participantRole === "Provider"
+
 
   const configOptions = {
     meetingId,
     name: participantName,
+    displayName: participantName, 
     mode: "SEND_AND_RECV",
     token,
     layout: "GRID",
@@ -533,7 +487,7 @@ const VideoSDKApp: React.FC = () => {
     ...(selectedAudioDeviceId && { micId: selectedAudioDeviceId }),
     ...(selectedVideoDeviceId && { webcamId: selectedVideoDeviceId }),
     debugMode: true,
-  };
+  }
 
   return (
     <div className="flex flex-col h-full ">
@@ -543,16 +497,13 @@ const VideoSDKApp: React.FC = () => {
           token={token}
           reinitialiseMeetingOnConfigChange={true}
           joinWithoutUserInteraction={true}
+          data-participant-name={participantName} 
         >
-          <MeetingView
-            meetingId={meetingId}
-            participantName={participantName}
-            isProvider={isProvider}
-          />
+          <MeetingView meetingId={meetingId} participantName={participantName} isProvider={isProvider} />
         </MeetingProvider>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default VideoSDKApp;
+export default VideoSDKApp
