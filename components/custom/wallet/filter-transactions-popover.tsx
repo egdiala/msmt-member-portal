@@ -52,8 +52,8 @@ const FilterContent = ({
       <div className="grid gap-y-5 w-full">
         <h3 className="font-bold text-xl text-brand-1">Filter</h3>
 
-        <div className="grid gap-8 content-start">
-          <div className="grid gap-y-1 content-start">
+        <div className="grid grid-cols-1 md:grid-cols-3  gap-8 content-start">
+          <div className="grid gap-y-2 content-start">
             <h5 className="uppercase text-xs text-brand-2">Date</h5>
 
             <SelectCmp
@@ -69,7 +69,7 @@ const FilterContent = ({
             />
 
             {selected === "Custom" && (
-              <div className="grid gap-y-1">
+              <div className="gap-y-2 grid md:hidden">
                 <CalendarInput
                   value={selected?.value?.start}
                   onChange={(e) => {
@@ -128,6 +128,33 @@ const FilterContent = ({
             />
           </div>
         </div>
+
+        {selected === "Custom" && (
+          <div className="gap-5 hidden md:flex w-full justify-between">
+            <div className="w-full">
+              <CalendarInput
+                value={selected?.value?.start}
+                onChange={(e) => {
+                  setCustomDate({ start: e, end: selected?.value?.end });
+                }}
+                label="From"
+              />
+            </div>
+
+            <div className="w-full">
+              <CalendarInput
+                value={selected?.value?.end}
+                onChange={(e) => {
+                  setCustomDate({
+                    start: selected?.value?.start,
+                    end: e,
+                  });
+                }}
+                label="To"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="md:pt-8 flex justify-end items-center gap-x-4">
