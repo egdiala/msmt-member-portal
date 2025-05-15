@@ -142,7 +142,7 @@ export const ProvidersTable = () => {
     setFilterValues[filterToRemove]("");
   };
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 14;
   const [page, setPage] = useState(1);
 
   const searchParams = useSearchParams();
