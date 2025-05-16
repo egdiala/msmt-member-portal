@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
 import { Loader } from "@/components/shared/loader";
 import { CancelAppointmentDialog } from "./appointments/cancel-appointments-dialog";
