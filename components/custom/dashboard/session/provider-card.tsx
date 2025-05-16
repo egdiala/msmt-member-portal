@@ -31,8 +31,8 @@ export function ProviderCard({ session }: ProviderCardProps) {
             />
           </div>
           <div>
-            <h3 className="font-medium">{session.name}</h3>
-            <p className="text-xs text-gray-500">{session.role}</p>
+            <h3 className="font-medium capitalize">{session.name}</h3>
+            <p className="text-xs text-gray-500 capitalize">{session.role}</p>
           </div>
         </div>
         <Separator />
