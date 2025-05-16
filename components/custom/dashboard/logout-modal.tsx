@@ -43,8 +43,8 @@ export const LogoutModal = ({ handleClose, isOpen }: ILogoutModal) => {
 
       <div className="grid gap-y-6">
         <p className="text-text-1 text-sm">
-          This action would log you out. you would need to login again to access
-          this MSMT
+          This action will log you out. You’ll need to log in again to access
+          Account.
         </p>
 
         <div className="grid grid-cols-2 gap-x-4">

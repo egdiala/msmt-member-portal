@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
 import { Loader } from "@/components/shared/loader";
 import { CancelAppointmentDialog } from "./appointments/cancel-appointments-dialog";
@@ -21,6 +22,7 @@ import {
   useCancelAppointment,
   useCancelAppointmentWithoutNotice,
 } from "@/services/hooks/mutations/use-appointment";
+import { useUpdateAppointment } from "@/services/hooks/mutations/use-session";
 import { formatSessionDate } from "./appointments/details/appointment-details";
 import { formatApptTimeShort, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -30,6 +32,7 @@ import { RenderIf } from "@/components/shared";
 export const UpcomingAppointmentCard = () => {
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const { data, isPending } = useGetAppointments({ status: "1" });
+  const router = useRouter();
   const { data: live } = useGetAppointments({ status: "2" });
   const { mutate, isPending: isCancelling } = useCancelAppointment(() => {
     setOpenCancelModal(true);
@@ -38,10 +41,13 @@ export const UpcomingAppointmentCard = () => {
     useCancelAppointmentWithoutNotice(() => {
       setOpenCancelModal(false);
     });
-  const mostRecent = !!live?.length ? live?.[0] : data?.[0];
+  useUpdateAppointment(() =>
+    router.push("/session")
+  );
+  const mostRecent = !!live?.length ? data?.[0] : live?.[0];
 
   const buttonCopy = {
-    idle: "Cancel",
+    idle: "Cancel Appointment",
     loading: <Loader className="spinner size-4" />,
   };
 
@@ -140,7 +146,7 @@ export const UpcomingAppointmentCard = () => {
               </div>
 
               {/* Placeholder: Show when session is live */}
-              {false && (
+              {true && (
                 <div className="bg-blue-400 flex justify-center items-center gap-x-2 py-2 rounded-lg">
                   <Image
                     src="/starting-stream.gif"
@@ -151,9 +157,21 @@ export const UpcomingAppointmentCard = () => {
                   />
                   <p className="font-medium text-xs text-button-primary">
                     Provider has started the Session.
-                    <Link href="/session" className="underline">
-                      Join now
-                    </Link>
+                    <Button
+                      // onClick={() =>
+                      //   updateAppointment({
+                      //     appointment_id: mostRecent?.appointment_id as string,
+                      //   })
+                      // }
+                      className="inline-block"
+                    >
+                      <Link
+                        href={`/session?user_id=${mostRecent?.provider_data?.user_id}&provider_id=${mostRecent?.provider_id}&appointment_id=${mostRecent?.appointment_id}`}
+                        className="underline"
+                      >
+                        Join now
+                      </Link>
+                    </Button>
                   </p>
                 </div>
               )}
@@ -182,7 +200,7 @@ export const UpcomingAppointmentCard = () => {
                     })
                   }
                   variant="outline"
-                  className="py-2 px-4 rounded-full w-20"
+                  className="py-2 px-4 rounded-full w-40"
                 >
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span

@@ -1,30 +1,31 @@
 "use client";
 
 import { RenderIf } from "@/components/shared";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { Checkbox } from "@/components/ui";
+// import { cn } from "@/lib/utils";
+// import { useState } from "react";
+// import { Checkbox } from "@/components/ui";
 import { AppointmentStepper, ProvidersTable } from "../providers";
 import { SetScheduleStep } from "../providers";
 import { ThirdPartyPaymentGate } from "../providers";
 import { FillAppointmentQuestionnaireForm } from "../providers";
 import { useStepper } from "@/contexts/StepperContext";
-import { IconCreditCard, IconUsers, IconWallet } from "@/components/icons";
-export const BookingStepper = () => {
+// import { IconCreditCard, IconUsers, IconWallet } from "@/components/icons";
+
+export const BookingStepper = ({ isPublic }: { isPublic?: boolean }) => {
   const { step, setStep } = useStepper();
-  const paymentMethods = [
-    { id: 1, name: "Family", icon: IconUsers },
-    { id: 2, name: "Wallet", icon: IconWallet },
-    { id: 3, name: "Card", icon: IconCreditCard },
-  ];
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState([
-    "Family",
-  ]);
+  // const paymentMethods = [
+  //   { id: 1, name: "Family", icon: IconUsers },
+  //   { id: 2, name: "Wallet", icon: IconWallet },
+  //   { id: 3, name: "Card", icon: IconCreditCard },
+  // ];
+  // const [selectedPaymentMethod, setSelectedPaymentMethod] = useState([
+  //   "Family",
+  // ]);
 
   return (
     <div className="mx-auto w-full h-full  grid  gap-4">
       <div className="hidden md:flex flex-col justify-center items-center gap-4">
-        <RenderIf condition={step === 2}>
+        {/* <RenderIf condition={step === 2}>
           <div className="flex items-center gap-x-2">
             {paymentMethods.map((method) => (
               <div
@@ -64,7 +65,7 @@ export const BookingStepper = () => {
               </div>
             ))}
           </div>
-        </RenderIf>
+        </RenderIf> */}
         <RenderIf condition={step === 1 || step === 2 || step === 3}>
           <AppointmentStepper
             steps={[
@@ -94,7 +95,7 @@ export const BookingStepper = () => {
 
       <RenderIf condition={step === 2}>
         <div className="mx-auto w-full max-w-2xl">
-          <SetScheduleStep setStep={setStep} />
+          <SetScheduleStep isPublic={isPublic} setStep={setStep} />
         </div>
       </RenderIf>
 

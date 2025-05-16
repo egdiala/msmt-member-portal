@@ -1,21 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import AudioView from "@/components/custom/dashboard/session/conferencing/ui/audio-view";
-import VideoView from "@/components/custom/dashboard/session/conferencing/ui/video-view";
+import VideoSDKApp from "@/components/custom/dashboard/session/meeting/video-sdk";
+import { Suspense } from "react";
 
 export default function AudioSession() {
-  const isMobile = useIsMobile();
-  const [view, ] = useState<"audio" | "video">("audio");
-
   return (
-    <div>
-      {view === "audio" ? (
-        <AudioView isMobile={isMobile} />
-      ) : (
-        <VideoView isMobile={isMobile} />
-      )}
+    <div className="flex flex-col w-full h-screen bg-[#F3F5F9] px-10 py-4">
+      <Suspense fallback={<div>Loading...</div>}>
+        <VideoSDKApp />
+      </Suspense>
     </div>
   );
 }
