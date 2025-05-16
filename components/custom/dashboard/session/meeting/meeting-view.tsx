@@ -7,7 +7,6 @@ import { ParticipantView } from "./participant-view";
 import { RenderIf } from "@/components/shared";
 import ToolBar from "./tool-bar";
 import { RatingDialog } from "../../appointments/rating-form";
-
 interface MeetingViewProps {
   isProvider?: boolean;
   meetingId: string;
@@ -16,15 +15,18 @@ interface MeetingViewProps {
 
 const MeetingView: React.FC<MeetingViewProps> = ({
   meetingId,
+  isProvider,
   onMeetingLeft,
 }) => {
   const searchParams = useSearchParams();
   const user_id = searchParams.get("user_id");
+  const [open, setOpen] = useState(false);
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
   const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const [isLeaving, setIsLeaving] = useState<boolean>(false);
+  const [userConfirmedLeave, setUserConfirmedLeave] = useState<boolean>(false);
   const meetingInitializedRef = useRef(false);
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMountedRef = useRef(true);
@@ -93,14 +95,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (isMeetingJoined && !isLeaving) {
-        try {
-          leave();
-        } catch (error) {
-          console.error("Error leaving meeting during unload:", error);
-        }
-      }
-
       event.preventDefault();
       event.returnValue = "";
       return "";
@@ -110,8 +104,34 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
+
+      if (isMeetingJoined && !isLeaving && userConfirmedLeave) {
+        try {
+          leave();
+        } catch (error) {
+          console.error("Error leaving meeting during unload:", error);
+        }
+      }
     };
-  }, [isMeetingJoined, isLeaving, leave]);
+  }, [isMeetingJoined, isLeaving, leave, userConfirmedLeave]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (
+        document.visibilityState === "hidden" &&
+        isMeetingJoined &&
+        !isLeaving
+      ) {
+        setUserConfirmedLeave(true);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isMeetingJoined, isLeaving]);
 
   useEffect(() => {
     return () => {
@@ -151,8 +171,14 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   };
 
   const handleEndCall = async () => {
+    if (!isProvider) {
+      setOpen(true);
+      return;
+    }
+
     try {
       setIsLeaving(true);
+      setUserConfirmedLeave(true);
 
       if (isMeetingJoined) {
         await leave();
@@ -307,11 +333,13 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           handleToggleVideo={handleToggleVideo}
         />
       </div>
-      {/* <RatingDialog
+      <RatingDialog
         open={open}
         onOpenChange={setOpen}
-        personName={data?.provider_data?.name}
-      /> */}
+        onSuccess={() => {
+          handleEndCall();
+        }}
+      />
     </div>
   );
 };

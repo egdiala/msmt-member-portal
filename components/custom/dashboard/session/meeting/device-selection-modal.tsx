@@ -65,7 +65,6 @@ const DeviceSelectionModal: React.FC<{
             video: true,
           });
           videoPermissionGranted = true;
-          // Keep stream active until we're done with device enumeration
           setTimeout(() => {
             videoStream.getTracks().forEach((track) => track.stop());
           }, 500);
@@ -129,7 +128,7 @@ const DeviceSelectionModal: React.FC<{
         videoStream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, []);
+  }, [videoStream]);
 
   const initializeDevices = () => {
     deviceInitializedRef.current = false;
@@ -178,7 +177,7 @@ const DeviceSelectionModal: React.FC<{
     if (deviceLoadingComplete && videoEnabled && selectedVideoDevice) {
       startVideoPreview();
     }
-  }, [selectedVideoDevice, videoEnabled, deviceLoadingComplete]);
+  }, [selectedVideoDevice, videoEnabled, deviceLoadingComplete, videoStream]);
 
   const handleJoin = () => {
     // Stop the preview stream
@@ -194,10 +193,10 @@ const DeviceSelectionModal: React.FC<{
     );
   };
 
-  const requestPermissions = async () => {
-    deviceInitializedRef.current = false;
-    await getDevices();
-  };
+//   const requestPermissions = async () => {
+//     deviceInitializedRef.current = false;
+//     await getDevices();
+//   };
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Star } from "lucide-react";
 import { Loader } from "@/components/shared/loader";
 import { RadioGroup, RadioGroupItem } from "@/components/ui";
@@ -38,19 +38,24 @@ type FormValues = z.infer<typeof formSchema>;
 interface RatingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
   personName?: string;
 }
 
 export function RatingDialog({
   open,
   onOpenChange,
-  personName = "Jide",
+  onSuccess,
+  personName,
 }: RatingDialogProps) {
   const { slug } = useParams();
+  const searchParams = useSearchParams();
+  const appoinmentId = searchParams.get("appointment_id");
   const [rating, setRating] = useState<number>(0);
-  const { mutate, isPending } = useSubmitSessionRating(() =>
-    onOpenChange(false)
-  );
+  const { mutate, isPending } = useSubmitSessionRating(() => {
+    onOpenChange(false);
+    onSuccess?.();
+  });
 
   const buttonCopy = {
     idle: " Submit Review",
@@ -65,7 +70,6 @@ export function RatingDialog({
     resolver: zodResolver(formSchema),
     defaultValues: {
       provider_on_time: "",
-
       starRating: 3,
       feedback: "",
     },
@@ -76,7 +80,7 @@ export function RatingDialog({
       provider_on_time: data.provider_on_time,
       comment: data.feedback!,
       rating: `${data?.starRating.toString()} - 5`,
-      appointment_id: slug as string ,
+      appointment_id: (slug as string) ?? appoinmentId,
     });
   }
   const handleStarClick = (value: number) => {
@@ -152,7 +156,9 @@ export function RatingDialog({
               render={() => (
                 <FormItem className="space-y-3">
                   <div>
-                    <h3 className="text-base font-medium">Rate {personName}</h3>
+                    <h3 className="text-base font-medium">
+                      Rate this provider {!!personName ? personName : ""}
+                    </h3>
                     <FormControl>
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (

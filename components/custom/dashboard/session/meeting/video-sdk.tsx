@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import DeviceSelectionModal from "./device-selection-modal";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import dynamic from "next/dynamic";
 import { requestLiveSession } from "@/services/api/session";
 import { ErrorModal } from "./error-modal";
@@ -108,7 +108,7 @@ const VideoSDKApp: React.FC = () => {
     if (appointment_id && user_id) {
       fetchMeetingDetails();
     }
-  }, [appointment_id, user_id]);
+  }, [appointment_id, user_id, userAudioEnabled, userVideoEnabled]);
 
   useEffect(() => {
     const initializeMediaDevices = async () => {

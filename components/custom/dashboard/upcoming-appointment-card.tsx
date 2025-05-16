@@ -31,9 +31,8 @@ import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 export const UpcomingAppointmentCard = () => {
   const [openCancelModal, setOpenCancelModal] = useState(false);
-  const {data: account} = useGetProfile()
-   const { data, isPending } = useGetAppointments({ status: "1" });
-  const router = useRouter();
+  const { data: account } = useGetProfile();
+  const { data, isPending } = useGetAppointments({ status: "1" });
   const { data: live } = useGetAppointments({ status: "2" });
   const { mutate, isPending: isCancelling } = useCancelAppointment(() => {
     setOpenCancelModal(true);
@@ -42,12 +41,9 @@ export const UpcomingAppointmentCard = () => {
     useCancelAppointmentWithoutNotice(() => {
       setOpenCancelModal(false);
     });
-  // const { mutate: updateAppointment } = useUpdateAppointment(() =>
-  //   router.push("/session")
-  // );
 
   console.log("live", data, account?.user_id);
-  const mostRecent = !live?.length ? data?.[0] : live?.[0];
+  const mostRecent = !!live?.length ? live?.[0] : data?.[0];
 
   const buttonCopy = {
     idle: "Cancel",
@@ -148,8 +144,7 @@ export const UpcomingAppointmentCard = () => {
                 </div>
               </div>
 
-              {/* Placeholder: Show when session is live */}
-              {true && (
+              {!!live?.length && (
                 <div className="bg-blue-400 flex justify-center items-center gap-x-2 py-2 rounded-lg">
                   <Image
                     src="/starting-stream.gif"
@@ -160,17 +155,10 @@ export const UpcomingAppointmentCard = () => {
                   />
                   <p className="font-medium text-xs text-button-primary">
                     Provider has started the Session.
-                    <Button
-                      // onClick={() =>
-                      //   updateAppointment({
-                      //     appointment_id: mostRecent?.appointment_id as string,
-                      //   })
-                      // }
-                      className="inline-block"
-                    >
+                    <Button variant="link" asChild className="inline-block text-brand-accent-2">
                       <Link
                         href={`/session?user_id=${account?.user_id}&provider_id=${mostRecent?.provider_id}&appointment_id=${mostRecent?.appointment_id}`}
-                        className="underline"
+                        className="underline text-brand-accent-2"
                       >
                         Join now
                       </Link>
@@ -218,11 +206,6 @@ export const UpcomingAppointmentCard = () => {
                   </AnimatePresence>
                 </Button>
               </motion.div>
-            </RenderIf>
-            <RenderIf condition={!!live?.length}>
-              <Button asChild className="py-2 px-4">
-                <Link href="/session">Join Session</Link>
-              </Button>
             </RenderIf>
 
             <CancelAppointmentDialog

@@ -5,6 +5,24 @@ import { useParticipant } from "@videosdk.live/react-sdk";
 import { IconMic, IconMicOff } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
+interface Stream {
+  track: MediaStreamTrack;
+}
+
+interface ParticipantData {
+  displayName: string;
+  webcamStream: Stream | null;
+  micStream: Stream | null;
+  webcamOn: boolean;
+  micOn: boolean;
+  isLocal: boolean;
+  metaData?: {
+    name?: string;
+    avatar?: string;
+    [key: string]: any;
+  };
+}
+
 const ParticipantView = ({
   participantId,
   large = false,
@@ -22,23 +40,24 @@ const ParticipantView = ({
     displayName,
     isLocal,
     metaData,
-  } = useParticipant(participantId);
+  } = useParticipant(participantId) as unknown as ParticipantData;
 
   const name = isLocal ? metaData?.name || displayName || "You" : displayName;
 
   const role = isLocal ? "You" : name;
-
   useEffect(() => {
-    if (audioRef.current) {
+    const audioElement = audioRef.current;
+
+    if (audioElement) {
       if (micStream && micOn) {
         try {
           const mediaStream = new MediaStream();
 
           if (micStream.track instanceof MediaStreamTrack) {
             mediaStream.addTrack(micStream.track);
-            audioRef.current.srcObject = mediaStream;
+            audioElement.srcObject = mediaStream;
 
-            audioRef.current.play().catch((error) => {
+            audioElement.play().catch((error) => {
               if (error.name !== "AbortError") {
                 console.error("Error playing audio:", error);
               }
@@ -48,35 +67,36 @@ const ParticipantView = ({
           console.error("Error setting up audio stream:", error);
         }
       } else {
-        if (audioRef.current.srcObject) {
-          const mediaStream = audioRef.current.srcObject as MediaStream;
+        if (audioElement.srcObject) {
+          const mediaStream = audioElement.srcObject as MediaStream;
           mediaStream.getTracks().forEach((track) => track.stop());
-          audioRef.current.srcObject = null;
+          audioElement.srcObject = null;
         }
       }
     }
 
-
     return () => {
-      if (audioRef.current && audioRef.current.srcObject) {
-        const mediaStream = audioRef.current.srcObject as MediaStream;
+      if (audioElement && audioElement.srcObject) {
+        const mediaStream = audioElement.srcObject as MediaStream;
         mediaStream.getTracks().forEach((track) => track.stop());
-        audioRef.current.srcObject = null;
+        audioElement.srcObject = null;
       }
     };
   }, [micStream, micOn, participantId]);
 
   useEffect(() => {
-    if (videoRef.current) {
+    const videoElement = videoRef.current;
+
+    if (videoElement) {
       if (webcamStream && webcamOn) {
         try {
           const mediaStream = new MediaStream();
 
           if (webcamStream.track instanceof MediaStreamTrack) {
             mediaStream.addTrack(webcamStream.track);
-            videoRef.current.srcObject = mediaStream;
+            videoElement.srcObject = mediaStream;
 
-            videoRef.current.play().catch((error) => {
+            videoElement.play().catch((error) => {
               if (error.name !== "AbortError") {
                 console.error("Error playing video:", error);
               }
@@ -86,20 +106,19 @@ const ParticipantView = ({
           console.error("Error setting up video stream:", error);
         }
       } else {
- 
-        if (videoRef.current.srcObject) {
-          const mediaStream = videoRef.current.srcObject as MediaStream;
+        if (videoElement.srcObject) {
+          const mediaStream = videoElement.srcObject as MediaStream;
           mediaStream.getTracks().forEach((track) => track.stop());
-          videoRef.current.srcObject = null;
+          videoElement.srcObject = null;
         }
       }
     }
 
     return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const mediaStream = videoRef.current.srcObject as MediaStream;
+      if (videoElement && videoElement.srcObject) {
+        const mediaStream = videoElement.srcObject as MediaStream;
         mediaStream.getTracks().forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
+        videoElement.srcObject = null;
       }
     };
   }, [webcamStream, webcamOn, participantId]);
@@ -130,7 +149,13 @@ const ParticipantView = ({
         </div>
       ) : (
         <div className="flex items-center justify-center w-full h-full bg-blue-400 text-white">
-          <div className={cn(audioRef && micOn && "p-2  rounded-2xl overflow-hidden ring-4 ring-brand-accent-2 ring-opacity-60")}>
+          <div
+            className={cn(
+              audioRef &&
+                micOn &&
+                "p-2  rounded-2xl overflow-hidden ring-4 ring-brand-accent-2 ring-opacity-60"
+            )}
+          >
             <div className="h-52 w-52 rounded-2xl relative">
               <Image
                 src={metaData?.avatar || "/assets/user.png"}
