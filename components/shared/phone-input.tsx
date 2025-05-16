@@ -68,24 +68,43 @@ const PhoneNumberInput = ({
   onBlur,
   showPlaceholder,
   placeholder,
-}: PhoneNumberInputProps) => (
-  <div className="flex-1 relative flex items-center">
-    {showPlaceholder && (
-      <div className="absolute inset-0 flex items-center pointer-events-none">
-        <span className="text-brand-3 text-sm">{placeholder}</span>
-      </div>
-    )}
-    <input
-      id={id}
-      type="tel"
-      className="w-full bg-transparent outline-none text-brand-2 text-sm placeholder:text-brand-3 py-2"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onFocus={onFocus}
-      onBlur={onBlur}
-    />
-  </div>
-);
+}: PhoneNumberInputProps) => {
+  // Handler to prevent leading zeros
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+
+    if (newValue === "0") {
+      return;
+    }
+
+    if (newValue.startsWith("0")) {
+      const sanitizedValue = newValue.replace(/^0+/, "");
+      onChange(sanitizedValue);
+      return;
+    }
+
+    onChange(newValue);
+  };
+
+  return (
+    <div className="flex-1 relative flex items-center">
+      {showPlaceholder && (
+        <div className="absolute inset-0 flex items-center pointer-events-none">
+          <span className="text-brand-3 text-sm">{placeholder}</span>
+        </div>
+      )}
+      <input
+        id={id}
+        type="tel"
+        className="w-full bg-transparent outline-none text-brand-2 text-sm placeholder:text-brand-3 py-2"
+        value={value}
+        onChange={handleInputChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+      />
+    </div>
+  );
+};
 
 type CountrySelectProps = {
   disabled?: boolean;
