@@ -152,18 +152,17 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
   const handleEndCall = async () => {
     try {
+      setIsLeaving(true);
+
       if (isMeetingJoined) {
-        await leaveMeetingSafely();
+        await leave();
       }
 
-      if (componentMountedRef.current) {
-        redirectTimeoutRef.current = setTimeout(() => {
-          router.push("/home");
-        }, 300);
-      }
+      router.push("/");
     } catch (error) {
       console.error("Error ending call:", error);
-      router.push("/home");
+
+      router.push("/");
     }
   };
 
@@ -215,7 +214,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                   {isAloneInMeeting ? (
                     localParticipant && (
                       <ParticipantView
-                        participantId={localParticipant.id}
+                        participantId={localParticipant?.id}
                         large={true}
                       />
                     )
@@ -230,8 +229,8 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                     <div className="flex flex-col p-2 gap-2 absolute top-2 right-2">
                       <div className="h-32 w-40 border-2 border-white rounded-lg overflow-hidden">
                         <ParticipantView
-                          key={localParticipant.id}
-                          participantId={localParticipant.id}
+                          key={localParticipant?.id}
+                          participantId={localParticipant?.id}
                           large={false}
                         />
                       </div>
@@ -242,11 +241,10 @@ const MeetingView: React.FC<MeetingViewProps> = ({
             ) : (
               <div className="h-full flex flex-col">
                 <div className="flex-1 relative">
-              
                   {isAloneInMeeting ? (
                     localParticipant && (
                       <ParticipantView
-                        participantId={localParticipant.id}
+                        participantId={localParticipant?.id}
                         large={true}
                       />
                     )
@@ -261,8 +259,8 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                     <div className="h-48 flex w-52 absolute top-2 right-2">
                       <div className="h-full w-full border-2 rounded-lg overflow-hidden border-white">
                         <ParticipantView
-                          key={localParticipant.id}
-                          participantId={localParticipant.id}
+                          key={localParticipant?.id}
+                          participantId={localParticipant?.id}
                           large={false}
                         />
                       </div>
@@ -274,7 +272,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           </div>
         )}
 
-        <div className="pb-20 h-full">
+        <div className="pb-16 md:pb-20 h-full">
           {layout === "grid" && (
             <div
               className={`grid ${
