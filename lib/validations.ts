@@ -71,24 +71,14 @@ export const signUpSchema = z.object({
 
 export const profileSecuritySchema = z
   .object({
-    currentPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number"),
+    currentPassword: z.string().nonempty("Password is required"),
     newPassword: z
       .string()
       .min(8, "Password must be at least 8 characters")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
       .regex(/[0-9]/, "Password must contain at least one number"),
-    confirmPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirmPassword: z.string().nonempty("Confirm Password is required"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
@@ -103,8 +93,8 @@ export const editProfileDetailsSchema = z.object({
   phone_prefix: z.string().optional(),
   phoneNumber: z
     .string()
-    // .min(8, "Phone number must be at least 8 characters")
-    .optional(),
+    .min(8, "Phone number must be at least 8 characters")
+    .max(12, "Phone number must be at most 12 characters"),
   religion: z
     .string()
     .min(2, "Religion must be at least 2 characters")
@@ -183,24 +173,18 @@ export const profileDetailsSchema = z.object({
 });
 
 export const contactPersonDetailsSchema = z.object({
-  firstName: z
-    .string()
-    .min(2, "First name must be at least 2 characters")
-    .optional(),
-  lastName: z
-    .string()
-    .min(2, "Last name must be at least 2 characters")
-    .optional(),
-  phone_prefix: z.string().optional(),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+
+  phone_prefix: z.string(),
   phoneNumber: z
     .string()
     .min(8, "Phone number must be at least 8 characters")
-    .optional(),
-  email: z.string().email("Please enter a valid email address").optional(),
-  relationship: z
-    .string()
-    .min(2, "Relationship must be at least 2 characters")
-    .optional(),
+    .max(12, "Phone number must be at most 12 characters"),
+
+  email: z.string().email("Please enter a valid email address"),
+  relationship: z.string().min(2, "Relationship must be at least 2 characters"),
 });
 
 export const ratingFormSchema = z.object({
@@ -298,7 +282,7 @@ export const setAppointmentSchedule = z.object({
 });
 
 export const fundWalletSchema = z.object({
-  amount: z.coerce.number().int().gte(1),
+  amount: z.coerce.number().int().gte(1, "Enter an amount of at least 1"),
 });
 
 export const disableProfileSchema = z.object({

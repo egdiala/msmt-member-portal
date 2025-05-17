@@ -115,7 +115,7 @@ export const SingleIndividualProviderContent = () => {
     <>
       <BreadcrumbCmp
         breadcrumbItems={[
-          { id: 1, name: "Providers", href: "/providers" },
+          { id: 1, name: "Providers" },
           { id: 2, name: data?.name ?? "" },
         ]}
       />

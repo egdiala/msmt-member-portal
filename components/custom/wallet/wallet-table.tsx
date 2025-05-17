@@ -144,13 +144,13 @@ export const WalletTable = () => {
     },
   ]);
 
-  const [selected, setSelected] = useState(dateFilters[2]);
+  const [selected, setSelected] = useState("All Time");
 
   const [transactionTypeFilter, setTransactionTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
   const handleClearAllFilters = () => {
-    setSelected(dateFilters[2]);
+    setSelected("All Time");
     setTransactionTypeFilter("");
     setStatusFilter("");
   };
@@ -176,7 +176,7 @@ export const WalletTable = () => {
     });
 
     if (filterToRemove === "start_date" || filterToRemove === "end_date") {
-      setSelected(dateFilters[2]);
+      setSelected("All Time");
     } else {
       setFilterValues[filterToRemove]("");
     }
@@ -205,7 +205,7 @@ export const WalletTable = () => {
           >
             <IconHandCoins className="stroke-white hidden md:inline-flex" />
             <IconPlus className="stroke-white md:hidden" />
-            Fund Wallet
+            Buy Units
           </Button>
         </div>
       </div>

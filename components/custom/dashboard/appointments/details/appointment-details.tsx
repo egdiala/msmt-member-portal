@@ -1,12 +1,14 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import { IconPlus } from "@/components/icons";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   IconStarFull,
   IconCalendarCheck2,
-  IconClock
+  IconClock,
 } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
@@ -62,11 +64,10 @@ export default function AppointmentDetails() {
     <div className=" grid gap-y-4">
       <BreadcrumbCmp
         breadcrumbItems={[
-          { id: 1, name: "Home", href: "/home" },
+          { id: 1, name: "Home", href: "/appointments" },
           {
             id: 2,
             name: "Appointments",
-            href: "/appointments",
           },
           { id: 3, name: data?.provider_data?.name || "" },
         ]}
@@ -94,23 +95,23 @@ export default function AppointmentDetails() {
                     </AvatarFallback>
                   </Avatar>
                 </div>
+
                 <div className="grid gap-3 w-full">
-                  <div className="grid gap-1 w-full">
-                    <h2 className="font-bold text-brand-1 text-xl capitalize">
-                      {data?.provider_data?.name}
-                    </h2>
-                    <p className="text-sm  text-brand-2 capitalize">
-                      {data?.provider_data?.specialty}
-                    </p>
-                    {/* <RenderIf condition={!data?.rating_data.length}>
-                      <div className="flex items-center gap-x-1 py-1">
-                        <IconStarFull className="fill-actions-amber size-6" />
-                        <span className="text-brand-1 font-medium text-sm">
-                          {" "}
-                          {appointment.feedback?.rating.toFixed(1)}
-                        </span>
-                      </div>
-                    </RenderIf> */}
+                  <div className="flex items-center justify-between w-full">
+                    <div className="grid gap-1 w-full">
+                      <h2 className="font-bold text-brand-1 text-xl capitalize">
+                        {data?.provider_data?.name}
+                      </h2>
+                      <p className="text-sm  text-brand-2 capitalize">
+                        {data?.provider_data?.specialty}
+                      </p>
+                    </div>
+                    <Button asChild className="hidden md:inline-flex">
+                      <Link href={`/providers`}>
+                        <IconPlus className="stroke-white" />
+                        Book An Appointment
+                      </Link>
+                    </Button>
                   </div>
 
                   <div className="hidden md:inline-block">
@@ -167,6 +168,7 @@ export default function AppointmentDetails() {
                   </div>
                 </div>
               </div>
+
               {/* <Button variant={'secondary'} className="border-none bg-transparent hover:bg-transparent shadow-none" asChild>
                 <Link href={``}>
                   <IconExternalLink className="h-5 w-5 stroke-brand-3 absolute right-0 top-0" />
@@ -178,7 +180,7 @@ export default function AppointmentDetails() {
               <Separator className="w-full" />
 
               <div className="flex md:flex-row items-start flex-col md:items-center md:justify-between">
-                <div className=" flex flex-col gap-y-3 md:py-2 md:flex-row md:items-center text-sm  text-brand-2 gap-x-6">
+                <div className=" flex flex-col gap-y-2 md:py-2 md:flex-row md:items-center text-sm  text-brand-2 gap-x-6">
                   <div className="flex items-center gap-x-1">
                     <IconCalendarCheck2 className="h-4 w-4 !stroke-brand-3" />
                     <span className="text-brand-1 text-xs md:text-sm">
@@ -191,37 +193,47 @@ export default function AppointmentDetails() {
                       {formatApptTimeShort(Number(data?.appt_time) || 0)}
                     </span>
                   </div>
-                </div>
-                <RenderIf
-                  condition={data?.provider_data?.isfav_provider === false}
-                >
-                  <Button
-                    variant={"ghost"}
-                    className="flex !p-0 items-center gap-1.5 border-none shadow-none"
-                    disabled={isPending}
-                    onClick={() => mutate(data?.provider_id as string)}
-                  >
-                    {isPending ? (
-                      <Loader className="spinner size-4" />
-                    ) : (
-                      <IconStarFull className="stroke-brand-1 stroke-2 size-4" />
-                    )}
-                    <span className="font-medium text-xs md:text-sm text-brand-1">
-                      Mark as Favourite
-                    </span>
-                  </Button>
-                </RenderIf>
-                <RenderIf
-                  condition={data?.provider_data?.isfav_provider === true}
-                >
-                  <div className="flex items-center gap-1.5 border-none shadow-none">
-                    <IconStarFull className="fill-brand-accent-2 stroke-2 size-4" />
 
-                    <span className="font-semibold text-sm text-brand-accent-2">
-                      Favourite
-                    </span>
-                  </div>
-                </RenderIf>
+                  <RenderIf
+                    condition={data?.provider_data?.isfav_provider === false}
+                  >
+                    <Button
+                      variant={"ghost"}
+                      className="flex !p-0 items-center gap-1.5 border-none shadow-none"
+                      disabled={isPending}
+                      onClick={() => mutate(data?.provider_id as string)}
+                    >
+                      {isPending ? (
+                        <Loader className="spinner size-4" />
+                      ) : (
+                        <IconStarFull className="stroke-brand-1 stroke-2 size-4" />
+                      )}
+                      <span className="font-medium text-xs md:text-sm text-brand-1">
+                        Mark as Favourite
+                      </span>
+                    </Button>
+                  </RenderIf>
+                  <RenderIf
+                    condition={data?.provider_data?.isfav_provider === true}
+                  >
+                    <div className="flex items-center gap-1.5 border-none shadow-none">
+                      <IconStarFull className="fill-brand-accent-2 stroke-2 size-4" />
+
+                      <span className="font-semibold text-sm text-brand-accent-2">
+                        Favourite
+                      </span>
+                    </div>
+                  </RenderIf>
+                  <Button
+                    asChild
+                    className="md:hidden inline-flex text-xs md:text-sm"
+                  >
+                    <Link href={`/providers`}>
+                      <IconPlus className="stroke-white" />
+                      Book An Appointment
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

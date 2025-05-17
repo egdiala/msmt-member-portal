@@ -1,20 +1,19 @@
 "use client";
 
+import { CheckCheck } from "lucide-react";
 import {
   PaginationCmp,
   RenderIf,
   // Searchbar,
   TableCmp,
 } from "@/components/shared";
-import { NOTIFICATION_TABLE_HEADERS } from "@/lib/constants";
-import { CheckCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useGetAllNotifications } from "@/services/hooks/queries/use-notifications";
 import { Button } from "@/components/ui";
-import { useMarkNotificationAsRead } from "@/services/hooks/mutations/use-notification";
 import { Loader } from "@/components/shared/loader";
-import { format, formatRelative } from "date-fns";
 import { usePagination } from "@/hooks/use-pagination";
+import { NOTIFICATION_TABLE_HEADERS } from "@/lib/constants";
+import { cn, formatTableDate } from "@/lib/utils";
+import { useGetAllNotifications } from "@/services/hooks/queries/use-notifications";
+import { useMarkNotificationAsRead } from "@/services/hooks/mutations/use-notification";
 
 export const NotificationTable = () => {
   const { page, itemsPerPage, setPage } = usePagination();
@@ -46,8 +45,7 @@ export const NotificationTable = () => {
             )}
           ></div>
           <p className="capitalize">
-            {formatRelative(val.createdAt, new Date()).split("at")[0]} •{" "}
-            {format(val.createdAt, "p")}
+            {val.createdAt ? formatTableDate(val?.createdAt) : ""}
           </p>
         </div>
       ),
@@ -99,8 +97,7 @@ export const NotificationTable = () => {
           >
             <div className="flex items-center justify-between">
               <p className="capitalize font-medium text-xs text-text-1">
-                {formatRelative(val.createdAt, new Date()).split("at")[0]} •{" "}
-                {format(val.createdAt, "p")}
+                {val.createdAt ? formatTableDate(val?.createdAt) : ""}
               </p>
               <RenderIf condition={val.status === "0"}>
                 <div

@@ -42,13 +42,27 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
         provider?.provider_data?.user_type.toLowerCase() === "org" &&
         !user_type
       ) {
-        return `/complete-booking/providers/organisation/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}${booking_link ? `&booking_link=${booking_link}` : ""}`;
+        return `/complete-booking/providers/organisation/${
+          provider?.provider_data?.user_id
+        }?type=${provider?.provider_data?.user_type}&service_type=${
+          provider?.provider_data?.account_service_type
+        }${booking_link ? `&booking_link=${booking_link}` : ""}`;
       } else if (
         provider?.provider_data?.user_type.toLowerCase() === "provider"
       ) {
-        return `/complete-booking/providers/individual/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}${booking_link ? `&booking_link=${booking_link}` : ""}`;
+        return `/complete-booking/providers/individual/${
+          provider?.provider_data?.user_id
+        }?type=${provider?.provider_data?.user_type}&service_type=${
+          provider?.provider_data?.account_service_type
+        }${booking_link ? `&booking_link=${booking_link}` : ""}`;
       } else {
-        return `/complete-booking/providers/organisation/${id}/single/${provider?.provider_data?.user_id}?type=${provider?.provider_data?.user_type}&service_type=${provider?.provider_data?.account_service_type}&user_type=provider&user_service_type=provider${booking_link ? `&booking_link=${booking_link}` : ""}`;
+        return `/complete-booking/providers/organisation/${id}/single/${
+          provider?.provider_data?.user_id
+        }?type=${provider?.provider_data?.user_type}&service_type=${
+          provider?.provider_data?.account_service_type
+        }&user_type=provider&user_service_type=provider${
+          booking_link ? `&booking_link=${booking_link}` : ""
+        }`;
       }
     } else {
       if (
@@ -94,25 +108,23 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           <div
             className={cn(
               "w-fit capitalize px-1 py-0.5 flex gap-x-1 text-xs text-brand-2 absolute top-1 left-1 rounded-sm",
-              provider?.provider_data?.account_type?.toLowerCase() ===
-                "individual"
+              provider?.provider_data?.user_type?.toLowerCase() === "provider"
                 ? "bg-blue-400"
                 : "bg-brand-bkg-3"
             )}
           >
             <RenderIf
               condition={
-                provider?.provider_data?.account_type?.toLowerCase() ===
-                "individual"
+                provider?.provider_data?.user_type?.toLowerCase() === "provider"
               }
             >
               <IconStethoscope className="stroke-brand-btn-secondary size-3" />
-              {provider?.provider_data?.account_type}
+              Individual
             </RenderIf>
 
             <RenderIf
               condition={
-                provider?.provider_data?.account_type?.toLowerCase() === "payer"
+                provider?.provider_data?.user_type?.toLowerCase() === "org"
               }
             >
               <IconHospital className="stroke-brand-btn-secondary size-3" />

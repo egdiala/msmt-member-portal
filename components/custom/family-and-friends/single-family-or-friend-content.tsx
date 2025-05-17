@@ -12,7 +12,7 @@ import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-
 import { FetchedSingleFamilyOrFriendType } from "@/types/family-and-friends";
 import { RemoveMemberModal } from "./remove-member-modal";
 import { ActivateMemberModal } from "./activate-member-modal";
-import { formatPhoneNumberIntl } from 'react-phone-number-input'
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 export const SingleFamilyOrFriendContent = () => {
   const { id } = useParams();
@@ -24,7 +24,11 @@ export const SingleFamilyOrFriendContent = () => {
   const userStatus: string = user?.status === 1 ? "Active" : "Suspended";
 
   const userInfo = [
-    { id: 1, title: "Phone", value: formatPhoneNumberIntl(`+${user?.phone_number}`) || "N/A" },
+    {
+      id: 1,
+      title: "Phone",
+      value: formatPhoneNumberIntl(`+${user?.phone_number}`) || "N/A",
+    },
     {
       id: 2,
       title: "Gender",
@@ -54,8 +58,8 @@ export const SingleFamilyOrFriendContent = () => {
     <>
       <BreadcrumbCmp
         breadcrumbItems={[
-          { id: 1, name: "Home", href: "/home" },
-          { id: 2, name: "Family & Friends", href: "/family-and-friends" },
+          { id: 1, name: "Home", href: "/family-and-friends" },
+          { id: 2, name: "Family & Friends" },
           { id: 3, name: user ? `${user?.first_name} ${user?.last_name}` : "" },
         ]}
       />
