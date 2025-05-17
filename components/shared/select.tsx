@@ -16,6 +16,7 @@ interface ISelectCmp {
   selectItems: { id: number; value: string }[];
   placeholder: string;
   className?: string;
+  lowercase?: boolean;
   value?: string;
   onSelect?: (val: string) => void;
 }
@@ -23,6 +24,7 @@ export const SelectCmp = ({
   selectItems,
   placeholder,
   className,
+  lowercase = true,
   onSelect,
   value,
   ...props
@@ -42,7 +44,11 @@ export const SelectCmp = ({
       <SelectContent>
         <SelectGroup>
           {selectItems?.map((item) => (
-            <SelectItem key={item.id} value={item.value} className="capitalize">
+            <SelectItem
+              key={item.id}
+              value={item.value}
+              className={cn(lowercase &&"capitalize")}
+            >
               {item.value}
             </SelectItem>
           ))}

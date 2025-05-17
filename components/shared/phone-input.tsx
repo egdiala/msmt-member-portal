@@ -38,14 +38,14 @@ const FloatingLabel = ({ id, visible, placeholder }: FloatingLabelProps) => (
 );
 
 const Divider = () => (
-  <div className="border-r-1 border-brand-3 h-4 mx-2">
-    <div></div>
+  <div className="border-r border-brand-3 h-5 mx-2 self-center">
+    {/* Using border-r instead of border-r-1 for Tailwind compatibility */}
   </div>
 );
 
 // Phone icon component
 const PhoneIcon = () => (
-  <div className="pr-4 text-gray-400 pb-2">
+  <div className="flex items-center pr-4 text-gray-400">
     <IconPhone className="w-4 h-4 stroke-brand-2" />
   </div>
 );
@@ -68,24 +68,43 @@ const PhoneNumberInput = ({
   onBlur,
   showPlaceholder,
   placeholder,
-}: PhoneNumberInputProps) => (
-  <div className="flex-1 relative">
-    {showPlaceholder && (
-      <div className="absolute inset-0 flex items-center pointer-events-none">
-        <span className="text-brand-3 text-sm">{placeholder}</span>
-      </div>
-    )}
-    <input
-      id={id}
-      type="tel"
-      className="w-full bg-transparent outline-none text-brand-2 text-sm placeholder:text-brand-3"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onFocus={onFocus}
-      onBlur={onBlur}
-    />
-  </div>
-);
+}: PhoneNumberInputProps) => {
+  // Handler to prevent leading zeros
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+
+    if (newValue === "0") {
+      return;
+    }
+
+    if (newValue.startsWith("0")) {
+      const sanitizedValue = newValue.replace(/^0+/, "");
+      onChange(sanitizedValue);
+      return;
+    }
+
+    onChange(newValue);
+  };
+
+  return (
+    <div className="flex-1 relative flex items-center">
+      {showPlaceholder && (
+        <div className="absolute inset-0 flex items-center pointer-events-none">
+          <span className="text-brand-3 text-sm">{placeholder}</span>
+        </div>
+      )}
+      <input
+        id={id}
+        type="tel"
+        className="w-full bg-transparent outline-none text-brand-2 text-sm placeholder:text-brand-3 py-2"
+        value={value}
+        onChange={handleInputChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+      />
+    </div>
+  );
+};
 
 type CountrySelectProps = {
   disabled?: boolean;
@@ -111,7 +130,7 @@ export const CountrySelect = ({
   const dialCode = value ? `+${RPNInput.getCountryCallingCode(value)}` : "";
 
   return (
-    <div className="relative pl-3 py-4">
+    <div className="flex items-center pl-3">
       <div
         className="inline-flex items-center gap-1 text-gray-700"
         aria-hidden="true"
@@ -231,9 +250,9 @@ export const BasePhoneInput = ({
     <div className="w-full relative flex flex-col items-center">
       <div
         className={cn(
-          "file:text-foreground bg-input-field placeholder:text-brand-2 selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-[3.125rem] items-center w-full min-w-0 rounded-sm border font-medium text-base transition-colors py-4 outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm border-input-field",
+          "file:text-foreground bg-input-field placeholder:text-brand-2 selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-12 items-center w-full min-w-0 rounded-sm border font-medium text-base transition-colors outline-none file:inline-flex file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm border-input-field",
           isFocused
-            ? "border-brand-accent-2 selection:bg-primary focus-visible:border-brand-accent-2 bg-blue-400  ring-brand-accent-2/20"
+            ? "border-brand-accent-2 selection:bg-primary focus-visible:border-brand-accent-2 bg-blue-400 ring-brand-accent-2/20"
             : "",
           "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
           className
@@ -245,7 +264,7 @@ export const BasePhoneInput = ({
           placeholder={placeholder}
         />
 
-        <div className="flex items-center w-full">
+        <div className="flex items-center w-full h-full relative">
           <CountrySelect
             value={country}
             onChange={handleCountryChange}
