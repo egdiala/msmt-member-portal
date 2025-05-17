@@ -1,25 +1,25 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useMeeting } from "@videosdk.live/react-sdk";
-import { IconUsers } from "@/components/icons";
 import { ParticipantView } from "./participant-view";
 import { RenderIf } from "@/components/shared";
+import { toast } from "sonner";
 import ToolBar from "./tool-bar";
 import { RatingDialog } from "../../appointments/rating-form";
 interface MeetingViewProps {
   isProvider?: boolean;
   meetingId: string;
   onMeetingLeft?: () => void;
+  commMode?: "audio" | "video";
 }
 
 const MeetingView: React.FC<MeetingViewProps> = ({
   meetingId,
   isProvider,
   onMeetingLeft,
+  commMode = "audio",
 }) => {
-  const searchParams = useSearchParams();
-  const user_id = searchParams.get("user_id");
   const [open, setOpen] = useState(false);
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
   const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
@@ -31,6 +31,8 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMountedRef = useRef(true);
   const router = useRouter();
+
+  const isVideoEnabled = commMode === "video";
 
   useEffect(() => {
     const checkMobile = () => {
@@ -95,25 +97,19 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "";
-      return "";
+      if (isMeetingJoined && !isLeaving) {
+        event.preventDefault();
+        event.returnValue = "";
+        return "";
+      }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-
-      if (isMeetingJoined && !isLeaving && userConfirmedLeave) {
-        try {
-          leave();
-        } catch (error) {
-          console.error("Error leaving meeting during unload:", error);
-        }
-      }
     };
-  }, [isMeetingJoined, isLeaving, leave, userConfirmedLeave]);
+  }, [isMeetingJoined, isLeaving]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -162,8 +158,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   };
 
   const handleToggleVideo = () => {
+    if (!isVideoEnabled) {
+      toast.error("Video toggle not allowed in audio-only mode");
+      return;
+    }
+
     try {
-      console.log("Toggling webcam, current state:", localWebcamOn);
       toggleWebcam();
     } catch (error) {
       console.error("Error toggling webcam:", error);
@@ -192,10 +192,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     }
   };
 
-  const handleToggleLayout = () => {
-    setLayout((prev) => (prev === "grid" ? "focus" : "grid"));
-  };
-
   const getActiveParticipants = () => {
     return [...participants.values()].filter((p) =>
       ["SEND_AND_RECV", "RECV_ONLY", "SEND_ONLY"].includes(p.mode)
@@ -207,10 +203,28 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const isAloneInMeeting = activeParticipantsArray.length <= 1;
 
   const otherParticipants = activeParticipantsArray.filter(
-    (p) => p?.id !== user_id
+    (p) => p?.id !== localParticipant?.id
   );
 
-  console.log(otherParticipants, "OTHER");
+  useEffect(() => {
+    if (
+      isVideoEnabled &&
+      ((activeParticipantsArray[0]?.webcamOn === true &&
+        otherParticipants[0]?.webcamOn === true) ||
+        isAloneInMeeting)
+    ) {
+      setLayout("focus");
+    } else {
+      setLayout("grid");
+    }
+  }, [
+    activeParticipantsArray,
+    isAloneInMeeting,
+    otherParticipants,
+    layout,
+    setLayout,
+    isVideoEnabled,
+  ]);
 
   return (
     <div className="flex flex-col h-full rounded-lg overflow-hidden">
@@ -218,17 +232,22 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       <div className="flex justify-between items-center py-2">
         <RenderIf condition={isAloneInMeeting}>
           <div className="text-center bg-blue-50 text-blue-700 py-2 px-4 rounded-lg">
-            Waiting for others to join...
+            {`Waiting for ${!isProvider ? "Provider" : "Patient"} to join...`}
           </div>
         </RenderIf>
 
-        {/* Layout toggle button */}
-        <button
-          onClick={handleToggleLayout}
-          className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
-        >
-          <IconUsers className="md:w-5 w-4 md:h-5 h-4 stroke-brand-1" />
-        </button>
+        {/* Mode indicator */}
+        <div className="ml-auto">
+          <span
+            className={`px-3 py-1 rounded-lg text-xs font-medium ${
+              isVideoEnabled
+                ? "bg-green-100 text-green-800"
+                : "bg-blue-100 text-blue-800"
+            }`}
+          >
+            {isVideoEnabled ? "Video Mode" : "Audio Only Mode"}
+          </span>
+        </div>
       </div>
 
       <div className="flex-1 overflow-hidden relative">
@@ -323,7 +342,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         </div>
 
         {/* ToolBar */}
-
         <ToolBar
           localMicOn={localMicOn}
           localWebcamOn={localWebcamOn}
@@ -331,6 +349,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           handleEndCall={handleEndCall}
           handleToggleAudio={handleToggleAudio}
           handleToggleVideo={handleToggleVideo}
+          isVideoEnabled={isVideoEnabled}
         />
       </div>
       <RatingDialog

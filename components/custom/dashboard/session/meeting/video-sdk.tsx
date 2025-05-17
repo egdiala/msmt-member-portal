@@ -1,7 +1,8 @@
+
 "use client";
 import { useSearchParams } from "next/navigation";
 import DeviceSelectionModal from "./device-selection-modal";
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { requestLiveSession } from "@/services/api/session";
 import { ErrorModal } from "./error-modal";
@@ -30,6 +31,7 @@ interface MeetingConfig {
   participantId?: string;
   participantName?: string;
   participantRole?: "Provider" | "Patient";
+  commMode: "audio" | "video"; // Add communication mode
 }
 
 const VideoSDKApp: React.FC = () => {
@@ -76,10 +78,12 @@ const VideoSDKApp: React.FC = () => {
           ? data?.provider_avatar
           : data?.member_avatar;
 
+        const commMode = data?.comm_mode === "video" ? "video" : "audio";
+
         setMeetingConfig({
           meetingId: data.meeting_id,
-          enableAudio: userAudioEnabled,
-          enableVideo: userVideoEnabled,
+          enableAudio: true, // Always enable audio
+          enableVideo: commMode === "video", // Only enable video for video mode
           token: data?.token,
           participantName: displayName,
           participantRole: data?.is_host ? "Provider" : "Patient",
@@ -88,6 +92,7 @@ const VideoSDKApp: React.FC = () => {
             name: displayName,
             avatar: displayAvatar,
           },
+          commMode, // Add the communication mode to meeting config
         });
 
         console.log("Setting participant name to:", displayName);
@@ -114,7 +119,7 @@ const VideoSDKApp: React.FC = () => {
     const initializeMediaDevices = async () => {
       if (meetingJoined && meetingConfig && !mediaInitialized) {
         try {
-          if (selectedVideoDeviceId && userVideoEnabled) {
+          if (selectedVideoDeviceId && userVideoEnabled && meetingConfig.commMode === "video") {
             try {
               console.log("Initializing video device:", selectedVideoDeviceId);
               const constraints = {
@@ -214,10 +219,12 @@ const VideoSDKApp: React.FC = () => {
     audioDeviceId?: string,
     videoDeviceId?: string
   ) => {
+    const finalVideoEnabled = meetingConfig?.commMode === "audio" ? false : videoEnabled;
+    
     if (audioDeviceId) setSelectedAudioDeviceId(audioDeviceId);
     if (videoDeviceId) setSelectedVideoDeviceId(videoDeviceId);
     setUserAudioEnabled(audioEnabled);
-    setUserVideoEnabled(videoEnabled);
+    setUserVideoEnabled(finalVideoEnabled);
     setShowDeviceSelection(false);
     setMeetingJoined(true);
   };
@@ -265,11 +272,11 @@ const VideoSDKApp: React.FC = () => {
         onJoin={handleJoinWithDevices}
         initialAudioEnabled={meetingConfig.enableAudio}
         initialVideoEnabled={meetingConfig.enableVideo}
+        // commMode={meetingConfig.commMode}
       />
     );
   }
-  // VideoSDK configuration
-  const { meetingId, token, participantRole } = meetingConfig;
+  const { meetingId, token, participantRole, commMode } = meetingConfig;
   const participantName = meetingConfig.participantName || "Guest";
   console.log(meetingConfig.participantName, "Participant Name");
   const isProvider = participantRole === "Provider";
@@ -304,7 +311,11 @@ const VideoSDKApp: React.FC = () => {
           reinitialiseMeetingOnConfigChange={true}
           joinWithoutUserInteraction={true}
         >
-          <MeetingView meetingId={meetingId} isProvider={isProvider} />
+          <MeetingView 
+            meetingId={meetingId} 
+            isProvider={isProvider} 
+            commMode={commMode} 
+          />
         </MeetingProvider>
       </div>
     </div>

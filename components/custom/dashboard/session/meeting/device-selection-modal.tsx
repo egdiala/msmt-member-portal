@@ -49,7 +49,6 @@ const DeviceSelectionModal: React.FC<{
             video: false,
           });
           audioPermissionGranted = true;
-          // Keep stream active until we're done with device enumeration
           setTimeout(() => {
             audioStream.getTracks().forEach((track) => track.stop());
           }, 500);
@@ -77,7 +76,6 @@ const DeviceSelectionModal: React.FC<{
         devices = await navigator.mediaDevices.enumerateDevices();
       }
 
-      // Process available devices
       const audioInputs = devices
         .filter((device) => device.kind === "audioinput")
         .map((device) => ({
@@ -122,33 +120,36 @@ const DeviceSelectionModal: React.FC<{
     }
   };
 
+  // Cleanup video stream when component unmounts
   useEffect(() => {
     return () => {
       if (videoStream) {
         videoStream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [videoStream]);
+  }, []);
 
   const initializeDevices = () => {
     deviceInitializedRef.current = false;
     getDevices();
   };
 
-  // Handle video preview
+  // Handle video preview - Fix for the twitching issue
   useEffect(() => {
+    // Only start video preview when all conditions are met
     const startVideoPreview = async () => {
-      try {
-        if (videoStream) {
-          videoStream.getTracks().forEach((track) => track.stop());
-          setVideoStream(null);
-        }
+      // Stop existing stream first
+      if (videoStream) {
+        videoStream.getTracks().forEach((track) => track.stop());
+        setVideoStream(null);
+      }
 
+      try {
         if (videoEnabled && selectedVideoDevice && videoPreviewRef.current) {
           let stream;
           try {
             stream = await navigator.mediaDevices.getUserMedia({
-              video: { deviceId: { ideal: selectedVideoDevice } },
+              video: { deviceId: { exact: selectedVideoDevice } },
             });
           } catch (err) {
             console.log(
@@ -174,10 +175,20 @@ const DeviceSelectionModal: React.FC<{
       }
     };
 
-    if (deviceLoadingComplete && videoEnabled && selectedVideoDevice) {
-      startVideoPreview();
+    // Only re-run this effect when these dependencies change
+    if (deviceLoadingComplete) {
+      if (videoEnabled && selectedVideoDevice) {
+        startVideoPreview();
+      } else if (!videoEnabled && videoStream) {
+        // Turn off video if disabled
+        videoStream.getTracks().forEach((track) => track.stop());
+        setVideoStream(null);
+        if (videoPreviewRef.current) {
+          videoPreviewRef.current.srcObject = null;
+        }
+      }
     }
-  }, [selectedVideoDevice, videoEnabled, deviceLoadingComplete, videoStream]);
+  }, [selectedVideoDevice, videoEnabled, deviceLoadingComplete]);
 
   const handleJoin = () => {
     // Stop the preview stream
@@ -193,11 +204,6 @@ const DeviceSelectionModal: React.FC<{
     );
   };
 
-//   const requestPermissions = async () => {
-//     deviceInitializedRef.current = false;
-//     await getDevices();
-//   };
-
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-lg">
@@ -211,7 +217,7 @@ const DeviceSelectionModal: React.FC<{
             </p>
             <button
               onClick={initializeDevices}
-              className="px-4 py-2 bg-brand-accent-2 text-white rounded hover:bg-blue-700"
+              className="px-4 py-2 bg-brand-accent-2 text-white rounded hover:bg-opacity-80 transition"
             >
               Set Up Audio & Video
             </button>
@@ -330,7 +336,7 @@ const DeviceSelectionModal: React.FC<{
         <div className="flex justify-end">
           <button
             onClick={handleJoin}
-            className="px-4 py-2 bg-brand-accent-2 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-brand-accent-2 text-white rounded hover:bg-opacity-80 transition"
           >
             Join Now
           </button>

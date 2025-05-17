@@ -9,6 +9,7 @@ import {
   IconEndCall,
   IconClock,
 } from "@/components/icons";
+import { cn } from "@/lib/utils";
 
 interface ToolBarProps {
   localMicOn: boolean;
@@ -17,6 +18,7 @@ interface ToolBarProps {
   handleToggleAudio: () => void;
   handleToggleVideo: () => void;
   handleEndCall: () => void;
+  isVideoEnabled: boolean;
 }
 
 const Timer = () => {
@@ -53,6 +55,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   handleToggleAudio,
   handleToggleVideo,
   handleEndCall,
+  isVideoEnabled,
 }) => {
   return (
     <div className="flex absolute inset-x-0 bottom-0 justify-between w-full items-center gap-4 p-2 bg-transparent">
@@ -81,17 +84,22 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
         <button
           onClick={handleToggleVideo}
-          className={`w-12 h-12 rounded-full flex items-center justify-center ${
-            localWebcamOn
-              ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-              : "bg-brand-accent-2 text-white hover:opacity-90"
-          } transition-colors`}
+          disabled={!isVideoEnabled}
+          className={cn(
+            `w-12 h-12 rounded-full flex items-center justify-center ${
+              !isVideoEnabled
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : localWebcamOn
+                ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                : "bg-brand-accent-2 text-white hover:opacity-90"
+            } transition-colors`
+          )}
           aria-label={localWebcamOn ? "Turn off camera" : "Turn on camera"}
         >
           {localWebcamOn ? (
             <IconVideo className="md:w-5 w-4 md:h-5 h-4 stroke-brand-1" />
           ) : (
-            <IconVideoOff className="md:w-5 w-4 md:h-5 h-4 stroke-white" />
+            <IconVideoOff className={cn("md:w-5 w-4 md:h-5 h-4 stroke-white", !isVideoEnabled && 'stroke-brand-3')} />
           )}
         </button>
 

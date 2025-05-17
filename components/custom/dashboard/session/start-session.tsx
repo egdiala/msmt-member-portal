@@ -18,7 +18,6 @@ export function StartSession() {
   const { data } = useGetAppointmentsById(appointment_id as string);
   const { data: account } = useGetProfile();
 
-  console.log("account", account);
 
   const provider = {
     name: data?.provider_data?.name || "-",
