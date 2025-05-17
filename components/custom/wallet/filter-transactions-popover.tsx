@@ -53,7 +53,7 @@ const FilterContent = ({
         <h3 className="font-bold text-xl text-brand-1">Filter</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3  gap-8 content-start">
-          <div className="grid gap-y-2 content-start">
+          <div className="grid gap-y-1 content-start">
             <h5 className="uppercase text-xs text-brand-2">Date</h5>
 
             <SelectCmp
@@ -226,13 +226,13 @@ export const FilterTransactionsPopover = ({
       ...(selected !== "All Time"
         ? { end_date: format(dateFilter?.end, "yyyy-MM-dd") }
         : {}),
-      ...(transactionTypeFilter
+      ...(transactionTypeFilter !== "All"
         ? {
             transaction_type:
               TRANSACTION_TYPE_ENUM[transactionTypeFilter?.toLowerCase()],
           }
         : {}),
-      ...(statusFilter
+      ...(statusFilter !== "All"
         ? { status: TRANSACTION_STATUS_ENUM[statusFilter?.toLowerCase()] }
         : {}),
     });
