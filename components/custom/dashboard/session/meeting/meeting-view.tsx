@@ -26,7 +26,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const [isLeaving, setIsLeaving] = useState<boolean>(false);
-  const [userConfirmedLeave, setUserConfirmedLeave] = useState<boolean>(false);
+  const [, setUserConfirmedLeave] = useState<boolean>(false);
   const meetingInitializedRef = useRef(false);
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMountedRef = useRef(true);
