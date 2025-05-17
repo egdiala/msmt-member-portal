@@ -56,9 +56,9 @@ export const PersonalInfoDetailsSection = () => {
     <div className="border border-divider rounded-lg p-4 md:py-4 md:px-6 w-full grid gap-y-6">
       <div className="flex justify-between">
         <div className="grid gap-y-4">
-          <div className="flex flex-col gap-y-3">
+          <div className="w-fit rounded-full border border-divider">
             <Avatar
-              className="h-22 w-22 rounded-full border-2 border-white cursor-pointer transition-all duration-75 hover:scale-105 shadow-md "
+              className="h-22 w-22 rounded-full cursor-pointer transition-transform ease-in-out duration-200 hover:scale-105"
               onClick={() => setImageDialogOpen(true)}
             >
               <AvatarImage

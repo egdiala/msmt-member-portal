@@ -111,7 +111,7 @@ export const UpdateProfileDetailsModal = ({
     <Modal
       isOpen={isOpen}
       handleClose={handleClose}
-      className="grid gap-y-6 h-full max-h-[70vh] md:max-h-[90vh] bg-white overflow-hidden"
+      className="grid gap-y-6 bg-white overflow-hidden"
     >
       <h2 className="font-bold text-lg md:text-2xl">Profile Details</h2>
 
@@ -238,28 +238,6 @@ export const UpdateProfileDetailsModal = ({
 
               <FormField
                 control={form.control}
-                name="preferredName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="relative">
-                        <FloatingInput
-                          label="Preferred Name (Optional)"
-                          className="pr-10"
-                          {...field}
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                          <IconUserRound className="h-4 w-4" />
-                        </div>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
@@ -276,6 +254,28 @@ export const UpdateProfileDetailsModal = ({
                         defaultCountry="NG"
                         placeholder="Phone Number"
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="preferredName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="relative">
+                        <FloatingInput
+                          label="Preferred Name (Optional)"
+                          className="pr-10"
+                          {...field}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                          <IconUserRound className="h-4 w-4" />
+                        </div>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
