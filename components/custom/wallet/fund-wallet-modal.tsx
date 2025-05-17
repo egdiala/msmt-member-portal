@@ -37,7 +37,11 @@ async function loadPaystackHook() {
   return customHook;
 }
 
-export const FundWalletModal = ({ isOpen, handleClose, isPublic }: IFundWalletModal) => {
+export const FundWalletModal = ({
+  isOpen,
+  handleClose,
+  isPublic,
+}: IFundWalletModal) => {
   const [config, setConfig] = useState({
     reference: "",
     email: "",
@@ -143,6 +147,11 @@ export const FundWalletModal = ({ isOpen, handleClose, isPublic }: IFundWalletMo
                           label="Amount to Buy"
                           className=" pr-8"
                           {...field}
+                          value={
+                            parseInt(field?.value?.toString()) === 0
+                              ? ""
+                              : field?.value
+                          }
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-grey-300 pointer-events-none">
                           ₦

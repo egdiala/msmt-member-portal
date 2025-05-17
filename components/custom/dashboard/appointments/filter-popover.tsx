@@ -10,10 +10,9 @@ import {
   startOfDay,
   endOfDay,
 } from "date-fns";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IconListFilter } from "@/components/icons";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Popover,
   PopoverContent,
@@ -34,10 +33,9 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { RenderIf } from "@/components/shared";
+import { RenderIf, SelectCmp } from "@/components/shared";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { X } from "lucide-react";
 
 type FormattedFilterValues = {
   status?: string;
@@ -78,7 +76,7 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
   // Default form values
   const defaultValues = {
     dateFilter: "All Time",
-    status: undefined,
+    status: "5",
     fromDate: undefined,
     toDate: undefined,
   };
@@ -134,15 +132,73 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
     setOpen(false);
   });
 
-  useEffect(() => {
-    if (open) {
-      reset(defaultValues);
-    }
-  }, [open, reset]);
+  useEffect(
+    () => {
+      if (open) {
+        reset(defaultValues);
+      }
+    },
+    // eslint-disable-next-line
+    [open, reset]
+  );
 
   const handleClose = () => {
     reset(defaultValues);
     setOpen(false);
+  };
+
+  const dateFilters = ["Today", "This Month", "All Time", "Custom Range"];
+  const statusFilters = [
+    { value: "Upcoming", id: 1 },
+    { value: "Live", id: 2 },
+    { value: "Completed", id: 3 },
+    { value: "Cancel", id: 4 },
+    { value: "All", id: 5 },
+  ];
+
+  const DateSection = () => {
+    return (
+      <>
+        <FormField
+          control={form.control}
+          name="fromDate"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormControl>
+                <DatePickerField
+                  label="From"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+
+              <span className="text-xs text-status-danger">
+                {errors?.fromDate?.message}
+              </span>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="toDate"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormControl>
+                <DatePickerField
+                  label="To"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+
+              <span className="text-xs text-status-danger">
+                {errors?.toDate?.message}
+              </span>
+            </FormItem>
+          )}
+        />
+      </>
+    );
   };
 
   const FilterForm = () => (
@@ -163,73 +219,28 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
                   DATE
                 </h3>
                 <FormControl>
-                  <RadioGroup
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    className="gap-0"
-                  >
-                    {["Today", "This Month", "All Time", "Custom Range"].map(
-                      (value) => (
-                        <div
-                          key={value}
-                          className="flex items-center space-x-2 px-2 py-2 md:py-3"
-                        >
-                          <RadioGroupItem value={value} id={value} />
-                          <Label htmlFor={value}>
-                            {value.charAt(0).toUpperCase() + value.slice(1)}
-                          </Label>
-                        </div>
-                      )
+                  <SelectCmp
+                    selectItems={dateFilters?.map(
+                      (val: string, index: number) => {
+                        return {
+                          id: index,
+                          value: val,
+                        };
+                      }
                     )}
-                  </RadioGroup>
+                    onSelect={(val) => field.onChange(val)}
+                    value={field.value}
+                    placeholder="Select date"
+                  />
                 </FormControl>
                 <FormMessage />
-
-                <RenderIf condition={field.value === "Custom Range"}>
-                  <div className="grid w-full mt-2 gap-y-2">
-                    <FormField
-                      control={form.control}
-                      name="fromDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <DatePickerField
-                              label="From"
-                              value={field.value}
-                              onChange={field.onChange}
-                            />
-                          </FormControl>
-
-                          <span className="text-xs text-status-danger">
-                            {errors?.fromDate?.message}
-                          </span>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="toDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <DatePickerField
-                              label="To"
-                              value={field.value}
-                              onChange={field.onChange}
-                            />
-                          </FormControl>
-
-                          <span className="text-xs text-status-danger">
-                            {errors?.toDate?.message}
-                          </span>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </RenderIf>
               </FormItem>
             )}
           />
+
+          <div className="md:hidden flex flex-col items-center w-full gap-2">
+            <DateSection />
+          </div>
 
           {/* STATUS FILTER */}
           <FormField
@@ -241,38 +252,36 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
                   STATUS
                 </h3>
                 <FormControl>
-                  <RadioGroup
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    className="gap-0"
-                  >
-                    {[
-                      { name: "Upcoming", id: 1 },
-                      { name: "Live", id: 2 },
-                      { name: "Completed", id: 3 },
-                      { name: "Cancel", id: 4 },
-                    ].map((value) => (
-                      <div
-                        key={value.id}
-                        className="flex items-center space-x-2 px-2 py-2 md:py-3"
-                      >
-                        <RadioGroupItem
-                          value={value.id.toString()}
-                          id={value.name}
-                        />
-                        <Label htmlFor={value.name}>
-                          {value.name.charAt(0).toUpperCase() +
-                            value.name.slice(1)}
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
+                  <SelectCmp
+                    selectItems={statusFilters}
+                    onSelect={(val) =>
+                      field.onChange(
+                        statusFilters
+                          ?.filter((inner) => inner.value === val)[0]
+                          ?.id?.toString()
+                      )
+                    }
+                    value={
+                      field.value === "5"
+                        ? "All"
+                        : statusFilters?.filter(
+                            (inner) => inner.id?.toString() === field.value
+                          )[0]?.value
+                    }
+                    placeholder="Select status"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+
+        <RenderIf condition={form.getValues("dateFilter") === "Custom Range"}>
+          <div className="hidden md:flex items-center w-full gap-2 px-4">
+            <DateSection />
+          </div>
+        </RenderIf>
 
         <div className="flex items-center justify-end p-4 pt-5 gap-x-4">
           <Button

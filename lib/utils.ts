@@ -271,7 +271,7 @@ export function formatApptDate(dateStr: string): string {
 
   if (isToday(date)) return "Today";
   if (isYesterday(date)) return "Yesterday";
-  return format(date, "MMM d, yyyy");
+  return format(date, "dd/MM/yyyy");
 }
 
 export const isEmpty = (obj: unknown): boolean => {

@@ -64,11 +64,10 @@ export default function AppointmentDetails() {
     <div className=" grid gap-y-4">
       <BreadcrumbCmp
         breadcrumbItems={[
-          { id: 1, name: "Home", href: "/home" },
+          { id: 1, name: "Home", href: "/appointments" },
           {
             id: 2,
             name: "Appointments",
-            href: "/appointments",
           },
           { id: 3, name: data?.provider_data?.name || "" },
         ]}

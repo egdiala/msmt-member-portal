@@ -123,7 +123,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
     <>
       <BreadcrumbCmp
         breadcrumbItems={[
-          { id: 1, name: "Providers", href: "/providers" },
+          { id: 1, name: "Providers" },
           {
             id: 2,
             name: orgProvider?.name ?? "",
@@ -210,7 +210,9 @@ export const SingleOrganisationIndividualProviderContent = () => {
                     }}
                   >
                     <Link
-                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}${booking_link ? `&booking_link=${booking_link}` : ""}`}
+                      href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}${
+                        booking_link ? `&booking_link=${booking_link}` : ""
+                      }`}
                     >
                       <IconPlus className="stroke-white" />
                       Book An Appointment

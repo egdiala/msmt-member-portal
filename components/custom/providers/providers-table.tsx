@@ -142,7 +142,7 @@ export const ProvidersTable = () => {
     setFilterValues[filterToRemove]("");
   };
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 14;
   const [page, setPage] = useState(1);
 
   const searchParams = useSearchParams();
@@ -150,7 +150,12 @@ export const ProvidersTable = () => {
 
   const { data, isLoading } = useGetServiceProviders<
     FetchedServiceProvidersType[]
-  >({ ...(value ? { q: value?.toString() } : {}), ...filters });
+  >({
+    ...(value ? { q: value?.toString() } : {}),
+    ...filters,
+    item_per_page: itemsPerPage?.toString(),
+    page: page?.toString(),
+  });
 
   const handlePageChange = (page: number) => {
     if (!isNaN(page)) {
@@ -175,7 +180,8 @@ export const ProvidersTable = () => {
       specialty: (
         <p className="capitalize">
           {provider?.provider_data?.specialty ||
-            provider?.provider_data?.industry_name}
+            provider?.provider_data?.industry_name ||
+            "N/A"}
         </p>
       ),
       rating: provider?.provider_data?.rating,

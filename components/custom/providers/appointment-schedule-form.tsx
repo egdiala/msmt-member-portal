@@ -74,9 +74,13 @@ interface ISetScheduleStep {
 }
 export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const navigate = useRouter();
-  const { data: walletCountStatus } = useGetWalletTransactions<FetchedWalletTransactionsStatsType>({
-    component: "count-status",
-  }, { enabled: !isPublic });
+  const { data: walletCountStatus } =
+    useGetWalletTransactions<FetchedWalletTransactionsStatsType>(
+      {
+        component: "count-status",
+      },
+      { enabled: !isPublic }
+    );
 
   const searchParams = useSearchParams();
   const booking_link = searchParams.get("booking_link") as string | undefined;
@@ -88,10 +92,13 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
     | "payer";
 
   const { data: familyFriendInfo } =
-    useGetSingleFamilyOrFriend<FetchedPaymentOptionFamilyType>({
-      familyfriend_id: provider_id,
-      component: "payment-option",
-    }, { enabled: isPublic ? false : !!provider_id });
+    useGetSingleFamilyOrFriend<FetchedPaymentOptionFamilyType>(
+      {
+        familyfriend_id: provider_id,
+        component: "payment-option",
+      },
+      { enabled: isPublic ? false : !!provider_id }
+    );
 
   const { data: providerInfo, isLoading: isLoadingProviderInfo } =
     useGetServiceProviders<FetchSingleProvider>({
@@ -108,7 +115,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
 
   const paymentMethods = [
     { id: 1, name: "Wallet", icon: IconWallet },
-    ...(familyFriendInfo && (familyFriendInfo as FetchedPaymentOptionFamilyType)?.familyfriend_id
+    ...(familyFriendInfo &&
+    (familyFriendInfo as FetchedPaymentOptionFamilyType)?.familyfriend_id
       ? [{ id: 2, name: "Family", icon: IconUsers }]
       : []),
   ];
@@ -127,7 +135,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
     useState("");
 
   const [intialDate, setInitialDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<any>(""); // Default is current date
+  const [selectedDate, setSelectedDate] = useState<any>("");
 
   const { data: providerDates } = useGetProviderSchedule<
     FetchedProviderSchedule[]
@@ -149,9 +157,9 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   );
 
   const formattedSlots = availableTimeBasedOnApptDate?.map((slot, index) => {
-    const formattedStartTimeAMPM = formatTimeToAMPM(slot.start_time); // Convert start_time to AM/PM format
-    const formattedEndTimeAMPM = formatTimeToAMPM(slot.end_time); // Convert end_time to AM/PM format
-    const formattedStartTimeHH = formatTimeToHH(slot.start_time); // Convert start_time to 24-hour (HH) format
+    const formattedStartTimeAMPM = formatTimeToAMPM(slot.start_time);
+    const formattedEndTimeAMPM = formatTimeToAMPM(slot.end_time); //
+    const formattedStartTimeHH = formatTimeToHH(slot.start_time); //
     return {
       id: index, // Using the index as the id
       value: `${formattedStartTimeAMPM} - ${formattedEndTimeAMPM}`, // Combine both times as the value
@@ -226,10 +234,12 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
       service_offer_id:
         account_service_type === "provider" && user_type === "org"
           ? orgInfo?.service_data?.filter(
-              (val: { name: string }) => val.name === values.service.split(" - ")[0]
+              (val: { name: string }) =>
+                val.name === values.service.split(" - ")[0]
             )[0]?.service_offer_id ?? ""
           : providerInfo?.service_data?.filter(
-              (val: { name: string }) => val.name === values.service.split(" - ")[0]
+              (val: { name: string }) =>
+                val.name === values.service.split(" - ")[0]
             )[0]?.service_offer_id ?? "",
       appt_date: format(values.appointmentDate, "yyyy-MM-dd"),
       appt_time:
@@ -241,7 +251,10 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
         | "audio",
       time_zone: new Date().getTimezoneOffset()?.toString(),
       ...(selectedPaymentMethod === "Family"
-        ? { familyuser_id: (familyFriendInfo as FetchedPaymentOptionFamilyType)?.familyfriend_id }
+        ? {
+            familyuser_id: (familyFriendInfo as FetchedPaymentOptionFamilyType)
+              ?.familyfriend_id,
+          }
         : {}),
       ...(account_service_type === "provider"
         ? { org_provider_id: orgInfo?.user_id }
@@ -253,7 +266,10 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
     if (!!isLoggedIn) {
       mutate(dataToBeSent);
     } else {
-      completeOrgBooking({ ...dataToBeSent, booking_link: booking_link ? booking_link : "" });
+      completeOrgBooking({
+        ...dataToBeSent,
+        booking_link: booking_link ? booking_link : "",
+      });
     }
   }
 
@@ -266,26 +282,47 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
     return isPending || isSubmitting ? "loading" : "idle";
   }, [isPending, isSubmitting]);
 
-  const formService = form.watch("service")
-  const formPaymentMethod = form.watch("paymentMethod")
-  
-  useEffect(() => {
-    form.setValue("paymentMethod", "Wallet")
-  },[])
+  const formService = form.watch("service");
+  const formPaymentMethod = form.watch("paymentMethod");
+
+  useEffect(
+    () => {
+      form.setValue("paymentMethod", "Wallet");
+    },
+    // eslint-disable-next-line
+    []
+  );
 
   useEffect(() => {
-    const serviceAmount = parseInt(formService.split(" - ")?.[1]?.replace(/,/g, "")?.split(".")?.[0]?.substring(1))
-    if (!isPublic && formService && (serviceAmount > ((walletCountStatus as FetchedWalletTransactionsStatsType)?.total_balance || 0)) && formPaymentMethod && formPaymentMethod.toLowerCase() === "wallet") {
-      toast.info(() => (
-        <div className="grid gap-4 text-grey-200">
-          <p>Insufficient balance. Please top up your wallet.</p>
-          <Button type="button" onClick={() => setOpenFundWalletModal(true)}>
-            Top Up Wallet
-          </Button>
-        </div>
-      ), { icon: <></>})
+    const serviceAmount = parseInt(
+      formService
+        .split(" - ")?.[1]
+        ?.replace(/,/g, "")
+        ?.split(".")?.[0]
+        ?.substring(1)
+    );
+    if (
+      !isPublic &&
+      formService &&
+      serviceAmount >
+        ((walletCountStatus as FetchedWalletTransactionsStatsType)
+          ?.total_balance || 0) &&
+      formPaymentMethod &&
+      formPaymentMethod.toLowerCase() === "wallet"
+    ) {
+      toast.info(
+        () => (
+          <div className="grid gap-4 text-grey-200">
+            <p>Insufficient balance. Please top up your wallet.</p>
+            <Button type="button" onClick={() => setOpenFundWalletModal(true)}>
+              Top Up Wallet
+            </Button>
+          </div>
+        ),
+        { icon: <></> }
+      );
     }
-  }, [formService, formPaymentMethod, walletCountStatus, isPublic])
+  }, [formService, formPaymentMethod, walletCountStatus, isPublic]);
 
   return (
     <div className="min-h-full pb-12 grid gap-y-4">
@@ -372,7 +409,11 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
 
                 <button
                   type="button"
-                  onClick={() => navigate.back()}
+                  onClick={() =>
+                    navigate.push(
+                      `/providers/organisation/${orgInfo?.user_id}?type=${user_type}&service_type=${account_service_type}`
+                    )
+                  }
                   className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
                 >
                   Change
@@ -401,24 +442,38 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                             account_service_type === "provider" &&
                             user_type === "org"
                               ? orgInfo?.service_data?.map(
-                                (val: { name: string; amount: number }, index: number) => {
+                                  (
+                                    val: { name: string; amount: number },
+                                    index: number
+                                  ) => {
                                     return {
                                       id: index,
-                                      value: `${val?.name} - ${formatNumberWithCommas(val?.amount)}`,
+                                      value: `${
+                                        val?.name
+                                      } - ${formatNumberWithCommas(
+                                        val?.amount
+                                      )}`,
                                     };
                                   }
                                 ) ?? []
                               : providerInfo?.service_data?.map(
-                                (val: { name: string; amount: number; }, index: number) => {
+                                  (
+                                    val: { name: string; amount: number },
+                                    index: number
+                                  ) => {
                                     return {
                                       id: index,
-                                      value: `${val?.name} - ${formatNumberWithCommas(val?.amount)}`,
+                                      value: `${
+                                        val?.name
+                                      } - ${formatNumberWithCommas(
+                                        val?.amount
+                                      )}`,
                                     };
                                   }
                                 ) ?? []
                           }
                           onSelect={(val) => {
-                            field.onChange(val)
+                            field.onChange(val);
                           }}
                           placeholder="Select Service"
                           {...field}
@@ -433,7 +488,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
                 <p className="text-sm">Charge</p>
                 <p className="text-lg">
-                  {form.watch("service").split(" - ")[1] || formatNumberWithCommas(0)}
+                  {form.watch("service").split(" - ")[1] ||
+                    formatNumberWithCommas(0)}
                   /hr
                 </p>
               </div>
@@ -441,7 +497,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               <RenderIf
                 condition={
                   !!familyFriendInfo &&
-                  !!(familyFriendInfo as FetchedPaymentOptionFamilyType)?.familyfriend_id &&
+                  !!(familyFriendInfo as FetchedPaymentOptionFamilyType)
+                    ?.familyfriend_id &&
                   account_service_type !== "payer"
                 }
               >
@@ -473,9 +530,13 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                   }}
                                   className="flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400"
                                 >
-                                  {selectedPaymentMethod.toLowerCase() === method.name.toLowerCase() ? (
+                                  {selectedPaymentMethod.toLowerCase() ===
+                                  method.name.toLowerCase() ? (
                                     <Checkbox
-                                      checked={selectedPaymentMethod.toLowerCase() === method.name.toLowerCase()}
+                                      checked={
+                                        selectedPaymentMethod.toLowerCase() ===
+                                        method.name.toLowerCase()
+                                      }
                                     />
                                   ) : (
                                     <method.icon className="stroke-brand-3 size-3.5" />
@@ -484,7 +545,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                   <p
                                     className={cn(
                                       "text-sm",
-                                      selectedPaymentMethod.toLowerCase() === method.name.toLowerCase()
+                                      selectedPaymentMethod.toLowerCase() ===
+                                        method.name.toLowerCase()
                                         ? "text-button-primary"
                                         : "text-brand-2"
                                     )}
@@ -513,7 +575,14 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     <FormControl>
                       <div className="flex justify-between items-center bg-input-field px-3 py-2 rounded-sm">
                         <p className="text-xs font-medium text-brand-1">
-                          I agree to <Link href="https://themsmt.com/terms-of-service/" target="_blank" className="underline">cancellation and refund policy</Link>
+                          I agree to{" "}
+                          <Link
+                            href="https://themsmt.com/terms-of-service/"
+                            target="_blank"
+                            className="underline"
+                          >
+                            cancellation and refund policy
+                          </Link>
                         </p>
 
                         <Switch
@@ -698,10 +767,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
 
             {/** Button section */}
             <div className="grid grid-cols-2 md:flex md:items-center md:justify-end gap-x-5">
-              <Button
-                variant="secondary"
-                asChild
-              >
+              <Button variant="secondary" asChild>
                 <Link href="/providers">Go Back</Link>
               </Button>
               <Button
