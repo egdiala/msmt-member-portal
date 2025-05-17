@@ -60,7 +60,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
   return (
     <div className="flex absolute inset-x-0 bottom-0 justify-between w-full items-center gap-4 p-2 bg-transparent">
       <button
-        className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
+        className="w-12 h-12 rounded-full cursor-pointer flex items-center justify-center bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
         aria-label="Share screen"
       >
         <IconShare2 className="md:w-5 w-4 md:h-5 h-4 stroke-brand-1" />
@@ -68,7 +68,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
       <div className="flex justify-center items-center gap-4 ">
         <button
           onClick={handleToggleAudio}
-          className={`w-12 h-12 rounded-full flex items-center justify-center ${
+          className={`w-12 h-12 rounded-full cursor-pointer flex items-center justify-center ${
             localMicOn
               ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
               : "bg-brand-accent-2 text-white hover:opacity-90"
@@ -86,7 +86,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
           onClick={handleToggleVideo}
           disabled={!isVideoEnabled}
           className={cn(
-            `w-12 h-12 rounded-full flex items-center justify-center ${
+            `w-12 h-12 rounded-full cursor-pointer flex items-center justify-center ${
               !isVideoEnabled
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                 : localWebcamOn
@@ -105,7 +105,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
         <button
           onClick={handleEndCall}
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-red-500 text-white hover:bg-red-600 transition-colors"
+          className="w-12 h-12 cursor-pointer rounded-full flex items-center justify-center bg-red-500 text-white hover:bg-red-600 transition-colors"
           aria-label="End call"
           disabled={isLeaving}
         >

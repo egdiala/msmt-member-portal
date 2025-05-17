@@ -150,7 +150,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
   const handleToggleAudio = () => {
     try {
-      console.log("Toggling microphone, current state:", localMicOn);
       toggleMic();
     } catch (error) {
       console.error("Error toggling mic:", error);
@@ -171,7 +170,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   };
 
   const handleEndCall = async () => {
-    if (!isProvider) {
+    if (!isProvider && !!otherParticipants.length) {
       setOpen(true);
       return;
     }
