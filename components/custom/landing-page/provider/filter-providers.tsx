@@ -16,8 +16,8 @@ import {
   DrawerTitle,
 } from "@/components/ui";
 import { SelectCmp } from "@/components/shared";
+import { DatePickerField } from "@/components/shared/date-picker-field";
 import { cn, createQueryString } from "@/lib/utils";
-import { CalendarInput } from "../../wallet/calendar-input";
 
 const FilterContent = (filter: {
   handleApplyMobile?: () => void;
@@ -46,16 +46,13 @@ const FilterContent = (filter: {
       <h4 className="font-bold mb-4 text-brand-1">Filter </h4>
 
       <div className="grid gap-y-4 w-full">
-        <CalendarInput
+        <DatePickerField
           value={filter.apptDate === "" ? undefined : new Date(filter.apptDate)}
           onChange={(date: any) => {
             filter.setApptDate(format(date, "yyy-MM-dd"));
           }}
-          label="Available date"
-          disabledDate={(date: any) => {
-            const today = new Date();
-            return date < today;
-          }}
+          label={"Available date"}
+          disableDatesBeforeToday
         />
 
         <SelectCmp

@@ -1,75 +1,179 @@
 "use client";
 
-import { useState } from "react";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
-import { IconCalendar } from "@/components/icons";
+import { format, getMonth, getYear, subYears } from "date-fns";
+import DatePicker from "react-datepicker";
+import { IconArrowDown, IconCalendar } from "@/components/icons";
+import "react-datepicker/dist/react-datepicker.css";
 import { FloatingInput } from "./floating-input";
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui";
 
 interface DatePickerPopoverProps {
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
   label: string;
   isDOB?: boolean;
+  disableDatesBeforeToday?: boolean;
 }
 
 export const DatePickerField: React.FC<DatePickerPopoverProps> = ({
-  value,
+  value: selectedValue,
   onChange,
   label,
   isDOB,
+  disableDatesBeforeToday,
 }) => {
-  const [openCalendar, setOpenCalendar] = useState(false);
+  const startYear = 1970;
+  const endYear = isDOB ? getYear(new Date()) - 18 : getYear(new Date()); // current year
+
+  const years = Array.from(
+    { length: endYear - startYear + 1 },
+    (_, i) => startYear + i
+  );
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   return (
-    <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
-      <PopoverTrigger asChild>
-        <div className="relative cursor-pointer">
+    <DatePicker
+      onChange={(e) => {
+        const date = e as Date;
+        onChange(date);
+      }}
+      scrollableYearDropdown
+      showMonthDropdown
+      showYearDropdown
+      minDate={disableDatesBeforeToday ? new Date() : new Date(1970)}
+      maxDate={isDOB ? subYears(new Date(), 18) : new Date(endYear, 11, 31)}
+      showPopperArrow={false}
+      calendarClassName="msmt-datepicker"
+      selected={
+        selectedValue ??
+        new Date(endYear, new Date().getMonth(), new Date().getDate())
+      }
+      renderCustomHeader={({
+        date,
+        changeYear,
+        changeMonth,
+        decreaseMonth,
+        increaseMonth,
+        prevMonthButtonDisabled,
+        nextMonthButtonDisabled,
+      }) => {
+        console.log({ date });
+        return (
+          <div className="flex justify-between items-center my-1.5 mx-3 gap-x-4">
+            <Button
+              onClick={decreaseMonth}
+              disabled={prevMonthButtonDisabled}
+              variant="ghost"
+              className="rounded-full bg-blue-400 !px-2.5 !py-2.5 stroke-button-primary hover:stroke-white"
+            >
+              <IconArrowDown className="rotate-90" />
+            </Button>
+
+            <div onMouseDown={(e) => e.stopPropagation()}>
+              <Select
+                value={getYear(date)?.toString()}
+                onValueChange={(e) => {
+                  changeYear(parseInt(e));
+                }}
+              >
+                <SelectTrigger className="w-full cursor-pointer">
+                  <SelectValue
+                    placeholder="Year"
+                    className="placeholder:text-text-2"
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {years?.reverse()?.map((item, index) => (
+                      <SelectItem
+                        key={index}
+                        value={item?.toString()}
+                        className="capitalize"
+                      >
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div onMouseDown={(e) => e.stopPropagation()}>
+              <Select
+                value={months[getMonth(date)]}
+                onValueChange={(e) => {
+                  changeMonth(months.indexOf(e));
+                }}
+              >
+                <SelectTrigger className="w-full cursor-pointer">
+                  <SelectValue
+                    placeholder="Month"
+                    className="placeholder:text-text-2"
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {months?.map((item, index) => (
+                      <SelectItem
+                        key={index}
+                        value={item?.toString()}
+                        className="capitalize"
+                      >
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button
+              onClick={increaseMonth}
+              disabled={nextMonthButtonDisabled}
+              variant="ghost"
+              className="rounded-full bg-blue-400 !px-2.5 !py-2.5 stroke-button-primary hover:stroke-white"
+            >
+              <IconArrowDown className="rotate-270" />
+            </Button>
+          </div>
+        );
+      }}
+      customInput={
+        <div className="relative">
           <FloatingInput
+            value={
+              selectedValue && selectedValue !== undefined
+                ? format(selectedValue, "dd/MM/yyyy")
+                : ""
+            }
             label={label}
-            readOnly
-            value={value ? format(value, "PPP") : ""}
-            className="pr-8 cursor-pointer"
-            onClick={(e) => e.currentTarget.focus()}
+            className="pr-8"
           />
-          <IconCalendar className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 stroke-brand-3 pointer-events-none" />
+          <IconCalendar className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />
         </div>
-      </PopoverTrigger>
-      <PopoverContent
-        side="bottom"
-        align="end"
-        className="w-auto p-0 z-50 overflow-visible !bg-white"
-        sideOffset={5}
-        alignOffset={0}
-        style={{ maxHeight: "none" }}
-      >
-        <Calendar
-          mode="single"
-          selected={value}
-          onSelect={(e) => {
-            onChange(e);
-            setOpenCalendar(false);
-          }}
-          disabled={(date) => {
-            const today = new Date();
-            return date > today;
-          }}
-          initialFocus
-          className="border-none p-3"
-          captionLayout="dropdown-buttons"
-          fromYear={1920}
-          toYear={
-            isDOB ? new Date().getFullYear() - 18 : new Date().getFullYear()
-          }
-          defaultMonth={value ?? new Date()}
-          showOutsideDays={false}
-        />
-      </PopoverContent>
-    </Popover>
+      }
+    />
   );
 };
