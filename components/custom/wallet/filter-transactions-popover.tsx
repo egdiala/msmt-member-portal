@@ -47,7 +47,6 @@ const FilterContent = ({
   setSelected: Dispatch<SetStateAction<any>>;
   setCustomDate: (val: any) => void;
 }) => {
-  console.log({ selected });
   return (
     <div className="p-6 flex flex-col justify-between gap-y-5 md:gap-y-1 w-full">
       <div className="grid gap-y-5 w-full">
