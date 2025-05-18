@@ -20,8 +20,8 @@ import {
   DrawerTitle,
 } from "@/components/ui";
 import { RenderIf, SelectCmp } from "@/components/shared";
+import { DatePickerField } from "@/components/shared/date-picker-field";
 import { cn } from "@/lib/utils";
-import { CalendarInput } from "../wallet/calendar-input";
 
 const FilterContent = ({
   handleCloseFilter,
@@ -86,18 +86,16 @@ const FilterContent = ({
 
         <div className="grid gap-y-2">
           <h4 className="font-semibold text-sm text-brand-1">Date</h4>
-          <CalendarInput
+
+          <DatePickerField
             value={
               selectedApptDate === "" ? undefined : new Date(selectedApptDate)
             }
             onChange={(date: any) => {
               setSelectedApptDate(format(date, "yyy-MM-dd"));
             }}
-            label="Available date"
-            disabledDate={(date: any) => {
-              const today = new Date();
-              return date < today;
-            }}
+            label={"Available date"}
+            disableDatesBeforeToday
           />
         </div>
 

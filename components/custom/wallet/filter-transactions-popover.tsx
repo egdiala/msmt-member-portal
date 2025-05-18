@@ -15,6 +15,7 @@ import {
   DrawerTitle,
 } from "@/components/ui";
 import { SelectCmp } from "@/components/shared";
+import { DatePickerField } from "@/components/shared/date-picker-field";
 import {
   TRANSACTION_STATUS_ENUM,
   TRANSACTION_TYPE_ENUM,
@@ -22,7 +23,6 @@ import {
   TRANSACTIONS_FILTER_TYPE_OPTIONS,
 } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { CalendarInput } from "./calendar-input";
 
 const FilterContent = ({
   handleCloseFilter,
@@ -47,6 +47,7 @@ const FilterContent = ({
   setSelected: Dispatch<SetStateAction<any>>;
   setCustomDate: (val: any) => void;
 }) => {
+  console.log({ selected });
   return (
     <div className="p-6 flex flex-col justify-between gap-y-5 md:gap-y-1 w-full">
       <div className="grid gap-y-5 w-full">
@@ -63,30 +64,36 @@ const FilterContent = ({
                   value: val?.name,
                 };
               })}
-              onSelect={(val) => setSelected(val)}
-              value={selected}
+              onSelect={(val) =>
+                setSelected(
+                  dateFilters?.filter(
+                    (filter: { name: string }) => filter?.name === val
+                  )[0]
+                )
+              }
+              value={selected?.name}
               placeholder="Select date"
             />
 
-            {selected === "Custom" && (
+            {selected?.name === "Custom" && (
               <div className="gap-y-2 grid md:hidden">
-                <CalendarInput
+                <DatePickerField
                   value={selected?.value?.start}
-                  onChange={(e) => {
-                    setCustomDate({ start: e, end: selected?.value?.end });
+                  onChange={(date: any) => {
+                    setCustomDate({ start: date, end: selected?.value?.end });
                   }}
-                  label="From"
+                  label={"From"}
                 />
 
-                <CalendarInput
+                <DatePickerField
                   value={selected?.value?.end}
-                  onChange={(e) => {
+                  onChange={(date: any) => {
                     setCustomDate({
                       start: selected?.value?.start,
-                      end: e,
+                      end: date,
                     });
                   }}
-                  label="To"
+                  label={"To"}
                 />
               </div>
             )}
@@ -129,28 +136,28 @@ const FilterContent = ({
           </div>
         </div>
 
-        {selected === "Custom" && (
+        {selected?.name === "Custom" && (
           <div className="gap-5 hidden md:flex w-full justify-between">
             <div className="w-full">
-              <CalendarInput
+              <DatePickerField
                 value={selected?.value?.start}
-                onChange={(e) => {
-                  setCustomDate({ start: e, end: selected?.value?.end });
+                onChange={(date: any) => {
+                  setCustomDate({ start: date, end: selected?.value?.end });
                 }}
-                label="From"
+                label={"From"}
               />
             </div>
 
             <div className="w-full">
-              <CalendarInput
+              <DatePickerField
                 value={selected?.value?.end}
-                onChange={(e) => {
+                onChange={(date: any) => {
                   setCustomDate({
                     start: selected?.value?.start,
-                    end: e,
+                    end: date,
                   });
                 }}
-                label="To"
+                label={"To"}
               />
             </div>
           </div>
@@ -208,31 +215,31 @@ export const FilterTransactionsPopover = ({
 
   const applyFilter = () => {
     const dateFilter =
-      selected !== "Custom"
+      selected?.name !== "Custom"
         ? {
             start: dateFilters?.filter(
-              (val: { name: string }) => val?.name === selected
+              (val: { name: string }) => val?.name === selected?.name
             )[0]?.value?.start,
             end: dateFilters?.filter(
-              (val: { name: string }) => val?.name === selected
+              (val: { name: string }) => val?.name === selected?.name
             )[0]?.value?.end,
           }
         : { start: selected?.value?.start, end: selected?.value?.end };
 
     setFilters({
-      ...(selected !== "All Time"
+      ...(selected?.name !== "All Time"
         ? { start_date: format(dateFilter?.start, "yyyy-MM-dd") }
         : {}),
-      ...(selected !== "All Time"
+      ...(selected?.name !== "All Time"
         ? { end_date: format(dateFilter?.end, "yyyy-MM-dd") }
         : {}),
-      ...(transactionTypeFilter !== "All"
+      ...(transactionTypeFilter !== ""
         ? {
             transaction_type:
               TRANSACTION_TYPE_ENUM[transactionTypeFilter?.toLowerCase()],
           }
         : {}),
-      ...(statusFilter !== "All"
+      ...(statusFilter !== ""
         ? { status: TRANSACTION_STATUS_ENUM[statusFilter?.toLowerCase()] }
         : {}),
     });
@@ -258,7 +265,7 @@ export const FilterTransactionsPopover = ({
           <PopoverContent
             sideOffset={10}
             className={cn(
-              "w-144 h-fit overflow-y-scroll pb-10 relative border-none shadow-modal-shadow bg-white hidden md:flex p-0",
+              "w-144 h-fit overflow-visible pb-10 relative border-none shadow-modal-shadow bg-white hidden md:flex p-0",
               isDeduction
                 ? "right-13 xl:right-18"
                 : "right-40 lg:right-48 xl:right-54"

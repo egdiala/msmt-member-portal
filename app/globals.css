@@ -178,3 +178,45 @@
     transform: rotate(360deg);
   }
 }
+
+.msmt-datepicker.react-datepicker{
+  border: 1px solid #DADCDD !important;
+}
+
+.msmt-datepicker .react-datepicker__day-name {
+  color: #0073C4;
+}
+
+.msmt-datepicker .react-datepicker__day:hover, .msmt-datepicker .react-datepicker__day--keyboard-selected, .msmt-datepicker .react-datepicker__day--selected {
+  border-radius: 100% !important;
+}
+
+.msmt-datepicker .react-datepicker__day--keyboard-selected, .msmt-datepicker .react-datepicker__day--selected {
+  background-color: #007BFF;
+  color: #fff;
+}
+
+.msmt-datepicker .react-datepicker__day:not([aria-disabled="true"]):hover {
+  background-color: #F2F8FF;
+}
+
+.msmt-datepicker .react-datepicker__day--keyboard-selected:not([aria-disabled="true"]):hover, .msmt-datepicker .react-datepicker__day--selected:hover {
+  background-color: #007BFF !important;
+}
+
+.msmt-datepicker .react-datepicker__header{
+  background-color: #fff;
+  border: none;
+}
+
+.msmt-datepicker .react-datepicker__day-names {
+  margin-bottom: -16px;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker-popper, .msmt-datepicker {
+  z-index: 99999 !important;
+}
