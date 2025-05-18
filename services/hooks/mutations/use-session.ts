@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { requestLiveSession, updateAppointment } from "@/services/api/session";
+import { requestLiveSession, startSession } from "@/services/api/session";
 
 export const useRequestLiveSession = (fn?: (res: any) => void) => {
   return useMutation({
@@ -15,9 +15,9 @@ export const useRequestLiveSession = (fn?: (res: any) => void) => {
   });
 };
 
-export const useUpdateAppointment = (fn?: (res: any) => void) => {
+export const useStartSession = (fn?: (res: any) => void) => {
   return useMutation({
-    mutationFn: updateAppointment,
+    mutationFn: startSession,
     onSuccess: (res: any) => {
       toast.success("Session Started!");
       fn?.(res);

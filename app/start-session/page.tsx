@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 export default function AudioSession() {
   return (
-    <div className="flex flex-col w-full h-screen bg-[#F3F5F9] px-10 py-4">
+    <div className="flex flex-col w-full h-screen bg-blue-400 lg:px-10 px-2 py-8 md:py-4">
       <Suspense fallback={<div>Loading...</div>}>
         <VideoSDKApp />
       </Suspense>
