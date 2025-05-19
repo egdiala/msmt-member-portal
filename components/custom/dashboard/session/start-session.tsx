@@ -1,7 +1,7 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { OrganizationCard } from "./organization-card";
+// import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
 import Link from "next/link";
 import { formatApptTimeShort } from "@/lib/utils";
@@ -28,11 +28,11 @@ export function StartSession() {
     duration: "1 hour",
   };
 
-  const organization = {
-    name: account?.org_data[0]?.name || "-",
-    avatar: account?.org_data[0]?.avatar,
-    type: account?.org_data[0]?.industry_name || "-",
-  };
+  // const organization = {
+  //   name: account?.org_data[0]?.name || "-",
+  //   avatar: account?.org_data[0]?.avatar,
+  //   type: account?.org_data[0]?.industry_name || "-",
+  // };
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
       <div className="text-center">
@@ -45,7 +45,7 @@ export function StartSession() {
       {/* Organization */}
 
       <div className="grid md:gap-4 gap-8">
-        <OrganizationCard organization={organization} />
+        {/* <OrganizationCard organization={organization} /> */}
         <ProviderCard session={provider} />
       </div>
 
