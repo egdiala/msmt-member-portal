@@ -7,7 +7,7 @@ import Link from "next/link";
 import { formatApptTimeShort } from "@/lib/utils";
 import { formatSessionDate } from "../appointments/details/appointment-details";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
-import { useGetProfile } from "@/services/hooks/queries/use-profile";
+// import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 export function StartSession() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export function StartSession() {
   const user_id = searchParams.get("user_id");
   const appointment_id = searchParams.get("appointment_id");
   const { data } = useGetAppointmentsById(appointment_id as string);
-  const { data: account } = useGetProfile();
+  // const { data: account } = useGetProfile();
 
 
   const provider = {
