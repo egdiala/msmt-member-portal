@@ -63,8 +63,8 @@ importers:
         specifier: ^3.0.6
         version: 3.0.6
       '@videosdk.live/react-sdk':
-        specifier: ^0.2.1
-        version: 0.2.3(react@19.1.0)
+        specifier: ^0.1.92
+        version: 0.1.105(react@19.1.0)
       axios:
         specifier: ^1.8.3
         version: 1.8.4
@@ -98,6 +98,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.1.0
+      react-datepicker:
+        specifier: ^8.3.0
+        version: 8.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-day-picker:
         specifier: 8.10.1
         version: 8.10.1(date-fns@4.1.0)(react@19.1.0)
@@ -243,6 +246,12 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
+
+  '@floating-ui/react@0.27.8':
+    resolution: {integrity: sha512-EQJ4Th328y2wyHR3KzOUOoTW2UKjFk53fmyahfwExnFQ8vnsMYqKc+fFPOkeYtj5tcp1DUMiNJ7BFhed7e9ONw==}
+    peerDependencies:
+      react: '>=17.0.0'
+      react-dom: '>=17.0.0'
 
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
@@ -1395,13 +1404,13 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@videosdk.live/js-sdk@0.1.6':
-    resolution: {integrity: sha512-iGQxw61vRVhb25U9T/ofXvwheXIYQegIHlP3bgZ3hSkCaLifMwLxni/IDC0YRXXfakJnslN6ZeLHkIbGwSzRvw==}
+  '@videosdk.live/js-sdk@0.0.101':
+    resolution: {integrity: sha512-LMmCCiZQYJUCIchCgU4LozmRL5ETjNxBixgXERm1SxGUPuYuRW1g11+VLPT10E7m8Ryz9Byrwst389xPfVz/jQ==}
 
-  '@videosdk.live/react-sdk@0.2.3':
-    resolution: {integrity: sha512-aVGIjlIx2J2KMVW0DSisg3RJRRfaZ+zJ5QqGN7b4AM3mDvt/WkWKBobtbusLt71suDQKh/8CAF+iC391FzkrXQ==}
+  '@videosdk.live/react-sdk@0.1.105':
+    resolution: {integrity: sha512-fYZ1G2rgSHOsK9f566yAlZjHCRM9c4uvUEbuQyDtFLGIdYwwjQnXyj0xJKY8kaSmvedWjiJsEurDzzDmS5IDAA==}
     peerDependencies:
-      react: ^16.13.1 || ^17 || ^18 || ^19
+      react: ^16.13.1 || ^17 || ^18
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -2515,6 +2524,12 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
+  react-datepicker@8.3.0:
+    resolution: {integrity: sha512-DhfrIJnTPJTUVRtXU7c7zooug40rD6q+Fc8UTCt19dYEotLpDQgTN98MfocY6Rc4S99oOFFEoxyanOM/TKauuw==}
+    peerDependencies:
+      react: ^16.9.0 || ^17 || ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^16.9.0 || ^17 || ^18 || ^19 || ^19.0.0-rc
+
   react-day-picker@8.10.1:
     resolution: {integrity: sha512-TMx7fNbhLk15eqcMt+7Z7S2KF7mfTId/XJDjKE8f+IUcFn0l08/kI4FiYTL/0yuOLmEcbR4Fwe3GJf/NiiMnPA==}
     peerDependencies:
@@ -2788,6 +2803,9 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  tabbable@6.2.0:
+    resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
+
   tailwind-merge@3.2.0:
     resolution: {integrity: sha512-FQT/OVqCD+7edmmJpsgCsY820RTD5AkBryuG5IUqR5YQZSdj5xlH5nLgH7YPths7WsLPSpSBNneJdM8aS8aeFA==}
 
@@ -3019,6 +3037,14 @@ snapshots:
       '@floating-ui/dom': 1.6.13
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
+
+  '@floating-ui/react@0.27.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@floating-ui/react-dom': 2.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@floating-ui/utils': 0.2.9
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      tabbable: 6.2.0
 
   '@floating-ui/utils@0.2.9': {}
 
@@ -4069,11 +4095,11 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.5.0':
     optional: true
 
-  '@videosdk.live/js-sdk@0.1.6': {}
+  '@videosdk.live/js-sdk@0.0.101': {}
 
-  '@videosdk.live/react-sdk@0.2.3(react@19.1.0)':
+  '@videosdk.live/react-sdk@0.1.105(react@19.1.0)':
     dependencies:
-      '@videosdk.live/js-sdk': 0.1.6
+      '@videosdk.live/js-sdk': 0.0.101
       events: 3.3.0
       react: 19.1.0
 
@@ -5314,6 +5340,14 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
+  react-datepicker@8.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      '@floating-ui/react': 0.27.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      clsx: 2.1.1
+      date-fns: 4.1.0
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
   react-day-picker@8.10.1(date-fns@4.1.0)(react@19.1.0):
     dependencies:
       date-fns: 4.1.0
@@ -5652,6 +5686,8 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  tabbable@6.2.0: {}
 
   tailwind-merge@3.2.0: {}
 

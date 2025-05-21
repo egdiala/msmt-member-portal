@@ -50,10 +50,10 @@ const FilterSchema = z
     fromDate: z.date().optional(),
     toDate: z.date().optional(),
   })
-  .refine((data) => data.status || data.fromDate || data.toDate, {
-    message: "Please select at least one filter.",
-    path: ["status"],
-  })
+  // .refine((data) => data.status || data.fromDate || data.toDate, {
+  //   message: "Please select at least one filter.",
+  //   path: ["status"],
+  // })
   .refine(
     (data) => !data.fromDate || !data.toDate || data.fromDate <= data.toDate,
     {
@@ -76,7 +76,7 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
   // Default form values
   const defaultValues = {
     dateFilter: "All Time",
-    status: "5",
+    status: "",
     fromDate: undefined,
     toDate: undefined,
   };
@@ -132,15 +132,15 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
     setOpen(false);
   });
 
-  useEffect(
-    () => {
-      if (open) {
-        reset(defaultValues);
-      }
-    },
-    // eslint-disable-next-line
-    [open, reset]
-  );
+  // useEffect(
+  //   () => {
+  //     if (open) {
+  //       reset(defaultValues);
+  //     }
+  //   },
+  //   // eslint-disable-next-line
+  //   [open, reset]
+  // );
 
   const handleClose = () => {
     reset(defaultValues);
@@ -149,11 +149,11 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
 
   const dateFilters = ["Today", "This Month", "All Time", "Custom Range"];
   const statusFilters = [
-    { value: "Upcoming", id: 1 },
-    { value: "Live", id: 2 },
-    { value: "Completed", id: 3 },
-    { value: "Cancel", id: 4 },
-    { value: "All", id: 5 },
+    { value: "Upcoming", id: 1, index: "1" },
+    { value: "Live", id: 2, index: "2" },
+    { value: "Completed", id: 3, index: "3" },
+    { value: "Cancel", id: 4, index: "4" },
+    { value: "All", id: 5, index: "" },
   ];
 
   const DateSection = () => {
@@ -238,9 +238,11 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
             )}
           />
 
-          <div className="md:hidden flex flex-col items-center w-full gap-2">
-            <DateSection />
-          </div>
+          <RenderIf condition={form.getValues("dateFilter") === "Custom Range"}>
+            <div className="md:hidden flex flex-col items-center w-full gap-2">
+              <DateSection />
+            </div>
+          </RenderIf>
 
           {/* STATUS FILTER */}
           <FormField
@@ -256,16 +258,15 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
                     selectItems={statusFilters}
                     onSelect={(val) =>
                       field.onChange(
-                        statusFilters
-                          ?.filter((inner) => inner.value === val)[0]
-                          ?.id?.toString()
+                        statusFilters?.filter((inner) => inner.value === val)[0]
+                          ?.index
                       )
                     }
                     value={
-                      field.value === "5"
+                      field.value === ""
                         ? "All"
                         : statusFilters?.filter(
-                            (inner) => inner.id?.toString() === field.value
+                            (inner) => inner.index === field.value
                           )[0]?.value
                     }
                     placeholder="Select status"

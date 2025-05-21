@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
 import { EmptyState } from "@/components/shared/empty-state";
+import { DatePickerField } from "@/components/shared/date-picker-field";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import { useDebounce } from "@/hooks/use-debounce";
 import {
@@ -41,7 +42,6 @@ import {
 } from "@/types/providers";
 import { SingleProviderCard } from "./single-provider-card";
 import { FilterProvidersTable } from "./filter-providers-table";
-import { CalendarInput } from "../wallet/calendar-input";
 
 export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
@@ -213,16 +213,13 @@ export const ProvidersTable = () => {
     return (
       <>
         <div className="grid gap-y-4 w-full">
-          <CalendarInput
+          <DatePickerField
             value={apptDate === "" ? undefined : new Date(apptDate)}
             onChange={(date: any) => {
               setApptDate(format(date, "yyy-MM-dd"));
             }}
-            label="Available date"
-            disabledDate={(date: any) => {
-              const today = new Date();
-              return date < today;
-            }}
+            label={"Available date"}
+            disableDatesBeforeToday
           />
 
           <SelectCmp
