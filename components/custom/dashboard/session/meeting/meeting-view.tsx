@@ -3,6 +3,16 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useMeeting } from "@videosdk.live/react-sdk";
 import { ParticipantView } from "./participant-view";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { RenderIf } from "@/components/shared";
 import { toast } from "sonner";
 import ToolBar from "./tool-bar";
@@ -24,7 +34,8 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
   const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-
+  const [isMultiDeviceDialogOpen, setIsMultiDeviceDialogOpen] =
+    useState<boolean>(false);
   const [isLeaving, setIsLeaving] = useState<boolean>(false);
   const [, setUserConfirmedLeave] = useState<boolean>(false);
   const meetingInitializedRef = useRef(false);
@@ -90,11 +101,48 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         onMeetingLeft();
       }
     },
-    onError: (error) => {
-      console.error("Error in meeting:", error);
+    onError: (error: any) => {
+      if (error.code === 4005) {
+        setIsMultiDeviceDialogOpen(true);
+      } else {
+        toast.error(`Meeting error: ${error.message}`);
+      }
     },
   });
+  const handleStayOnCurrentDevice = () => {
+    setIsMultiDeviceDialogOpen(false);
+    toast.info("Continuing meeting on this device");
 
+    try {
+      join();
+    } catch (error) {
+      console.error("Error rejoining the meeting:", error);
+      toast.error("Failed to rejoin the meeting");
+    }
+  };
+
+  const handleSwitchToOtherDevice = async () => {
+    setIsMultiDeviceDialogOpen(false);
+    toast.info("Ending meeting on this device");
+
+    try {
+      setIsLeaving(true);
+      setUserConfirmedLeave(true);
+
+      if (isMeetingJoined) {
+        await leave();
+      }
+
+      if (onMeetingLeft) {
+        onMeetingLeft();
+      } else {
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error leaving meeting:", error);
+      router.push("/");
+    }
+  };
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (isMeetingJoined && !isLeaving) {
@@ -197,13 +245,17 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     );
   };
 
-  const activeParticipantsArray = getActiveParticipants();
-  console.log("Active participants:", activeParticipantsArray);
-  const isAloneInMeeting = activeParticipantsArray.length <= 1;
+  console.log(participants);
 
-  const otherParticipants = activeParticipantsArray.filter(
+  const activeParticipantsArray = getActiveParticipants();
+    const otherParticipants = [...participants.values()].filter(
     (p) => p?.id !== localParticipant?.id
   );
+  const isAloneInMeeting = !!activeParticipantsArray.length && !otherParticipants?.length;
+
+
+
+  console.log(!!otherParticipants?.length,isAloneInMeeting, "OEJDJ");
 
   useEffect(() => {
     if (
@@ -262,7 +314,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                         large={true}
                       />
                     )
-                  ) : otherParticipants?.[1] ? (
+                  ) : !!otherParticipants?.length ? (
                     <ParticipantView
                       participantId={otherParticipants[0]?.id}
                       large={true}
@@ -292,7 +344,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                         large={true}
                       />
                     )
-                  ) : otherParticipants.length > 0 ? (
+                  ) : !!otherParticipants.length ? (
                     <ParticipantView
                       participantId={otherParticipants[0]?.id}
                       large={true}
@@ -320,16 +372,16 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           {layout === "grid" && (
             <div
               className={`grid ${
-                activeParticipantsArray.length === 1
+                [...participants.values()].length === 1
                   ? "grid-cols-1"
-                  : activeParticipantsArray.length <= 2
+                  : [...participants.values()].length <= 2
                   ? "grid-cols-1 md:grid-cols-2"
-                  : activeParticipantsArray.length <= 4
+                  : [...participants.values()].length <= 4
                   ? "grid-cols-2"
                   : "grid-cols-2 md:grid-cols-3"
               } gap-2 p-2 h-full`}
             >
-              {activeParticipantsArray.map((participant) => (
+              {[...participants.values()].map((participant) => (
                 <ParticipantView
                   key={participant.id}
                   participantId={participant.id}
@@ -358,6 +410,31 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           handleEndCall();
         }}
       />
+
+      <AlertDialog
+        open={isMultiDeviceDialogOpen}
+        onOpenChange={setIsMultiDeviceDialogOpen}
+      >
+        <AlertDialogContent className="grid gap-4">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Multiple Device Connection Detected
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              You appear to be joining this meeting from another device. Would
+              you like to continue on this device or switch to the other device?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex md:justify-end ">
+            <AlertDialogCancel onClick={handleSwitchToOtherDevice}>
+              Switch to Other Device
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleStayOnCurrentDevice}>
+              Continue on This Device
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
