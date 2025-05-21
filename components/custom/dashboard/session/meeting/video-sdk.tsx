@@ -284,8 +284,12 @@ const VideoSDKApp: React.FC = () => {
   const configOptions = {
     meetingId,
     name: participantName,
+    participantId: meetingConfig.participantId,
+    metaData: meetingConfig.metaData,
+    micEnabled: userAudioEnabled,
+    webcamEnabled: userVideoEnabled,
+    debugMode: true,
     displayName: participantName,
-    mode: "SEND_AND_RECV",
     token,
     layout: "GRID",
     multiStream: true,
@@ -293,13 +297,8 @@ const VideoSDKApp: React.FC = () => {
       title: "Live Session",
       description: `You are in a live session with your provider ${participantName}`,
     },
-    participantId: meetingConfig.participantId,
-    micEnabled: userAudioEnabled,
-    webcamEnabled: userVideoEnabled,
     ...(selectedAudioDeviceId && { micId: selectedAudioDeviceId }),
     ...(selectedVideoDeviceId && { webcamId: selectedVideoDeviceId }),
-    debugMode: true,
-    metaData: meetingConfig.metaData,
   };
 
   return (

@@ -60,8 +60,8 @@ importers:
         specifier: ^3.0.6
         version: 3.0.6
       '@videosdk.live/react-sdk':
-        specifier: ^0.2.1
-        version: 0.2.3(react@19.1.0)
+        specifier: ^0.1.92
+        version: 0.1.105(react@19.1.0)
       axios:
         specifier: ^1.8.3
         version: 1.8.4
@@ -1314,13 +1314,13 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@videosdk.live/js-sdk@0.1.6':
-    resolution: {integrity: sha512-iGQxw61vRVhb25U9T/ofXvwheXIYQegIHlP3bgZ3hSkCaLifMwLxni/IDC0YRXXfakJnslN6ZeLHkIbGwSzRvw==}
+  '@videosdk.live/js-sdk@0.0.101':
+    resolution: {integrity: sha512-LMmCCiZQYJUCIchCgU4LozmRL5ETjNxBixgXERm1SxGUPuYuRW1g11+VLPT10E7m8Ryz9Byrwst389xPfVz/jQ==}
 
-  '@videosdk.live/react-sdk@0.2.3':
-    resolution: {integrity: sha512-aVGIjlIx2J2KMVW0DSisg3RJRRfaZ+zJ5QqGN7b4AM3mDvt/WkWKBobtbusLt71suDQKh/8CAF+iC391FzkrXQ==}
+  '@videosdk.live/react-sdk@0.1.105':
+    resolution: {integrity: sha512-fYZ1G2rgSHOsK9f566yAlZjHCRM9c4uvUEbuQyDtFLGIdYwwjQnXyj0xJKY8kaSmvedWjiJsEurDzzDmS5IDAA==}
     peerDependencies:
-      react: ^16.13.1 || ^17 || ^18 || ^19
+      react: ^16.13.1 || ^17 || ^18
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -3919,11 +3919,11 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.5.0':
     optional: true
 
-  '@videosdk.live/js-sdk@0.1.6': {}
+  '@videosdk.live/js-sdk@0.0.101': {}
 
-  '@videosdk.live/react-sdk@0.2.3(react@19.1.0)':
+  '@videosdk.live/react-sdk@0.1.105(react@19.1.0)':
     dependencies:
-      '@videosdk.live/js-sdk': 0.1.6
+      '@videosdk.live/js-sdk': 0.0.101
       events: 3.3.0
       react: 19.1.0
 
