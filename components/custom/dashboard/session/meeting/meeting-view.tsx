@@ -245,12 +245,17 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     );
   };
 
-  const activeParticipantsArray = getActiveParticipants();
-  const isAloneInMeeting = activeParticipantsArray.length <= 1;
+  console.log(participants);
 
-  const otherParticipants = activeParticipantsArray.filter(
+  const activeParticipantsArray = getActiveParticipants();
+    const otherParticipants = [...participants.values()].filter(
     (p) => p?.id !== localParticipant?.id
   );
+  const isAloneInMeeting = !!activeParticipantsArray.length && !otherParticipants?.length;
+
+
+
+  console.log(!!otherParticipants?.length,isAloneInMeeting, "OEJDJ");
 
   useEffect(() => {
     if (
@@ -309,7 +314,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                         large={true}
                       />
                     )
-                  ) : otherParticipants?.[1] ? (
+                  ) : !!otherParticipants?.length ? (
                     <ParticipantView
                       participantId={otherParticipants[0]?.id}
                       large={true}
@@ -339,7 +344,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                         large={true}
                       />
                     )
-                  ) : otherParticipants.length > 0 ? (
+                  ) : !!otherParticipants.length ? (
                     <ParticipantView
                       participantId={otherParticipants[0]?.id}
                       large={true}
@@ -367,16 +372,16 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           {layout === "grid" && (
             <div
               className={`grid ${
-                activeParticipantsArray.length === 1
+                [...participants.values()].length === 1
                   ? "grid-cols-1"
-                  : activeParticipantsArray.length <= 2
+                  : [...participants.values()].length <= 2
                   ? "grid-cols-1 md:grid-cols-2"
-                  : activeParticipantsArray.length <= 4
+                  : [...participants.values()].length <= 4
                   ? "grid-cols-2"
                   : "grid-cols-2 md:grid-cols-3"
               } gap-2 p-2 h-full`}
             >
-              {activeParticipantsArray.map((participant) => (
+              {[...participants.values()].map((participant) => (
                 <ParticipantView
                   key={participant.id}
                   participantId={participant.id}
