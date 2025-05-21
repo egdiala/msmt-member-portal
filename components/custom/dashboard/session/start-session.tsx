@@ -1,13 +1,13 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { OrganizationCard } from "./organization-card";
+// import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
 import Link from "next/link";
 import { formatApptTimeShort } from "@/lib/utils";
 import { formatSessionDate } from "../appointments/details/appointment-details";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
-import { useGetProfile } from "@/services/hooks/queries/use-profile";
+// import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 export function StartSession() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export function StartSession() {
   const user_id = searchParams.get("user_id");
   const appointment_id = searchParams.get("appointment_id");
   const { data } = useGetAppointmentsById(appointment_id as string);
-  const { data: account } = useGetProfile();
+  // const { data: account } = useGetProfile();
 
 
   const provider = {
@@ -28,11 +28,11 @@ export function StartSession() {
     duration: "1 hour",
   };
 
-  const organization = {
-    name: account?.org_data[0]?.name || "-",
-    avatar: account?.org_data[0]?.avatar,
-    type: account?.org_data[0]?.industry_name || "-",
-  };
+  // const organization = {
+  //   name: account?.org_data[0]?.name || "-",
+  //   avatar: account?.org_data[0]?.avatar,
+  //   type: account?.org_data[0]?.industry_name || "-",
+  // };
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
       <div className="text-center">
@@ -45,7 +45,7 @@ export function StartSession() {
       {/* Organization */}
 
       <div className="grid md:gap-4 gap-8">
-        <OrganizationCard organization={organization} />
+        {/* <OrganizationCard organization={organization} /> */}
         <ProviderCard session={provider} />
       </div>
 
