@@ -310,7 +310,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   }, [isVideoEnabled, toggleWebcam]);
 
   const handleEndCall = useCallback(async () => {
-    if (isProvider) {
+    if (!isProvider) {
       setOpen(true);
       return;
     }
