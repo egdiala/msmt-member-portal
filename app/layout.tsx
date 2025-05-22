@@ -124,7 +124,7 @@ export default function RootLayout({
             classNames: {
               error: `${TOAST_STYLING} !bg-status-danger`,
               success: `${TOAST_STYLING} !bg-actions-green`,
-              info: `${TOAST_STYLING} !bg-white`,
+              info: `flex items-center gap-x-2 p-3 rounded-lg !bg-white !text-black`,
             },
           }}
         />

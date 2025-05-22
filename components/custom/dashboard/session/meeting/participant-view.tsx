@@ -32,6 +32,7 @@ const ParticipantView = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const {
     webcamStream,
     micStream,
@@ -42,108 +43,60 @@ const ParticipantView = ({
     metaData,
   } = useParticipant(participantId) as unknown as ParticipantData;
 
-  const name = isLocal ? metaData?.name || displayName || "You" : displayName;
+  const name = isLocal ? metaData?.name || "You" : displayName;
 
-  const role = isLocal ? "You" : name;
-  useEffect(() => {
-    const audioElement = audioRef.current;
-
-    if (audioElement) {
-      if (micStream && micOn) {
-        try {
-          const mediaStream = new MediaStream();
-
-          if (micStream.track instanceof MediaStreamTrack) {
-            mediaStream.addTrack(micStream.track);
-            audioElement.srcObject = mediaStream;
-
-            audioElement.play().catch((error) => {
-              if (error.name !== "AbortError") {
-                console.error("Error playing audio:", error);
-              }
-            });
-          }
-        } catch (error) {
-          console.error("Error setting up audio stream:", error);
-        }
-      } else {
-        if (audioElement.srcObject) {
-          const mediaStream = audioElement.srcObject as MediaStream;
-          mediaStream.getTracks().forEach((track) => track.stop());
-          audioElement.srcObject = null;
-        }
-      }
-    }
-
-    return () => {
-      if (audioElement && audioElement.srcObject) {
-        const mediaStream = audioElement.srcObject as MediaStream;
-        mediaStream.getTracks().forEach((track) => track.stop());
-        audioElement.srcObject = null;
-      }
-    };
-  }, [micStream, micOn, participantId]);
-
+  // Setup Video
   useEffect(() => {
     const videoElement = videoRef.current;
 
-    if (videoElement) {
-      if (webcamStream && webcamOn) {
-        try {
-          const mediaStream = new MediaStream();
-
-          if (webcamStream.track instanceof MediaStreamTrack) {
-            mediaStream.addTrack(webcamStream.track);
-            videoElement.srcObject = mediaStream;
-
-            videoElement.play().catch((error) => {
-              if (error.name !== "AbortError") {
-                console.error("Error playing video:", error);
-              }
-            });
-          }
-        } catch (error) {
-          console.error("Error setting up video stream:", error);
-        }
-      } else {
-        if (videoElement.srcObject) {
-          const mediaStream = videoElement.srcObject as MediaStream;
-          mediaStream.getTracks().forEach((track) => track.stop());
-          videoElement.srcObject = null;
-        }
-      }
+    if (webcamStream?.track && videoElement) {
+      const mediaStream = new MediaStream();
+      mediaStream.addTrack(webcamStream.track);
+      videoElement.srcObject = mediaStream;
+      videoElement
+        .play()
+        .catch((e) => console.error("Video play error:", e));
     }
+  }, [webcamStream?.track]);
 
-    return () => {
-      if (videoElement && videoElement.srcObject) {
-        const mediaStream = videoElement.srcObject as MediaStream;
-        mediaStream.getTracks().forEach((track) => track.stop());
-        videoElement.srcObject = null;
-      }
-    };
-  }, [webcamStream, webcamOn, participantId]);
+  // Setup Audio (Only for remote)
+  useEffect(() => {
+    const audioElement = audioRef.current;
+
+    if (!isLocal && micStream?.track && audioElement) {
+      const mediaStream = new MediaStream();
+      mediaStream.addTrack(micStream.track);
+      audioElement.srcObject = mediaStream;
+      audioElement
+        .play()
+        .catch((e) => console.error("Audio play error:", e));
+    }
+  }, [micStream?.track, isLocal]);
 
   return (
-    <div
-      className={`rounded-lg overflow-hidden ${
-        large ? "h-full w-full" : "h-full w-full"
-      }`}
-    >
-      {webcamOn ? (
-        <div className="full h-full relative">
+    <div className={`rounded-lg overflow-hidden ${large ? "h-full w-full" : "h-full w-full"}`}>
+      {webcamOn && webcamStream ? (
+        <div className="h-full w-full rounded-lg relative">
           <video
             ref={videoRef}
             autoPlay
             playsInline
             muted={isLocal}
-            className="w-full h-full object-cover object-center"
+            className={cn(
+              large
+                ? "object-cover md:object-contain md:aspect-video"
+                : "object-cover",
+              "object-center z-1 rounded-lg w-full h-full"
+            )}
           />
-          <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center">
-            <span>{role}</span>
-
+          <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center shadow-sm">
+            <span>{name}</span>
             <span className="ml-2 text-red-500">
-              {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
-              {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
+              {!micOn ? (
+                <IconMicOff className="w-4 h-4 stroke-red-500" />
+              ) : (
+                <IconMic className="w-4 h-4 stroke-brand-1" />
+              )}
             </span>
           </div>
         </div>
@@ -151,26 +104,25 @@ const ParticipantView = ({
         <div className="flex items-center justify-center w-full h-full bg-blue-400 text-white">
           <div
             className={cn(
-              audioRef &&
-                micOn &&
-                "p-2  rounded-2xl overflow-hidden ring-4 ring-brand-accent-2 ring-opacity-60"
+              audioRef && micOn && "p-2 rounded-2xl overflow-hidden ring-4 ring-brand-accent-2 ring-opacity-60"
             )}
           >
-            <div className="h-52 w-52 rounded-2xl relative">
+            <div className="h-40 w-40 md:h-52 md:w-52 rounded-2xl relative">
               <Image
-                src={metaData?.avatar || "/assets/user.png"}
+                src={metaData?.avatar || "/assets/blank-profile-picture.png"}
                 alt={name}
                 width={208}
                 height={208}
                 className="w-full h-full object-cover rounded-2xl"
               />
-
-              <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center">
-                <span>{role}</span>
-
+              <div className="absolute bottom-4 md:bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center shadow-sm">
+                <span>{name}</span>
                 <span className="ml-2 text-red-500">
-                  {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
-                  {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
+                  {!micOn ? (
+                    <IconMicOff className="w-4 h-4 stroke-red-500" />
+                  ) : (
+                    <IconMic className="w-4 h-4 stroke-brand-1" />
+                  )}
                 </span>
               </div>
             </div>
@@ -178,7 +130,7 @@ const ParticipantView = ({
         </div>
       )}
 
-      {micOn && !isLocal && <audio ref={audioRef} autoPlay />}
+      {!isLocal && micOn && <audio ref={audioRef} autoPlay />}
     </div>
   );
 };
