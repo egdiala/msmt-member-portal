@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useMeeting } from "@videosdk.live/react-sdk";
+import { useMeeting, usePubSub } from "@videosdk.live/react-sdk";
 import { ParticipantView } from "./participant-view";
 import {
   AlertDialog,
@@ -17,6 +17,7 @@ import { RenderIf } from "@/components/shared";
 import { toast } from "sonner";
 import ToolBar from "./tool-bar";
 import { RatingDialog } from "../../appointments/rating-form";
+
 interface MeetingViewProps {
   isProvider?: boolean;
   meetingId: string;
@@ -37,50 +38,18 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const [isMultiDeviceDialogOpen, setIsMultiDeviceDialogOpen] =
     useState<boolean>(false);
   const [isLeaving, setIsLeaving] = useState<boolean>(false);
-  const [, setUserConfirmedLeave] = useState<boolean>(false);
+  const [userConfirmedLeave, setUserConfirmedLeave] = useState<boolean>(false);
+
+  // Refs
   const meetingInitializedRef = useRef(false);
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMountedRef = useRef(true);
-  const router = useRouter();
+  const leavingInProgressRef = useRef(false);
 
+  const router = useRouter();
   const isVideoEnabled = commMode === "video";
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-      componentMountedRef.current = false;
-    };
-  }, []);
-
-  const leaveMeetingSafely = async () => {
-    if (isLeaving) return;
-
-    setIsLeaving(true);
-    try {
-      await leave();
-
-      if (redirectTimeoutRef.current) {
-        clearTimeout(redirectTimeoutRef.current);
-      }
-
-      if (componentMountedRef.current && onMeetingLeft) {
-        onMeetingLeft();
-      }
-    } catch (error) {
-      console.error("Error leaving meeting:", error);
-    } finally {
-      setIsMeetingJoined(false);
-      setIsLeaving(false);
-    }
-  };
-
+  // Meeting hook
   const {
     join,
     leave,
@@ -92,16 +61,39 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     localWebcamOn,
   } = useMeeting({
     onMeetingJoined: () => {
-      setIsMeetingJoined(true);
+      if (componentMountedRef.current) {
+        setIsMeetingJoined(true);
+      }
+    },
+    onParticipantJoined: (participant: any) => {
+      if (
+        componentMountedRef.current &&
+        participant.id !== localParticipant?.id
+      ) {
+        const participantName = participant.displayName;
+        toast.info(`${participantName} joined the meeting`);
+      }
+    },
+    onParticipantLeft: (participant: any) => {
+      if (
+        componentMountedRef.current &&
+        participant.id !== localParticipant?.id
+      ) {
+        const participantName = participant.displayName;
+        toast.info(`${participantName} left the meeting`);
+      }
     },
     onMeetingLeft: () => {
-      setIsMeetingJoined(false);
-
-      if (onMeetingLeft && componentMountedRef.current) {
-        onMeetingLeft();
+      if (componentMountedRef.current) {
+        setIsMeetingJoined(false);
+        if (onMeetingLeft) {
+          onMeetingLeft();
+        }
       }
     },
     onError: (error: any) => {
+      if (!componentMountedRef.current) return;
+
       if (error.code === 4005) {
         setIsMultiDeviceDialogOpen(true);
       } else {
@@ -109,19 +101,97 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       }
     },
   });
-  const handleStayOnCurrentDevice = () => {
+
+  const leaveMeetingSafely = useCallback(async () => {
+    if (leavingInProgressRef.current || isLeaving) return;
+
+    leavingInProgressRef.current = true;
+    setIsLeaving(true);
+
+    try {
+      await leave();
+
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+        redirectTimeoutRef.current = null;
+      }
+
+      if (componentMountedRef.current && onMeetingLeft) {
+        onMeetingLeft();
+      }
+    } catch (error) {
+      console.error("Error leaving meeting:", error);
+    } finally {
+      if (componentMountedRef.current) {
+        setIsMeetingJoined(false);
+        setIsLeaving(false);
+      }
+      leavingInProgressRef.current = false;
+    }
+  }, [leave, onMeetingLeft, isLeaving]);
+
+  const { publish, messages } = usePubSub("multi-device-control");
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      if (componentMountedRef.current) {
+        setIsMobile(window.innerWidth < 768);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  // Component mount/unmount tracking
+  useEffect(() => {
+    componentMountedRef.current = true;
+
+    return () => {
+      componentMountedRef.current = false;
+    };
+  }, []);
+
+  // PubSub message handling
+  useEffect(() => {
+    const latestMessage = messages[messages.length - 1];
+    if (
+      latestMessage &&
+      latestMessage.message === "force-leave" &&
+      componentMountedRef.current
+    ) {
+      toast.info("You have been logged out due to login on another device.");
+      leaveMeetingSafely();
+    }
+  }, [messages, leaveMeetingSafely]);
+
+  // Multi-device dialog handlers
+  const handleStayOnCurrentDevice = useCallback(() => {
+    if (!componentMountedRef.current) return;
+
     setIsMultiDeviceDialogOpen(false);
     toast.info("Continuing meeting on this device");
+
+    publish("force-leave", { persist: false });
 
     try {
       join();
     } catch (error) {
       console.error("Error rejoining the meeting:", error);
-      toast.error("Failed to rejoin the meeting");
+      if (componentMountedRef.current) {
+        toast.error("Failed to rejoin the meeting");
+      }
     }
-  };
+  }, [publish, join]);
 
-  const handleSwitchToOtherDevice = async () => {
+  const handleSwitchToOtherDevice = useCallback(async () => {
+    if (!componentMountedRef.current) return;
+
     setIsMultiDeviceDialogOpen(false);
     toast.info("Ending meeting on this device");
 
@@ -133,16 +203,22 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         await leave();
       }
 
-      if (onMeetingLeft) {
-        onMeetingLeft();
-      } else {
-        router.push("/");
+      if (componentMountedRef.current) {
+        if (onMeetingLeft) {
+          onMeetingLeft();
+        } else {
+          router.push("/home");
+        }
       }
     } catch (error) {
       console.error("Error leaving meeting:", error);
-      router.push("/");
+      if (componentMountedRef.current) {
+        router.push("/home");
+      }
     }
-  };
+  }, [isMeetingJoined, leave, onMeetingLeft, router]);
+
+  // Browser events
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (isMeetingJoined && !isLeaving) {
@@ -164,7 +240,8 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       if (
         document.visibilityState === "hidden" &&
         isMeetingJoined &&
-        !isLeaving
+        !isLeaving &&
+        componentMountedRef.current
       ) {
         setUserConfirmedLeave(true);
       }
@@ -177,34 +254,55 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     };
   }, [isMeetingJoined, isLeaving]);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      componentMountedRef.current = false;
-      if (isMeetingJoined && !isLeaving) {
-        leaveMeetingSafely();
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
+
+      if (isMeetingJoined && !leavingInProgressRef.current) {
+        leaveMeetingSafely().catch(console.error);
       }
     };
-  }, [isMeetingJoined, isLeaving]);
-
+  }, []);
   useEffect(() => {
-    if (!meetingInitializedRef.current && meetingId) {
+    if (
+      !meetingInitializedRef.current &&
+      meetingId &&
+      componentMountedRef.current
+    ) {
       meetingInitializedRef.current = true;
+
       const timeout = setTimeout(() => {
-        join();
+        if (componentMountedRef.current) {
+          join();
+        }
       }, 500);
+
       return () => clearTimeout(timeout);
     }
   }, [meetingId, join]);
 
-  const handleToggleAudio = () => {
+  // Layout management
+  useEffect(() => {
+    if (isVideoEnabled) {
+      setLayout("focus");
+    } else {
+      setLayout("grid");
+    }
+  }, [isVideoEnabled]);
+
+  // Event handlers
+  const handleToggleAudio = useCallback(() => {
     try {
       toggleMic();
     } catch (error) {
       console.error("Error toggling mic:", error);
     }
-  };
+  }, [toggleMic]);
 
-  const handleToggleVideo = () => {
+  const handleToggleVideo = useCallback(() => {
     if (!isVideoEnabled) {
       toast.error("Video toggle not allowed in audio-only mode");
       return;
@@ -215,9 +313,13 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     } catch (error) {
       console.error("Error toggling webcam:", error);
     }
-  };
+  }, [isVideoEnabled, toggleWebcam]);
 
-  const handleEndCall = async () => {
+  const handleEndCall = useCallback(async () => {
+    const otherParticipants = [...participants.values()].filter(
+      (p) => p?.id !== localParticipant?.id
+    );
+
     if (!isProvider && !!otherParticipants.length) {
       setOpen(true);
       return;
@@ -231,51 +333,30 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         await leave();
       }
 
-      router.push("/");
+      if (componentMountedRef.current) {
+        router.push("/");
+      }
     } catch (error) {
       console.error("Error ending call:", error);
-
-      router.push("/");
-    }
-  };
-
-  const getActiveParticipants = () => {
-    return [...participants.values()].filter((p) =>
-      ["SEND_AND_RECV", "RECV_ONLY", "SEND_ONLY"].includes(p.mode)
-    );
-  };
-
-  console.log(participants);
-
-  const activeParticipantsArray = getActiveParticipants();
-    const otherParticipants = [...participants.values()].filter(
-    (p) => p?.id !== localParticipant?.id
-  );
-  const isAloneInMeeting = !!activeParticipantsArray.length && !otherParticipants?.length;
-
-
-
-  console.log(!!otherParticipants?.length,isAloneInMeeting, "OEJDJ");
-
-  useEffect(() => {
-    if (
-      isVideoEnabled &&
-      ((activeParticipantsArray[0]?.webcamOn === true &&
-        otherParticipants[0]?.webcamOn === true) ||
-        isAloneInMeeting)
-    ) {
-      setLayout("focus");
-    } else {
-      setLayout("grid");
+      if (componentMountedRef.current) {
+        router.push("/");
+      }
     }
   }, [
-    activeParticipantsArray,
-    isAloneInMeeting,
-    otherParticipants,
-    layout,
-    setLayout,
-    isVideoEnabled,
+    isProvider,
+    participants,
+    localParticipant?.id,
+    isMeetingJoined,
+    leave,
+    router,
   ]);
+
+  // Computed values
+  const otherParticipants = [...participants.values()].filter(
+    (p) => p?.id !== localParticipant?.id
+  );
+  const isAloneInMeeting =
+    !!localParticipant && otherParticipants?.length === 0;
 
   return (
     <div className="flex flex-col h-full rounded-lg overflow-hidden">
@@ -301,14 +382,14 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden relative">
+      <div className="flex-1 overflow-hidden relative h-full">
         {layout === "focus" && (
           <div className="h-full flex flex-col">
             {isMobile ? (
-              <div className="h-full flex flex-col">
-                <div className="flex-1 relative">
+              <div className="h-full flex flex-col pb-16 md:pb-20">
+                <div className="flex-1 h-full relative">
                   {isAloneInMeeting ? (
-                    localParticipant && (
+                    !!localParticipant?.id && (
                       <ParticipantView
                         participantId={localParticipant?.id}
                         large={true}
@@ -321,9 +402,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                     />
                   ) : null}
 
-                  {!isAloneInMeeting && localParticipant && (
+                  {!isAloneInMeeting && !!localParticipant?.id && (
                     <div className="flex flex-col p-2 gap-2 absolute top-2 right-2">
-                      <div className="h-32 w-40 border-2 border-white rounded-lg overflow-hidden">
+                      <div className="h-40 w-40 border-2 border-white rounded-lg overflow-hidden">
                         <ParticipantView
                           key={localParticipant?.id}
                           participantId={localParticipant?.id}
@@ -351,7 +432,9 @@ const MeetingView: React.FC<MeetingViewProps> = ({
                     />
                   ) : null}
 
-                  <RenderIf condition={!isAloneInMeeting && !!localParticipant}>
+                  <RenderIf
+                    condition={!isAloneInMeeting && !!localParticipant?.id}
+                  >
                     <div className="h-48 flex w-52 absolute top-2 right-2">
                       <div className="h-full w-full border-2 rounded-lg overflow-hidden border-white">
                         <ParticipantView
@@ -368,7 +451,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           </div>
         )}
 
-        <div className="pb-16 md:pb-20 h-full">
+        <div className="h-full pb-16 md:pb-20">
           {layout === "grid" && (
             <div
               className={`grid ${
@@ -403,12 +486,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           isVideoEnabled={isVideoEnabled}
         />
       </div>
+
       <RatingDialog
         open={open}
+        personName={otherParticipants[0]?.displayName}
         onOpenChange={setOpen}
-        onSuccess={() => {
-          handleEndCall();
-        }}
+        onSuccess={handleEndCall}
       />
 
       <AlertDialog
@@ -417,15 +500,15 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       >
         <AlertDialogContent className="grid gap-4">
           <AlertDialogHeader>
-            <AlertDialogTitle>
+            <AlertDialogTitle className="text-center text-base md:text-lg">
               Multiple Device Connection Detected
             </AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="text-xs md:text-sm text-left">
               You appear to be joining this meeting from another device. Would
               you like to continue on this device or switch to the other device?
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex md:justify-end ">
+          <AlertDialogFooter className="flex md:justify-end">
             <AlertDialogCancel onClick={handleSwitchToOtherDevice}>
               Switch to Other Device
             </AlertDialogCancel>
@@ -438,4 +521,5 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     </div>
   );
 };
+
 export default MeetingView;
