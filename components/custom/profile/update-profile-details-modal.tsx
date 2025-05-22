@@ -46,7 +46,6 @@ export const UpdateProfileDetailsModal = ({
   const { requestVariables, variableList, countryList } =
     useGetDefinedVariables();
   const countryListArray = countryList ? countryList : [];
-  console.log(data, "data");
 
   const form = useForm<z.infer<typeof editProfileDetailsSchema>>({
     resolver: zodResolver(editProfileDetailsSchema),
@@ -111,48 +110,50 @@ export const UpdateProfileDetailsModal = ({
     <Modal
       isOpen={isOpen}
       handleClose={handleClose}
-      className="grid gap-y-6 bg-white overflow-hidden"
+      className="bg-white overflow-hidden"
     >
-      <h2 className="font-bold text-lg md:text-2xl">Profile Details</h2>
-
-      <div className="flex flex-col gap-2 justify-center items-center">
-        <Avatar className="h-25 w-25 rounded-full">
-          <AvatarImage
-            src={
-              avatar instanceof File
-                ? URL.createObjectURL(avatar)
-                : avatar || data?.avatar || "/assets/blank-profile-picture.png"
-            }
-            className="object-cover w-full h-full"
-            alt={`${data?.first_name} ${data?.last_name}`}
-          />
-        </Avatar>
-
-        <button
-          className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          id="update-form"
+          className="grid gap-y-6"
         >
-          <IconCamera className="stroke-text-tertiary size-4" />
-          {isLoading ? "Uploading..." : "Upload Profile Picture"}
-        </button>
+          <h2 className="font-bold text-lg md:text-2xl">Profile Details</h2>
 
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleFileChange}
-        />
-      </div>
+          <div className="flex flex-col gap-2 justify-center items-center">
+            <Avatar className="h-25 w-25 rounded-full">
+              <AvatarImage
+                src={
+                  avatar instanceof File
+                    ? URL.createObjectURL(avatar)
+                    : avatar ||
+                      data?.avatar ||
+                      "/assets/blank-profile-picture.png"
+                }
+                className="object-cover w-full h-full"
+                alt={`${data?.first_name} ${data?.last_name}`}
+              />
+            </Avatar>
 
-      <div className="overflow-y-auto max-h-[48vh] pr-2">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            id="update-form"
-            className="grid gap-y-6"
-          >
+            <button
+              className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+            >
+              <IconCamera className="stroke-text-tertiary size-4" />
+              {isLoading ? "Uploading..." : "Upload Profile Picture"}
+            </button>
+
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </div>
+
+          <div className="overflow-y-auto max-h-[48vh] pr-2">
             <div className="grid gap-y-4">
               <FormField
                 control={form.control}
@@ -282,33 +283,33 @@ export const UpdateProfileDetailsModal = ({
                 )}
               />
             </div>
-          </form>
-        </Form>
-      </div>
-      <div className="flex justify-end gap-x-4 pt-4 h-fit">
-        <Button variant="secondary" onClick={handleClose} type="button">
-          Cancel
-        </Button>
+          </div>
+          <div className="flex justify-end gap-x-4 pt-4 h-fit">
+            <Button variant="secondary" onClick={handleClose} type="button">
+              Cancel
+            </Button>
 
-        <Button
-          type="submit"
-          disabled={!form.formState.isValid || isPending}
-          id="update-form"
-          className="cursor-pointer w-21"
-        >
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-              initial={{ opacity: 0, y: -25 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 25 }}
-              key={buttonState}
+            <Button
+              type="submit"
+              disabled={!form.formState.isValid || isPending}
+              id="update-form"
+              className="cursor-pointer w-21"
             >
-              {buttonCopy[buttonState]}
-            </motion.span>
-          </AnimatePresence>
-        </Button>
-      </div>
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                  initial={{ opacity: 0, y: -25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 25 }}
+                  key={buttonState}
+                >
+                  {buttonCopy[buttonState]}
+                </motion.span>
+              </AnimatePresence>
+            </Button>
+          </div>
+        </form>
+      </Form>
     </Modal>
   );
 };
