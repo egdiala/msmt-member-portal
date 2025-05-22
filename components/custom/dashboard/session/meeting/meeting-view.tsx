@@ -201,18 +201,15 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         await leave();
       }
 
-      if (componentMountedRef.current) {
-        if (onMeetingLeft) {
-          onMeetingLeft();
-        } else {
-          router.push("/home");
-        }
+      if (onMeetingLeft) {
+        onMeetingLeft();
+      } else {
+        router.push("/home");
       }
     } catch (error) {
       console.error("Error leaving meeting:", error);
-      if (componentMountedRef.current) {
-        router.push("/home");
-      }
+
+      router.push("/home");
     }
   }, [isMeetingJoined, leave, onMeetingLeft, router]);
 
@@ -313,11 +310,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   }, [isVideoEnabled, toggleWebcam]);
 
   const handleEndCall = useCallback(async () => {
-    const otherParticipants = [...participants.values()].filter(
-      (p) => p?.id !== localParticipant?.id
-    );
-
-    if (!isProvider && !!otherParticipants.length) {
+    if (isProvider) {
       setOpen(true);
       return;
     }
@@ -329,14 +322,11 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         await leave();
       }
 
-      if (componentMountedRef.current) {
-        router.push("/");
-      }
+      router.push("/home");
     } catch (error) {
       console.error("Error ending call:", error);
-      if (componentMountedRef.current) {
-        router.push("/");
-      }
+
+      router.push("/home");
     }
   }, [
     isProvider,
