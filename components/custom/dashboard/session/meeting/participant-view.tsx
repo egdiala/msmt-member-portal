@@ -32,9 +32,6 @@ const ParticipantView = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const currentVideoStream = useRef<MediaStream | null>(null);
-  const currentAudioStream = useRef<MediaStream | null>(null);
-  const isCleaningUp = useRef(false);
 
   const {
     webcamStream,
@@ -46,180 +43,60 @@ const ParticipantView = ({
     metaData,
   } = useParticipant(participantId) as unknown as ParticipantData;
 
-  const name = isLocal ? metaData?.name || displayName || "You" : displayName;
-  const role = isLocal ? "You" : name;
+  const name = isLocal ? metaData?.name || "You" : displayName;
 
-  const cleanupStreams = useCallback(() => {
-    if (isCleaningUp.current) return;
-    isCleaningUp.current = true;
-
-    if (!isLocal) {
-      if (currentVideoStream.current) {
-        currentVideoStream.current.getTracks().forEach((track) => {
-          track.stop();
-        });
-        currentVideoStream.current = null;
-      }
-
-      if (currentAudioStream.current) {
-        currentAudioStream.current.getTracks().forEach((track) => {
-          track.stop();
-        });
-        currentAudioStream.current = null;
-      }
-
-      if (videoRef.current && videoRef.current.srcObject) {
-        const mediaStream = videoRef.current.srcObject as MediaStream;
-        mediaStream.getTracks().forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
-      }
-
-      if (audioRef.current && audioRef.current.srcObject) {
-        const mediaStream = audioRef.current.srcObject as MediaStream;
-        mediaStream.getTracks().forEach((track) => track.stop());
-        audioRef.current.srcObject = null;
-      }
-    }
-
-    isCleaningUp.current = false;
-  }, [isLocal]);
-  // Audio stream handling
-  useEffect(() => {
-    const audioElement = audioRef.current;
-    if (!audioElement || isCleaningUp.current) return;
-
-    const setupAudioStream = async () => {
-      try {
-        // Clean up previous audio stream only
-        if (currentAudioStream.current) {
-          currentAudioStream.current
-            .getTracks()
-            .forEach((track) => track.stop());
-          audioElement.srcObject = null;
-          currentAudioStream.current = null;
-        }
-
-        if (micStream && micOn && micStream.track instanceof MediaStreamTrack) {
-          // Check if track is still active
-          if (micStream.track.readyState === "ended") {
-            console.warn("Audio track is ended, skipping setup");
-            return;
-          }
-
-          const mediaStream = new MediaStream();
-          mediaStream.addTrack(micStream.track);
-
-          currentAudioStream.current = mediaStream;
-          audioElement.srcObject = mediaStream;
-
-          try {
-            await audioElement.play();
-          } catch (error: any) {
-            if (
-              error.name !== "AbortError" &&
-              error.name !== "NotAllowedError"
-            ) {
-              console.error("Error playing audio:", error);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error setting up audio stream:", error);
-      }
-    };
-
-    const timeoutId = setTimeout(setupAudioStream, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [micStream, micOn, participantId]);
-
+  // Setup Video
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (!videoElement || isCleaningUp.current) return;
 
-    const setupVideoStream = async () => {
-      try {
-        if (currentVideoStream.current) {
-          currentVideoStream.current
-            .getTracks()
-            .forEach((track) => track.stop());
-          videoElement.srcObject = null;
-          currentVideoStream.current = null;
-        }
+    if (webcamStream?.track && videoElement) {
+      const mediaStream = new MediaStream();
+      mediaStream.addTrack(webcamStream.track);
+      videoElement.srcObject = mediaStream;
+      videoElement
+        .play()
+        .catch((e) => console.error("Video play error:", e));
+    }
+  }, [webcamStream?.track]);
 
-        if (
-          webcamStream &&
-          webcamOn &&
-          webcamStream.track instanceof MediaStreamTrack
-        ) {
-          if (webcamStream.track.readyState === "ended") {
-            console.warn("Video track is ended, skipping setup");
-            return;
-          }
-
-          const mediaStream = new MediaStream();
-          mediaStream.addTrack(webcamStream.track);
-
-          currentVideoStream.current = mediaStream;
-          videoElement.srcObject = mediaStream;
-
-          try {
-            await videoElement.play();
-          } catch (error: any) {
-            if (
-              error.name !== "AbortError" &&
-              error.name !== "NotAllowedError"
-            ) {
-              console.error("Error playing video:", error);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error setting up video stream:", error);
-      }
-    };
-
-    const timeoutId = setTimeout(setupVideoStream, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [webcamStream, webcamOn, participantId]);
-
-  // Cleanup on unmount
+  // Setup Audio (Only for remote)
   useEffect(() => {
-    return () => {
-      cleanupStreams();
-    };
-  }, [cleanupStreams]);
+    const audioElement = audioRef.current;
+
+    if (!isLocal && micStream?.track && audioElement) {
+      const mediaStream = new MediaStream();
+      mediaStream.addTrack(micStream.track);
+      audioElement.srcObject = mediaStream;
+      audioElement
+        .play()
+        .catch((e) => console.error("Audio play error:", e));
+    }
+  }, [micStream?.track, isLocal]);
 
   return (
-    <div
-      className={`rounded-lg overflow-hidden ${
-        large ? "h-full w-full" : "h-full w-full"
-      }`}
-    >
-      {webcamOn && !!currentVideoStream ? (
-        <div className=" h-full w-full rounded-lg relative ">
+    <div className={`rounded-lg overflow-hidden ${large ? "h-full w-full" : "h-full w-full"}`}>
+      {webcamOn && webcamStream ? (
+        <div className="h-full w-full rounded-lg relative">
           <video
             ref={videoRef}
             autoPlay
             playsInline
-            muted
+            muted={isLocal}
             className={cn(
               large
-                ? "object-cover  md:object-contain md:aspect-video "
-                : "object-cover ",
-              " object-center z-1  rounded-lg w-full h-full"
+                ? "object-cover md:object-contain md:aspect-video"
+                : "object-cover",
+              "object-center z-1 rounded-lg w-full h-full"
             )}
           />
           <div className="absolute bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center shadow-sm">
-            <span>{role}</span>
+            <span>{name}</span>
             <span className="ml-2 text-red-500">
-              {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
-              {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
+              {!micOn ? (
+                <IconMicOff className="w-4 h-4 stroke-red-500" />
+              ) : (
+                <IconMic className="w-4 h-4 stroke-brand-1" />
+              )}
             </span>
           </div>
         </div>
@@ -227,9 +104,7 @@ const ParticipantView = ({
         <div className="flex items-center justify-center w-full h-full bg-blue-400 text-white">
           <div
             className={cn(
-              audioRef &&
-                micOn &&
-                "p-2 rounded-2xl overflow-hidden ring-4 ring-brand-accent-2 ring-opacity-60"
+              audioRef && micOn && "p-2 rounded-2xl overflow-hidden ring-4 ring-brand-accent-2 ring-opacity-60"
             )}
           >
             <div className="h-40 w-40 md:h-52 md:w-52 rounded-2xl relative">
@@ -239,13 +114,15 @@ const ParticipantView = ({
                 width={208}
                 height={208}
                 className="w-full h-full object-cover rounded-2xl"
-                priority={large}
               />
-              <div className="absolute bottom-4 md:bottom-2  left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center shadow-sm">
-                <span>{role}</span>
+              <div className="absolute bottom-4 md:bottom-2 left-2 bg-blue-400 bg-opacity-50 text-[#354959] px-1 py-0.5 rounded-full text-sm flex items-center shadow-sm">
+                <span>{name}</span>
                 <span className="ml-2 text-red-500">
-                  {!micOn && <IconMicOff className="w-4 h-4 stroke-red-500" />}
-                  {micOn && <IconMic className="w-4 h-4 stroke-brand-1" />}
+                  {!micOn ? (
+                    <IconMicOff className="w-4 h-4 stroke-red-500" />
+                  ) : (
+                    <IconMic className="w-4 h-4 stroke-brand-1" />
+                  )}
                 </span>
               </div>
             </div>
@@ -253,7 +130,7 @@ const ParticipantView = ({
         </div>
       )}
 
-      {micOn && !isLocal && <audio ref={audioRef} autoPlay />}
+      {!isLocal && micOn && <audio ref={audioRef} autoPlay />}
     </div>
   );
 };

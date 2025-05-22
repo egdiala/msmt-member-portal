@@ -38,7 +38,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   const [isMultiDeviceDialogOpen, setIsMultiDeviceDialogOpen] =
     useState<boolean>(false);
   const [isLeaving, setIsLeaving] = useState<boolean>(false);
-  const [userConfirmedLeave, setUserConfirmedLeave] = useState<boolean>(false);
 
   // Refs
   const meetingInitializedRef = useRef(false);
@@ -197,7 +196,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
     try {
       setIsLeaving(true);
-      setUserConfirmedLeave(true);
 
       if (isMeetingJoined) {
         await leave();
@@ -243,7 +241,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
         !isLeaving &&
         componentMountedRef.current
       ) {
-        setUserConfirmedLeave(true);
       }
     };
 
@@ -327,7 +324,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
     try {
       setIsLeaving(true);
-      setUserConfirmedLeave(true);
 
       if (isMeetingJoined) {
         await leave();
