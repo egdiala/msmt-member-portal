@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useParticipant } from "@videosdk.live/react-sdk";
 import { IconMic, IconMicOff } from "@/components/icons";
