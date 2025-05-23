@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -23,11 +22,13 @@ export const UpdatePasswordForm = () => {
 
   const { mutate, isPending } = useChangePassword(() => {
     clearAllCookies();
+    localStorage.clear();
     router.push("/sign-in");
   });
 
   const form = useForm<z.infer<typeof profileSecuritySchema>>({
     resolver: zodResolver(profileSecuritySchema),
+    mode: "onChange",
     defaultValues: {
       currentPassword: "",
       newPassword: "",
