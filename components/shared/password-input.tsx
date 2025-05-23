@@ -93,10 +93,21 @@ interface PasswordInputProps {
   placeholder?: string;
   className?: string;
   showRequirements?: boolean;
+  turnOffAutocomplete?: boolean;
 }
 
 const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ value, labelTitle, onChange, showRequirements = true, ...props }, ref) => {
+  (
+    {
+      value,
+      labelTitle,
+      onChange,
+      showRequirements = true,
+      turnOffAutocomplete,
+      ...props
+    },
+    ref
+  ) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,6 +128,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
             value={value}
             onChange={handleChange}
             ref={ref}
+            autoComplete={turnOffAutocomplete ? "off" : "on"}
             {...props}
           />
           <Button

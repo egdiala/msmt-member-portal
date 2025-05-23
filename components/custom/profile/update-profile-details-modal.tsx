@@ -137,7 +137,10 @@ export const UpdateProfileDetailsModal = ({
 
             <button
               className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={(e) => {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }}
               disabled={isLoading}
             >
               <IconCamera className="stroke-text-tertiary size-4" />

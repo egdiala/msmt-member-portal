@@ -24,6 +24,12 @@ export function getStatusBadge(status: string) {
           Pending
         </span>
       );
+    case "Live":
+      return (
+        <span className="text-purple-500 font-medium text-xs md:text-sm">
+          Live
+        </span>
+      );
     default:
       return status;
   }

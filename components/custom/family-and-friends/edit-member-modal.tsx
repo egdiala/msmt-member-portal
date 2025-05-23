@@ -39,6 +39,7 @@ export const EditMemberModal = ({
       email: memberDetail?.email,
       relationship: memberDetail?.relationship === "1" ? "Family" : "Friend",
       gender: "",
+      phone_number: "",
     },
   });
 

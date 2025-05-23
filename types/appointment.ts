@@ -1,7 +1,8 @@
 export interface Appointment {
   id: string;
   date: string;
-  time: string;
+  appt_date: string;
+  appt_time: string;
   consultant: string;
   amount: string;
   serviceOffered: string;
@@ -22,11 +23,11 @@ export type AppointmentType = {
   booking_ref: string;
   booking_link: string;
   comm_mode: "audio" | "video" | string;
-  member_questionnaire: any[]; 
-  appt_schedule: string; 
-  appt_date: string; 
-  appt_day: number; 
-  appt_time: number; 
+  member_questionnaire: any[];
+  appt_schedule: string;
+  appt_date: string;
+  appt_day: number;
+  appt_time: number;
   amount: number;
   refunded_amount: number;
   status: number;
@@ -38,9 +39,9 @@ export type AppointmentType = {
   meeting_id: string;
   member_token: string;
   provider_token: string;
-  systemdata_charge: Record<string, any>; 
-  createdAt: string; 
-  updatedAt: string; 
+  systemdata_charge: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
   provider_data: {
     name: string;
     avatar: string;
@@ -62,8 +63,6 @@ export interface GetAppointmentsQuery {
   page?: string;
   component?: string;
 }
-
-
 
 export interface ChildQuestion {
   question: string;
@@ -152,4 +151,3 @@ export interface SessionRatingPayload {
   appointment_id: string;
   comment?: string;
 }
-

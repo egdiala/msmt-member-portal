@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { IconPen } from "@/components/icons";
 import { Button, Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import {
@@ -14,7 +15,6 @@ import {
 import { hasCompletedBasicProfile } from "@/lib/utils";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { UpdateProfileDetailsModal } from "./update-profile-details-modal";
-import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 export const PersonalInfoDetailsSection = () => {
   const router = useRouter();
@@ -22,15 +22,20 @@ export const PersonalInfoDetailsSection = () => {
 
   const { data } = useGetProfile();
   const hasntCompletedProfile = !hasCompletedBasicProfile(data!);
+  const phoneNumber = `+${data?.phone_prefix || ""}${data?.phone_number}`;
+  const formattedPhoneNumber = formatPhoneNumberIntl(phoneNumber)
+    ?.split(" ")
+    ?.join("");
 
   const personalInfo = [
     {
       id: 1,
       key: "Phone number",
-      value:
-        formatPhoneNumberIntl(
-          `+${data?.phone_prefix || ""}${data?.phone_number}`
-        ) || "_",
+      value: data?.phone_prefix
+        ? formattedPhoneNumber
+        : data?.phone_number && Object.keys(data?.phone_number)?.length === 0
+        ? "-"
+        : phoneNumber || "_",
     },
     { id: 2, key: "Religion", value: data?.religion || "_" },
     { id: 3, key: "Gender", value: data?.gender || "_" },

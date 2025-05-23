@@ -183,7 +183,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                   <FormItem>
                     <FormControl>
                       <SelectCmp
-                        onSelect={(val) => form.setValue("gender", val)}
+                        onSelect={(val) => field.onChange(val)}
                         selectItems={[
                           { id: 1, value: "Male" },
                           { id: 2, value: "Female" },
@@ -204,7 +204,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                   <FormItem>
                     <FormControl>
                       <SelectCmp
-                        onSelect={(val) => form.setValue("relationship", val)}
+                        onSelect={(val) => field.onChange(val)}
                         selectItems={[
                           { id: 1, value: "Family" },
                           { id: 2, value: "Friend" },
