@@ -143,6 +143,7 @@ export interface GetAppointmentIdType {
   rating_data: any[];
   appointment_id: string;
   service_offer_name: string;
+  org_payer_id?: string;
 }
 
 export interface SessionRatingPayload {
