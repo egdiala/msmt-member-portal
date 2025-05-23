@@ -102,7 +102,7 @@ export function AppointmentContainer() {
   }));
 
   const headers = [
-    { key: "date", value: "Date & Time" },
+    { key: "date", value: "Created Date & Time" },
     { key: "appt_date", value: "Appointment Date & Time" },
     { key: "consultant", value: "Consultant" },
     { key: "amount", value: "Amount" },
