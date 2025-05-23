@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { IconPen } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { UpdateContactPersonDetailsModal } from "./update-contact-person-details-modal";
@@ -8,16 +9,23 @@ import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 export const ContactInfoDetailsSection = () => {
   const { data } = useGetProfile();
+  const contactPhoneNumber = `+${data?.contact_person?.phone_prefix || ""}${
+    data?.contact_person?.phone_number
+  }`;
+  const formattedPhoneNumber = formatPhoneNumberIntl(contactPhoneNumber)
+    ?.split(" ")
+    ?.join("");
+
   const contactPerson = [
     {
       id: 2,
       key: "Phone number",
-      value:
-        data?.contact_person && Object.keys(data?.contact_person)?.length === 0
-          ? "-"
-          : `+${data?.contact_person?.phone_prefix || ""}${
-              data?.contact_person?.phone_number
-            }` || "_",
+      value: data?.contact_person?.phone_prefix
+        ? formattedPhoneNumber
+        : data?.contact_person &&
+          Object.keys(data?.contact_person)?.length === 0
+        ? "-"
+        : contactPhoneNumber || "_",
     },
     { id: 3, key: "Email", value: data?.contact_person?.email || "_" },
     {

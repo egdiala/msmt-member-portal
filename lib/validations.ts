@@ -93,7 +93,7 @@ export const editProfileDetailsSchema = z.object({
   phone_prefix: z.string().optional(),
   phoneNumber: z
     .string()
-    .min(8, "Phone number must be at least 8 characters")
+    .min(10, "Phone number must be at least 10 characters")
     .max(12, "Phone number must be at most 12 characters"),
   religion: z
     .string()
@@ -180,7 +180,7 @@ export const contactPersonDetailsSchema = z.object({
   phone_prefix: z.string(),
   phoneNumber: z
     .string()
-    .min(8, "Phone number must be at least 8 characters")
+    .min(10, "Phone number must be at least 10 characters")
     .max(12, "Phone number must be at most 12 characters"),
 
   email: z.string().email("Please enter a valid email address"),
@@ -204,8 +204,8 @@ export const addMemberSchema = z.object({
   phone_prefix: z.string().optional(),
   phone_number: z
     .string()
-    .min(8, "Phone number must be at least 8 characters")
-    .optional(),
+    .min(10, "Phone number must be at least 10 characters")
+    .max(12, "Phone number must be at most 12 characters"),
   gender: z.string().min(2, "Gender must be at least 2 characters"),
   relationship: z.string().min(2, "Relationship must be at least 2 characters"),
 });
