@@ -122,8 +122,8 @@ export const PersonalInfoDetailsSection = () => {
       <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
         <DialogContent className="sm:max-w-sm md:max-w-md">
           <DialogHeader>
-            <DialogTitle>Profile Photo</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="hidden">Profile Photo</DialogTitle>
+            <DialogDescription className="hidden">
               {data?.first_name || "_"} {data?.last_name || "_"}
             </DialogDescription>
           </DialogHeader>
