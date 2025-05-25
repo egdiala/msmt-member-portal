@@ -165,7 +165,7 @@ export default function SignUp() {
                         <FloatingInput
                           label="Email"
                           type="email"
-                          className="pr-8"
+                          className="pr-10"
                           {...field}
                         />
                         <IconEmail className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -15,22 +14,21 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui";
-import { IconEye, IconEyeOff } from "@/components/icons";
-import { FloatingInput, RenderIf } from "@/components/shared";
+import PasswordInput from "@/components/shared/password-input";
 import { useChangePassword } from "@/services/hooks/mutations/use-auth";
 
 export const UpdatePasswordForm = () => {
   const router = useRouter();
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const { mutate, isPending } = useChangePassword(() => {
     clearAllCookies();
+    localStorage.clear();
     router.push("/sign-in");
   });
 
   const form = useForm<z.infer<typeof profileSecuritySchema>>({
     resolver: zodResolver(profileSecuritySchema),
+    mode: "onChange",
     defaultValues: {
       currentPassword: "",
       newPassword: "",
@@ -55,30 +53,14 @@ export const UpdatePasswordForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="relative">
-                    <FloatingInput
-                      label="Current Password"
-                      type={showCurrentPassword ? "text" : "password"}
-                      className="pr-10"
-                      {...field}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                      <button
-                        onClick={() =>
-                          setShowCurrentPassword(!showCurrentPassword)
-                        }
-                        className="cursor-pointer"
-                      >
-                        <RenderIf condition={!showCurrentPassword}>
-                          <IconEyeOff className="h-4 w-4" />
-                        </RenderIf>
-
-                        <RenderIf condition={showCurrentPassword}>
-                          <IconEye className="h-4 w-4" />
-                        </RenderIf>
-                      </button>
-                    </div>
-                  </div>
+                  <PasswordInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    id={field.name}
+                    name={field.name}
+                    labelTitle="Current Password"
+                    turnOffAutocomplete
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -91,28 +73,13 @@ export const UpdatePasswordForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="relative">
-                    <FloatingInput
-                      label="New Password"
-                      type={showNewPassword ? "text" : "password"}
-                      className="pr-10"
-                      {...field}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                      <button
-                        onClick={() => setShowNewPassword(!showNewPassword)}
-                        className="cursor-pointer"
-                      >
-                        <RenderIf condition={!showNewPassword}>
-                          <IconEyeOff className="h-4 w-4" />
-                        </RenderIf>
-
-                        <RenderIf condition={showNewPassword}>
-                          <IconEye className="h-4 w-4" />
-                        </RenderIf>
-                      </button>
-                    </div>
-                  </div>
+                  <PasswordInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    id={field.name}
+                    name={field.name}
+                    labelTitle="New Password"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -125,30 +92,13 @@ export const UpdatePasswordForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="relative">
-                    <FloatingInput
-                      label="Confirm Password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      className="pr-10"
-                      {...field}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
-                      <button
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        className="cursor-pointer"
-                      >
-                        <RenderIf condition={!showConfirmPassword}>
-                          <IconEyeOff className="h-4 w-4" />
-                        </RenderIf>
-
-                        <RenderIf condition={showConfirmPassword}>
-                          <IconEye className="h-4 w-4" />
-                        </RenderIf>
-                      </button>
-                    </div>
-                  </div>
+                  <PasswordInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    id={field.name}
+                    name={field.name}
+                    labelTitle="Confirm Password"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

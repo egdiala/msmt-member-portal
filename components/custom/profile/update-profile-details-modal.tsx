@@ -39,9 +39,7 @@ export const UpdateProfileDetailsModal = ({
   isOpen,
   data,
 }: IUpdateProfileDetailsModal) => {
-  const { mutateAsync: updateProfile, isPending } = useUpdateProfile(() =>
-    handleSuccess()
-  );
+  const { mutateAsync: updateProfile, isPending } = useUpdateProfile();
 
   const { requestVariables, variableList, countryList } =
     useGetDefinedVariables();
@@ -65,31 +63,6 @@ export const UpdateProfileDetailsModal = ({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof editProfileDetailsSchema>) {
-    await updateProfile({
-      preferred_lan: values.preferredLanguage,
-      phone_prefix: values.phone_prefix,
-      nickname: values.preferredName,
-      phone_number: values.phoneNumber,
-      religion: values.religion,
-      gender:
-        values.gender?.toLowerCase() === "prefer not to say"
-          ? ""
-          : values.gender?.toLowerCase(),
-      marital_status: values.maritalStatus,
-      origin_country: values.country,
-    });
-  }
-
-  const buttonCopy = {
-    idle: "Update",
-    loading: <Loader className="spinner size-4" />,
-  };
-
-  const buttonState = useMemo(() => {
-    return isPending ? "loading" : "idle";
-  }, [isPending]);
-
   const [avatar, setAvatar] = useState<File | string | undefined>(undefined);
   const { mutateAsync: uploadAvatar, isPending: isLoading } = useUploadAvatar();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -98,13 +71,46 @@ export const UpdateProfileDetailsModal = ({
     const file = e.target.files?.[0];
     if (file) {
       setAvatar(file);
-      try {
-        await uploadAvatar(file);
-      } catch (error) {
-        console.error("Failed to upload avatar", error);
-      }
     }
   };
+
+  async function onSubmit(values: z.infer<typeof editProfileDetailsSchema>) {
+    await updateProfile(
+      {
+        preferred_lan: values.preferredLanguage,
+        phone_prefix: values.phone_prefix,
+        nickname: values.preferredName,
+        phone_number: values.phoneNumber,
+        religion: values.religion,
+        gender:
+          values.gender?.toLowerCase() === "prefer not to say"
+            ? ""
+            : values.gender?.toLowerCase(),
+        marital_status: values.maritalStatus,
+        origin_country: values.country,
+      },
+      {
+        onSuccess: async () => {
+          try {
+            await uploadAvatar(avatar as File, {
+              onSuccess: () => handleSuccess(),
+            });
+          } catch (error) {
+            console.error("Failed to upload avatar", error);
+          }
+        },
+      }
+    );
+  }
+
+  const buttonCopy = {
+    idle: "Update",
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isPending || isLoading ? "loading" : "idle";
+  }, [isPending, isLoading]);
 
   return (
     <Modal
@@ -137,7 +143,10 @@ export const UpdateProfileDetailsModal = ({
 
             <button
               className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={(e) => {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }}
               disabled={isLoading}
             >
               <IconCamera className="stroke-text-tertiary size-4" />
@@ -291,7 +300,7 @@ export const UpdateProfileDetailsModal = ({
 
             <Button
               type="submit"
-              disabled={!form.formState.isValid || isPending}
+              disabled={!form.formState.isValid || isPending || isLoading}
               id="update-form"
               className="cursor-pointer w-21"
             >

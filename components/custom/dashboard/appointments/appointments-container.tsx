@@ -10,7 +10,10 @@ import {
   getPaginationParams,
   setPaginationParams,
 } from "@/hooks/use-pagination-params";
-import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
+import {
+  formatTableDate,
+  useGetTableTotalPages,
+} from "@/hooks/use-format-table-info";
 import { AppointmentListMobile } from "./appointments-list-mobile";
 import { PaginationCmp, BreadcrumbCmp } from "@/components/shared";
 import { getStatusBadge } from "./get-status-badge";
@@ -34,8 +37,8 @@ export function AppointmentContainer() {
   const handleApplyFilters = (filters: Record<string, any>) => {
     // Only set non-empty filters
     const cleanFilters = Object.fromEntries(
-      Object.entries(filters).filter(([, value]) => 
-        value !== undefined && value !== null && value !== ""
+      Object.entries(filters).filter(
+        ([, value]) => value !== undefined && value !== null && value !== ""
       )
     );
     setAppliedFilters(cleanFilters);
@@ -54,12 +57,12 @@ export function AppointmentContainer() {
     const newFilters = { ...appliedFilters };
     delete newFilters[key];
     setAppliedFilters(newFilters);
-    setFormKey(prevKey => prevKey + 1);
+    setFormKey((prevKey) => prevKey + 1);
   };
 
   const handleClearAllFilters = () => {
     setAppliedFilters({});
-    setFormKey(prevKey => prevKey + 1);
+    setFormKey((prevKey) => prevKey + 1);
   };
 
   const { data, isPending } = useGetAppointments({
@@ -79,8 +82,9 @@ export function AppointmentContainer() {
 
   const appointments: Appointment[] | undefined = data?.map((item) => ({
     id: item?.appointment_id,
-    date: formatApptDate(item.appt_date),
-    time: formatApptTimeShort(item?.appt_time),
+    date: item.createdAt,
+    appt_date: formatApptDate(item.appt_date),
+    appt_time: formatApptTimeShort(item?.appt_time),
     amount: new Intl.NumberFormat("en-NG", {
       style: "currency",
       currency: "NGN",
@@ -98,7 +102,8 @@ export function AppointmentContainer() {
   }));
 
   const headers = [
-    { key: "date", value: "Date & Time" },
+    { key: "date", value: "Created Date & Time" },
+    { key: "appt_date", value: "Appointment Date & Time" },
     { key: "consultant", value: "Consultant" },
     { key: "amount", value: "Amount" },
     { key: "serviceOffered", value: "Service Offerred" },
@@ -137,7 +142,8 @@ export function AppointmentContainer() {
               <TableCmp
                 data={(appointments as Appointment[])?.map((apt) => ({
                   ...apt,
-                  date: `${apt.date} • ${apt.time}`,
+                  date: formatTableDate(apt.date),
+                  appt_date: `${apt.appt_date} • ${apt.appt_time}`,
                   status: getStatusBadge(apt.status),
                 }))}
                 isLoading={isPending}
@@ -157,7 +163,6 @@ export function AppointmentContainer() {
                 totalPages={useGetTableTotalPages({
                   totalDataCount: (count as any)?.total ?? 0,
                   itemsPerPage: itemsPerPage,
-               
                 })}
                 onInputPage={(val) => handlePageChange(parseInt(val))}
               />

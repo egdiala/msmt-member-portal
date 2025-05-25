@@ -1,7 +1,8 @@
 import { Appointment } from "@/types/appointment";
 import Link from "next/link";
-import { getStatusBadge } from "./get-status-badge";
 import { IconStethoscope } from "@/components/icons";
+import { formatTableDate } from "@/hooks/use-format-table-info";
+import { getStatusBadge } from "./get-status-badge";
 
 interface AppointmentListMobileProps {
   appointments: Appointment[] | undefined;
@@ -15,10 +16,7 @@ export function AppointmentListMobile({
   return (
     <div className={`md:hidden  grid gap-2 ${className}`}>
       {appointments?.map((appointment) => (
-        <Card
-          appointment={appointment}
-          key={appointment.id}
-        />
+        <Card appointment={appointment} key={appointment.id} />
       ))}
     </div>
   );
@@ -28,16 +26,13 @@ interface CardProps {
   appointment: Appointment;
 }
 
-const Card = ({ appointment}: CardProps) => {
+const Card = ({ appointment }: CardProps) => {
   return (
     <Link href={`/appointments/${appointment.id}`} className="block">
-      <div
-        className=" rounded-xs p-3 bg-[#F6F8F9] grid gap-2 text-brand-1 "
-
-      >
+      <div className=" rounded-xs p-3 bg-[#F6F8F9] grid gap-2 text-brand-1 ">
         <div className="flex justify-between pb-2 border-b border-[#DADCDD]">
           <div className="font-medium text-xs">
-            {appointment.date} • {appointment.time}
+            {formatTableDate(appointment.date)}
           </div>
           <span className="text-xs">{getStatusBadge(appointment.status)}</span>
         </div>
