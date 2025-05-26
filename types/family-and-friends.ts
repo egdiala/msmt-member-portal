@@ -15,6 +15,15 @@ export type AddFamilyAndFriendsType = {
   phone_number?: string;
 };
 
+export type UpdateFamilyOrFriendType = {
+  first_name?: string;
+  last_name?: string;
+  relationship?: string; // 1=family | 2=friend
+  gender?: string;
+  phone_number?: string;
+  familyfriend_id: string;
+};
+
 export type UpdateFamilyAndFriendsStatus = {
   status: string;
   reason: string;

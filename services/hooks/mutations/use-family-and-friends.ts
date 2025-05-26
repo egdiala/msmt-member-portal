@@ -4,6 +4,7 @@ import {
   addFamilyAndFriends,
   deleteFamilyOrFriend,
   updateFamilyAndFriendsStatus,
+  updateFamilyOrFriend,
 } from "@/services/api/family-and-friends";
 
 export const useAddFamilyOrFriend = (fn?: (res: any) => void) => {
@@ -22,13 +23,33 @@ export const useAddFamilyOrFriend = (fn?: (res: any) => void) => {
   });
 };
 
+export const useUpdateFamilyOrFriend = (fn?: (res: any) => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateFamilyOrFriend,
+    onSuccess: (res: any) => {
+      toast.success("Successfully updated family or friend detail!");
+      queryClient.invalidateQueries({
+        queryKey: ["get-single-family-or-friend"],
+      });
+      fn?.(res);
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.msg || "Something went wrong");
+    },
+  });
+};
+
 export const useUpdateFamilyOrFriendStatus = (fn?: (res: any) => void) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: updateFamilyAndFriendsStatus,
     onSuccess: (res: any) => {
-      queryClient.invalidateQueries({ queryKey: ["get-single-family-or-friend"] });
+      queryClient.invalidateQueries({
+        queryKey: ["get-single-family-or-friend"],
+      });
       toast.success("Successfully updated status!");
       fn?.(res);
     },

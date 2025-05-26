@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarFallback, Badge, Button } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
@@ -12,7 +13,7 @@ import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-
 import { FetchedSingleFamilyOrFriendType } from "@/types/family-and-friends";
 import { RemoveMemberModal } from "./remove-member-modal";
 import { ActivateMemberModal } from "./activate-member-modal";
-import { formatPhoneNumberIntl } from "react-phone-number-input";
+import { EditMemberModal } from "./edit-member-modal";
 
 export const SingleFamilyOrFriendContent = () => {
   const { id } = useParams();
@@ -22,12 +23,16 @@ export const SingleFamilyOrFriendContent = () => {
     });
 
   const userStatus: string = user?.status === 1 ? "Active" : "Suspended";
+  const phoneNumber = `+${user?.phone_number}`;
+  const formattedPhoneNumber = formatPhoneNumberIntl(phoneNumber)
+    ?.split(" ")
+    ?.join("");
 
   const userInfo = [
     {
       id: 1,
       title: "Phone",
-      value: formatPhoneNumberIntl(`+${user?.phone_number}`) || "N/A",
+      value: formattedPhoneNumber ? formattedPhoneNumber : phoneNumber,
     },
     {
       id: 2,
@@ -36,16 +41,21 @@ export const SingleFamilyOrFriendContent = () => {
     },
     {
       id: 3,
+      title: "Relationship",
+      value: user?.relationship === 1 ? "Family" : "Friend",
+    },
+    {
+      id: 4,
       title: "Status",
       value: userStatus,
     },
     {
-      id: 4,
+      id: 5,
       title: "Total appointment",
       value: user?.total_appointment,
     },
     {
-      id: 5,
+      id: 6,
       title: "Total money spent",
       value: formatNumberWithCommas(user?.total_spent ?? 0, "NGN"),
     },
@@ -53,6 +63,7 @@ export const SingleFamilyOrFriendContent = () => {
 
   const [openRemoveMemberModal, setOpenRemoveMemberModal] = useState(false);
   const [openActivateMemberModal, setOpenActivateMemberModal] = useState(false);
+  const [openEditMemberModal, setOpenEditMemberModal] = useState(false);
 
   return (
     <>
@@ -85,6 +96,12 @@ export const SingleFamilyOrFriendContent = () => {
               </div>
 
               <div className="flex items-start md:items-center gap-4">
+                <Button
+                  variant="secondary"
+                  onClick={() => setOpenEditMemberModal(true)}
+                >
+                  Edit Profile
+                </Button>
                 <Button
                   variant="secondary"
                   onClick={() => setOpenRemoveMemberModal(true)}
@@ -148,6 +165,20 @@ export const SingleFamilyOrFriendContent = () => {
           first_name: user?.first_name ?? "",
           last_name: user?.last_name ?? "",
           status: userStatus,
+          familyfriend_id: user?.familyfriend_id ?? "",
+        }}
+      />
+
+      <EditMemberModal
+        handleClose={() => setOpenEditMemberModal(false)}
+        isOpen={openEditMemberModal}
+        memberDetail={{
+          first_name: user?.first_name ?? "",
+          last_name: user?.last_name ?? "",
+          email: user?.email ?? "",
+          relationship: user?.relationship?.toString() ?? "",
+          phone_number: user?.phone_number ?? "",
+          gender: user?.gender ?? "",
           familyfriend_id: user?.familyfriend_id ?? "",
         }}
       />

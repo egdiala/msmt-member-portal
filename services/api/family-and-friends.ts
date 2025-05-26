@@ -3,6 +3,7 @@ import {
   AddFamilyAndFriendsType,
   FetchFamilyAndFriendsQuery,
   UpdateFamilyAndFriendsStatus,
+  UpdateFamilyOrFriendType,
 } from "@/types/family-and-friends";
 import { axiosUserService } from "../axios-instance";
 
@@ -32,6 +33,15 @@ export const addFamilyAndFriends = async (data: AddFamilyAndFriendsType) => {
   const res = await axiosUserService.post(
     `${FAMILY_AND_FRIENDS_BASE_URL}/`,
     data
+  );
+  return res.data;
+};
+
+export const updateFamilyOrFriend = async (data: UpdateFamilyOrFriendType) => {
+  const { familyfriend_id, ...rest } = data;
+  const res = await axiosUserService.put(
+    `${FAMILY_AND_FRIENDS_BASE_URL}/${familyfriend_id}`,
+    rest
   );
   return res.data;
 };
