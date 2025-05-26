@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useMeasure from "react-use-measure";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { IconEmail, IconUserRound } from "@/components/icons";
 import {
   Button,
@@ -41,6 +42,10 @@ export const EditMemberModal = ({
   handleClose,
   memberDetail,
 }: IEditMemberModal) => {
+  const member_phone_number = formatPhoneNumberIntl(
+    `+${memberDetail?.phone_number}`
+  )?.split(" ");
+
   const form = useForm<z.infer<typeof addMemberSchema>>({
     resolver: zodResolver(addMemberSchema),
     mode: "onChange",
@@ -50,7 +55,11 @@ export const EditMemberModal = ({
       email: memberDetail?.email,
       relationship: memberDetail?.relationship === "1" ? "Family" : "Friend",
       gender: capitalizeFirstLetter(memberDetail?.gender),
-      phone_number: memberDetail?.phone_number,
+      phone_number:
+        member_phone_number?.length > 1
+          ? member_phone_number?.slice(1)?.join("")
+          : memberDetail?.phone_number,
+      phone_prefix: member_phone_number[0],
     },
   });
 

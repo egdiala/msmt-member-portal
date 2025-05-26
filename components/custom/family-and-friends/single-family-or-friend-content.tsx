@@ -23,7 +23,7 @@ export const SingleFamilyOrFriendContent = () => {
     });
 
   const userStatus: string = user?.status === 1 ? "Active" : "Suspended";
-  const phoneNumber = `+${user?.phone_number}`;
+  const phoneNumber = user?.phone_number ? `+${user?.phone_number}` : "";
   const formattedPhoneNumber = formatPhoneNumberIntl(phoneNumber)
     ?.split(" ")
     ?.join("");
@@ -32,7 +32,7 @@ export const SingleFamilyOrFriendContent = () => {
     {
       id: 1,
       title: "Phone",
-      value: formattedPhoneNumber ? formattedPhoneNumber : phoneNumber,
+      value: formattedPhoneNumber ? formattedPhoneNumber : phoneNumber || "N/A",
     },
     {
       id: 2,
