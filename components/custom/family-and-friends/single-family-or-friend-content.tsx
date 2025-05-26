@@ -32,7 +32,9 @@ export const SingleFamilyOrFriendContent = () => {
     {
       id: 1,
       title: "Phone",
-      value: formattedPhoneNumber ? formattedPhoneNumber : phoneNumber || "N/A",
+      value: formattedPhoneNumber
+        ? formattedPhoneNumber
+        : user?.phone_number || "N/A",
     },
     {
       id: 2,

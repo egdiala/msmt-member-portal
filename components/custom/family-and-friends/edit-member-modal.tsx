@@ -59,7 +59,7 @@ export const EditMemberModal = ({
         member_phone_number?.length > 1
           ? member_phone_number?.slice(1)?.join("")
           : memberDetail?.phone_number,
-      phone_prefix: member_phone_number[0],
+      phone_prefix: member_phone_number[0]?.split("+")[1],
     },
   });
 
