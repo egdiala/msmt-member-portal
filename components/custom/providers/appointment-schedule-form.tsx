@@ -1,7 +1,14 @@
 "use client";
 
 import Cookies from "js-cookie";
-import { Dispatch, SetStateAction, useState, useMemo, useEffect } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+} from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
@@ -16,6 +23,7 @@ import {
   subDays,
   subMonths,
 } from "date-fns";
+import { RescheduleAppointmentPayload } from "@/types/booking";
 import { AnimatePresence, motion } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -60,13 +68,18 @@ import {
   FetchOrganizationProvider,
   FetchSingleProvider,
 } from "@/types/providers";
-import { useCompleteOrgBooking } from "@/services/hooks/mutations/use-appointment";
+import {
+  useCompleteOrgBooking,
+  useRescheduleAppointment,
+} from "@/services/hooks/mutations/use-appointment";
 import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-and-friends";
 import { FetchedPaymentOptionFamilyType } from "@/types/family-and-friends";
 import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 import type { FetchedWalletTransactionsStatsType } from "@/types/wallet";
 import { toast } from "sonner";
 import { FundWalletModal } from "../wallet/fund-wallet-modal";
+import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
+import { ResecheduleAppointmentDialog } from "./RescheduleAppointmentDialog";
 
 interface ISetScheduleStep {
   setStep: Dispatch<SetStateAction<string | number>>;
@@ -74,6 +87,10 @@ interface ISetScheduleStep {
 }
 export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const navigate = useRouter();
+  const [openReschedule, setOpenReschedule] = useState(false);
+  const [noticeResponse, setNoticeResponse] = useState<any>(null);
+  const [rescheduleData, setRescheduleData] =
+    useState<RescheduleAppointmentPayload>({} as RescheduleAppointmentPayload);
   const { data: walletCountStatus } =
     useGetWalletTransactions<FetchedWalletTransactionsStatsType>(
       {
@@ -86,11 +103,23 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const booking_link = searchParams.get("booking_link") as string | undefined;
   const provider_id = searchParams.get("provider_id") as string;
   const org_id = searchParams.get("org_id") as string;
+  const appointment_id = searchParams.get("appointment_id") as
+    | string
+    | undefined;
   const user_type = searchParams.get("type") as "provider" | "org";
+  const { mutate: rescheduleAppointment, isPending: isSubmittingReschedule } =
+    useRescheduleAppointment((res) => {
+      setNoticeResponse(res);
+      setOpenReschedule(true);
+    });
   const account_service_type = searchParams.get("service_type") as
     | "provider"
     | "payer";
 
+  const { data, isPending: isLoadingAppointment } = useGetAppointmentsById(
+    appointment_id as string
+  );
+  console.log(data);
   const { data: familyFriendInfo } =
     useGetSingleFamilyOrFriend<FetchedPaymentOptionFamilyType>(
       {
@@ -217,6 +246,72 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
     },
   });
 
+  useEffect(() => {
+    if (!data || !appointment_id || isLoadingAppointment) return;
+
+    const serviceData =
+      account_service_type === "provider" && user_type === "org"
+        ? orgInfo?.service_data
+        : providerInfo?.service_data;
+
+    const matchingService = serviceData?.find(
+      (service: { service_offer_id: string; name: string; amount: number }) =>
+        service.service_offer_id === data.service_offer_id
+    );
+
+    const formattedService = matchingService
+      ? `${matchingService.name} - ${formatNumberWithCommas(
+          matchingService.amount
+        )}`
+      : "";
+
+    const appointmentDate = new Date(data.appt_schedule);
+    const appointmentHour = data.appt_time;
+
+    if (!formattedSlots || formattedSlots.length === 0) {
+      console.log("Waiting for formattedSlots...");
+      return;
+    }
+
+    const formattedTimeSlot = formattedSlots?.find(
+      (val) => val?.value === appointmentHour.toString()
+    )?.real;
+
+    console.log("Appointment Hour:", appointmentHour);
+    console.log("Formatted Time Slot:", formattedTimeSlot);
+
+    setSelectedDate(appointmentDate);
+    setSelectedCommunicationPreference(
+      data.comm_mode.charAt(0).toUpperCase() + data.comm_mode.slice(1)
+    );
+
+    const paymentMethod = data.payment_by === 1 ? "Family" : "Wallet";
+    setSelectedPaymentMethod(paymentMethod);
+
+    console.log(formattedTimeSlot, "TEGGSG");
+
+    form.reset({
+      service: formattedService,
+      paymentMethod: paymentMethod,
+      appointmentDate: appointmentDate,
+      appointmentTime: formattedTimeSlot || "",
+      communicationPreference:
+        data.comm_mode.charAt(0).toUpperCase() + data.comm_mode.slice(1),
+      agreeToCancellation: true,
+    });
+
+    setInitialDate(appointmentDate);
+  }, [
+    data,
+    appointment_id,
+    form,
+    isLoadingAppointment,
+    providerInfo,
+    orgInfo,
+    account_service_type,
+    user_type,
+  ]);
+
   const { mutate, isPending } = useBookSelfAppointment((res) => {
     localStorage.setItem("booking-appointment-id", res?.appointment_id);
     setStep(2);
@@ -263,24 +358,45 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
         ? { org_payer_id: orgInfo?.user_id }
         : {}),
     };
-    if (!!isLoggedIn) {
+    if (!!isLoggedIn && !appointment_id) {
       mutate(dataToBeSent);
-    } else {
+    }
+    if (appointment_id) {
+      console.log("Booking link333:", booking_link);
+      rescheduleAppointment({
+        appointmentId: appointment_id as string,
+        component: "notice",
+      });
+    }
+    setRescheduleData({
+      appt_date: dataToBeSent?.appt_date,
+      appt_time: dataToBeSent?.appt_time,
+      time_zone: dataToBeSent?.time_zone,
+    });
+
+    if (!isLoggedIn) {
+      console.log("Booking link:", booking_link);
       completeOrgBooking({
         ...dataToBeSent,
-        booking_link: booking_link ? booking_link : "",
+        booking_link: booking_link || "",
       });
     }
   }
 
   const buttonCopy = {
-    idle: !!isLoggedIn ? "Proceed to Pay" : "Continue",
+    idle: !!isLoggedIn
+      ? !!appointment_id
+        ? "Reschedule"
+        : "Proceed to Pay"
+      : "Continue",
     loading: <Loader className="spinner size-4" />,
   };
 
   const buttonState = useMemo(() => {
-    return isPending || isSubmitting ? "loading" : "idle";
-  }, [isPending, isSubmitting]);
+    return isPending || isSubmitting || isSubmittingReschedule
+      ? "loading"
+      : "idle";
+  }, [isPending, isSubmitting, isSubmittingReschedule]);
 
   const formService = form.watch("service");
   const formPaymentMethod = form.watch("paymentMethod");
@@ -337,13 +453,13 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
         </span>
       </RenderIf>
 
-      <RenderIf condition={isLoadingProviderInfo}>
+      <RenderIf condition={isLoadingProviderInfo || isLoadingAppointment}>
         <div className="bg-white h-screen flex justify-center items-center">
           <Loader />
         </div>
       </RenderIf>
 
-      <RenderIf condition={!isLoadingProviderInfo}>
+      <RenderIf condition={!isLoadingProviderInfo && !isLoadingAppointment}>
         <div className="bg-white p-3 md:p-4 grid gap-y-4 rounded-2xl h-fit">
           <h4 className="font-semibold text-brand-1 text-sm md:text-base">
             Preferred Provider
@@ -378,14 +494,29 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 <Button
                   asChild
                   variant="link"
-                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
+                  className={cn(
+                    "underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm",
+                    !!appointment_id
+                      ? "pointer-events-none text-gray-400 cursor-not-allowed"
+                      : "cursor-pointer"
+                  )}
                 >
-                  <Link href="/providers">Change</Link>
+                  <Link
+                    href={!!appointment_id ? "#" : "/providers"}
+                    onClick={(e) => {
+                      if (!!appointment_id) {
+                        e.preventDefault();
+                      }
+                    }}
+                  >
+                    Change
+                  </Link>
                 </Button>
               </RenderIf>
 
               <RenderIf condition={!isLoggedIn}>
                 <button
+                  disabled={!!appointment_id}
                   onClick={() => navigate.back()}
                   className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
                 >
@@ -409,6 +540,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
 
                 <button
                   type="button"
+                  disabled={!!appointment_id}
                   onClick={() =>
                     navigate.push(
                       `/providers/organisation/${orgInfo?.user_id}?type=${user_type}&service_type=${account_service_type}`
@@ -438,6 +570,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     <FormItem>
                       <FormControl>
                         <SelectCmp
+                          disabled={!!appointment_id}
                           selectItems={
                             account_service_type === "provider" &&
                             user_type === "org"
@@ -475,8 +608,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                           onSelect={(val) => {
                             field.onChange(val);
                           }}
+                          value={field.value}
                           placeholder="Select Service"
-                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -524,15 +657,24 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                               }) => (
                                 <div
                                   key={method.id}
-                                  onClick={() => {
-                                    setSelectedPaymentMethod(method.name);
-                                    field.onChange(method.name);
-                                  }}
-                                  className="flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400"
+                                  onClick={
+                                    appointment_id
+                                      ? undefined
+                                      : () => {
+                                          setSelectedPaymentMethod(method.name);
+                                          field.onChange(method.name);
+                                        }
+                                  }
+                                  className={cn(
+                                    "flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400",
+                                    appointment_id &&
+                                      "cursor-not-allowed text-gray-500 bg-gray-100"
+                                  )}
                                 >
                                   {selectedPaymentMethod.toLowerCase() ===
                                   method.name.toLowerCase() ? (
                                     <Checkbox
+                                      disabled={!!appointment_id}
                                       checked={
                                         selectedPaymentMethod.toLowerCase() ===
                                         method.name.toLowerCase()
@@ -587,6 +729,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
 
                         <Switch
                           checked={field.value}
+                          disabled={!!appointment_id}
                           onCheckedChange={field.onChange}
                         />
                       </div>
@@ -693,7 +836,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                         selectItems={formattedSlots ?? []}
                         placeholder="Select time (WAT)"
                         onSelect={(val) => field.onChange(val)}
-                        {...field}
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -796,6 +939,11 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
         isPublic={isPublic}
         isOpen={openFundWalletModal}
         handleClose={() => setOpenFundWalletModal(false)}
+      />
+      <ResecheduleAppointmentDialog
+        open={openReschedule}
+        rescheduleData={rescheduleData}
+        onOpenChange={setOpenReschedule}
       />
     </div>
   );

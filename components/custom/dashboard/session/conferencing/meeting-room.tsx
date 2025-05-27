@@ -16,11 +16,11 @@ const MeetingRoom = () => {
 
   const meeting = useVideoSDKMeeting({
     onMeetingJoined: () => {
-      console.log("Meeting joined via VideoSDK");
+
       _setIsMeetingJoined(true);
     },
     onMeetingLeft: () => {
-      console.log("Meeting left via VideoSDK");
+  
       _setIsMeetingJoined(false);
     },
     onParticipantJoined: (participant: any) => {

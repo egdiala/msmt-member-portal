@@ -107,12 +107,26 @@ export default function AppointmentDetails() {
                         {data?.provider_data?.specialty}
                       </p>
                     </div>
-                    <Button asChild className="hidden md:inline-flex">
-                      <Link href={`/providers`}>
-                        <IconPlus className="stroke-white" />
-                        Book An Appointment
-                      </Link>
-                    </Button>
+                    <div className="flex items-center gap-x-1.5">
+                      <Button asChild className="hidden md:inline-flex">
+                        <Link href={`/providers`}>
+                          <IconPlus className="stroke-white" />
+                          Book An Appointment
+                        </Link>
+                      </Button>
+                      <RenderIf condition={data?.status === 1}>
+                        <Button
+                          asChild
+                          className="hidden md:inline-flex text-xs md:text-sm"
+                        >
+                          <Link
+                            href={`/providers/book-appointment?provider_id=${data?.provider_id}&type=provider&service_type=provider&appointment_id=${data?.appointment_id}`}
+                          >
+                            Reschedule Appointment
+                          </Link>
+                        </Button>
+                      </RenderIf>
+                    </div>
                   </div>
 
                   <div className="hidden md:inline-block">
@@ -225,15 +239,29 @@ export default function AppointmentDetails() {
                       </span>
                     </div>
                   </RenderIf>
-                  <Button
-                    asChild
-                    className="md:hidden inline-flex text-xs md:text-sm"
-                  >
-                    <Link href={`/providers`}>
-                      <IconPlus className="stroke-white" />
-                      Book An Appointment
-                    </Link>
-                  </Button>
+                  <div className="grid  gap-1.5">
+                    <Button
+                      asChild
+                      className="md:hidden inline-flex text-xs md:text-sm"
+                    >
+                      <Link href={`/providers`}>
+                        <IconPlus className="stroke-white" />
+                        Book An Appointment
+                      </Link>
+                    </Button>
+                    <RenderIf condition={data?.status === 1}>
+                      <Button
+                        asChild
+                        className="md:hidden inline-flex text-xs md:text-sm"
+                      >
+                        <Link
+                          href={`/providers/book-appointment?provider_id=${data?.provider_id}&type=provider&service_type=provider&appointment_id=${data?.appointment_id}`}
+                        >
+                          Reschedule Appointment
+                        </Link>
+                      </Button>
+                    </RenderIf>
+                  </div>
                 </div>
               </div>
             </div>

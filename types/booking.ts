@@ -19,8 +19,6 @@ export type BookingQuestionnaireType = {
   }[];
 };
 
-
-
 export interface FetchedQuestionsForQuestionnaireType {
   question: string;
   option?: string[];
@@ -53,3 +51,9 @@ export interface BookOrgDetails {
   };
   member_first_name: string;
 }
+
+export type RescheduleAppointmentPayload = {
+  appt_date: string;
+  appt_time: string;
+  time_zone: string;
+};

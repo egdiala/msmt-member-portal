@@ -4,14 +4,21 @@ import {
   submitOrgBookingQuestionnaire,
   validateOrgBooking,
 } from "@/services/api/appointment";
+import { rescheduleAppointment } from "@/services/api/booking";
 import { useQueryClient, InvalidateQueryFilters } from "@tanstack/react-query";
-import { submitSessionRating, cancelAppointment } from "@/services/api/appointments";
+import {
+  submitSessionRating,
+  cancelAppointment,
+} from "@/services/api/appointments";
 import {
   CompleteOrgBookingPayload,
   SessionRatingPayload,
 } from "@/types/appointment";
 import { toast } from "sonner";
-import { BookingQuestionnaireType } from "@/types/booking";
+import {
+  BookingQuestionnaireType,
+  RescheduleAppointmentPayload,
+} from "@/types/booking";
 
 export const useCompleteOrgBooking = (fn?: (res: any) => void) => {
   return useMutation({
@@ -24,6 +31,32 @@ export const useCompleteOrgBooking = (fn?: (res: any) => void) => {
     onError: (err: any) => {
       toast.error(
         err?.response?.data?.msg || "Booking failed. Please try again."
+      );
+    },
+  });
+};
+
+export const useRescheduleAppointment = (onSuccessFn?: (res: any) => void) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      appointmentId,
+      payload,
+      component,
+    }: {
+      appointmentId: string;
+      payload?: RescheduleAppointmentPayload;
+      component?: string;
+    }) => rescheduleAppointment(appointmentId, payload, component),
+    onSuccess: (res) => {
+      onSuccessFn?.(res);
+      queryClient.invalidateQueries([
+        "get-appointments",
+      ] as InvalidateQueryFilters);
+    },
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.msg || "Rescheduling failed. Please try again."
       );
     },
   });
@@ -79,7 +112,6 @@ export const useSubmitSessionRating = (
   });
 };
 
-
 export const useCancelAppointment = (
   onSuccessCallback?: (res: any) => void
 ) => {
@@ -94,13 +126,10 @@ export const useCancelAppointment = (
       onSuccessCallback?.(res);
     },
     onError: (err: any) => {
-      toast.error(
-        err?.response?.data?.msg || "Failed."
-      );
+      toast.error(err?.response?.data?.msg || "Failed.");
     },
   });
 };
-
 
 export const useCancelAppointmentWithoutNotice = (
   onSuccessCallback?: (res: any) => void
@@ -116,13 +145,7 @@ export const useCancelAppointmentWithoutNotice = (
       onSuccessCallback?.(res);
     },
     onError: (err: any) => {
-      toast.error(
-        err?.response?.data?.msg || "Failed to cancel appointment."
-      );
+      toast.error(err?.response?.data?.msg || "Failed to cancel appointment.");
     },
   });
 };
-
-
-
-
