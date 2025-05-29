@@ -16,6 +16,7 @@ interface CancelAppointmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCancel?: () => void;
+  notice: string;
   isRemoving: boolean;
 }
 
@@ -23,12 +24,15 @@ export function CancelAppointmentDialog({
   open,
   onOpenChange,
   onCancel,
+  notice,
   isRemoving,
 }: CancelAppointmentDialogProps) {
   const buttonCopy = {
     idle: "Cancel",
     loading: <Loader className="spinner size-4" />,
   };
+
+  console.log(notice, "NOTICE");
 
   const buttonState = useMemo(() => {
     return isRemoving ? "loading" : "idle";
@@ -41,8 +45,7 @@ export function CancelAppointmentDialog({
             Cancel Appointment ?
           </DialogTitle>
           <DialogDescription className="text-left text-sm text-brand-1">
-            This action will cancel your appointment, and you’ll need to
-            reschedule to see a provider.
+            {notice}
           </DialogDescription>
         </DialogHeader>
 

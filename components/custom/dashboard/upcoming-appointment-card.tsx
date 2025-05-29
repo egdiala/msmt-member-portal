@@ -32,8 +32,10 @@ export const UpcomingAppointmentCard = () => {
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const { data: account } = useGetProfile();
   const { data, isPending } = useGetAppointments({ status: "1" });
+  const [notice, setNotice] = useState("");
   const { data: live } = useGetAppointments({ status: "2" });
-  const { mutate, isPending: isCancelling } = useCancelAppointment(() => {
+  const { mutate, isPending: isCancelling } = useCancelAppointment((res) => {
+    setNotice(res?.data?.notice);
     setOpenCancelModal(true);
   });
   const { mutate: cancelAppointment, isPending: isRemoving } =
@@ -41,7 +43,6 @@ export const UpcomingAppointmentCard = () => {
       setOpenCancelModal(false);
     });
 
-  console.log("live", data, account?.user_id);
   const mostRecent = !!live?.length ? live?.[0] : data?.[0];
 
   const buttonCopy = {
@@ -154,7 +155,11 @@ export const UpcomingAppointmentCard = () => {
                   />
                   <p className="font-medium text-xs text-button-primary">
                     Provider has started the Session.
-                    <Button variant="link" asChild className="inline-block text-brand-accent-2">
+                    <Button
+                      variant="link"
+                      asChild
+                      className="inline-block text-brand-accent-2"
+                    >
                       <Link
                         href={`/session?user_id=${account?.user_id}&provider_id=${mostRecent?.provider_id}&appointment_id=${mostRecent?.appointment_id}`}
                         className="underline text-brand-accent-2"
@@ -213,6 +218,7 @@ export const UpcomingAppointmentCard = () => {
                   appointment_id: mostRecent?.appointment_id as string,
                 })
               }
+              notice={notice}
               isRemoving={isRemoving}
               open={openCancelModal}
               onOpenChange={setOpenCancelModal}

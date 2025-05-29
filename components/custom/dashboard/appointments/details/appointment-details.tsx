@@ -120,7 +120,7 @@ export default function AppointmentDetails() {
                           className="hidden md:inline-flex text-xs md:text-sm"
                         >
                           <Link
-                            href={`/providers/book-appointment?provider_id=${data?.provider_id}&type=provider&service_type=provider&appointment_id=${data?.appointment_id}`}
+                            href={`/reschedule-appointment?provider_id=${data?.provider_id}&type=provider&service_type=provider&appointment_id=${data?.appointment_id}`}
                           >
                             Reschedule Appointment
                           </Link>
@@ -255,7 +255,7 @@ export default function AppointmentDetails() {
                         className="md:hidden inline-flex text-xs md:text-sm"
                       >
                         <Link
-                          href={`/providers/book-appointment?provider_id=${data?.provider_id}&type=provider&service_type=provider&appointment_id=${data?.appointment_id}`}
+                          href={`/reschedule-appointment?provider_id=${data?.provider_id}&type=provider&service_type=provider&appointment_id=${data?.appointment_id}`}
                         >
                           Reschedule Appointment
                         </Link>

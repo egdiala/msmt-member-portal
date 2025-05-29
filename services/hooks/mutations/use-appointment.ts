@@ -113,9 +113,9 @@ export const useSubmitSessionRating = (
 };
 
 export const useCancelAppointment = (
-  onSuccessCallback?: (res: any) => void
+  onSuccessCallback?: (res: any, queryClient?: any) => void
 ) => {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: cancelAppointment,
     onSuccess: (res: any) => {
@@ -123,7 +123,7 @@ export const useCancelAppointment = (
       // queryClient.invalidateQueries([
       //   "get-appointments",
       // ] as InvalidateQueryFilters);
-      onSuccessCallback?.(res);
+      onSuccessCallback?.(res, queryClient);
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.msg || "Failed.");
