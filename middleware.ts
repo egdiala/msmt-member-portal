@@ -15,7 +15,8 @@ const publicSessionRoutes = [
   "/verify-booking",
   "/complete-booking",
   "/providers",
-]
+  "/session",
+];
 
 export function middleware(request: NextRequest) {
   // Clone the request URL for modifications
@@ -34,7 +35,10 @@ export function middleware(request: NextRequest) {
     // CASE 1: Authenticated user trying to access public routes (sign-in, etc.)
     if (
       isAuthenticated &&
-      publicRoutes.some((route) => pathname.startsWith(route) || pathname === "/") && !publicSessionRoutes.some((route) => pathname.startsWith(route))
+      publicRoutes.some(
+        (route) => pathname.startsWith(route) || pathname === "/"
+      ) &&
+      !publicSessionRoutes.some((route) => pathname.startsWith(route))
     ) {
       // console.log(
       //   `[Middleware] Authenticated user trying to access public route`
@@ -71,19 +75,24 @@ export function middleware(request: NextRequest) {
     }
 
     // CASE 2: Unauthenticated user trying to access protected routes
-    const isPublicRoute = [...publicRoutes, ...publicSessionRoutes].some((route) =>
-      pathname.startsWith(route)
+    const isPublicRoute = [...publicRoutes, ...publicSessionRoutes].some(
+      (route) => pathname.startsWith(route)
     );
     const isNextInternal =
-      pathname.startsWith("/_next") || pathname.includes(".")
+      pathname.startsWith("/_next") || pathname.includes(".");
 
-    if (!isAuthenticated && !isPublicRoute && !isNextInternal && pathname === "/") {
+    if (
+      !isAuthenticated &&
+      !isPublicRoute &&
+      !isNextInternal &&
+      pathname === "/"
+    ) {
       // console.log(
       //   `[Middleware] Unauthenticated user trying to access protected route`
       // );
       const redirectUrl = new URL("/sign-in", url.origin);
       // Store the current URL as a query param for possible redirect after login
-      redirectUrl.searchParams.set("callbackUrl", `/home${search || ""}`)
+      redirectUrl.searchParams.set("callbackUrl", `/home${search || ""}`);
 
       return NextResponse.redirect(redirectUrl);
     }
