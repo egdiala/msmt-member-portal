@@ -100,7 +100,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
     | undefined;
   const user_type = searchParams.get("type") as "provider" | "org";
   const { mutate: rescheduleAppointment, isPending: isSubmittingReschedule } =
-    useRescheduleAppointment((res) => {
+    useRescheduleAppointment(() => {
       setOpenReschedule(true);
     });
   const account_service_type = searchParams.get("service_type") as

@@ -265,73 +265,81 @@ export const RescheduleAppointmentForm = ({
     };
   }, [appointment_id, form]);
 
-  useEffect(() => {
-    refetchAppointment();
-    refetchProviderInfo();
-    refetchOrgInfo();
-  }, []);
+  useEffect(
+    () => {
+      refetchAppointment();
+      refetchProviderInfo();
+      refetchOrgInfo();
+    },
+    // eslint-disable-next-line
+    []
+  );
 
-  useEffect(() => {
-    if (!appointmentData || !appointment_id || isLoadingAppointment) return;
+  useEffect(
+    () => {
+      if (!appointmentData || !appointment_id || isLoadingAppointment) return;
 
-    console.log("Loading appointment data:", appointmentData);
+      console.log("Loading appointment data:", appointmentData);
 
-    const serviceData =
-      account_service_type === "provider" && user_type === "org"
-        ? orgInfo?.service_data
-        : providerInfo?.service_data;
+      const serviceData =
+        account_service_type === "provider" && user_type === "org"
+          ? orgInfo?.service_data
+          : providerInfo?.service_data;
 
-    const matchingService = serviceData?.find(
-      (service: { service_offer_id: string; name: string; amount: number }) =>
-        service.service_offer_id === appointmentData.service_offer_id
-    );
+      const matchingService = serviceData?.find(
+        (service: { service_offer_id: string; name: string; amount: number }) =>
+          service.service_offer_id === appointmentData.service_offer_id
+      );
 
-    const formattedService = matchingService
-      ? `${matchingService.name} - ${formatNumberWithCommas(
-          matchingService.amount
-        )}`
-      : "";
+      const formattedService = matchingService
+        ? `${matchingService.name} - ${formatNumberWithCommas(
+            matchingService.amount
+          )}`
+        : "";
 
-    const appointmentDate = new Date(appointmentData.appt_schedule);
+      const appointmentDate = new Date(appointmentData.appt_schedule);
 
-    // Set the selected date and initial date
-    setSelectedDate(appointmentDate);
-    setInitialDate(appointmentDate);
+      // Set the selected date and initial date
+      setSelectedDate(appointmentDate);
+      setInitialDate(appointmentDate);
 
-    const communicationPref =
-      appointmentData.comm_mode.charAt(0).toUpperCase() +
-      appointmentData.comm_mode.slice(1);
-    setSelectedCommunicationPreference(communicationPref);
+      const communicationPref =
+        appointmentData.comm_mode.charAt(0).toUpperCase() +
+        appointmentData.comm_mode.slice(1);
+      setSelectedCommunicationPreference(communicationPref);
 
-    const paymentMethod =
-      appointmentData.payment_option === 1 ? "Family" : "Wallet";
-    setSelectedPaymentMethod(paymentMethod);
+      const paymentMethod =
+        appointmentData.payment_option === 1 ? "Family" : "Wallet";
+      setSelectedPaymentMethod(paymentMethod);
 
-    // Set form data
-    const baseFormData = {
-      service: formattedService,
-      paymentMethod: paymentMethod,
-      appointmentDate: appointmentDate,
-      communicationPreference: communicationPref,
-      agreeToCancellation: true,
-      appointmentTime: "",
-    };
+      // Set form data
+      const baseFormData = {
+        service: formattedService,
+        paymentMethod: paymentMethod,
+        appointmentDate: appointmentDate,
+        communicationPreference: communicationPref,
+        agreeToCancellation: true,
+        appointmentTime: "",
+      };
 
-    console.log("Setting form data:", baseFormData);
-    form.reset(baseFormData);
-  }, [
-    appointmentData,
-    appointment_id,
-    isLoadingAppointment,
-    isLoadingProviderInfo,
-    isLoadingOrgInfo,
-    isRefetchingProviderInfo,
-    isRefetchingOrgInfo,
-    isRefetchingAppointment,
-    account_service_type,
-    user_type,
-    form,
-  ]);
+      console.log("Setting form data:", baseFormData);
+      form.reset(baseFormData);
+    },
+    // eslint-disable-next-line
+    [
+      appointmentData,
+      appointment_id,
+      isLoadingAppointment,
+      isLoadingProviderInfo,
+      isLoadingOrgInfo,
+      isRefetchingProviderInfo,
+      isRefetchingOrgInfo,
+      isRefetchingAppointment,
+      account_service_type,
+      user_type,
+      form,
+    ]
+  );
 
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
     console.log("Reschedule appointment:", appointment_id);
