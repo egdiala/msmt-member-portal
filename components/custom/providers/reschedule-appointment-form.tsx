@@ -90,18 +90,31 @@ export const RescheduleAppointmentForm = ({
     | "payer";
 
   // Load appointment data
-  const { data: appointmentData, isPending: isLoadingAppointment } =
-    useGetAppointmentsById(appointment_id);
+  const {
+    data: appointmentData,
+    isPending: isLoadingAppointment,
+    refetch: refetchAppointment,
+    isRefetching: isRefetchingAppointment,
+  } = useGetAppointmentsById(appointment_id);
 
   // Load provider/org info
-  const { data: providerInfo, isLoading: isLoadingProviderInfo } =
-    useGetServiceProviders<FetchSingleProvider>({
-      user_id: provider_id?.toString(),
-      user_type: "provider",
-      account_service_type: "provider",
-    });
+  const {
+    data: providerInfo,
+    isLoading: isLoadingProviderInfo,
+    isRefetching: isRefetchingProviderInfo,
+    refetch: refetchProviderInfo,
+  } = useGetServiceProviders<FetchSingleProvider>({
+    user_id: provider_id?.toString(),
+    user_type: "provider",
+    account_service_type: "provider",
+  });
 
-  const { data: orgInfo } = useGetServiceProviders<FetchOrganizationProvider>({
+  const {
+    data: orgInfo,
+    isLoading: isLoadingOrgInfo,
+    isRefetching: isRefetchingOrgInfo,
+    refetch: refetchOrgInfo,
+  } = useGetServiceProviders<FetchOrganizationProvider>({
     user_id: org_id?.toString(),
     user_type: "org",
     account_service_type: "payer",
@@ -253,6 +266,12 @@ export const RescheduleAppointmentForm = ({
   }, [appointment_id, form]);
 
   useEffect(() => {
+    refetchAppointment();
+    refetchProviderInfo();
+    refetchOrgInfo();
+  }, []);
+
+  useEffect(() => {
     if (!appointmentData || !appointment_id || isLoadingAppointment) return;
 
     console.log("Loading appointment data:", appointmentData);
@@ -262,9 +281,7 @@ export const RescheduleAppointmentForm = ({
         ? orgInfo?.service_data
         : providerInfo?.service_data;
 
-    if (!serviceData) return;
-
-    const matchingService = serviceData.find(
+    const matchingService = serviceData?.find(
       (service: { service_offer_id: string; name: string; amount: number }) =>
         service.service_offer_id === appointmentData.service_offer_id
     );
@@ -287,7 +304,7 @@ export const RescheduleAppointmentForm = ({
     setSelectedCommunicationPreference(communicationPref);
 
     const paymentMethod =
-      appointmentData.payment_by === 1 ? "Family" : "Wallet";
+      appointmentData.payment_option === 1 ? "Family" : "Wallet";
     setSelectedPaymentMethod(paymentMethod);
 
     // Set form data
@@ -306,40 +323,15 @@ export const RescheduleAppointmentForm = ({
     appointmentData,
     appointment_id,
     isLoadingAppointment,
-    providerInfo,
-    orgInfo,
+    isLoadingProviderInfo,
+    isLoadingOrgInfo,
+    isRefetchingProviderInfo,
+    isRefetchingOrgInfo,
+    isRefetchingAppointment,
     account_service_type,
     user_type,
     form,
   ]);
-
-  // Second useEffect: Update appointment time when formattedSlots becomes available
-  useEffect(() => {
-    if (!appointmentData || !formattedSlots || formattedSlots.length === 0)
-      return;
-
-    console.log("Appointment time:", appointmentData.appt_time);
-    console.log("Available slots:", formattedSlots);
-
-    // The appointment time from the backend is in HH format (e.g., "10")
-    const appointmentHour = appointmentData.appt_time.toString();
-
-    // Find the matching slot by comparing the 'real' property (which is in HH format)
-    const matchingSlot = formattedSlots.find(
-      (slot) => slot.real === appointmentHour
-    );
-
-    console.log("Matching slot:", matchingSlot);
-
-    if (matchingSlot) {
-      const currentTimeValue = form.getValues("appointmentTime");
-      console.log("Current time value:", currentTimeValue);
-      console.log("Setting time to:", matchingSlot.value);
-
-      // Set the appointment time to the formatted value (e.g., "10:00 AM - 11:00 AM")
-      form.setValue("appointmentTime", matchingSlot.value);
-    }
-  }, [appointmentData, appointment_id, formattedSlots, form]);
 
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
     console.log("Reschedule appointment:", appointment_id);
