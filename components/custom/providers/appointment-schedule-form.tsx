@@ -1,14 +1,7 @@
 "use client";
 
 import Cookies from "js-cookie";
-import {
-  Dispatch,
-  SetStateAction,
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
-} from "react";
+import { Dispatch, SetStateAction, useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
@@ -88,7 +81,6 @@ interface ISetScheduleStep {
 export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const navigate = useRouter();
   const [openReschedule, setOpenReschedule] = useState(false);
-  const [noticeResponse, setNoticeResponse] = useState<any>(null);
   const [rescheduleData, setRescheduleData] =
     useState<RescheduleAppointmentPayload>({} as RescheduleAppointmentPayload);
   const { data: walletCountStatus } =
@@ -108,8 +100,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
     | undefined;
   const user_type = searchParams.get("type") as "provider" | "org";
   const { mutate: rescheduleAppointment, isPending: isSubmittingReschedule } =
-    useRescheduleAppointment((res) => {
-      setNoticeResponse(res);
+    useRescheduleAppointment(() => {
       setOpenReschedule(true);
     });
   const account_service_type = searchParams.get("service_type") as
@@ -245,72 +236,6 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
       communicationPreference: "",
     },
   });
-
-  useEffect(() => {
-    if (!data || !appointment_id || isLoadingAppointment) return;
-
-    const serviceData =
-      account_service_type === "provider" && user_type === "org"
-        ? orgInfo?.service_data
-        : providerInfo?.service_data;
-
-    const matchingService = serviceData?.find(
-      (service: { service_offer_id: string; name: string; amount: number }) =>
-        service.service_offer_id === data.service_offer_id
-    );
-
-    const formattedService = matchingService
-      ? `${matchingService.name} - ${formatNumberWithCommas(
-          matchingService.amount
-        )}`
-      : "";
-
-    const appointmentDate = new Date(data.appt_schedule);
-    const appointmentHour = data.appt_time;
-
-    if (!formattedSlots || formattedSlots.length === 0) {
-      console.log("Waiting for formattedSlots...");
-      return;
-    }
-
-    const formattedTimeSlot = formattedSlots?.find(
-      (val) => val?.value === appointmentHour.toString()
-    )?.real;
-
-    console.log("Appointment Hour:", appointmentHour);
-    console.log("Formatted Time Slot:", formattedTimeSlot);
-
-    setSelectedDate(appointmentDate);
-    setSelectedCommunicationPreference(
-      data.comm_mode.charAt(0).toUpperCase() + data.comm_mode.slice(1)
-    );
-
-    const paymentMethod = data.payment_by === 1 ? "Family" : "Wallet";
-    setSelectedPaymentMethod(paymentMethod);
-
-    console.log(formattedTimeSlot, "TEGGSG");
-
-    form.reset({
-      service: formattedService,
-      paymentMethod: paymentMethod,
-      appointmentDate: appointmentDate,
-      appointmentTime: formattedTimeSlot || "",
-      communicationPreference:
-        data.comm_mode.charAt(0).toUpperCase() + data.comm_mode.slice(1),
-      agreeToCancellation: true,
-    });
-
-    setInitialDate(appointmentDate);
-  }, [
-    data,
-    appointment_id,
-    form,
-    isLoadingAppointment,
-    providerInfo,
-    orgInfo,
-    account_service_type,
-    user_type,
-  ]);
 
   const { mutate, isPending } = useBookSelfAppointment((res) => {
     localStorage.setItem("booking-appointment-id", res?.appointment_id);
@@ -608,8 +533,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                           onSelect={(val) => {
                             field.onChange(val);
                           }}
-                          value={field.value}
                           placeholder="Select Service"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
