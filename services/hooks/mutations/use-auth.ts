@@ -125,7 +125,7 @@ export const useResetPassword = (fn?: (v: string) => void) => {
     mutationFn: resetPassword,
     onSuccess: () => {
       toast.success("Successful! Please login to continue.");
-      fn?.("/login");
+      fn?.("/sign-in");
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.msg || "Something went wrong");
