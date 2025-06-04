@@ -249,17 +249,21 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   }, [isMeetingJoined, isLeaving]);
 
   // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (redirectTimeoutRef.current) {
-        clearTimeout(redirectTimeoutRef.current);
-      }
+  useEffect(
+    () => {
+      return () => {
+        if (redirectTimeoutRef.current) {
+          clearTimeout(redirectTimeoutRef.current);
+        }
 
-      if (isMeetingJoined && !leavingInProgressRef.current) {
-        leaveMeetingSafely().catch(console.error);
-      }
-    };
-  }, []);
+        if (isMeetingJoined && !leavingInProgressRef.current) {
+          leaveMeetingSafely().catch(console.error);
+        }
+      };
+    },
+    // eslint-disable-next-line
+    []
+  );
   useEffect(() => {
     if (
       !meetingInitializedRef.current &&
@@ -309,33 +313,37 @@ const MeetingView: React.FC<MeetingViewProps> = ({
     }
   }, [isVideoEnabled, toggleWebcam]);
 
-  const handleEndCall = useCallback(async () => {
-    if (!isProvider) {
-      setOpen(true);
-      return;
-    }
-
-    try {
-      setIsLeaving(true);
-
-      if (isMeetingJoined) {
-        await leave();
+  const handleEndCall = useCallback(
+    async () => {
+      if (!isProvider) {
+        setOpen(true);
+        return;
       }
 
-      router.push("/home");
-    } catch (error) {
-      console.error("Error ending call:", error);
+      try {
+        setIsLeaving(true);
 
-      router.push("/home");
-    }
-  }, [
-    isProvider,
-    participants,
-    localParticipant?.id,
-    isMeetingJoined,
-    leave,
-    router,
-  ]);
+        if (isMeetingJoined) {
+          await leave();
+        }
+
+        router.push("/home");
+      } catch (error) {
+        console.error("Error ending call:", error);
+
+        router.push("/home");
+      }
+    },
+    // eslint-disable-next-line
+    [
+      isProvider,
+      participants,
+      localParticipant?.id,
+      isMeetingJoined,
+      leave,
+      router,
+    ]
+  );
 
   // Computed values
   const otherParticipants = [...participants.values()].filter(
