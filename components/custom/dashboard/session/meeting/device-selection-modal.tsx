@@ -121,13 +121,17 @@ const DeviceSelectionModal: React.FC<{
   };
 
   // Cleanup video stream when component unmounts
-  useEffect(() => {
-    return () => {
-      if (videoStream) {
-        videoStream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, []);
+  useEffect(
+    () => {
+      return () => {
+        if (videoStream) {
+          videoStream.getTracks().forEach((track) => track.stop());
+        }
+      };
+    },
+    //eslint-disable-next-line
+    []
+  );
 
   const initializeDevices = () => {
     deviceInitializedRef.current = false;
@@ -135,60 +139,64 @@ const DeviceSelectionModal: React.FC<{
   };
 
   // Handle video preview - Fix for the twitching issue
-  useEffect(() => {
-    // Only start video preview when all conditions are met
-    const startVideoPreview = async () => {
-      // Stop existing stream first
-      if (videoStream) {
-        videoStream.getTracks().forEach((track) => track.stop());
-        setVideoStream(null);
-      }
+  useEffect(
+    () => {
+      // Only start video preview when all conditions are met
+      const startVideoPreview = async () => {
+        // Stop existing stream first
+        if (videoStream) {
+          videoStream.getTracks().forEach((track) => track.stop());
+          setVideoStream(null);
+        }
 
-      try {
-        if (videoEnabled && selectedVideoDevice && videoPreviewRef.current) {
-          let stream;
-          try {
-            stream = await navigator.mediaDevices.getUserMedia({
-              video: { deviceId: { exact: selectedVideoDevice } },
-            });
-          } catch (err) {
-            console.log(
-              "Failed with selected device, trying default camera",
-              err
-            );
-            // If that fails, try with default camera
-            stream = await navigator.mediaDevices.getUserMedia({
-              video: true,
-            });
+        try {
+          if (videoEnabled && selectedVideoDevice && videoPreviewRef.current) {
+            let stream;
+            try {
+              stream = await navigator.mediaDevices.getUserMedia({
+                video: { deviceId: { exact: selectedVideoDevice } },
+              });
+            } catch (err) {
+              console.log(
+                "Failed with selected device, trying default camera",
+                err
+              );
+              // If that fails, try with default camera
+              stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+              });
+            }
+
+            if (videoPreviewRef.current) {
+              videoPreviewRef.current.srcObject = stream;
+              setVideoStream(stream);
+            }
           }
+        } catch (err) {
+          console.error("Error starting video preview:", err);
+          setPermissionError(
+            "Could not start camera preview. Please check permissions."
+          );
+        }
+      };
 
+      // Only re-run this effect when these dependencies change
+      if (deviceLoadingComplete) {
+        if (videoEnabled && selectedVideoDevice) {
+          startVideoPreview();
+        } else if (!videoEnabled && videoStream) {
+          // Turn off video if disabled
+          videoStream.getTracks().forEach((track) => track.stop());
+          setVideoStream(null);
           if (videoPreviewRef.current) {
-            videoPreviewRef.current.srcObject = stream;
-            setVideoStream(stream);
+            videoPreviewRef.current.srcObject = null;
           }
         }
-      } catch (err) {
-        console.error("Error starting video preview:", err);
-        setPermissionError(
-          "Could not start camera preview. Please check permissions."
-        );
       }
-    };
-
-    // Only re-run this effect when these dependencies change
-    if (deviceLoadingComplete) {
-      if (videoEnabled && selectedVideoDevice) {
-        startVideoPreview();
-      } else if (!videoEnabled && videoStream) {
-        // Turn off video if disabled
-        videoStream.getTracks().forEach((track) => track.stop());
-        setVideoStream(null);
-        if (videoPreviewRef.current) {
-          videoPreviewRef.current.srcObject = null;
-        }
-      }
-    }
-  }, [selectedVideoDevice, videoEnabled, deviceLoadingComplete]);
+    },
+    // eslint-disable-next-line
+    [selectedVideoDevice, videoEnabled, deviceLoadingComplete]
+  );
 
   const handleJoin = () => {
     // Stop the preview stream

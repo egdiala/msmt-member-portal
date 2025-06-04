@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { IconPlus } from "@/components/icons";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -108,12 +107,12 @@ export default function AppointmentDetails() {
                       </p>
                     </div>
                     <div className="flex items-center gap-x-1.5">
-                      <Button asChild className="hidden md:inline-flex">
+                      {/* <Button asChild className="hidden md:inline-flex">
                         <Link href={`/providers`}>
                           <IconPlus className="stroke-white" />
                           Book An Appointment
                         </Link>
-                      </Button>
+                      </Button> */}
                       <RenderIf condition={data?.status === 1}>
                         <Button
                           asChild
@@ -241,7 +240,7 @@ export default function AppointmentDetails() {
                     </div>
                   </RenderIf>
                   <div className="grid  gap-1.5">
-                    <Button
+                    {/* <Button
                       asChild
                       className="md:hidden inline-flex text-xs md:text-sm"
                     >
@@ -249,7 +248,7 @@ export default function AppointmentDetails() {
                         <IconPlus className="stroke-white" />
                         Book An Appointment
                       </Link>
-                    </Button>
+                    </Button> */}
                     <RenderIf condition={data?.status === 1}>
                       <Button
                         asChild
