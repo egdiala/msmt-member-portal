@@ -144,6 +144,7 @@ export interface GetAppointmentIdType {
   appointment_id: string;
   service_offer_name: string;
   org_payer_id?: string;
+  org_provider_id?: string;
 }
 
 export interface SessionRatingPayload {

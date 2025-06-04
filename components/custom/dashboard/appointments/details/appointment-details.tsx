@@ -34,31 +34,6 @@ export default function AppointmentDetails() {
   const { data, isLoading } = useGetAppointmentsById(slug as string);
 
   const { mutate, isPending } = useAddFavouriteProvider();
-  const appointment = {
-    id: "completed",
-    psychologist: {
-      name: "Jide Kosoko",
-      title: "Psychologist",
-      avatar: "/assets/user-dummy.png",
-    },
-    date: "Wed, 12th May, 2025",
-    time: "01:53am - 02:53am (1hr)",
-    charge: "$40/hr",
-    communicationMode: "Video",
-    status: "Completed",
-    serviceType: "Adult Counselling",
-    bookedBy: "James John",
-    method: "Wallet",
-    assessment:
-      "Lorem ipsum dolor sit amet consectetur. Duis ornare velit vitae lacus ipsum euismod. Nullam ultricies risus ut leo. Massa rhoncus mauris egestas duis nulla arcu in semper tortor. Sagittis suspendisse ultricies.Lorem ipsum dolor sit amet consectetur. Duis ornare velit vitae lacus ipsum euismod. Nullam",
-    prescription:
-      "Lorem ipsum dolor sit amet consectetur. Duis ornare velit vitae lacus ipsum euismod. Nullam ultricies risus ut leo. Massa rhoncus mauris egestas duis nulla arcu in semper tortor. Sagittis suspendisse ultricies.Lorem ipsum dolor sit amet consectetur. Duis ornare velit vitae lacus ipsum euismod. Nullam",
-    feedback: {
-      rating: 4.0,
-      comment:
-        "Lorem ipsum dolor sit amet consectetur. Duis ornare velit vitae lacus ipsum euismod. Nullam ultricies risus ut leo. Massa rhoncus mauris egestas duis nulla arcu in semper tortor. Sagittis suspendisse ultricies.Lorem ipsum dolor sit amet consectetur. Duis ornare velit vitae lacus ipsum euismod. Nullam",
-    },
-  };
 
   return (
     <div className=" grid gap-y-4">
@@ -302,8 +277,8 @@ export default function AppointmentDetails() {
             <div className="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between p-4 md:px-5 py-4  border border-[#DADCDD] rounded-lg">
               <div>
                 <p className="text-sm text-brand-2 mb-1">Service type</p>
-                <p className="font-medium text-brand-1 text-sm">
-                  {appointment.serviceType}
+                <p className="font-medium text-brand-1 text-sm capitalize">
+                  {data?.service_offer_name}
                 </p>
               </div>
               {/* <div>
@@ -315,7 +290,7 @@ export default function AppointmentDetails() {
               <div>
                 <p className="text-sm text-brand-2 mb-1">Method</p>
                 <p className="font-medium text-brand-1 text-sm">
-                  {appointment.method}
+                  {data?.org_provider_id ? "Family Account" : "Wallet"}
                 </p>
               </div>
             </div>
@@ -356,13 +331,11 @@ export default function AppointmentDetails() {
                     <IconStarFull className="fill-actions-amber size-6" />
                     <span className="text-brand-1 font-medium text-sm">
                       {" "}
-                      {appointment.feedback?.rating.toFixed(1)}
+                      {data?.rating_data}
                     </span>
                   </div>
 
-                  <p className="text-sm text-brand-2">
-                    {appointment.feedback?.comment}
-                  </p>
+                  <p className="text-sm text-brand-2">{data?.rating_data}</p>
                 </div>
               </div>
             </RenderIf>
