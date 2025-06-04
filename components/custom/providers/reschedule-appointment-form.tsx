@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import {
   format,
@@ -73,8 +73,8 @@ interface EditAppointmentFormProps {
 
 export const RescheduleAppointmentForm = ({
   onSuccess,
-  onCancel,
 }: EditAppointmentFormProps) => {
+  const navigate = useRouter();
   const [openReschedule, setOpenReschedule] = useState(false);
   const [rescheduleData, setRescheduleData] =
     useState<RescheduleAppointmentPayload>({} as RescheduleAppointmentPayload);
@@ -279,8 +279,6 @@ export const RescheduleAppointmentForm = ({
     () => {
       if (!appointmentData || !appointment_id || isLoadingAppointment) return;
 
-      console.log("Loading appointment data:", appointmentData);
-
       const serviceData =
         account_service_type === "provider" && user_type === "org"
           ? orgInfo?.service_data
@@ -322,7 +320,6 @@ export const RescheduleAppointmentForm = ({
         appointmentTime: "",
       };
 
-      console.log("Setting form data:", baseFormData);
       form.reset(baseFormData);
     },
     // eslint-disable-next-line
@@ -342,8 +339,6 @@ export const RescheduleAppointmentForm = ({
   );
 
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
-    console.log("Reschedule appointment:", appointment_id);
-
     // Trigger reschedule notice
     rescheduleAppointment({
       appointmentId: appointment_id,
@@ -807,7 +802,11 @@ export const RescheduleAppointmentForm = ({
           </div>
 
           <div className="grid grid-cols-2 md:flex md:items-center md:justify-end gap-x-5">
-            <Button variant="secondary" type="button" onClick={onCancel}>
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => navigate.back()}
+            >
               Cancel
             </Button>
             <Button
