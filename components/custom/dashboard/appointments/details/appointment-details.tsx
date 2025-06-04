@@ -303,8 +303,8 @@ export default function AppointmentDetails() {
             <div className="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between p-4 md:px-5 py-4  border border-[#DADCDD] rounded-lg">
               <div>
                 <p className="text-sm text-brand-2 mb-1">Service type</p>
-                <p className="font-medium text-brand-1 text-sm">
-                  {appointment.serviceType}
+                <p className="font-medium capitalize text-brand-1 text-sm">
+                  {data?.service_offer_name}
                 </p>
               </div>
               {/* <div>
@@ -316,7 +316,7 @@ export default function AppointmentDetails() {
               <div>
                 <p className="text-sm text-brand-2 mb-1">Method</p>
                 <p className="font-medium text-brand-1 text-sm">
-                  {appointment.method}
+                  {data?.payment_option}
                 </p>
               </div>
             </div>
