@@ -287,7 +287,6 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
       mutate(dataToBeSent);
     }
     if (appointment_id) {
-      console.log("Booking link333:", booking_link);
       rescheduleAppointment({
         appointmentId: appointment_id as string,
         component: "notice",
@@ -415,7 +414,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 </div>
               </div>
 
-              <RenderIf condition={!!isLoggedIn}>
+              <RenderIf condition={!!isLoggedIn && !isPublic}>
                 <Button
                   asChild
                   variant="link"
@@ -439,7 +438,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 </Button>
               </RenderIf>
 
-              <RenderIf condition={!isLoggedIn}>
+              {/* <RenderIf condition={!isLoggedIn}>
                 <button
                   disabled={!!appointment_id}
                   onClick={() => navigate.back()}
@@ -447,7 +446,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 >
                   Change
                 </button>
-              </RenderIf>
+              </RenderIf> */}
             </div>
 
             <RenderIf condition={user_type === "org"}>
@@ -506,11 +505,13 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                   ) => {
                                     return {
                                       id: index,
-                                      value: `${
-                                        val?.name
-                                      } - ${formatNumberWithCommas(
-                                        val?.amount
-                                      )}`,
+                                      value: isPublic
+                                        ? val?.name
+                                        : `${
+                                            val?.name
+                                          } - ${formatNumberWithCommas(
+                                            val?.amount
+                                          )}`,
                                     };
                                   }
                                 ) ?? []
@@ -521,11 +522,13 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                   ) => {
                                     return {
                                       id: index,
-                                      value: `${
-                                        val?.name
-                                      } - ${formatNumberWithCommas(
-                                        val?.amount
-                                      )}`,
+                                      value: isPublic
+                                        ? val?.name
+                                        : `${
+                                            val?.name
+                                          } - ${formatNumberWithCommas(
+                                            val?.amount
+                                          )}`,
                                     };
                                   }
                                 ) ?? []
@@ -543,14 +546,16 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 />
               </div>
 
-              <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
-                <p className="text-sm">Charge</p>
-                <p className="text-lg">
-                  {form.watch("service").split(" - ")[1] ||
-                    formatNumberWithCommas(0)}
-                  /hr
-                </p>
-              </div>
+              <RenderIf condition={!!isLoggedIn && !isPublic}>
+                <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
+                  <p className="text-sm">Charge</p>
+                  <p className="text-lg">
+                    {form.watch("service").split(" - ")[1] ||
+                      formatNumberWithCommas(0)}
+                    /hr
+                  </p>
+                </div>
+              </RenderIf>
 
               <RenderIf
                 condition={
