@@ -31,7 +31,7 @@ const CustomRadioItem = ({
         checked={isValid}
       />
       <RenderIf condition={isValid}>
-        <Check className="size-2.5  absolute text-white" />
+        <Check className="size-2.5 absolute text-white" />
       </RenderIf>
 
       <label
@@ -120,7 +120,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
 
     return (
       <div className="space-y-2">
-        <div className="relative">
+        <div className="">
           <FloatingInput
             label={labelTitle}
             type={showPassword ? "text" : "password"}
@@ -128,6 +128,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
             value={value}
             onChange={handleChange}
             ref={ref}
+            
             autoComplete={turnOffAutocomplete ? "off" : "on"}
             {...props}
           />
@@ -135,7 +136,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
             type="button"
             variant="ghost"
             size="sm"
-            className="absolute right-0 top-0 h-full px-3 py-2 text-brand-3 hover:bg-transparent "
+            className="absolute right-0 bottom-2 h-fit px-3 py-2 text-brand-3 hover:bg-transparent "
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (

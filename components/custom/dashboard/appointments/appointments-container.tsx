@@ -104,7 +104,7 @@ export function AppointmentContainer() {
   const headers = [
     { key: "date", value: "Created Date & Time" },
     { key: "appt_date", value: "Appointment Date & Time" },
-    { key: "consultant", value: "Consultant" },
+    { key: "consultant", value: "Provider" },
     { key: "amount", value: "Amount" },
     { key: "serviceOffered", value: "Service Offerred" },
     { key: "status", value: "Status" },

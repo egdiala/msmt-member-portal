@@ -313,7 +313,7 @@ export default function AppointmentDetails() {
                 </p>
               </div> */}
               <div>
-                <p className="text-sm text-brand-2 mb-1">Method</p>
+                <p className="text-sm text-brand-2 mb-1">Paid by</p>
                 <p className="font-medium text-brand-1 text-sm">
                   {data?.payment_option}
                 </p>

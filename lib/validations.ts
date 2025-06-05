@@ -71,9 +71,9 @@ export const signUpSchema = z.object({
 
 export const profileSecuritySchema = z
   .object({
-    currentPassword: passwordSchema,
+    currentPassword: z.string().nonempty(),
     newPassword: passwordSchema,
-    confirmPassword: passwordSchema,
+    confirmPassword:  z.string().nonempty(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",

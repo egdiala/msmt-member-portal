@@ -106,7 +106,7 @@ export default function SignUp() {
                           className="pr-8"
                           {...field}
                         />
-                        <IconCaseSensitive className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />
+                        <IconCaseSensitive className="absolute right-3 bottom-2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -126,7 +126,7 @@ export default function SignUp() {
                           className="pr-8"
                           {...field}
                         />
-                        <IconCaseSensitive className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />
+                        <IconCaseSensitive className="absolute right-3 bottom-2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -168,7 +168,7 @@ export default function SignUp() {
                           className="pr-10"
                           {...field}
                         />
-                        <IconEmail className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />
+                        <IconEmail className="absolute right-3 bottom-2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />
                       </div>
                     </FormControl>
                     <FormMessage />
