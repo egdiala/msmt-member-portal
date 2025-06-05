@@ -60,6 +60,15 @@ export default function AppointmentDetails() {
     },
   };
 
+
+  const PaidBy = {
+  0: "User",
+  1: "Organization",
+  2: "Family & Friends",
+} as const;
+
+type PaidByKey = keyof typeof PaidBy;
+
   return (
     <div className=" grid gap-y-4">
       <BreadcrumbCmp
@@ -315,7 +324,7 @@ export default function AppointmentDetails() {
               <div>
                 <p className="text-sm text-brand-2 mb-1">Paid by</p>
                 <p className="font-medium text-brand-1 text-sm">
-                  {data?.payment_option}
+                  {PaidBy?.[data?.payment_by as PaidByKey]}
                 </p>
               </div>
             </div>

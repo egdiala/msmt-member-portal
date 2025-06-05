@@ -119,6 +119,7 @@ export interface GetAppointmentIdType {
   service_cat_id: string;
   booking_ref: string;
   booking_link: string;
+  payment_by: number;
   comm_mode: string;
   member_questionnaire: MemberQuestion[];
   appt_schedule: string;
