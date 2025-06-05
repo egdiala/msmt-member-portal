@@ -505,7 +505,7 @@ export const RescheduleAppointmentForm = ({
                               ) ?? []
                         }
                         onSelect={(val) => field.onChange(val)}
-                        placeholder="Select Service"
+                        placeholder="Service"
                         {...field}
                       />
                     </FormControl>
@@ -726,12 +726,15 @@ export const RescheduleAppointmentForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <SelectCmp
-                      selectItems={formattedSlots ?? []}
-                      placeholder="Select time (WAT)"
-                      onSelect={(val) => field.onChange(val)}
-                      value={field.value}
-                    />
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium text-brand-2">Appointment Time</h3>
+                      <SelectCmp
+                        selectItems={formattedSlots ?? []}
+                        placeholder="time (WAT)"
+                        onSelect={(val) => field.onChange(val)}
+                        value={field.value}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

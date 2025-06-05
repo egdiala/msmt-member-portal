@@ -106,7 +106,7 @@ export function AppointmentContainer() {
     { key: "appt_date", value: "Appointment Date & Time" },
     { key: "consultant", value: "Provider" },
     { key: "amount", value: "Amount" },
-    { key: "serviceOffered", value: "Service Offerred" },
+    { key: "serviceOffered", value: "Service Type" },
     { key: "status", value: "Status" },
   ];
 

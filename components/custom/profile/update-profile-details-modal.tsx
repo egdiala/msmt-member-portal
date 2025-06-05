@@ -168,16 +168,21 @@ export const UpdateProfileDetailsModal = ({
                 control={form.control}
                 name="religion"
                 render={({ field }) => (
-                  <SelectCmp
-                    selectItems={
-                      variableList
-                        ? variableList(requestVariables?.["religion-list"])
-                        : []
-                    }
-                    onSelect={field.onChange}
-                    placeholder={"Religion"}
-                    {...field}
-                  />
+                  <div className="space-y-1">
+                    <h1 className="text-sm font-medium text-brand-2">
+                      Religion
+                    </h1>
+                    <SelectCmp
+                      selectItems={
+                        variableList
+                          ? variableList(requestVariables?.["religion-list"])
+                          : []
+                      }
+                      onSelect={field.onChange}
+                      placeholder={"Religion"}
+                      {...field}
+                    />
+                  </div>
                 )}
               />
 
@@ -185,17 +190,20 @@ export const UpdateProfileDetailsModal = ({
                 control={form.control}
                 name="gender"
                 render={({ field }) => (
-                  <SelectCmp
-                    selectItems={[
-                      { value: "Male", id: 1 },
-                      { value: "Female", id: 2 },
-                      { value: "Prefer not to say", id: 3 },
-                    ]}
-                    lowercase={false}
-                    onSelect={field.onChange}
-                    placeholder={"Gender"}
-                    {...field}
-                  />
+                  <div className="space-y-1">
+                    <h1 className="text-sm font-medium text-brand-2">Gender</h1>
+                    <SelectCmp
+                      selectItems={[
+                        { value: "Male", id: 1 },
+                        { value: "Female", id: 2 },
+                        { value: "Prefer not to say", id: 3 },
+                      ]}
+                      lowercase={false}
+                      onSelect={field.onChange}
+                      placeholder={"Gender"}
+                      {...field}
+                    />
+                  </div>
                 )}
               />
 
@@ -203,16 +211,21 @@ export const UpdateProfileDetailsModal = ({
                 control={form.control}
                 name="maritalStatus"
                 render={({ field }) => (
-                  <SelectCmp
-                    selectItems={
-                      variableList
-                        ? variableList(requestVariables?.["marital-status"])
-                        : []
-                    }
-                    onSelect={field.onChange}
-                    placeholder={"Marital Status"}
-                    {...field}
-                  />
+                  <div className="space-y-1">
+                    <h1 className="text-sm font-medium text-brand-2">
+                      Marital Status
+                    </h1>
+                    <SelectCmp
+                      selectItems={
+                        variableList
+                          ? variableList(requestVariables?.["marital-status"])
+                          : []
+                      }
+                      onSelect={field.onChange}
+                      placeholder={"Marital Status"}
+                      {...field}
+                    />
+                  </div>
                 )}
               />
 
@@ -220,12 +233,17 @@ export const UpdateProfileDetailsModal = ({
                 control={form.control}
                 name="country"
                 render={({ field }) => (
-                  <SelectCmp
-                    selectItems={[...countryListArray]}
-                    placeholder={"Country"}
-                    onSelect={field.onChange}
-                    {...field}
-                  />
+                  <div className="space-y-1">
+                    <h1 className="text-sm font-medium text-brand-2">
+                      Country
+                    </h1>
+                    <SelectCmp
+                      selectItems={[...countryListArray]}
+                      placeholder={"Country"}
+                      onSelect={field.onChange}
+                      {...field}
+                    />
+                  </div>
                 )}
               />
 
@@ -233,16 +251,21 @@ export const UpdateProfileDetailsModal = ({
                 control={form.control}
                 name="preferredLanguage"
                 render={({ field }) => (
-                  <SelectCmp
-                    selectItems={
-                      variableList
-                        ? variableList(requestVariables?.["preferred-lan"])
-                        : []
-                    }
-                    onSelect={field.onChange}
-                    placeholder={"Preferred Language"}
-                    {...field}
-                  />
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-medium text-brand-2">
+                      Preferred Language
+                    </h3>
+                    <SelectCmp
+                      selectItems={
+                        variableList
+                          ? variableList(requestVariables?.["preferred-lan"])
+                          : []
+                      }
+                      onSelect={field.onChange}
+                      placeholder={"Preferred Language"}
+                      {...field}
+                    />
+                  </div>
                 )}
               />
 

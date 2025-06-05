@@ -182,15 +182,18 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <SelectCmp
-                        onSelect={(val) => field.onChange(val)}
-                        selectItems={[
-                          { id: 1, value: "Male" },
-                          { id: 2, value: "Female" },
-                        ]}
-                        placeholder={"Gender"}
-                        {...field}
-                      />
+                      <div className="space-y-1">
+                        <h3 className="text-sm font-medium text-brand-2">Gender</h3>
+                        <SelectCmp
+                          onSelect={(val) => field.onChange(val)}
+                          selectItems={[
+                            { id: 1, value: "Male" },
+                            { id: 2, value: "Female" },
+                          ]}
+                          placeholder={"Gender"}
+                          {...field}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -203,7 +206,9 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <SelectCmp
+                     <div className="space-y-1">
+                      <h3 className="text-sm font-medium text-brand-2">Relationship</h3>
+                       <SelectCmp
                         onSelect={(val) => field.onChange(val)}
                         selectItems={[
                           { id: 1, value: "Family" },
@@ -212,6 +217,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                         placeholder={"Relationship"}
                         {...field}
                       />
+                     </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

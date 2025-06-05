@@ -230,7 +230,7 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
                     )}
                     onSelect={(val) => field.onChange(val)}
                     value={field.value}
-                    placeholder="Select date"
+                    placeholder="date"
                   />
                 </FormControl>
                 <FormMessage />
@@ -269,7 +269,7 @@ export function FilterPopover({ onApplyFilters }: FilterPopoverProps) {
                             (inner) => inner.index === field.value
                           )[0]?.value
                     }
-                    placeholder="Select status"
+                    placeholder="status"
                   />
                 </FormControl>
                 <FormMessage />

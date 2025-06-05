@@ -128,15 +128,18 @@ export const EditMemberModal = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <SelectCmp
-                      onSelect={(val) => form.setValue("relationship", val)}
-                      selectItems={[
-                        { id: 1, value: "Family" },
-                        { id: 2, value: "Friend" },
-                      ]}
-                      placeholder={"Relationship"}
-                      {...field}
-                    />
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium text-brand-2">Relationship</h3>
+                      <SelectCmp
+                        onSelect={(val) => form.setValue("relationship", val)}
+                        selectItems={[
+                          { id: 1, value: "Family" },
+                          { id: 2, value: "Friend" },
+                        ]}
+                        placeholder={"Relationship"}
+                        {...field}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
