@@ -99,7 +99,7 @@ export const UpdatePasswordForm = () => {
                     onChange={field.onChange}
                     id={field.name}
                     name={field.name}
-                    showRequirements={false}
+                    showRequirements={true}
                     labelTitle="Confirm Password"
                   />
                 </FormControl>
