@@ -222,88 +222,112 @@ export const ProvidersTable = () => {
             disableDatesBeforeToday
           />
 
-          <SelectCmp
-            selectItems={[
-              { id: 1, value: "Provider" },
-              { id: 2, value: "Organization" },
-            ]}
-            value={providerType}
-            onSelect={(val) => setProviderType(val)}
-            placeholder={"Provider type"}
-          />
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium text-brand-2">Provider type</h3>
+            <SelectCmp
+              selectItems={[
+                { id: 1, value: "Provider" },
+                { id: 2, value: "Organization" },
+              ]}
+              value={providerType}
+              onSelect={(val) => setProviderType(val)}
+              placeholder={"Provider type"}
+            />
+          </div>
 
-          <SelectCmp
-            selectItems={requestVariables["service-offering"]?.map(
-              (val: { service_offer_id: string; name: string }) => {
-                return { id: val?.service_offer_id, value: val?.name };
-              }
-            )}
-            value={specificService}
-            onSelect={(val) => setSpecificService(val)}
-            placeholder={"Specific service"}
-          />
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium text-brand-2">
+              Specific Service
+            </h3>
+            <SelectCmp
+              selectItems={requestVariables["service-offering"]?.map(
+                (val: { service_offer_id: string; name: string }) => {
+                  return { id: val?.service_offer_id, value: val?.name };
+                }
+              )}
+              value={specificService}
+              onSelect={(val) => setSpecificService(val)}
+              placeholder={"Specific service"}
+            />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium text-brand-2">Price range</h3>
+            <SelectCmp
+              selectItems={requestVariables["booking-prices"]?.map(
+                (val: { name: string }, index: number) => {
+                  return {
+                    id: index,
+                    value: val?.name,
+                  };
+                }
+              )}
+              value={priceRange}
+              onSelect={(val) => setPriceRange(val)}
+              placeholder={"Price range"}
+            />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium text-brand-2">Gender</h3>
+            <SelectCmp
+              selectItems={[
+                { id: 1, value: "Male" },
+                { id: 2, value: "Female" },
+              ]}
+              value={gender}
+              onSelect={(val) => setGender(val)}
+              placeholder={"Gender"}
+            />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium text-brand-2">
+              Preferred Language
+            </h3>
+            <SelectCmp
+              selectItems={requestVariables["preferred-lan"]?.map(
+                (val: string) => {
+                  return {
+                    id: val,
+                    value: val,
+                  };
+                }
+              )}
+              value={language}
+              onSelect={(val) => setLanguage(val)}
+              placeholder={"Language"}
+            />
+          </div>
 
-          <SelectCmp
-            selectItems={requestVariables["booking-prices"]?.map(
-              (val: { name: string }, index: number) => {
-                return {
-                  id: index,
-                  value: val?.name,
-                };
-              }
-            )}
-            value={priceRange}
-            onSelect={(val) => setPriceRange(val)}
-            placeholder={"Price range"}
-          />
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium text-brand-2">Religion</h3>
+            <SelectCmp
+              selectItems={requestVariables["religion-list"]?.map(
+                (val: string) => {
+                  return {
+                    id: val,
+                    value: val,
+                  };
+                }
+              )}
+              value={religion}
+              onSelect={(val) => setReligion(val)}
+              placeholder={"Religion"}
+            />
+          </div>
 
-          <SelectCmp
-            selectItems={[
-              { id: 1, value: "Male" },
-              { id: 2, value: "Female" },
-            ]}
-            value={gender}
-            onSelect={(val) => setGender(val)}
-            placeholder={"Gender"}
-          />
-
-          <SelectCmp
-            selectItems={requestVariables["preferred-lan"]?.map(
-              (val: string) => {
-                return {
-                  id: val,
-                  value: val,
-                };
-              }
-            )}
-            value={language}
-            onSelect={(val) => setLanguage(val)}
-            placeholder={"Language"}
-          />
-
-          <SelectCmp
-            selectItems={requestVariables["religion-list"]?.map(
-              (val: string) => {
-                return {
-                  id: val,
-                  value: val,
-                };
-              }
-            )}
-            value={religion}
-            onSelect={(val) => setReligion(val)}
-            placeholder={"Religion"}
-          />
-
-          <SelectCmp
-            selectItems={[
-              { id: 1, value: "Audio" },
-              { id: 2, value: "Video" },
-            ]}
-            value={communicationPreference}
-            onSelect={(val) => setCommunicationPreference(val)}
-            placeholder={"Communication preference"}
-          />
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium text-brand-2">
+              Communication Preference
+            </h3>
+            <SelectCmp
+              selectItems={[
+                { id: 1, value: "Audio" },
+                { id: 2, value: "Video" },
+              ]}
+              value={communicationPreference}
+              onSelect={(val) => setCommunicationPreference(val)}
+              placeholder={"Communication preference"}
+            />
+          </div>
         </div>
 
         <div className="pt-8 gap-x-4 grid grid-cols-2">

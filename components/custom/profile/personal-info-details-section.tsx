@@ -120,14 +120,14 @@ export const PersonalInfoDetailsSection = () => {
       />
 
       <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
-        <DialogContent className="sm:max-w-sm md:max-w-md">
+        <DialogContent className="sm:max-w-sm md:max-w-md bg-transparent shadow-none">
           <DialogHeader>
             <DialogTitle className="hidden">Profile Photo</DialogTitle>
             <DialogDescription className="hidden">
               {data?.first_name || "_"} {data?.last_name || "_"}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center justify-center p-2">
+          <div className="flex items-center justify-center p-2 bg-transparent">
             <div className="relative w-full aspect-square max-h-[60vh] overflow-hidden rounded-md">
               <Image
                 fill

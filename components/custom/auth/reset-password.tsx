@@ -80,7 +80,7 @@ export default function ResetPassword() {
                         className=" pr-10"
                         {...field}
                       />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3 pointer-events-none">
+                      <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3 pointer-events-none">
                         <IconEmail className="h-4 w-4" />
                       </div>
                     </div>

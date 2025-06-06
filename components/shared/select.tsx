@@ -37,8 +37,8 @@ export const SelectCmp = ({
     >
       <SelectTrigger className={cn("w-full cursor-pointer", className)}>
         <SelectValue
-          placeholder={placeholder}
-          className="placeholder:text-text-2"
+          placeholder={`Select ${placeholder}`}
+          className="placeholder:text-grey-300"
         />
       </SelectTrigger>
       <SelectContent>
@@ -47,7 +47,7 @@ export const SelectCmp = ({
             <SelectItem
               key={item.id}
               value={item.value}
-              className={cn(lowercase &&"capitalize")}
+              className={cn(lowercase && "capitalize")}
             >
               {item.value}
             </SelectItem>

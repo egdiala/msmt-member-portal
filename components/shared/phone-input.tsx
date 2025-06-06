@@ -21,18 +21,11 @@ export type PhoneInputWithLabelProps = {
 // Floating label component
 interface FloatingLabelProps {
   id: string;
-  visible: boolean;
   placeholder: string;
 }
 
-const FloatingLabel = ({ id, visible, placeholder }: FloatingLabelProps) => (
-  <label
-    htmlFor={id}
-    className={cn(
-      "absolute left-2 pointer-events-none transition-all duration-200 z-10 text-brand-3 bg-transparent px-1",
-      visible ? "transform -translate-y-3 text-brand-2 text-xs top-3" : "hidden"
-    )}
-  >
+const FloatingLabel = ({ id, placeholder }: FloatingLabelProps) => (
+  <label htmlFor={id} className={cn("text-brand-2 text-sm font-medium")}>
     {placeholder}
   </label>
 );
@@ -247,7 +240,8 @@ export const BasePhoneInput = ({
   };
 
   return (
-    <div className="w-full relative flex flex-col items-center">
+    <div className="w-full relative flex flex-col gap-1">
+      <FloatingLabel id={id} placeholder={placeholder} />
       <div
         className={cn(
           "file:text-foreground bg-input-field placeholder:text-brand-2 selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-12 items-center w-full min-w-0 rounded-sm border font-medium text-base transition-colors outline-none file:inline-flex file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm border-input-field",
@@ -258,12 +252,6 @@ export const BasePhoneInput = ({
           className
         )}
       >
-        <FloatingLabel
-          id={id}
-          visible={isFocused || hasValue}
-          placeholder={placeholder}
-        />
-
         <div className="flex items-center w-full h-full relative">
           <CountrySelect
             value={country}
