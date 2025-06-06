@@ -280,20 +280,18 @@ export default function AppointmentDetails() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div className="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between p-4 md:px-5 py-4 border border-[#DADCDD] rounded-lg">
-              <RenderIf condition={!data?.org_payer_id}>
-                <div>
-                  <p className="text-sm text-brand-2 mb-1">Charge</p>
-                  <p className="font-medium text-brand-1 text-sm">
-                    {data?.payment_by === 0
-                      ? new Intl.NumberFormat("en-NG", {
-                          style: "currency",
-                          currency: "NGN",
-                          minimumFractionDigits: 0,
-                        }).format(data?.amount || 0)
-                      : "N/A"}
-                  </p>
-                </div>
-              </RenderIf>
+              <div>
+                <p className="text-sm text-brand-2 mb-1">Charge</p>
+                <p className="font-medium text-brand-1 text-sm">
+                  {data?.payment_by === 0
+                    ? new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                        minimumFractionDigits: 0,
+                      }).format(data?.amount || 0)
+                    : "N/A"}
+                </p>
+              </div>
 
               <div>
                 <p className="text-sm text-brand-2 mb-1">Communication Mode</p>
