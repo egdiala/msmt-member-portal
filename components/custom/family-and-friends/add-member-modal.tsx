@@ -1,37 +1,30 @@
-"use client";
+"use client"
 
-import { useMemo, useEffect } from "react";
-import type * as z from "zod";
-import { useForm } from "react-hook-form";
-import { AnimatePresence, motion } from "motion/react";
-import useMeasure from "react-use-measure";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IconEmail, IconUserRound } from "@/components/icons";
-import {
-  Button,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui";
-import { Loader } from "@/components/shared/loader";
-import { addMemberSchema } from "@/lib/validations";
-import { useAddFamilyOrFriend } from "@/services/hooks/mutations/use-family-and-friends";
-import { FloatingInput, Modal, SelectCmp } from "../../shared";
-import { PhoneInputWithLabel } from "@/components/shared/phone-input";
+import { useMemo, useEffect } from "react"
+import type * as z from "zod"
+import { useForm } from "react-hook-form"
+import { AnimatePresence, motion } from "motion/react"
+import useMeasure from "react-use-measure"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { IconEmail, IconUserRound } from "@/components/icons"
+import { Button, Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui"
+import { Loader } from "@/components/shared/loader"
+import { addMemberSchema } from "@/lib/validations"
+import { useAddFamilyOrFriend } from "@/services/hooks/mutations/use-family-and-friends"
+import { FloatingInput, Modal, SelectCmp } from "../../shared"
+import { PhoneInputWithLabel } from "@/components/shared/phone-input"
 
 interface IAddMemberModal {
-  handleClose: () => void;
-  isOpen: boolean;
+  handleClose: () => void
+  isOpen: boolean
 }
 export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
   const onClose = () => {
-    form.reset();
-    handleClose();
-  };
-  const [ref, bounds] = useMeasure();
-  const { mutate, isPending } = useAddFamilyOrFriend(onClose);
+    form.reset()
+    handleClose()
+  }
+  const [ref, bounds] = useMeasure()
+  const { mutate, isPending } = useAddFamilyOrFriend(onClose)
 
   const form = useForm<z.infer<typeof addMemberSchema>>({
     resolver: zodResolver(addMemberSchema),
@@ -45,11 +38,11 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
       email: "",
       relationship: "",
     },
-  });
+  })
 
   useEffect(() => {
-    form.register("phone_prefix");
-  }, [form]);
+    form.register("phone_prefix")
+  }, [form])
 
   async function onSubmit({
     first_name,
@@ -66,26 +59,26 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
       gender: gender.toLowerCase(),
       phone_number: `${phone_number}`,
       relationship: relationship.toLowerCase() === "family" ? "1" : "2",
-    });
+    })
   }
 
   const buttonCopy = {
     idle: "Add Member",
     loading: <Loader className="spinner size-4" />,
-  };
+  }
 
   const buttonState = useMemo(() => {
-    return isPending ? "loading" : "idle";
-  }, [isPending]);
+    return isPending ? "loading" : "idle"
+  }, [isPending])
 
   return (
-    <Modal isOpen={isOpen} handleClose={onClose} className="gap-y-6">
+    <Modal isOpen={isOpen} handleClose={onClose} className="gap-y-6 ">
       <h2 className="font-bold text-2xl text-brand-1">Add Member</h2>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-y-6">
           <motion.div animate={{ height: bounds.height }}>
-            <div ref={ref} className="grid gap-y-4">
+            <div ref={ref} className="grid gap-y-4 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:content-start md:gap-6 w-full">
                 <FormField
                   control={form.control}
@@ -94,11 +87,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                     <FormItem className="w-full">
                       <FormControl>
                         <div className="relative">
-                          <FloatingInput
-                            label="First Name"
-                            className="pr-10"
-                            {...field}
-                          />
+                          <FloatingInput label="First Name" className="pr-10" {...field} />
                           <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3">
                             <IconUserRound className="h-4 w-4" />
                           </div>
@@ -116,11 +105,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                     <FormItem className="w-full">
                       <FormControl>
                         <div className="relative">
-                          <FloatingInput
-                            label="Last Name"
-                            className="pr-10"
-                            {...field}
-                          />
+                          <FloatingInput label="Last Name" className="pr-10" {...field} />
                           <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3">
                             <IconUserRound className="h-4 w-4" />
                           </div>
@@ -139,11 +124,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                   <FormItem>
                     <FormControl>
                       <div className="relative">
-                        <FloatingInput
-                          label="Email"
-                          className="pr-10"
-                          {...field}
-                        />
+                        <FloatingInput label="Email" className="pr-10" {...field} />
                         <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3">
                           <IconEmail className="h-4 w-4" />
                         </div>
@@ -163,9 +144,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                       <PhoneInputWithLabel
                         value={field.value!}
                         onChange={(val) => field.onChange(val)}
-                        onCountryChange={(value) =>
-                          form.setValue("phone_prefix", value)
-                        }
+                        onCountryChange={(value) => form.setValue("phone_prefix", value)}
                         defaultCountry="NG"
                         phonePrefix={form.getValues("phone_prefix")}
                         placeholder="Phone Number"
@@ -206,18 +185,18 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                     <div className="space-y-1">
-                      <h3 className="text-sm font-medium text-brand-2">Relationship</h3>
-                       <SelectCmp
-                        onSelect={(val) => field.onChange(val)}
-                        selectItems={[
-                          { id: 1, value: "Family" },
-                          { id: 2, value: "Friend" },
-                        ]}
-                        placeholder={"Relationship"}
-                        {...field}
-                      />
-                     </div>
+                      <div className="space-y-1">
+                        <h3 className="text-sm font-medium text-brand-2">Relationship</h3>
+                        <SelectCmp
+                          onSelect={(val) => field.onChange(val)}
+                          selectItems={[
+                            { id: 1, value: "Family" },
+                            { id: 2, value: "Friend" },
+                          ]}
+                          placeholder={"Relationship"}
+                          {...field}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -231,11 +210,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
               Cancel
             </Button>
 
-            <Button
-              type="submit"
-              className="w-28"
-              disabled={isPending || !form.formState.isValid}
-            >
+            <Button type="submit" className="w-28" disabled={isPending || !form.formState.isValid}>
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span
                   transition={{ type: "spring", duration: 0.3, bounce: 0 }}
@@ -252,5 +227,5 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
         </form>
       </Form>
     </Modal>
-  );
-};
+  )
+}
