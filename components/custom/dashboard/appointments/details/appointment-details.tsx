@@ -60,14 +60,13 @@ export default function AppointmentDetails() {
     },
   };
 
-
   const PaidBy = {
-  0: "User",
-  1: "Organization",
-  2: "Family & Friends",
-} as const;
+    0: "User",
+    1: "Organization",
+    2: "Family & Friends",
+  } as const;
 
-type PaidByKey = keyof typeof PaidBy;
+  type PaidByKey = keyof typeof PaidBy;
 
   return (
     <div className=" grid gap-y-4">
@@ -285,11 +284,13 @@ type PaidByKey = keyof typeof PaidBy;
                 <div>
                   <p className="text-sm text-brand-2 mb-1">Charge</p>
                   <p className="font-medium text-brand-1 text-sm">
-                    {new Intl.NumberFormat("en-NG", {
-                      style: "currency",
-                      currency: "NGN",
-                      minimumFractionDigits: 0,
-                    }).format(data?.amount || 0)}
+                    {data?.payment_by === 0
+                      ? new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: "NGN",
+                          minimumFractionDigits: 0,
+                        }).format(data?.amount || 0)
+                      : "N/A"}
                   </p>
                 </div>
               </RenderIf>

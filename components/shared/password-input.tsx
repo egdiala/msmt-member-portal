@@ -120,7 +120,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
 
     return (
       <div className="space-y-2">
-        <div className="">
+        <div className="relative">
           <FloatingInput
             label={labelTitle}
             type={showPassword ? "text" : "password"}

@@ -85,11 +85,14 @@ export function AppointmentContainer() {
     date: item.createdAt,
     appt_date: formatApptDate(item.appt_date),
     appt_time: formatApptTimeShort(item?.appt_time),
-    amount: new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      minimumFractionDigits: 0,
-    }).format(item?.amount),
+    amount:
+      item?.payment_by === 0
+        ? new Intl.NumberFormat("en-NG", {
+            style: "currency",
+            currency: "NGN",
+            minimumFractionDigits: 0,
+          }).format(item?.amount)
+        : "N/A",
     consultant: item?.provider_data?.name,
     serviceOffered: item?.service_offer_name
       .split(" ")

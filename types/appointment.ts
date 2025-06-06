@@ -29,6 +29,7 @@ export type AppointmentType = {
   appt_day: number;
   appt_time: number;
   amount: number;
+  payment_by: number;
   refunded_amount: number;
   status: number;
   status_cancel: number;
