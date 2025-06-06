@@ -78,7 +78,7 @@ export const AddMemberModal = ({ isOpen, handleClose }: IAddMemberModal) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-y-6">
           <motion.div animate={{ height: bounds.height }}>
-            <div ref={ref} className="grid gap-y-4 max-h-[70vh] overflow-y-auto">
+            <div ref={ref} className="grid gap-y-4 max-h-[65vh] overflow-y-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:content-start md:gap-6 w-full">
                 <FormField
                   control={form.control}
