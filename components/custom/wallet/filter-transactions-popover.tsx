@@ -71,7 +71,7 @@ const FilterContent = ({
                 )
               }
               value={selected?.name}
-              placeholder="Select date"
+              placeholder="date"
             />
 
             {selected?.name === "Custom" && (
@@ -112,7 +112,7 @@ const FilterContent = ({
               )}
               onSelect={(val) => setSelectedTypeOption(val)}
               value={selectedTypeOption === "" ? "All" : selectedTypeOption}
-              placeholder="Select type"
+              placeholder="type"
             />
           </div>
 
@@ -130,7 +130,7 @@ const FilterContent = ({
               )}
               onSelect={(val) => setSelectedStatusOption(val)}
               value={selectedStatusOption === "" ? "All" : selectedStatusOption}
-              placeholder="Select status"
+              placeholder="status"
             />
           </div>
         </div>

@@ -54,7 +54,7 @@ const SectionContainer = ({
             !isFirstImg && !isSecondImg
               ? "top-9 right-1 bottom-0"
               : isSecondImg
-              ? "top-9 right-3 bottom-3"
+              ? "top-9 right-3 bottom-2"
               : "top-5 right-1 bottom-0"
           )}
           width={377}
@@ -69,7 +69,7 @@ const SectionContainer = ({
             isFirstImg
               ? "top-2 -right-1 bottom-0"
               : isSecondImg
-              ? "right-3 bottom-3 rounded-tr-[60px] rounded-bl-[45px]"
+              ? "right-3 bottom-2 rounded-tr-[60px] rounded-bl-[45px]"
               : "right-0 bottom-0"
           )}
         />

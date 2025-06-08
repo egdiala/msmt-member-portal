@@ -115,7 +115,7 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
                         className="pr-10"
                         {...field}
                       />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                      <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3">
                         <IconUserRound className="h-4 w-4" />
                       </div>
                     </div>
@@ -137,7 +137,7 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
                         className="pr-10"
                         {...field}
                       />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                      <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3">
                         <IconPhone className="h-4 w-4" />
                       </div>
                     </div>
@@ -151,14 +151,17 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               control={form.control}
               name="religion"
               render={({ field }) => (
-                <SelectCmp
-                  selectItems={variableList(
-                    requestVariables?.["religion-list"]
-                  )}
-                  onSelect={field.onChange}
-                  placeholder={"Religion"}
-                  {...field}
-                />
+                <div className="space-y-1">
+                  <h1 className="text-sm font-medium text-brand-2">Religion</h1>
+                  <SelectCmp
+                    selectItems={variableList(
+                      requestVariables?.["religion-list"]
+                    )}
+                    onSelect={field.onChange}
+                    placeholder={"Religion"}
+                    {...field}
+                  />
+                </div>
               )}
             />
 
@@ -166,15 +169,18 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               control={form.control}
               name="gender"
               render={({ field }) => (
-                <SelectCmp
-                  selectItems={[
-                    { value: "male", id: 1 },
-                    { value: "female", id: 2 },
-                  ]}
-                  onSelect={field.onChange}
-                  placeholder={"Gender"}
-                  {...field}
-                />
+                <div className="space-y-1">
+                  <h1 className="text-sm font-medium text-brand-2">Religion</h1>
+                  <SelectCmp
+                    selectItems={[
+                      { value: "male", id: 1 },
+                      { value: "female", id: 2 },
+                    ]}
+                    onSelect={field.onChange}
+                    placeholder={"Gender"}
+                    {...field}
+                  />
+                </div>
               )}
             />
 
@@ -182,14 +188,19 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               control={form.control}
               name="maritalStatus"
               render={({ field }) => (
-                <SelectCmp
-                  selectItems={variableList(
-                    requestVariables?.["marital-status"]
-                  )}
-                  onSelect={field.onChange}
-                  placeholder={"Marital Status"}
-                  {...field}
-                />
+                <div className="space-y-1">
+                  <h1 className="text-sm font-medium text-brand-2">
+                    Marital Status
+                  </h1>
+                  <SelectCmp
+                    selectItems={variableList(
+                      requestVariables?.["marital-status"]
+                    )}
+                    onSelect={field.onChange}
+                    placeholder={"Marital Status"}
+                    {...field}
+                  />
+                </div>
               )}
             />
 
@@ -197,12 +208,15 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               control={form.control}
               name="country"
               render={({ field }) => (
-                <SelectCmp
-                  selectItems={countryList}
-                  onSelect={field.onChange}
-                  placeholder={"Country"}
-                  {...field}
-                />
+                <div className="space-y-1">
+                  <h1 className="text-sm font-medium text-brand-2">Country</h1>
+                  <SelectCmp
+                    selectItems={countryList}
+                    onSelect={field.onChange}
+                    placeholder={"Country"}
+                    {...field}
+                  />
+                </div>
               )}
             />
 
@@ -210,14 +224,19 @@ export const CompleteProfileForm = ({ data }: { data: UserProfileType }) => {
               control={form.control}
               name="preferredLanguage"
               render={({ field }) => (
-                <SelectCmp
-                  selectItems={variableList(
-                    requestVariables?.["preferred-lan"]
-                  )}
-                  onSelect={field.onChange}
-                  placeholder={"Preferred Language"}
-                  {...field}
-                />
+                <div className="space-y-1">
+                  <h1 className="text-sm font-medium text-brand-2">
+                    Preferred Language
+                  </h1>
+                  <SelectCmp
+                    selectItems={variableList(
+                      requestVariables?.["preferred-lan"]
+                    )}
+                    onSelect={field.onChange}
+                    placeholder={"Preferred Language"}
+                    {...field}
+                  />
+                </div>
               )}
             />
           </div>

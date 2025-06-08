@@ -67,7 +67,7 @@ export const EditMemberModal = ({
                           className="pr-10"
                           {...field}
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                        <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3">
                           <IconUserRound className="h-4 w-4" />
                         </div>
                       </div>
@@ -89,7 +89,7 @@ export const EditMemberModal = ({
                           className="pr-10"
                           {...field}
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                        <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3">
                           <IconUserRound className="h-4 w-4" />
                         </div>
                       </div>
@@ -112,7 +112,7 @@ export const EditMemberModal = ({
                         className="pr-10"
                         {...field}
                       />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3">
+                      <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3">
                         <IconEmail className="h-4 w-4" />
                       </div>
                     </div>
@@ -128,15 +128,18 @@ export const EditMemberModal = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <SelectCmp
-                      onSelect={(val) => form.setValue("relationship", val)}
-                      selectItems={[
-                        { id: 1, value: "Family" },
-                        { id: 2, value: "Friend" },
-                      ]}
-                      placeholder={"Relationship"}
-                      {...field}
-                    />
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium text-brand-2">Relationship</h3>
+                      <SelectCmp
+                        onSelect={(val) => form.setValue("relationship", val)}
+                        selectItems={[
+                          { id: 1, value: "Family" },
+                          { id: 2, value: "Friend" },
+                        ]}
+                        placeholder={"Relationship"}
+                        {...field}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

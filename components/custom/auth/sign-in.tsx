@@ -78,7 +78,7 @@ export default function SignIn() {
                         className=" pr-10"
                         {...field}
                       />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 stroke-brand-3 pointer-events-none">
+                      <div className="absolute right-3 bottom-2 -translate-y-1/2 stroke-brand-3 pointer-events-none">
                         <IconEmail className="h-4 w-4" />
                       </div>
                     </div>
@@ -105,7 +105,7 @@ export default function SignIn() {
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-0 inset-y-1 h-10 w-10 hover:bg-transparent"
+                        className="absolute right-0 bottom-2 h-10 w-10 hover:bg-transparent"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
