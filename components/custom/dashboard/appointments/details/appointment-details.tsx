@@ -1,7 +1,11 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { format, parseISO } from "date-fns";
+import { enUS } from "date-fns/locale";
+import { AnimatePresence, motion } from "motion/react";
 import { BreadcrumbCmp, RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -10,17 +14,19 @@ import {
   IconClock,
 } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
-import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
 import { Loader } from "@/components/shared/loader";
 import { formatApptTimeShort, getSessionStatus, isEmpty } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
-import { RatingDialog } from "../rating-form";
 import { Button } from "@/components/ui";
-import { useState } from "react";
-import { format, parseISO } from "date-fns";
-import { enUS } from "date-fns/locale";
+import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
 import { useAddFavouriteProvider } from "@/services/hooks/mutations/use-providers";
+import {
+  useCancelAppointment,
+  useCancelAppointmentWithoutNotice,
+} from "@/services/hooks/mutations/use-appointment";
 import { getStatusBadgeId } from "../get-status-badge";
+import { CancelAppointmentDialog } from "../cancel-appointments-dialog";
+import { RatingDialog } from "../rating-form";
 
 export function formatSessionDate(dateStr: string): string {
   if (dateStr === "") return "";
@@ -68,6 +74,29 @@ export default function AppointmentDetails() {
 
   type PaidByKey = keyof typeof PaidBy;
 
+  const [notice, setNotice] = useState("");
+  const [openCancelModal, setOpenCancelModal] = useState(false);
+
+  const { mutate: cancelAppointment, isPending: isCancelling } =
+    useCancelAppointment((res) => {
+      setNotice(res?.data?.notice);
+      setOpenCancelModal(true);
+    });
+
+  const buttonCopy = {
+    idle: "Cancel Appointment",
+    loading: <Loader className="spinner size-4" />,
+  };
+
+  const buttonState = useMemo(() => {
+    return isCancelling ? "loading" : "idle";
+  }, [isCancelling]);
+
+  const { mutate: cancelAppointmentWithoutNotice, isPending: isRemoving } =
+    useCancelAppointmentWithoutNotice(() => {
+      setOpenCancelModal(false);
+    });
+
   return (
     <div className=" grid gap-y-4">
       <BreadcrumbCmp
@@ -114,14 +143,34 @@ export default function AppointmentDetails() {
                         {data?.provider_data?.specialty}
                       </p>
                     </div>
-                    <div className="flex items-center gap-x-1.5">
-                      {/* <Button asChild className="hidden md:inline-flex">
-                        <Link href={`/providers`}>
-                          <IconPlus className="stroke-white" />
-                          Book An Appointment
-                        </Link>
-                      </Button> */}
-                      <RenderIf condition={data?.status === 1}>
+                    <RenderIf condition={data?.status === 1}>
+                      <div className="flex items-center gap-x-1.5">
+                        <Button
+                          className="hidden md:inline-flex w-40"
+                          onClick={() =>
+                            cancelAppointment({
+                              component: "notice",
+                              appointment_id: data?.appointment_id as string,
+                            })
+                          }
+                        >
+                          <AnimatePresence mode="popLayout" initial={false}>
+                            <motion.span
+                              transition={{
+                                type: "spring",
+                                duration: 0.3,
+                                bounce: 0,
+                              }}
+                              initial={{ opacity: 0, y: -25 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 25 }}
+                              key={buttonState}
+                            >
+                              {buttonCopy[buttonState]}
+                            </motion.span>
+                          </AnimatePresence>
+                        </Button>
+
                         <Button
                           asChild
                           className="hidden md:inline-flex text-xs md:text-sm"
@@ -133,8 +182,8 @@ export default function AppointmentDetails() {
                             Reschedule Appointment
                           </Link>
                         </Button>
-                      </RenderIf>
-                    </div>
+                      </div>
+                    </RenderIf>
                   </div>
 
                   <div className="hidden md:inline-block">
@@ -247,17 +296,35 @@ export default function AppointmentDetails() {
                       </span>
                     </div>
                   </RenderIf>
-                  <div className="grid  gap-1.5">
-                    {/* <Button
-                      asChild
-                      className="md:hidden inline-flex text-xs md:text-sm"
-                    >
-                      <Link href={`/providers`}>
-                        <IconPlus className="stroke-white" />
-                        Book An Appointment
-                      </Link>
-                    </Button> */}
-                    <RenderIf condition={data?.status === 1}>
+
+                  <RenderIf condition={data?.status === 1}>
+                    <div className="grid  gap-1.5">
+                      <Button
+                        className="md:hidden inline-flex text-xs md:text-sm w-40"
+                        onClick={() =>
+                          cancelAppointment({
+                            component: "notice",
+                            appointment_id: data?.appointment_id as string,
+                          })
+                        }
+                      >
+                        <AnimatePresence mode="popLayout" initial={false}>
+                          <motion.span
+                            transition={{
+                              type: "spring",
+                              duration: 0.3,
+                              bounce: 0,
+                            }}
+                            initial={{ opacity: 0, y: -25 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 25 }}
+                            key={buttonState}
+                          >
+                            {buttonCopy[buttonState]}
+                          </motion.span>
+                        </AnimatePresence>
+                      </Button>
+
                       <Button
                         asChild
                         className="md:hidden inline-flex text-xs md:text-sm"
@@ -269,8 +336,8 @@ export default function AppointmentDetails() {
                           Reschedule Appointment
                         </Link>
                       </Button>
-                    </RenderIf>
-                  </div>
+                    </div>
+                  </RenderIf>
                 </div>
               </div>
             </div>
@@ -409,6 +476,18 @@ export default function AppointmentDetails() {
         open={open}
         onOpenChange={setOpen}
         personName={data?.provider_data?.name}
+      />
+
+      <CancelAppointmentDialog
+        onCancel={() =>
+          cancelAppointmentWithoutNotice({
+            appointment_id: data?.appointment_id as string,
+          })
+        }
+        notice={notice}
+        isRemoving={isRemoving}
+        open={openCancelModal}
+        onOpenChange={setOpenCancelModal}
       />
     </div>
   );
