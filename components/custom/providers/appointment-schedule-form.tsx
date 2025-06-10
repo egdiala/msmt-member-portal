@@ -39,7 +39,6 @@ import {
   IconArrowDown,
   IconUsers,
 } from "@/components/icons";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import {
@@ -110,7 +109,6 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const { data, isPending: isLoadingAppointment } = useGetAppointmentsById(
     appointment_id as string
   );
-  console.log(data);
   const { data: familyFriendInfo } =
     useGetSingleFamilyOrFriend<FetchedPaymentOptionFamilyType>(
       {
@@ -437,16 +435,6 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                   </Link>
                 </Button>
               </RenderIf>
-
-              {/* <RenderIf condition={!isLoggedIn}>
-                <button
-                  disabled={!!appointment_id}
-                  onClick={() => navigate.back()}
-                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
-                >
-                  Change
-                </button>
-              </RenderIf> */}
             </div>
 
             <RenderIf condition={user_type === "org"}>
@@ -505,13 +493,16 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                   ) => {
                                     return {
                                       id: index,
-                                      value: isPublic
-                                        ? val?.name
-                                        : `${
-                                            val?.name
-                                          } - ${formatNumberWithCommas(
-                                            val?.amount
-                                          )}`,
+                                      value:
+                                        isPublic ||
+                                        familyFriendInfo?.familyfriend_id ||
+                                        data?.payment_by === 0
+                                          ? val?.name
+                                          : `${
+                                              val?.name
+                                            } - ${formatNumberWithCommas(
+                                              val?.amount
+                                            )}`,
                                     };
                                   }
                                 ) ?? []
@@ -522,13 +513,16 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                   ) => {
                                     return {
                                       id: index,
-                                      value: isPublic
-                                        ? val?.name
-                                        : `${
-                                            val?.name
-                                          } - ${formatNumberWithCommas(
-                                            val?.amount
-                                          )}`,
+                                      value:
+                                        isPublic ||
+                                        familyFriendInfo?.familyfriend_id ||
+                                        data?.payment_by === 0
+                                          ? val?.name
+                                          : `${
+                                              val?.name
+                                            } - ${formatNumberWithCommas(
+                                              val?.amount
+                                            )}`,
                                     };
                                   }
                                 ) ?? []
@@ -546,16 +540,18 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 />
               </div>
 
-              <RenderIf condition={!!isLoggedIn && !isPublic}>
-                <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
-                  <p className="text-sm">Charge</p>
-                  <p className="text-lg">
-                    {form.watch("service").split(" - ")[1] ||
-                      formatNumberWithCommas(0)}
-                    /hr
-                  </p>
-                </div>
-              </RenderIf>
+              <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
+                <p className="text-sm">Charge</p>
+                <p className="text-lg">
+                  {!familyFriendInfo?.familyfriend_id || data?.payment_by === 0
+                    ? `${
+                        form.watch("service").split(" - ")[1] ||
+                        formatNumberWithCommas(0)
+                      }
+                  /hr`
+                    : "N/A"}
+                </p>
+              </div>
 
               <RenderIf
                 condition={
@@ -567,7 +563,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               >
                 <div className="border-t border-divider"></div>
 
-                <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+                <div className="flex flex-col gap-2">
                   <p className="font-medium text-sm text-brand-1">
                     Payment Method
                   </p>
@@ -578,7 +574,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <div className="flex items-center gap-x-2">
+                          {/* <div className="flex items-center gap-x-2">
                             {paymentMethods.map(
                               (method: {
                                 name: string;
@@ -628,7 +624,22 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                 </div>
                               )
                             )}
-                          </div>
+                          </div> */}
+                          <SelectCmp
+                            disabled={!!appointment_id}
+                            onSelect={(e) => {
+                              setSelectedPaymentMethod(e);
+                              field.onChange(e);
+                            }}
+                            selectItems={paymentMethods.map((val) => {
+                              return {
+                                id: val.id,
+                                value: val.name,
+                              };
+                            })}
+                            placeholder="Payment Method"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -763,7 +774,9 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                   <FormItem>
                     <FormControl>
                       <div className="space-y-1">
-                        <h3 className="text-sm font-medium text-brand-2">Appointment Time</h3>
+                        <h3 className="text-sm font-medium text-brand-2">
+                          Appointment Time
+                        </h3>
                         <SelectCmp
                           selectItems={formattedSlots ?? []}
                           placeholder="time (WAT)"
