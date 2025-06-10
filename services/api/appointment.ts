@@ -25,10 +25,10 @@ export const getBookOrganization = async (booking_link: string) => {
 export const submitOrgBookingQuestionnaire = async (
   payload: BookingQuestionnaireType
 ) => {
-  const { appointment_id, data } = payload;
+  const { appointment_id, data, booking_link } = payload;
   const res = await axiosPublicBookingService.patch(
     `/users/requests/org-bookings/${appointment_id}`,
-    { data: data }
+    { data: data, booking_link: booking_link }
   );
   return res.data;
 };
@@ -40,5 +40,3 @@ export const validateOrgBooking = async (payload: RequestOrgBookingPayload) => {
   );
   return res.data;
 };
-
-

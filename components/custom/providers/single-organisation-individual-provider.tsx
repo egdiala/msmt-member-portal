@@ -38,6 +38,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
   const user_account_type = searchParams.get("user_service_type") as
     | "provider"
     | "payer";
+  const service_offer_id = searchParams.get("service_offer_id") as string;
 
   const { data: orgProvider } =
     useGetServiceProviders<FetchOrganizationProvider>({
@@ -212,6 +213,10 @@ export const SingleOrganisationIndividualProviderContent = () => {
                     <Link
                       href={`/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}${
                         booking_link ? `&booking_link=${booking_link}` : ""
+                      }${
+                        service_offer_id
+                          ? `&service_offer_id=${service_offer_id}`
+                          : ""
                       }`}
                     >
                       <IconPlus className="stroke-white" />
@@ -312,7 +317,13 @@ export const SingleOrganisationIndividualProviderContent = () => {
               className="flex md:hidden"
               onClick={() => {
                 router.push(
-                  `/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}`
+                  `/complete-booking?provider_id=${uid}&org_id=${id}&type=${org_user_type}&service_type=${account_type}${
+                    booking_link ? `&booking_link=${booking_link}` : ""
+                  }${
+                    service_offer_id
+                      ? `&service_offer_id=${service_offer_id}`
+                      : ""
+                  }`
                 );
                 setStep(2);
               }}

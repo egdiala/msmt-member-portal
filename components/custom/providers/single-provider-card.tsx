@@ -16,6 +16,7 @@ import { FetchedServiceProvidersType } from "@/types/providers";
 
 interface ISingleProviderCard extends FetchedServiceProvidersType {
   key: string;
+  serviceOfferId?: string;
 }
 export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const { id } = useParams();
@@ -46,7 +47,11 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           provider?.provider_data?.user_id
         }?type=${provider?.provider_data?.user_type}&service_type=${
           provider?.provider_data?.account_service_type
-        }${booking_link ? `&booking_link=${booking_link}` : ""}`;
+        }${booking_link ? `&booking_link=${booking_link}` : ""}${
+          provider?.serviceOfferId
+            ? `&service_offer_id=${provider?.serviceOfferId}`
+            : ""
+        }`;
       } else if (
         provider?.provider_data?.user_type.toLowerCase() === "provider"
       ) {
@@ -62,6 +67,10 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           provider?.provider_data?.account_service_type
         }&user_type=provider&user_service_type=provider${
           booking_link ? `&booking_link=${booking_link}` : ""
+        }${
+          provider?.serviceOfferId
+            ? `&service_offer_id=${provider?.serviceOfferId}`
+            : ""
         }`;
       }
     } else {

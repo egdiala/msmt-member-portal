@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import Cookies from "js-cookie";
@@ -77,12 +77,11 @@ export const FillAppointmentQuestionnaireForm = ({
     defaultValues,
   });
 
-  // const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
 
   async function onSubmit(values: z.infer<typeof schema>) {
     const bookingId = localStorage.getItem("booking-appointment-id");
-    // const booking_link = searchParams.get("booking_link") as string | undefined;
-    console.log({ bookingId });
+    const booking_link = searchParams.get("booking_link") as string | undefined;
     const isLoggedIn = Cookies.get("authToken");
 
     if (!!isLoggedIn) {
@@ -93,6 +92,7 @@ export const FillAppointmentQuestionnaireForm = ({
     } else {
       submitOrgQuestionnaire({
         data: mapAnswersToData(questions, values),
+        booking_link: booking_link,
         appointment_id: bookingId as string,
       });
     }

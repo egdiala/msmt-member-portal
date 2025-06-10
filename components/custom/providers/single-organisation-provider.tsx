@@ -57,6 +57,9 @@ export const SingleOrganisationProviderContent = ({
   const searchParams = useSearchParams();
   const user_type = searchParams.get("type") as "provider" | "org";
   const account_type = searchParams.get("service_type") as "provider" | "payer";
+  const member_id = searchParams.get("member_id") as string;
+  const service_offer_id = searchParams.get("service_offer_id") as string;
+  console.log({ service_offer_id });
 
   const { value, onChangeHandler } = useDebounce(400);
 
@@ -114,13 +117,15 @@ export const SingleOrganisationProviderContent = ({
   >({
     org_id: id!.toString(),
     ...(value ? { q: value } : {}),
-    member_id: userProfile?.user_id,
+    ...(isPublic ? { service_offer_id: service_offer_id } : {}),
+    member_id: isPublic ? member_id : userProfile?.user_id,
     ...filters,
   });
 
   const { data: providersCount } =
     useGetOrganizationProviders<FetchedServiceProvidersCountType>({
       org_id: id!.toString(),
+      member_id: isPublic ? member_id : userProfile?.user_id,
       component: "count",
       ...filters,
     });
@@ -418,6 +423,7 @@ export const SingleOrganisationProviderContent = ({
                     rating: provider?.rating?.toString(),
                   }}
                   charge_from={provider?.user_data?.charge_from}
+                  serviceOfferId={service_offer_id ?? ""}
                 />
               ))}
             </div>
@@ -465,6 +471,7 @@ export const SingleOrganisationProviderContent = ({
                       rating: provider?.rating?.toString(),
                     }}
                     charge_from={provider?.user_data?.charge_from}
+                    serviceOfferId={service_offer_id ?? ""}
                   />
                 ))}
               </div>
