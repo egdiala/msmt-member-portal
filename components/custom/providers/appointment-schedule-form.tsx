@@ -482,7 +482,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     <FormItem>
                       <FormControl>
                         <SelectCmp
-                          disabled={!!appointment_id || isPublic}
+                          disabled={!!appointment_id}
                           selectItems={
                             account_service_type === "provider" &&
                             user_type === "org"
