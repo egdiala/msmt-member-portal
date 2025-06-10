@@ -59,7 +59,6 @@ export const SingleOrganisationProviderContent = ({
   const account_type = searchParams.get("service_type") as "provider" | "payer";
   const member_id = searchParams.get("member_id") as string;
   const service_offer_id = searchParams.get("service_offer_id") as string;
-  console.log({ service_offer_id });
 
   const { value, onChangeHandler } = useDebounce(400);
 
