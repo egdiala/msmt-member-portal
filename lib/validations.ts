@@ -73,7 +73,7 @@ export const profileSecuritySchema = z
   .object({
     currentPassword: z.string().nonempty(),
     newPassword: passwordSchema,
-    confirmPassword:  passwordSchema,
+    confirmPassword: passwordSchema,
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
@@ -81,32 +81,17 @@ export const profileSecuritySchema = z
   });
 
 export const editProfileDetailsSchema = z.object({
-  preferredName: z
-    .string()
-    // .min(2, "Preferred name must be at least 2 characters")
-    .optional(),
+  preferredName: z.string().optional(),
   phone_prefix: z.string().optional(),
   phoneNumber: z
     .string()
     .min(10, "Phone number must be at least 10 characters")
     .max(12, "Phone number must be at most 12 characters"),
-  religion: z
-    .string()
-    .min(2, "Religion must be at least 2 characters")
-    .optional(),
-  gender: z.string().min(2, "Gender must be at least 2 characters").optional(),
-  maritalStatus: z
-    .string()
-    .min(2, "Marital status must be at least 2 characters")
-    .optional(),
-  country: z
-    .string()
-    .min(2, "Country must be at least 2 characters")
-    .optional(),
-  preferredLanguage: z
-    .string()
-    .min(2, "Preferred language must be at least 2 characters")
-    .optional(),
+  religion: z.string().optional(),
+  gender: z.string().optional(),
+  maritalStatus: z.string().optional(),
+  country: z.string().optional(),
+  preferredLanguage: z.string().optional(),
   avatar: z.string().optional(),
 });
 
