@@ -35,7 +35,6 @@ import {
   IconArrowDown,
   IconUsers,
 } from "@/components/icons";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import {
@@ -144,7 +143,6 @@ export const RescheduleAppointmentForm = ({
     });
 
   // Form state
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("Wallet");
   const [selectedCommunicationPreference, setSelectedCommunicationPreference] =
     useState("");
   const [initialDate, setInitialDate] = useState(new Date());
@@ -232,12 +230,6 @@ export const RescheduleAppointmentForm = ({
     }
   };
 
-  // const componentKey = useMemo(() => {
-  //   return `reschedule-${appointment_id}-${
-  //     appointmentData?.appointment_id || "new"
-  //   }-${Date.now()}`;
-  // }, [appointment_id, appointmentData?.appointment_id]);
-
   // Form setup
   const form = useForm<z.infer<typeof setAppointmentSchedule>>({
     resolver: zodResolver(setAppointmentSchedule),
@@ -289,11 +281,14 @@ export const RescheduleAppointmentForm = ({
           service.service_offer_id === appointmentData.service_offer_id
       );
 
-      const formattedService = matchingService
-        ? `${matchingService.name} - ${formatNumberWithCommas(
-            matchingService.amount
-          )}`
-        : "";
+      const formattedService =
+        matchingService && appointmentData
+          ? appointmentData?.payment_by !== 1
+            ? `${matchingService.name} - ${formatNumberWithCommas(
+                matchingService.amount
+              )}`
+            : matchingService.name
+          : "";
 
       const appointmentDate = new Date(appointmentData.appt_schedule);
 
@@ -307,8 +302,8 @@ export const RescheduleAppointmentForm = ({
       setSelectedCommunicationPreference(communicationPref);
 
       const paymentMethod =
-        appointmentData.payment_option === 1 ? "Family" : "Wallet";
-      setSelectedPaymentMethod(paymentMethod);
+        appointmentData.payment_by === 2 ? "Family" : "Wallet";
+      // setSelectedPaymentMethod(paymentMethod);
 
       // Set form data
       const baseFormData = {
@@ -457,12 +452,7 @@ export const RescheduleAppointmentForm = ({
         </div>
       </div>
 
-      <Form
-        {...form}
-        // key={`reschedule-form-${appointment_id}-${
-        //   appointmentData?.appointment_id || "loading"
-        // }`}
-      >
+      <Form {...form}>
         <form className="grid gap-y-4" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="bg-white rounded-2xl p-3 md:p-4 grid gap-y-4">
             <div className="grid gap-y-2">
@@ -487,9 +477,14 @@ export const RescheduleAppointmentForm = ({
                                   index: number
                                 ) => ({
                                   id: index,
-                                  value: `${
-                                    val?.name
-                                  } - ${formatNumberWithCommas(val?.amount)}`,
+                                  value:
+                                    appointmentData?.payment_by !== 1
+                                      ? `${
+                                          val?.name
+                                        } - ${formatNumberWithCommas(
+                                          val?.amount
+                                        )}`
+                                      : val?.name,
                                 })
                               ) ?? []
                             : providerInfo?.service_data?.map(
@@ -498,9 +493,15 @@ export const RescheduleAppointmentForm = ({
                                   index: number
                                 ) => ({
                                   id: index,
-                                  value: `${
-                                    val?.name
-                                  } - ${formatNumberWithCommas(val?.amount)}`,
+                                  value:
+                                    appointmentData?.payment_by !== 1 ||
+                                    account_service_type === "payer"
+                                      ? `${
+                                          val?.name
+                                        } - ${formatNumberWithCommas(
+                                          val?.amount
+                                        )}`
+                                      : val?.name,
                                 })
                               ) ?? []
                         }
@@ -518,9 +519,14 @@ export const RescheduleAppointmentForm = ({
             <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
               <p className="text-sm">Charge</p>
               <p className="text-lg">
-                {form.watch("service").split(" - ")[1] ||
-                  formatNumberWithCommas(0)}
-                /hr
+                {!familyFriendInfo?.familyfriend_id ||
+                appointmentData?.payment_by !== 1 ||
+                account_service_type === "payer"
+                  ? `${
+                      form.watch("service").split(" - ")[1] ||
+                      formatNumberWithCommas(0)
+                    }/hr`
+                  : "N/A"}
               </p>
             </div>
 
@@ -534,7 +540,7 @@ export const RescheduleAppointmentForm = ({
             >
               <div className="border-t border-divider"></div>
 
-              <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+              <div className="flex flex-col gap-2">
                 <p className="font-medium text-sm text-brand-1">
                   Payment Method
                 </p>
@@ -545,57 +551,22 @@ export const RescheduleAppointmentForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-center gap-x-2">
-                          {paymentMethods.map(
-                            (method: {
-                              name: string;
-                              id: number;
-                              icon: any;
-                            }) => (
-                              <div
-                                key={method.id}
-                                onClick={
-                                  appointment_id
-                                    ? undefined
-                                    : () => {
-                                        setSelectedPaymentMethod(method.name);
-                                        field.onChange(method.name);
-                                      }
-                                }
-                                className={cn(
-                                  "flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400",
-                                  appointment_id &&
-                                    "cursor-not-allowed text-gray-500 bg-gray-100"
-                                )}
-                              >
-                                {selectedPaymentMethod.toLowerCase() ===
-                                method.name.toLowerCase() ? (
-                                  <Checkbox
-                                    disabled={!!appointment_id}
-                                    checked={
-                                      selectedPaymentMethod.toLowerCase() ===
-                                      method.name.toLowerCase()
-                                    }
-                                  />
-                                ) : (
-                                  <method.icon className="stroke-brand-3 size-3.5" />
-                                )}
-
-                                <p
-                                  className={cn(
-                                    "text-sm",
-                                    selectedPaymentMethod.toLowerCase() ===
-                                      method.name.toLowerCase()
-                                      ? "text-button-primary"
-                                      : "text-brand-2"
-                                  )}
-                                >
-                                  {method.name}
-                                </p>
-                              </div>
-                            )
-                          )}
-                        </div>
+                        <SelectCmp
+                          disabled={!!appointment_id}
+                          onSelect={(e) => {
+                            field.onChange(e);
+                          }}
+                          selectItems={
+                            paymentMethods?.map((val) => {
+                              return {
+                                id: val.id,
+                                value: val.name,
+                              };
+                            }) ?? []
+                          }
+                          placeholder="Payment Method"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -727,7 +698,9 @@ export const RescheduleAppointmentForm = ({
                 <FormItem>
                   <FormControl>
                     <div className="space-y-1">
-                      <h3 className="text-sm font-medium text-brand-2">Appointment Time</h3>
+                      <h3 className="text-sm font-medium text-brand-2">
+                        Appointment Time
+                      </h3>
                       <SelectCmp
                         selectItems={formattedSlots ?? []}
                         placeholder="time (WAT)"

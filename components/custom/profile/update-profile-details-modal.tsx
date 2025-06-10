@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type * as z from "zod";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "motion/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetDefinedVariables } from "@/hooks/use-get-variables";
-import { IconCamera, IconUserRound } from "@/components/icons";
+import { IconCamera, IconTrash2, IconUserRound } from "@/components/icons";
 import {
   Avatar,
   AvatarImage,
@@ -18,14 +18,15 @@ import {
   FormMessage,
 } from "@/components/ui";
 import { Loader } from "@/components/shared/loader";
+import { PhoneInputWithLabel } from "@/components/shared/phone-input";
 import { editProfileDetailsSchema } from "@/lib/validations";
-import { UpdateProfileType } from "@/types/profile";
 import {
+  useRemoveAvatar,
   useUpdateProfile,
   useUploadAvatar,
 } from "@/services/hooks/mutations/use-profile";
-import { FloatingInput, SelectCmp, Modal } from "../../shared";
-import { PhoneInputWithLabel } from "@/components/shared/phone-input";
+import { UpdateProfileType } from "@/types/profile";
+import { FloatingInput, SelectCmp, Modal, RenderIf } from "../../shared";
 
 interface IUpdateProfileDetailsModal {
   handleClose: () => void;
@@ -39,6 +40,11 @@ export const UpdateProfileDetailsModal = ({
   isOpen,
   data,
 }: IUpdateProfileDetailsModal) => {
+  const handleCancel = () => {
+    setAvatar(data?.avatar);
+    handleClose();
+  };
+
   const { mutateAsync: updateProfile, isPending } = useUpdateProfile();
 
   const { requestVariables, variableList, countryList } =
@@ -60,12 +66,18 @@ export const UpdateProfileDetailsModal = ({
       maritalStatus: data?.marital_status || "",
       country: data?.origin_country || "",
       preferredLanguage: data?.preferred_lan || "",
+      avatar: data?.avatar || undefined,
     },
   });
 
   const [avatar, setAvatar] = useState<File | string | undefined>(undefined);
   const { mutateAsync: uploadAvatar, isPending: isLoading } = useUploadAvatar();
+  const { mutateAsync: removeAvatar, isPending: isRemovingPicture } =
+    useRemoveAvatar();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [isUpdate, setIsUpdate] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,6 +85,13 @@ export const UpdateProfileDetailsModal = ({
       setAvatar(file);
     }
   };
+  useEffect(
+    () => {
+      setAvatar(data?.avatar);
+    },
+    // eslint-disable-next-line
+    []
+  );
 
   async function onSubmit(values: z.infer<typeof editProfileDetailsSchema>) {
     await updateProfile(
@@ -92,9 +111,13 @@ export const UpdateProfileDetailsModal = ({
       {
         onSuccess: async () => {
           try {
-            await uploadAvatar(avatar as File, {
-              onSuccess: () => handleSuccess(),
-            });
+            if (avatar) {
+              await uploadAvatar(avatar === undefined ? "" : (avatar as File), {
+                onSuccess: () => handleSuccess(),
+              });
+            } else {
+              await removeAvatar(undefined, { onSuccess: handleSuccess });
+            }
           } catch (error) {
             console.error("Failed to upload avatar", error);
           }
@@ -109,13 +132,13 @@ export const UpdateProfileDetailsModal = ({
   };
 
   const buttonState = useMemo(() => {
-    return isPending || isLoading ? "loading" : "idle";
-  }, [isPending, isLoading]);
+    return isPending || isLoading || isRemovingPicture ? "loading" : "idle";
+  }, [isPending, isLoading, isRemovingPicture]);
 
   return (
     <Modal
       isOpen={isOpen}
-      handleClose={handleClose}
+      handleClose={handleCancel}
       className="bg-white overflow-hidden"
     >
       <Form {...form}>
@@ -132,26 +155,44 @@ export const UpdateProfileDetailsModal = ({
                 src={
                   avatar instanceof File
                     ? URL.createObjectURL(avatar)
-                    : avatar ||
-                      data?.avatar ||
-                      "/assets/blank-profile-picture.png"
+                    : avatar || "/assets/blank-profile-picture.png"
                 }
                 className="object-cover w-full h-full"
                 alt={`${data?.first_name} ${data?.last_name}`}
               />
             </Avatar>
 
-            <button
-              className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                fileInputRef.current?.click();
-              }}
-              disabled={isLoading}
-            >
-              <IconCamera className="stroke-text-tertiary size-4" />
-              {isLoading ? "Uploading..." : "Upload Profile Picture"}
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                className="p-0 gap-x-1 flex items-center text-sm underline text-button-primary font-medium cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsUpdate(true);
+                  fileInputRef.current?.click();
+                }}
+                disabled={isLoading}
+              >
+                <IconCamera className="stroke-text-tertiary size-4" />
+                {isLoading && isUpdate
+                  ? "Uploading..."
+                  : "Upload Profile Picture"}
+              </button>
+
+              <RenderIf condition={!!data?.avatar || !!avatar}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setAvatar(undefined);
+                  }}
+                  disabled={isRemovingPicture}
+                  className="p-0 gap-x-1 flex items-center text-sm underline text-status-danger font-medium cursor-pointer"
+                >
+                  <IconTrash2 className="stroke-text-tertiary size-4" />
+
+                  {isRemovingPicture ? "Removing..." : " Remove Picture"}
+                </button>
+              </RenderIf>
+            </div>
 
             <input
               type="file"
@@ -317,13 +358,18 @@ export const UpdateProfileDetailsModal = ({
             </div>
           </div>
           <div className="flex justify-end gap-x-4 pt-4 h-fit">
-            <Button variant="secondary" onClick={handleClose} type="button">
+            <Button variant="secondary" onClick={handleCancel} type="button">
               Cancel
             </Button>
 
             <Button
               type="submit"
-              disabled={!form.formState.isValid || isPending || isLoading}
+              disabled={
+                !form.formState.isValid ||
+                isPending ||
+                isLoading ||
+                isRemovingPicture
+              }
               id="update-form"
               className="cursor-pointer w-21"
             >

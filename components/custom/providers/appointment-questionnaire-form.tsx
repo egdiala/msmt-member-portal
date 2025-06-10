@@ -77,8 +77,12 @@ export const FillAppointmentQuestionnaireForm = ({
     defaultValues,
   });
 
+  // const searchParams = useSearchParams();
+
   async function onSubmit(values: z.infer<typeof schema>) {
     const bookingId = localStorage.getItem("booking-appointment-id");
+    // const booking_link = searchParams.get("booking_link") as string | undefined;
+    console.log({ bookingId });
     const isLoggedIn = Cookies.get("authToken");
 
     if (!!isLoggedIn) {
