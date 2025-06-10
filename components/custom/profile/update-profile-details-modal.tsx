@@ -74,7 +74,7 @@ export const UpdateProfileDetailsModal = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isUpdate, setIsUpdate] = useState(false);
-  const [isRemove, setIsRemove] = useState(false);
+  // const [isRemove, setIsRemove] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -167,7 +167,7 @@ export const UpdateProfileDetailsModal = ({
                   : "Upload Profile Picture"}
               </button>
 
-              <RenderIf condition={!!data?.avatar || !!avatar}>
+              {/* <RenderIf condition={!!data?.avatar || !!avatar}>
                 <button
                   onClick={(e) => {
                     e.preventDefault();
@@ -180,7 +180,7 @@ export const UpdateProfileDetailsModal = ({
 
                   {isLoading && isRemove ? "Removing..." : " Remove Picture"}
                 </button>
-              </RenderIf>
+              </RenderIf> */}
             </div>
 
             <input

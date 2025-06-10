@@ -16,26 +16,26 @@ export const disableProfile = async ({ password }: { password: string }) => {
 };
 
 export const uploadProfileAvatar = async (file: File | string) => {
-  if (typeof file !== "string") {
-    const formData = new FormData();
-    formData.append("file", file);
-    const res = await axiosUserService.post(
-      "/members/files/profile-avatar",
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/form-data",
-          Accept: "application/form-data",
-        },
-      }
-    );
-    return res.data;
-  } else {
-    const res = await axiosUserService.post("/members/files/profile-avatar", {
-      file,
-    });
-    return res.data;
-  }
+  // if (typeof file !== "string") {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await axiosUserService.post(
+    "/members/files/profile-avatar",
+    formData,
+    {
+      headers: {
+        "Content-Type": "application/form-data",
+        Accept: "application/form-data",
+      },
+    }
+  );
+  return res.data;
+  // } else {
+  //   const res = await axiosUserService.post("/members/files/profile-avatar", {
+  //     file,
+  //   });
+  //   return res.data;
+  // }
 };
 
 export const getProfile = async (): Promise<{
