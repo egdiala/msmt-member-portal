@@ -494,9 +494,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                     return {
                                       id: index,
                                       value:
-                                        isPublic ||
-                                        familyFriendInfo?.familyfriend_id ||
-                                        data?.payment_by === 1
+                                        isPublic || data?.payment_by === 1
                                           ? val?.name
                                           : `${
                                               val?.name
@@ -515,8 +513,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                       id: index,
                                       value:
                                         isPublic ||
-                                        familyFriendInfo?.familyfriend_id ||
-                                        data?.payment_by === 1
+                                        data?.payment_by === 1 ||
+                                        account_service_type === "payer"
                                           ? val?.name
                                           : `${
                                               val?.name
@@ -545,6 +543,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 <p className="text-lg">
                   {!familyFriendInfo?.familyfriend_id ||
                   data?.payment_by === 2 ||
+                  account_service_type === "payer" ||
                   isPublic
                     ? "N/A"
                     : `${
