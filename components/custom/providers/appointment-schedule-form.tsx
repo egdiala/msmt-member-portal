@@ -482,7 +482,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     <FormItem>
                       <FormControl>
                         <SelectCmp
-                          disabled={!!appointment_id}
+                          disabled={!!appointment_id || isPublic}
                           selectItems={
                             account_service_type === "provider" &&
                             user_type === "org"
@@ -543,13 +543,15 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
                 <p className="text-sm">Charge</p>
                 <p className="text-lg">
-                  {!familyFriendInfo?.familyfriend_id || data?.payment_by === 0
-                    ? `${
+                  {!familyFriendInfo?.familyfriend_id ||
+                  data?.payment_by === 2 ||
+                  isPublic
+                    ? "N/A"
+                    : `${
                         form.watch("service").split(" - ")[1] ||
                         formatNumberWithCommas(0)
                       }
-                  /hr`
-                    : "N/A"}
+                  /hr`}
                 </p>
               </div>
 
