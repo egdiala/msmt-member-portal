@@ -494,9 +494,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                     return {
                                       id: index,
                                       value:
-                                        isPublic ||
-                                        familyFriendInfo?.familyfriend_id ||
-                                        data?.payment_by === 1
+                                        isPublic || data?.payment_by === 1
                                           ? val?.name
                                           : `${
                                               val?.name
@@ -515,8 +513,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                       id: index,
                                       value:
                                         isPublic ||
-                                        familyFriendInfo?.familyfriend_id ||
-                                        data?.payment_by === 1
+                                        data?.payment_by === 1 ||
+                                        account_service_type === "payer"
                                           ? val?.name
                                           : `${
                                               val?.name
@@ -545,6 +543,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 <p className="text-lg">
                   {!familyFriendInfo?.familyfriend_id ||
                   data?.payment_by === 2 ||
+                  account_service_type === "payer" ||
                   isPublic
                     ? "N/A"
                     : `${
@@ -576,57 +575,6 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          {/* <div className="flex items-center gap-x-2">
-                            {paymentMethods.map(
-                              (method: {
-                                name: string;
-                                id: number;
-                                icon: any;
-                              }) => (
-                                <div
-                                  key={method.id}
-                                  onClick={
-                                    appointment_id
-                                      ? undefined
-                                      : () => {
-                                          setSelectedPaymentMethod(method.name);
-                                          field.onChange(method.name);
-                                        }
-                                  }
-                                  className={cn(
-                                    "flex items-center gap-x-2 px-3 py-2 rounded-full border border-divider cursor-pointer hover:bg-blue-400",
-                                    appointment_id &&
-                                      "cursor-not-allowed text-gray-500 bg-gray-100"
-                                  )}
-                                >
-                                  {selectedPaymentMethod.toLowerCase() ===
-                                  method.name.toLowerCase() ? (
-                                    <Checkbox
-                                      disabled={!!appointment_id}
-                                      checked={
-                                        selectedPaymentMethod.toLowerCase() ===
-                                        method.name.toLowerCase()
-                                      }
-                                    />
-                                  ) : (
-                                    <method.icon className="stroke-brand-3 size-3.5" />
-                                  )}
-
-                                  <p
-                                    className={cn(
-                                      "text-sm",
-                                      selectedPaymentMethod.toLowerCase() ===
-                                        method.name.toLowerCase()
-                                        ? "text-button-primary"
-                                        : "text-brand-2"
-                                    )}
-                                  >
-                                    {method.name}
-                                  </p>
-                                </div>
-                              )
-                            )}
-                          </div> */}
                           <SelectCmp
                             disabled={!!appointment_id}
                             onSelect={(e) => {
