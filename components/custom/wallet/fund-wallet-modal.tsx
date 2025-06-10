@@ -153,7 +153,7 @@ export const FundWalletModal = ({
                               : field?.value
                           }
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-grey-300 pointer-events-none">
+                        <div className="absolute right-3 bottom-2 -translate-y-1/2 text-grey-300 pointer-events-none">
                           ₦
                         </div>
                       </div>

@@ -58,6 +58,7 @@ export const UpdatePasswordForm = () => {
                     onChange={field.onChange}
                     id={field.name}
                     name={field.name}
+                    showRequirements={false}
                     labelTitle="Current Password"
                     turnOffAutocomplete
                   />
@@ -77,6 +78,7 @@ export const UpdatePasswordForm = () => {
                     value={field.value}
                     onChange={field.onChange}
                     id={field.name}
+                    showRequirements={true}
                     name={field.name}
                     labelTitle="New Password"
                   />
@@ -97,6 +99,7 @@ export const UpdatePasswordForm = () => {
                     onChange={field.onChange}
                     id={field.name}
                     name={field.name}
+                    showRequirements={true}
                     labelTitle="Confirm Password"
                   />
                 </FormControl>
