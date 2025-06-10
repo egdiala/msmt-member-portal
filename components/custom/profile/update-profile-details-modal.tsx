@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "motion/react";
 import { useGetDefinedVariables } from "@/hooks/use-get-variables";
-import { IconCamera, IconTrash2, IconUserRound } from "@/components/icons";
+import { IconCamera, IconUserRound } from "@/components/icons";
 import {
   Avatar,
   AvatarImage,
@@ -24,7 +24,7 @@ import {
   useUpdateProfile,
   useUploadAvatar,
 } from "@/services/hooks/mutations/use-profile";
-import { FloatingInput, SelectCmp, Modal, RenderIf } from "../../shared";
+import { FloatingInput, SelectCmp, Modal } from "../../shared";
 import { PhoneInputWithLabel } from "@/components/shared/phone-input";
 
 interface IUpdateProfileDetailsModal {
@@ -82,9 +82,13 @@ export const UpdateProfileDetailsModal = ({
       setAvatar(file);
     }
   };
-  useEffect(() => {
-    setAvatar(data?.avatar);
-  }, []);
+  useEffect(
+    () => {
+      setAvatar(data?.avatar);
+    },
+    // eslint-disable-next-line
+    []
+  );
 
   async function onSubmit(values: z.infer<typeof editProfileDetailsSchema>) {
     await updateProfile(
