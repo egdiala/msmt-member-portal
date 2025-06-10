@@ -16,7 +16,6 @@ export const disableProfile = async ({ password }: { password: string }) => {
 };
 
 export const uploadProfileAvatar = async (file: File | string) => {
-  // if (typeof file !== "string") {
   const formData = new FormData();
   formData.append("file", file);
   const res = await axiosUserService.post(
@@ -30,12 +29,11 @@ export const uploadProfileAvatar = async (file: File | string) => {
     }
   );
   return res.data;
-  // } else {
-  //   const res = await axiosUserService.post("/members/files/profile-avatar", {
-  //     file,
-  //   });
-  //   return res.data;
-  // }
+};
+
+export const removeProfileAvatar = async () => {
+  const res = await axiosUserService.delete("/members/files/remove-avatar");
+  return res.data;
 };
 
 export const getProfile = async (): Promise<{
