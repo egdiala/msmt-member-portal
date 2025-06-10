@@ -107,6 +107,7 @@ export const editProfileDetailsSchema = z.object({
     .string()
     .min(2, "Preferred language must be at least 2 characters")
     .optional(),
+  avatar: z.string().optional(),
 });
 
 export const profileDetailsSchema = z.object({

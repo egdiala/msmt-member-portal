@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InvalidateQueryFilters } from "@tanstack/react-query";
 import {
   disableProfile,
+  removeProfileAvatar,
   updateProfile,
   uploadProfileAvatar,
 } from "@/services/api/profile";
@@ -28,6 +29,20 @@ export const useUploadAvatar = () => {
     mutationFn: uploadProfileAvatar,
     onSuccess: () => {
       toast.success("Profile picture updated successfully");
+      queryClient.invalidateQueries(["get-profile"] as InvalidateQueryFilters);
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.msg);
+    },
+  });
+};
+
+export const useRemoveAvatar = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: removeProfileAvatar,
+    onSuccess: () => {
+      toast.success("Profile picture has been successfully removed!");
       queryClient.invalidateQueries(["get-profile"] as InvalidateQueryFilters);
     },
     onError: (error: any) => {

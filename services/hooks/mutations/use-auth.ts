@@ -30,7 +30,7 @@ export const useInitRegister = (fn?: () => void) => {
 export const useCompleteRegister = (fn?: (v: string) => void) => {
   return useMutation({
     mutationFn: completeRegister,
-    onSuccess: ({ token, ...user  }: LoginResponse) => {
+    onSuccess: ({ token, ...user }: LoginResponse) => {
       axiosInit(token);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
@@ -48,7 +48,7 @@ export const useCompleteRegister = (fn?: (v: string) => void) => {
         sameSite: "lax",
       });
 
-      toast.success("Successful! Login to access your account");
+      toast.success("Successful! Welcome to MSMT");
       fn?.("/home");
     },
     onError: (err: any) => {

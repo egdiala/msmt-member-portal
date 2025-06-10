@@ -39,7 +39,6 @@ import {
   IconArrowDown,
   IconUsers,
 } from "@/components/icons";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
 import {
@@ -110,7 +109,6 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const { data, isPending: isLoadingAppointment } = useGetAppointmentsById(
     appointment_id as string
   );
-  console.log(data);
   const { data: familyFriendInfo } =
     useGetSingleFamilyOrFriend<FetchedPaymentOptionFamilyType>(
       {
@@ -287,7 +285,6 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
       mutate(dataToBeSent);
     }
     if (appointment_id) {
-      console.log("Booking link333:", booking_link);
       rescheduleAppointment({
         appointmentId: appointment_id as string,
         component: "notice",
@@ -415,7 +412,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                 </div>
               </div>
 
-              <RenderIf condition={!!isLoggedIn}>
+              <RenderIf condition={!!isLoggedIn && !isPublic}>
                 <Button
                   asChild
                   variant="link"
@@ -437,16 +434,6 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     Change
                   </Link>
                 </Button>
-              </RenderIf>
-
-              <RenderIf condition={!isLoggedIn}>
-                <button
-                  disabled={!!appointment_id}
-                  onClick={() => navigate.back()}
-                  className="underline text-button-primary font-semibold underline-offset-3 decoration-1 text-sm cursor-pointer"
-                >
-                  Change
-                </button>
               </RenderIf>
             </div>
 
@@ -495,7 +482,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     <FormItem>
                       <FormControl>
                         <SelectCmp
-                          disabled={!!appointment_id}
+                          disabled={!!appointment_id || isPublic}
                           selectItems={
                             account_service_type === "provider" &&
                             user_type === "org"
@@ -506,11 +493,16 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                   ) => {
                                     return {
                                       id: index,
-                                      value: `${
-                                        val?.name
-                                      } - ${formatNumberWithCommas(
-                                        val?.amount
-                                      )}`,
+                                      value:
+                                        isPublic ||
+                                        familyFriendInfo?.familyfriend_id ||
+                                        data?.payment_by === 1
+                                          ? val?.name
+                                          : `${
+                                              val?.name
+                                            } - ${formatNumberWithCommas(
+                                              val?.amount
+                                            )}`,
                                     };
                                   }
                                 ) ?? []
@@ -521,11 +513,16 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                   ) => {
                                     return {
                                       id: index,
-                                      value: `${
-                                        val?.name
-                                      } - ${formatNumberWithCommas(
-                                        val?.amount
-                                      )}`,
+                                      value:
+                                        isPublic ||
+                                        familyFriendInfo?.familyfriend_id ||
+                                        data?.payment_by === 1
+                                          ? val?.name
+                                          : `${
+                                              val?.name
+                                            } - ${formatNumberWithCommas(
+                                              val?.amount
+                                            )}`,
                                     };
                                   }
                                 ) ?? []
@@ -546,9 +543,15 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
                 <p className="text-sm">Charge</p>
                 <p className="text-lg">
-                  {form.watch("service").split(" - ")[1] ||
-                    formatNumberWithCommas(0)}
-                  /hr
+                  {!familyFriendInfo?.familyfriend_id ||
+                  data?.payment_by === 2 ||
+                  isPublic
+                    ? "N/A"
+                    : `${
+                        form.watch("service").split(" - ")[1] ||
+                        formatNumberWithCommas(0)
+                      }
+                  /hr`}
                 </p>
               </div>
 
@@ -562,7 +565,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               >
                 <div className="border-t border-divider"></div>
 
-                <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+                <div className="flex flex-col gap-2">
                   <p className="font-medium text-sm text-brand-1">
                     Payment Method
                   </p>
@@ -573,7 +576,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <div className="flex items-center gap-x-2">
+                          {/* <div className="flex items-center gap-x-2">
                             {paymentMethods.map(
                               (method: {
                                 name: string;
@@ -623,7 +626,22 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                 </div>
                               )
                             )}
-                          </div>
+                          </div> */}
+                          <SelectCmp
+                            disabled={!!appointment_id}
+                            onSelect={(e) => {
+                              setSelectedPaymentMethod(e);
+                              field.onChange(e);
+                            }}
+                            selectItems={paymentMethods.map((val) => {
+                              return {
+                                id: val.id,
+                                value: val.name,
+                              };
+                            })}
+                            placeholder="Payment Method"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -758,7 +776,9 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                   <FormItem>
                     <FormControl>
                       <div className="space-y-1">
-                        <h3 className="text-sm font-medium text-brand-2">Appointment Time</h3>
+                        <h3 className="text-sm font-medium text-brand-2">
+                          Appointment Time
+                        </h3>
                         <SelectCmp
                           selectItems={formattedSlots ?? []}
                           placeholder="time (WAT)"
