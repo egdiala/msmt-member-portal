@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
 
   try {
     // Check if current path is a public session route
-    const isPublicSessionRoute = publicSessionRoutes.some((route) => 
+    const isPublicSessionRoute = publicSessionRoutes.some((route) =>
       pathname.startsWith(route)
     );
 
@@ -41,12 +41,15 @@ export function middleware(request: NextRequest) {
     // BUT allow access to publicSessionRoutes
     if (
       isAuthenticated &&
-      (publicRoutes.some((route) => pathname.startsWith(route)) || pathname === "/") &&
+      (publicRoutes.some((route) => pathname.startsWith(route)) ||
+        pathname === "/" ) &&
       !isPublicSessionRoute
     ) {
       // console.log(
       //   `[Middleware] Authenticated user trying to access auth-only public route`
       // );
+
+      console.log(pathname,publicRoutes.some((route) => pathname.startsWith(route)), "PAThName");
 
       // Get referer (where the user came from)
       const referer = request.headers.get("referer");
