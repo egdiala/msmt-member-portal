@@ -283,7 +283,7 @@ export const RescheduleAppointmentForm = ({
 
       const formattedService =
         matchingService && appointmentData
-          ? appointmentData?.payment_by === 0
+          ? appointmentData?.payment_by !== 1
             ? `${matchingService.name} - ${formatNumberWithCommas(
                 matchingService.amount
               )}`
@@ -478,7 +478,7 @@ export const RescheduleAppointmentForm = ({
                                 ) => ({
                                   id: index,
                                   value:
-                                    appointmentData?.payment_by === 0
+                                    appointmentData?.payment_by !== 1
                                       ? `${
                                           val?.name
                                         } - ${formatNumberWithCommas(
@@ -494,7 +494,7 @@ export const RescheduleAppointmentForm = ({
                                 ) => ({
                                   id: index,
                                   value:
-                                    appointmentData?.payment_by === 0
+                                    appointmentData?.payment_by !== 1
                                       ? `${
                                           val?.name
                                         } - ${formatNumberWithCommas(
@@ -518,7 +518,7 @@ export const RescheduleAppointmentForm = ({
             <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
               <p className="text-sm">Charge</p>
               <p className="text-lg">
-                {appointmentData?.payment_by === 0
+                {appointmentData?.payment_by !== 1
                   ? `${
                       form.watch("service").split(" - ")[1] ||
                       formatNumberWithCommas(0)

@@ -350,7 +350,7 @@ export default function AppointmentDetails() {
               <div>
                 <p className="text-sm text-brand-2 mb-1">Charge</p>
                 <p className="font-medium text-brand-1 text-sm">
-                  {data?.payment_by === 0
+                  {data?.payment_by !== 1
                     ? new Intl.NumberFormat("en-NG", {
                         style: "currency",
                         currency: "NGN",

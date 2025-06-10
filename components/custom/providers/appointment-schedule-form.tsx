@@ -496,7 +496,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                       value:
                                         isPublic ||
                                         familyFriendInfo?.familyfriend_id ||
-                                        data?.payment_by === 0
+                                        data?.payment_by === 1
                                           ? val?.name
                                           : `${
                                               val?.name
@@ -516,7 +516,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                       value:
                                         isPublic ||
                                         familyFriendInfo?.familyfriend_id ||
-                                        data?.payment_by === 0
+                                        data?.payment_by === 1
                                           ? val?.name
                                           : `${
                                               val?.name

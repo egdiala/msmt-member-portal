@@ -86,7 +86,7 @@ export function AppointmentContainer() {
     appt_date: formatApptDate(item.appt_date),
     appt_time: formatApptTimeShort(item?.appt_time),
     amount:
-      item?.payment_by === 0
+      item?.payment_by !== 1
         ? new Intl.NumberFormat("en-NG", {
             style: "currency",
             currency: "NGN",
