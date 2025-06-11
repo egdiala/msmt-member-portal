@@ -541,8 +541,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
                 <p className="text-sm">Charge</p>
                 <p className="text-lg">
-                  {!familyFriendInfo?.familyfriend_id ||
-                  data?.payment_by === 2 ||
+                  {data?.payment_by === 2 ||
                   account_service_type === "payer" ||
                   isPublic
                     ? "N/A"

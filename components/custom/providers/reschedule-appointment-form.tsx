@@ -519,8 +519,7 @@ export const RescheduleAppointmentForm = ({
             <div className="bg-blue-400 rounded-lg flex items-center justify-between p-3 font-medium text-brand-1">
               <p className="text-sm">Charge</p>
               <p className="text-lg">
-                {!familyFriendInfo?.familyfriend_id ||
-                appointmentData?.payment_by !== 1 ||
+                {appointmentData?.payment_by !== 1 ||
                 account_service_type === "payer"
                   ? `${
                       form.watch("service").split(" - ")[1] ||
