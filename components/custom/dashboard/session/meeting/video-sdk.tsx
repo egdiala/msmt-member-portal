@@ -36,6 +36,7 @@ interface MeetingConfig {
 const VideoSDKApp: React.FC = () => {
   const searchParams = useSearchParams();
   const user_id = searchParams.get("user_id");
+  const provider_id = searchParams.get("provider_id");
   const appointment_id = searchParams.get("appointment_id");
   const [meetingConfig, setMeetingConfig] = useState<MeetingConfig | null>(
     null
@@ -84,7 +85,7 @@ const VideoSDKApp: React.FC = () => {
           token: data?.token,
           participantName: displayName,
           participantRole: data?.is_host ? "Provider" : "Patient",
-          participantId: user_id as string,
+          participantId: data?.is_host ? provider_id as string : user_id as string,
           metaData: {
             name: displayName,
             avatar: displayAvatar,
