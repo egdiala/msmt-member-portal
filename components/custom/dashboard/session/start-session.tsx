@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 // import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
 import Link from "next/link";
-import { formatApptTimeShort } from "@/lib/utils";
-import { formatSessionDate } from "../appointments/details/appointment-details";
-import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
-// import { useGetProfile } from "@/services/hooks/queries/use-profile";
+import { parseISO, subHours, format } from "date-fns";
+import { useGetLiveSession } from "@/services/hooks/queries/use-appointments";
+
+import { RenderIf } from "@/components/shared";
+import { useMemo } from "react";
 
 export function StartSession() {
   const router = useRouter();
@@ -15,24 +16,25 @@ export function StartSession() {
 
   const user_id = searchParams.get("user_id");
   const appointment_id = searchParams.get("appointment_id");
-  const { data } = useGetAppointmentsById(appointment_id as string);
-  // const { data: account } = useGetProfile();
 
+  const { data } = useGetLiveSession({
+    appointment_id: appointment_id as string,
+    user_id: user_id as string,
+  });
+  console.log(data, "DATA FROM LIVE SESSION");
+  const startDate = useMemo(() => {
+    return data?.end_at ? parseISO(data.end_at) : "--";
+  }, [data?.end_at]);
 
   const provider = {
-    name: data?.provider_data?.name || "-",
+    name: data?.provider_name || "-",
     role: data?.provider_data?.specialty || "-",
-    imageUrl: data?.provider_data?.avatar,
-    date: formatSessionDate(data?.appt_date || ""),
-    time: formatApptTimeShort(Number(data?.appt_time) || 0),
+    imageUrl: data?.provider_avatar,
+    date: format(startDate, "do MMMM yyyy"),
+    time: format(startDate, "h:mm a"),
     duration: "1 hour",
   };
 
-  // const organization = {
-  //   name: account?.org_data[0]?.name || "-",
-  //   avatar: account?.org_data[0]?.avatar,
-  //   type: account?.org_data[0]?.industry_name || "-",
-  // };
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
       <div className="text-center">
@@ -58,13 +60,15 @@ export function StartSession() {
         >
           Go to Home
         </Button>
-        <Button className="h-12 flex-1 md:flex-none py-3 px-4" asChild>
-          <Link
-            href={`/start-session?user_id=${user_id}&appointment_id=${appointment_id}`}
-          >
-            Join Session
-          </Link>
-        </Button>
+        <RenderIf condition={!!data?.token}>
+          <Button className="h-12 flex-1 md:flex-none py-3 px-4" asChild>
+            <Link
+              href={`/start-session?user_id=${user_id}&appointment_id=${appointment_id}`}
+            >
+              Join Session
+            </Link>
+          </Button>
+        </RenderIf>
       </div>
     </div>
   );
