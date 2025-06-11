@@ -32,17 +32,24 @@ export function middleware(request: NextRequest) {
   // console.log(`[Middleware] isAuthenticated:`, isAuthenticated);
 
   try {
-    // CASE 1: Authenticated user trying to access public routes (sign-in, etc.)
+    // Check if current path is a public session route
+    const isPublicSessionRoute = publicSessionRoutes.some((route) =>
+      pathname.startsWith(route)
+    );
+
+    // CASE 1: Authenticated user trying to access auth-only public routes (sign-in, etc.)
+    // BUT allow access to publicSessionRoutes
     if (
       isAuthenticated &&
-      publicRoutes.some(
-        (route) => pathname.startsWith(route) || pathname === "/"
-      ) &&
-      !publicSessionRoutes.some((route) => pathname.startsWith(route))
+      (publicRoutes.some((route) => pathname.startsWith(route)) ||
+        pathname === "/" ) &&
+      !isPublicSessionRoute
     ) {
       // console.log(
-      //   `[Middleware] Authenticated user trying to access public route`
+      //   `[Middleware] Authenticated user trying to access auth-only public route`
       // );
+
+      console.log(pathname,publicRoutes.some((route) => pathname.startsWith(route)), "PAThName");
 
       // Get referer (where the user came from)
       const referer = request.headers.get("referer");
@@ -85,15 +92,22 @@ export function middleware(request: NextRequest) {
       !isAuthenticated &&
       !isPublicRoute &&
       !isNextInternal &&
-      pathname === "/"
+      pathname !== "/"
     ) {
       // console.log(
       //   `[Middleware] Unauthenticated user trying to access protected route`
       // );
       const redirectUrl = new URL("/sign-in", url.origin);
       // Store the current URL as a query param for possible redirect after login
-      redirectUrl.searchParams.set("callbackUrl", `/home${search || ""}`);
+      redirectUrl.searchParams.set("callbackUrl", `${pathname}${search || ""}`);
 
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    // CASE 3: Unauthenticated user accessing root path should go to sign-in
+    if (!isAuthenticated && pathname === "/") {
+      const redirectUrl = new URL("/sign-in", url.origin);
+      redirectUrl.searchParams.set("callbackUrl", `/home${search || ""}`);
       return NextResponse.redirect(redirectUrl);
     }
 
