@@ -16,6 +16,7 @@ const publicSessionRoutes = [
   "/complete-booking",
   "/providers",
   "/session",
+  '/organisation'
 ];
 
 export function middleware(request: NextRequest) {
