@@ -21,9 +21,8 @@ export function StartSession() {
     appointment_id: appointment_id as string,
     user_id: user_id as string,
   });
-  console.log(data, "DATA FROM LIVE SESSION");
   const startDate = useMemo(() => {
-    return data?.end_at ? parseISO(data.end_at) : "--";
+    return data?.end_at ? parseISO(data.end_at) : new Date();
   }, [data?.end_at]);
 
   const provider = {
