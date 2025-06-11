@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 // import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
 import Link from "next/link";
-import { parseISO, subHours, format } from "date-fns";
+import { parseISO, format } from "date-fns";
 import { useGetLiveSession } from "@/services/hooks/queries/use-appointments";
 
 import { RenderIf } from "@/components/shared";
@@ -28,7 +28,7 @@ export function StartSession() {
 
   const provider = {
     name: data?.provider_name || "-",
-    role: data?.provider_data?.specialty || "-",
+    role: data?.provider_specialty || "-",
     imageUrl: data?.provider_avatar,
     date: format(startDate, "do MMMM yyyy"),
     time: format(startDate, "h:mm a"),
