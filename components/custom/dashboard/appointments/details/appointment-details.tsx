@@ -38,6 +38,7 @@ export default function AppointmentDetails() {
   const { slug } = useParams();
   const [open, setOpen] = useState(false);
   const { data, isLoading } = useGetAppointmentsById(slug as string);
+  const user = JSON.parse(localStorage.getItem("user") as string);
 
   const { mutate, isPending } = useAddFavouriteProvider();
   const appointment = {
@@ -143,6 +144,15 @@ export default function AppointmentDetails() {
                         {data?.provider_data?.specialty}
                       </p>
                     </div>
+                    <RenderIf condition={data?.status === 2}>
+                      <Button asChild>
+                        <Link
+                          href={`/session?appointment_id=${data?.appointment_id}&user_id=${user?.user_id}`}
+                        >
+                          Join
+                        </Link>
+                      </Button>
+                    </RenderIf>
                     <RenderIf condition={data?.status === 1}>
                       <div className="flex items-center gap-x-1.5">
                         <Button
@@ -295,6 +305,16 @@ export default function AppointmentDetails() {
                         Favourite
                       </span>
                     </div>
+                  </RenderIf>
+
+                  <RenderIf condition={data?.status === 2}>
+                    <Button asChild>
+                      <Link
+                        href={`/session?appointment_id=${data?.appointment_id}&user_id=${user?.user_id}`}
+                      >
+                        Join
+                      </Link>
+                    </Button>
                   </RenderIf>
 
                   <RenderIf condition={data?.status === 1}>
