@@ -16,7 +16,6 @@ import {
 import { RenderIf } from "@/components/shared";
 import { toast } from "sonner";
 import ToolBar from "./tool-bar";
-import { RatingDialog } from "../../appointments/rating-form";
 
 interface MeetingViewProps {
   isProvider?: boolean;
@@ -31,7 +30,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   onMeetingLeft,
   commMode = "audio",
 }) => {
-  const [open, setOpen] = useState(false);
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
   const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -315,11 +313,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
   const handleEndCall = useCallback(
     async () => {
-      if (!isProvider) {
-        setOpen(true);
-        return;
-      }
-
       try {
         setIsLeaving(true);
 
@@ -480,13 +473,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           isVideoEnabled={isVideoEnabled}
         />
       </div>
-
-      <RatingDialog
-        open={open}
-        personName={otherParticipants[0]?.displayName}
-        onOpenChange={setOpen}
-        onSuccess={handleEndCall}
-      />
 
       <AlertDialog
         open={isMultiDeviceDialogOpen}
