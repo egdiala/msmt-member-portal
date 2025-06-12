@@ -3,7 +3,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 // import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
-import Link from "next/link";
 import { parseISO, format } from "date-fns";
 import { useGetLiveSession } from "@/services/hooks/queries/use-appointments";
 

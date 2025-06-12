@@ -17,7 +17,6 @@ import { RenderIf } from "@/components/shared";
 import { toast } from "sonner";
 import ToolBar from "./tool-bar";
 import { LeaveSessionModal } from "./leave-session-modal";
-import { set } from "date-fns";
 
 interface MeetingViewProps {
   isProvider?: boolean;
