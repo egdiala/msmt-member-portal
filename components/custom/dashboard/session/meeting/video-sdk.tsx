@@ -64,7 +64,7 @@ const VideoSDKApp: React.FC = () => {
         setIsLoading(true);
         const response = await requestLiveSession({
           appointment_id: appointment_id as string,
-          user_id: user_id as string,
+          user_id: !!provider_id ? provider_id as string : user_id as string,
         });
         const data = response.data;
 
@@ -106,10 +106,10 @@ const VideoSDKApp: React.FC = () => {
       }
     };
 
-    if (appointment_id && user_id) {
+    if (appointment_id && (user_id || provider_id)) {
       fetchMeetingDetails();
     }
-  }, [appointment_id, user_id, userAudioEnabled, userVideoEnabled]);
+  }, [appointment_id, user_id, provider_id, userAudioEnabled, userVideoEnabled]);
 
   useEffect(() => {
     const initializeMediaDevices = async () => {

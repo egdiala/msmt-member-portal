@@ -27,6 +27,7 @@ import {
 import { getStatusBadgeId } from "../get-status-badge";
 import { CancelAppointmentDialog } from "../cancel-appointments-dialog";
 import { RatingDialog } from "../rating-form";
+import { useGetProfile } from "@/services/hooks/queries/use-profile";
 
 export function formatSessionDate(dateStr: string): string {
   if (dateStr === "") return "";
@@ -77,6 +78,8 @@ export default function AppointmentDetails() {
 
   const [notice, setNotice] = useState("");
   const [openCancelModal, setOpenCancelModal] = useState(false);
+  const {data:profile} = useGetProfile()
+  console.log(profile, data,  "PROFILE DATA");
 
   const { mutate: cancelAppointment, isPending: isCancelling } =
     useCancelAppointment((res) => {
