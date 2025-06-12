@@ -15,6 +15,7 @@ export function StartSession() {
   const searchParams = useSearchParams();
 
   const user_id = searchParams.get("user_id");
+  const provider_id = searchParams.get("provider_id");
   const appointment_id = searchParams.get("appointment_id");
 
   const { data } = useGetLiveSession({
@@ -26,9 +27,9 @@ export function StartSession() {
   }, [data?.end_at]);
 
   const provider = {
-    name: data?.provider_name || "-",
-    role: data?.provider_specialty || "-",
-    imageUrl: data?.provider_avatar,
+    name: !!provider_id ? data?.member_name : data?.provider_name || "-",
+    role: !!provider_id ? "Patient" : data?.provider_specialty || "-",
+    imageUrl: !!provider_id ? data?.member_avatar : data?.provider_avatar,
     date: format(startDate, "do MMMM yyyy"),
     time: format(startDate, "h:mm a"),
     duration: "1 hour",
