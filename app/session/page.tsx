@@ -5,7 +5,7 @@ import { StartSession } from "@/components/custom/dashboard/session/start-sessio
 
 const SessionPage = () => {
   return (
-    <Suspense fallback={<div className="text-xl text-brand-1">Retrieving Meeting&apos;s Information</div>}>
+    <Suspense fallback={<div className="text-xl text-brand-1">Retrieving Meeting Information</div>}>
       <StartSession />
     </Suspense>
   );
