@@ -17,7 +17,7 @@ export function ProviderCard({ session }: ProviderCardProps) {
   return (
     <div className="bg-white p-3 md:p-4 grid gap-2 rounded-xl">
       <p className="text-xs md:text-base text-brand-1 font-medium md:font-semibold ">
-        Provider
+        {session.role === "Patient" ? "Patient" : "Provider"}
       </p>
       <div className="bg-blue-400 p-3 rounded-lg md:rounded-xs flex flex-col gap-3">
         <div className="flex items-center gap-3">

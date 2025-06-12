@@ -161,7 +161,7 @@ export const UpcomingAppointmentCard = () => {
                       className="inline-block text-brand-accent-2"
                     >
                       <Link
-                        href={`/session?user_id=${account?.user_id}&provider_id=${mostRecent?.provider_id}&appointment_id=${mostRecent?.appointment_id}`}
+                        href={`/session?user_id=${account?.user_id}&appointment_id=${mostRecent?.appointment_id}`}
                         className="underline text-brand-accent-2"
                       >
                         Join now
