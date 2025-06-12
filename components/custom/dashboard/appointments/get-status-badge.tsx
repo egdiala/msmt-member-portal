@@ -44,10 +44,15 @@ export function getStatusBadgeId(status: string) {
         </span>
       );
     case "Completed":
-    case "Live":
       return (
         <span className="bg-[#0AA571] font-medium w-fit text-xs md:text-sm text-white !py-1 !px-2 rounded-xs">
           Completed
+        </span>
+      );
+    case "Live":
+      return (
+        <span className="bg-purple-500 font-medium w-fit text-xs md:text-sm text-white !py-1 !px-2 rounded-xs">
+          Live
         </span>
       );
     case "Canceled":
