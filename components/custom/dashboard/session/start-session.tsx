@@ -63,7 +63,9 @@ export function StartSession() {
         <RenderIf condition={!!data?.token}>
           <Button className="h-12 flex-1 md:flex-none py-3 px-4" asChild>
             <Link
-              href={`/start-session?user_id=${user_id}&appointment_id=${appointment_id}`}
+              href={`/start-session?user_id=${user_id}&appointment_id=${appointment_id}${
+                provider_id ? `&provider_id=${provider_id}` : ""
+              }`}
             >
               Join Session
             </Link>
