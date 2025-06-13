@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
@@ -40,6 +40,7 @@ import {
   FetchedServiceProvidersCountType,
   FetchedServiceProvidersType,
 } from "@/types/providers";
+import { UserProfileType } from "@/types/profile";
 import { SingleProviderCard } from "./single-provider-card";
 import { FilterProvidersTable } from "./filter-providers-table";
 
@@ -47,7 +48,13 @@ export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
   const isLoggedIn = !!Cookies.get("authToken");
 
-  const loggedInUser = JSON.parse(localStorage.getItem("user") as string);
+  const [user, setUser] = useState<UserProfileType>();
+
+  useEffect(() => {
+    if (window !== undefined) {
+      setUser(JSON.parse(localStorage.getItem("user") as string));
+    }
+  }, []);
 
   const { data: requestVariables } = useMultipleRequestVariables([
     "service-offering",
@@ -157,7 +164,7 @@ export const ProvidersTable = () => {
     ...filters,
     item_per_page: itemsPerPage?.toString(),
     page: page?.toString(),
-    residence_country: loggedInUser?.residence_country,
+    residence_country: user?.residence_country,
   });
 
   const handlePageChange = (page: number) => {
@@ -172,7 +179,7 @@ export const ProvidersTable = () => {
   const { data: count } =
     useGetServiceProviders<FetchedServiceProvidersCountType>({
       component: "count",
-      residence_country: loggedInUser?.residence_country,
+      residence_country: user?.residence_country,
       ...filters,
     });
 

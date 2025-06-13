@@ -60,6 +60,7 @@ import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-
 import { FetchedPaymentOptionFamilyType } from "@/types/family-and-friends";
 import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 import type { FetchedWalletTransactionsStatsType } from "@/types/wallet";
+import { UserProfileType } from "@/types/profile";
 import { toast } from "sonner";
 import { FundWalletModal } from "../wallet/fund-wallet-modal";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
@@ -79,7 +80,13 @@ export const RescheduleAppointmentForm = ({
     useState<RescheduleAppointmentPayload>({} as RescheduleAppointmentPayload);
   const [openFundWalletModal, setOpenFundWalletModal] = useState(false);
 
-  const loggedInUser = JSON.parse(localStorage.getItem("user") as string);
+  const [user, setUser] = useState<UserProfileType>();
+
+  useEffect(() => {
+    if (window !== undefined) {
+      setUser(JSON.parse(localStorage.getItem("user") as string));
+    }
+  }, []);
 
   const searchParams = useSearchParams();
   const appointment_id = searchParams.get("appointment_id") as string;
@@ -108,7 +115,7 @@ export const RescheduleAppointmentForm = ({
     user_id: provider_id?.toString(),
     user_type: "provider",
     account_service_type: "provider",
-    residence_country: loggedInUser?.residence_country,
+    residence_country: user?.residence_country,
   });
 
   const {
@@ -120,7 +127,7 @@ export const RescheduleAppointmentForm = ({
     user_id: org_id?.toString(),
     user_type: "org",
     account_service_type: "payer",
-    residence_country: loggedInUser?.residence_country,
+    residence_country: user?.residence_country,
   });
 
   // Family/friend payment option

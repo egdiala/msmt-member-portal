@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { differenceInYears } from "date-fns";
@@ -27,6 +27,7 @@ import {
   FetchOrganizationProvider,
   FetchSingleProvider,
 } from "@/types/providers";
+import { UserProfileType } from "@/types/profile";
 
 export const SingleOrganisationIndividualProviderContent = () => {
   const { id, uid } = useParams();
@@ -38,14 +39,21 @@ export const SingleOrganisationIndividualProviderContent = () => {
   const user_account_type = searchParams.get("user_service_type") as
     | "provider"
     | "payer";
-  const loggedInUser = JSON.parse(localStorage.getItem("user") as string);
+
+  const [user, setUser] = useState<UserProfileType>();
+
+  useEffect(() => {
+    if (window !== undefined) {
+      setUser(JSON.parse(localStorage.getItem("user") as string));
+    }
+  }, []);
 
   const { data: orgProvider } =
     useGetServiceProviders<FetchOrganizationProvider>({
       user_id: id?.toString(),
       user_type: org_user_type,
       account_service_type: account_type,
-      residence_country: loggedInUser?.residence_country,
+      residence_country: user?.residence_country,
     });
 
   const { data: userProfile } = useGetProfile();
@@ -55,7 +63,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
     user_type: user_type,
     account_service_type: user_account_type,
     member_id: userProfile?.user_id,
-    residence_country: loggedInUser?.residence_country,
+    residence_country: user?.residence_country,
   });
 
   const yearsOfExperience = differenceInYears(
