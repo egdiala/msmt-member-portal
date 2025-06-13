@@ -16,6 +16,7 @@ export interface FetchServiceProvidersQuery {
   time_zone?: string; // The user's device time zone. Required when there's appt_date
   component?: "count";
   member_id?: string;
+  residence_country?: string;
 }
 
 export interface FetchOrganizationProvidersQuery {

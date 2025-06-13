@@ -32,6 +32,7 @@ export const SingleIndividualProviderContent = () => {
   const router = useRouter();
   const { setStep } = useStepper();
   const isLoggedIn = !!Cookies.get("authToken");
+  const loggedInUser = JSON.parse(localStorage.getItem("user") as string);
   const searchParams = useSearchParams();
   const { data: userProfile } = useGetProfile();
 
@@ -45,6 +46,7 @@ export const SingleIndividualProviderContent = () => {
     user_type: user_type,
     account_service_type: account_service_type,
     member_id: userProfile?.user_id,
+    residence_country: loggedInUser?.residence_country,
   });
 
   const yearsOfExperience = differenceInYears(

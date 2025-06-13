@@ -47,6 +47,8 @@ export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
   const isLoggedIn = !!Cookies.get("authToken");
 
+  const loggedInUser = JSON.parse(localStorage.getItem("user") as string);
+
   const { data: requestVariables } = useMultipleRequestVariables([
     "service-offering",
     "preferred-lan",
@@ -142,7 +144,7 @@ export const ProvidersTable = () => {
     setFilterValues[filterToRemove]("");
   };
 
-  const itemsPerPage = 14;
+  const itemsPerPage = 12;
   const [page, setPage] = useState(1);
 
   const searchParams = useSearchParams();
@@ -155,6 +157,7 @@ export const ProvidersTable = () => {
     ...filters,
     item_per_page: itemsPerPage?.toString(),
     page: page?.toString(),
+    residence_country: loggedInUser?.residence_country,
   });
 
   const handlePageChange = (page: number) => {
@@ -169,6 +172,7 @@ export const ProvidersTable = () => {
   const { data: count } =
     useGetServiceProviders<FetchedServiceProvidersCountType>({
       component: "count",
+      residence_country: loggedInUser?.residence_country,
       ...filters,
     });
 

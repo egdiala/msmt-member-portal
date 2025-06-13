@@ -57,6 +57,7 @@ export const SingleOrganisationProviderContent = ({
   const searchParams = useSearchParams();
   const user_type = searchParams.get("type") as "provider" | "org";
   const account_type = searchParams.get("service_type") as "provider" | "payer";
+  const loggedInUser = JSON.parse(localStorage.getItem("user") as string);
 
   const { value, onChangeHandler } = useDebounce(400);
 
@@ -68,6 +69,7 @@ export const SingleOrganisationProviderContent = ({
       user_type: user_type,
       account_service_type: account_type,
       member_id: userProfile?.user_id,
+      residence_country: loggedInUser?.residence_country,
     });
 
   const [filters, setFilters] = useState<Record<string, any>>({});

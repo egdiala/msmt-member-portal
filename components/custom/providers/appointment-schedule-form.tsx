@@ -79,6 +79,7 @@ interface ISetScheduleStep {
 }
 export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const navigate = useRouter();
+  const loggedInUser = JSON.parse(localStorage.getItem("user") as string);
   const [openReschedule, setOpenReschedule] = useState(false);
   const [rescheduleData, setRescheduleData] =
     useState<RescheduleAppointmentPayload>({} as RescheduleAppointmentPayload);
@@ -123,12 +124,14 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
       user_id: provider_id?.toString(),
       user_type: "provider",
       account_service_type: "provider",
+      residence_country: loggedInUser?.residence_country,
     });
 
   const { data: orgInfo } = useGetServiceProviders<FetchOrganizationProvider>({
     user_id: org_id?.toString(),
     user_type: "org",
     account_service_type: "payer",
+    residence_country: loggedInUser?.residence_country,
   });
 
   const paymentMethods = [

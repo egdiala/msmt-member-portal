@@ -38,12 +38,14 @@ export const SingleOrganisationIndividualProviderContent = () => {
   const user_account_type = searchParams.get("user_service_type") as
     | "provider"
     | "payer";
+  const loggedInUser = JSON.parse(localStorage.getItem("user") as string);
 
   const { data: orgProvider } =
     useGetServiceProviders<FetchOrganizationProvider>({
       user_id: id?.toString(),
       user_type: org_user_type,
       account_service_type: account_type,
+      residence_country: loggedInUser?.residence_country,
     });
 
   const { data: userProfile } = useGetProfile();
@@ -53,6 +55,7 @@ export const SingleOrganisationIndividualProviderContent = () => {
     user_type: user_type,
     account_service_type: user_account_type,
     member_id: userProfile?.user_id,
+    residence_country: loggedInUser?.residence_country,
   });
 
   const yearsOfExperience = differenceInYears(
