@@ -1,3 +1,4 @@
+import axios from "axios";
 import { axiosUserService } from "@/services/axios-instance";
 import type {
   ChangePasswordType,
@@ -49,8 +50,12 @@ export const resendOtp = async (data: Partial<LoginType>) => {
   return res.data;
 };
 
-
 export const changePassword = async (data: ChangePasswordType) => {
   const res = await axiosUserService.put("members/accounts", data);
+  return res.data;
+};
+
+export const getCountryInfo = async () => {
+  const res = await axios.get("https://api.country.is/");
   return res.data;
 };

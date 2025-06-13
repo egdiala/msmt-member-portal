@@ -64,7 +64,10 @@ export const UpdateProfileDetailsModal = ({
           data.gender.slice(1).toLowerCase()
         : "",
       maritalStatus: data?.marital_status || "",
-      country: data?.origin_country || "",
+      country:
+        `${data?.residence_country?.[0]?.toUpperCase()}${data?.residence_country?.slice(
+          1
+        )}` || "",
       preferredLanguage: data?.preferred_lan || "",
       avatar: data?.avatar || undefined,
     },
@@ -78,10 +81,13 @@ export const UpdateProfileDetailsModal = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isUpdate, setIsUpdate] = useState(false);
+  const [isAvatarChanged, setIsAvatarChanged] = useState(false);
+  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsAvatarChanged(true);
       setAvatar(file);
     }
   };
@@ -106,17 +112,27 @@ export const UpdateProfileDetailsModal = ({
             ? ""
             : values.gender?.toLowerCase(),
         marital_status: values.maritalStatus,
-        origin_country: values.country,
+        residence_country: values.country,
       },
       {
         onSuccess: async () => {
           try {
-            if (avatar) {
+            if (avatar && isAvatarChanged) {
               await uploadAvatar(avatar === undefined ? "" : (avatar as File), {
-                onSuccess: () => handleSuccess(),
+                onSuccess: () => {
+                  setIsAvatarChanged(false);
+                  handleSuccess();
+                },
+              });
+            } else if (!avatar && isAvatarRemoved) {
+              await removeAvatar(undefined, {
+                onSuccess: () => {
+                  setIsAvatarRemoved(false);
+                  handleSuccess();
+                },
               });
             } else {
-              await removeAvatar(undefined, { onSuccess: handleSuccess });
+              handleSuccess();
             }
           } catch (error) {
             console.error("Failed to upload avatar", error);
@@ -182,6 +198,7 @@ export const UpdateProfileDetailsModal = ({
                 <button
                   onClick={(e) => {
                     e.preventDefault();
+                    setIsAvatarRemoved(true);
                     setAvatar(undefined);
                   }}
                   disabled={isRemovingPicture}

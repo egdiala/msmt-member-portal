@@ -37,7 +37,7 @@ const CustomRadioItem = ({
       <label
         htmlFor={id}
         className={cn(
-          " text-brand-3 cursor-none text-xs",
+          " text-brand-3 cursor-none text-xs whitespace-nowrap",
           isValid && "text-brand-2"
         )}
       >
@@ -128,7 +128,6 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
             value={value}
             onChange={handleChange}
             ref={ref}
-            
             autoComplete={turnOffAutocomplete ? "off" : "on"}
             {...props}
           />

@@ -40,7 +40,7 @@ export const PersonalInfoDetailsSection = () => {
     { id: 2, key: "Religion", value: data?.religion || "_" },
     { id: 3, key: "Gender", value: data?.gender || "_" },
     { id: 4, key: "Marital Status", value: data?.marital_status || "_" },
-    { id: 5, key: "Country", value: data?.origin_country || "_" },
+    { id: 5, key: "Country", value: data?.residence_country || "_" },
     { id: 6, key: "Preferred Language", value: data?.preferred_lan || "_" },
   ];
 
