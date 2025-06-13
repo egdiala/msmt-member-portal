@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
@@ -26,13 +26,35 @@ import { FloatingInput } from "@/components/shared/floating-input";
 import { Switch } from "@/components/ui/switch";
 import { Loader } from "@/components/shared/loader";
 import { DatePickerField } from "@/components/shared/date-picker-field";
+import { SelectCmp } from "@/components/shared";
 import { signUpSchema } from "@/lib/validations";
 import { useInitRegister } from "@/services/hooks/mutations/use-auth";
+import { useGetUserCountryInfo } from "@/services/hooks/queries/use-auth";
+import { useMultipleRequestVariables } from "@/services/hooks/queries/use-profile";
 
 export default function SignUp() {
   const router = useRouter();
   const [ref, bounds] = useMeasure();
   const queryClient = useQueryClient();
+
+  const { data: countryInfo } = useGetUserCountryInfo();
+  const { data: countryListData } = useMultipleRequestVariables([
+    "country-list",
+  ]);
+
+  const countryList =
+    countryListData?.["country-list"]?.map(
+      (val: { name: string; iso2: string }) => {
+        return {
+          id: val?.iso2,
+          value: val?.name,
+        };
+      }
+    ) || [];
+
+  const preSelectedCountry = countryList?.filter(
+    (val: { id: string }) => val?.id === countryInfo?.country
+  )[0]?.value;
 
   const { mutate, isPending } = useInitRegister(() => {
     localStorage.setItem("email_to_verify", form.getValues("email"));
@@ -57,8 +79,15 @@ export default function SignUp() {
       dob: signUpDetails?.dob || undefined,
       password: signUpDetails?.password || "",
       terms: signUpDetails?.terms || false,
+      residence_country: preSelectedCountry || "",
     },
   });
+
+  useEffect(() => {
+    if (preSelectedCountry) {
+      form.setValue("residence_country", preSelectedCountry);
+    }
+  }, [preSelectedCountry]);
 
   function onSubmit({
     first_name,
@@ -66,14 +95,18 @@ export default function SignUp() {
     dob,
     password,
     email,
+    residence_country,
   }: z.infer<typeof signUpSchema>) {
-    mutate({
+    const data = {
       first_name,
       last_name,
       email,
       password,
       dob: format(dob, "yyyy-MM-dd"),
-    });
+      residence_country,
+    };
+
+    mutate(data);
   }
 
   const buttonCopy = {
@@ -177,23 +210,44 @@ export default function SignUp() {
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <PasswordInput
-                      value={field.value}
-                      onChange={field.onChange}
-                      id={field.name}
-                      name={field.name}
-                      labelTitle="Password"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <PasswordInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        id={field.name}
+                        name={field.name}
+                        labelTitle="Password"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="residence_country"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-1">
+                    <p className="text-sm font-medium text-brand-2">Country</p>
+
+                    <SelectCmp
+                      selectItems={countryList}
+                      disabled={!!preSelectedCountry}
+                      placeholder={"Country"}
+                      onSelect={(e) => field.onChange(e)}
+                      {...field}
+                      value={preSelectedCountry ?? ""}
                     />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}

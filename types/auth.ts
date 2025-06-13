@@ -4,6 +4,7 @@ export type InitRegisterType = {
   last_name: string;
   password: string;
   dob: string; // Must be +18. Format is YYYY-MM-DD
+  residence_country: string;
 };
 
 export type CompleteRegisterType = {

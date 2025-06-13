@@ -91,7 +91,7 @@ export function hasCompletedBasicProfile(data?: UpdateProfileType): boolean {
     // phone_number,
     // gender,
     marital_status,
-    origin_country,
+    residence_country,
     preferred_lan,
   } = data;
 
@@ -99,7 +99,7 @@ export function hasCompletedBasicProfile(data?: UpdateProfileType): boolean {
     // Boolean(phone_number?.trim()) &&
     // Boolean(gender?.trim()) &&
     Boolean(marital_status?.trim()) &&
-    Boolean(origin_country?.trim()) &&
+    Boolean(residence_country?.trim()) &&
     Boolean(preferred_lan?.trim())
   );
 }
