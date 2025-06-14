@@ -16,7 +16,7 @@ import {
 import { RenderIf } from "@/components/shared";
 import { toast } from "sonner";
 import ToolBar from "./tool-bar";
-import { RatingDialog } from "../../appointments/rating-form";
+import { LeaveSessionModal } from "./leave-session-modal";
 
 interface MeetingViewProps {
   isProvider?: boolean;
@@ -31,7 +31,7 @@ const MeetingView: React.FC<MeetingViewProps> = ({
   onMeetingLeft,
   commMode = "audio",
 }) => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [layout, setLayout] = useState<"grid" | "focus">("focus");
   const [isMeetingJoined, setIsMeetingJoined] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -204,12 +204,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
       if (onMeetingLeft) {
         onMeetingLeft();
       } else {
-        router.push("/home");
+        window.close();
       }
     } catch (error) {
       console.error("Error leaving meeting:", error);
 
-      router.push("/home");
+      window.close();
     }
   }, [isMeetingJoined, leave, onMeetingLeft, router]);
 
@@ -315,11 +315,6 @@ const MeetingView: React.FC<MeetingViewProps> = ({
 
   const handleEndCall = useCallback(
     async () => {
-      if (!isProvider) {
-        setOpen(true);
-        return;
-      }
-
       try {
         setIsLeaving(true);
 
@@ -327,11 +322,11 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           await leave();
         }
 
-        router.push("/home");
+        window.close();
       } catch (error) {
         console.error("Error ending call:", error);
 
-        router.push("/home");
+        window.close();
       }
     },
     // eslint-disable-next-line
@@ -474,19 +469,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           localMicOn={localMicOn}
           localWebcamOn={localWebcamOn}
           isLeaving={isLeaving}
-          handleEndCall={handleEndCall}
+          handleEndCall={() => setIsOpen(true)}
           handleToggleAudio={handleToggleAudio}
           handleToggleVideo={handleToggleVideo}
           isVideoEnabled={isVideoEnabled}
         />
       </div>
-
-      <RatingDialog
-        open={open}
-        personName={otherParticipants[0]?.displayName}
-        onOpenChange={setOpen}
-        onSuccess={handleEndCall}
-      />
 
       <AlertDialog
         open={isMultiDeviceDialogOpen}
@@ -512,6 +500,12 @@ const MeetingView: React.FC<MeetingViewProps> = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <LeaveSessionModal
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        handleLeaveSession={handleEndCall}
+      />
     </div>
   );
 };

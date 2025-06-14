@@ -3,7 +3,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 // import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
-import Link from "next/link";
 import { parseISO, format } from "date-fns";
 import { useGetLiveSession } from "@/services/hooks/queries/use-appointments";
 
@@ -62,13 +61,16 @@ export function StartSession() {
         </Button>
         <RenderIf condition={!!data?.token}>
           <Button className="h-12 flex-1 md:flex-none py-3 px-4" asChild>
-            <Link
+            <a
               href={`/start-session?user_id=${user_id}&appointment_id=${appointment_id}${
                 provider_id ? `&provider_id=${provider_id}` : ""
               }`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="decoration-none text-white font-semibold flex items-center justify-center h-full"
             >
               Join Session
-            </Link>
+            </a>
           </Button>
         </RenderIf>
       </div>
