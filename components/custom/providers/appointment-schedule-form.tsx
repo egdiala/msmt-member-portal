@@ -68,6 +68,7 @@ import { useGetSingleFamilyOrFriend } from "@/services/hooks/queries/use-family-
 import { FetchedPaymentOptionFamilyType } from "@/types/family-and-friends";
 import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 import type { FetchedWalletTransactionsStatsType } from "@/types/wallet";
+import { UserProfileType } from "@/types/profile";
 import { toast } from "sonner";
 import { FundWalletModal } from "../wallet/fund-wallet-modal";
 import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
@@ -79,6 +80,7 @@ interface ISetScheduleStep {
 }
 export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const navigate = useRouter();
+
   const [openReschedule, setOpenReschedule] = useState(false);
   const [rescheduleData, setRescheduleData] =
     useState<RescheduleAppointmentPayload>({} as RescheduleAppointmentPayload);
@@ -118,17 +120,27 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
       { enabled: isPublic ? false : !!provider_id }
     );
 
+  const [user, setUser] = useState<UserProfileType>();
+
+  useEffect(() => {
+    if (window !== undefined) {
+      setUser(JSON.parse(localStorage.getItem("user") as string));
+    }
+  }, []);
+
   const { data: providerInfo, isLoading: isLoadingProviderInfo } =
     useGetServiceProviders<FetchSingleProvider>({
       user_id: provider_id?.toString(),
       user_type: "provider",
       account_service_type: "provider",
+      residence_country: user?.residence_country,
     });
 
   const { data: orgInfo } = useGetServiceProviders<FetchOrganizationProvider>({
     user_id: org_id?.toString(),
     user_type: "org",
     account_service_type: "payer",
+    residence_country: user?.residence_country,
   });
 
   const paymentMethods = [

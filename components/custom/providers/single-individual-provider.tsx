@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { differenceInYears } from "date-fns";
@@ -26,6 +26,7 @@ import {
 } from "@/services/hooks/mutations/use-providers";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
 import { FetchSingleProvider } from "@/types/providers";
+import { UserProfileType } from "@/types/profile";
 
 export const SingleIndividualProviderContent = () => {
   const { id } = useParams();
@@ -34,6 +35,13 @@ export const SingleIndividualProviderContent = () => {
   const isLoggedIn = !!Cookies.get("authToken");
   const searchParams = useSearchParams();
   const { data: userProfile } = useGetProfile();
+  const [user, setUser] = useState<UserProfileType>();
+
+  useEffect(() => {
+    if (window !== undefined) {
+      setUser(JSON.parse(localStorage.getItem("user") as string));
+    }
+  }, []);
 
   const user_type = searchParams.get("type") as "provider" | "org";
   const account_service_type = searchParams.get("service_type") as
@@ -45,6 +53,7 @@ export const SingleIndividualProviderContent = () => {
     user_type: user_type,
     account_service_type: account_service_type,
     member_id: userProfile?.user_id,
+    residence_country: user?.residence_country,
   });
 
   const yearsOfExperience = differenceInYears(
