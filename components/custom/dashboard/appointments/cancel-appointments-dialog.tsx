@@ -32,8 +32,6 @@ export function CancelAppointmentDialog({
     loading: <Loader className="spinner size-4" />,
   };
 
-  console.log(notice, "NOTICE");
-
   const buttonState = useMemo(() => {
     return isRemoving ? "loading" : "idle";
   }, [isRemoving]);

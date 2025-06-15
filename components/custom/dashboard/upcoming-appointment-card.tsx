@@ -3,30 +3,29 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useMemo } from "react";
-import { Loader } from "@/components/shared/loader";
-import { CancelAppointmentDialog } from "./appointments/cancel-appointments-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { compareAsc, isAfter } from "date-fns";
 import { AnimatePresence, motion } from "motion/react";
+import { Loader } from "@/components/shared/loader";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   IconCalendarCheck2,
   IconClock,
   IconExternalLink,
-  // IconHeart,
-  // IconStarFull,
 } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/shared/empty-state";
+import { RenderIf } from "@/components/shared";
+import { formatApptTimeShort, isEmpty } from "@/lib/utils";
+import { BLUR_VARIANTS } from "@/lib/constants";
 import { useGetAppointments } from "@/services/hooks/queries/use-appointments";
 import {
   useCancelAppointment,
   useCancelAppointmentWithoutNotice,
 } from "@/services/hooks/mutations/use-appointment";
-import { formatSessionDate } from "./appointments/details/appointment-details";
-import { formatApptTimeShort, isEmpty } from "@/lib/utils";
-import { EmptyState } from "@/components/shared/empty-state";
-import { BLUR_VARIANTS } from "@/lib/constants";
-import { RenderIf } from "@/components/shared";
 import { useGetProfile } from "@/services/hooks/queries/use-profile";
+import { CancelAppointmentDialog } from "./appointments/cancel-appointments-dialog";
+import { formatSessionDate } from "./appointments/details/appointment-details";
 
 export const UpcomingAppointmentCard = () => {
   const [openCancelModal, setOpenCancelModal] = useState(false);
@@ -43,7 +42,24 @@ export const UpcomingAppointmentCard = () => {
       setOpenCancelModal(false);
     });
 
-  const mostRecent = !!live?.length ? live?.[0] : data?.[0];
+  const liveAppointments = live && live?.length > 0 ? live : [];
+  const upcomingAppointments = data && data?.length > 0 ? data : [];
+
+  const appointmentsWithDateObjects = [
+    ...liveAppointments,
+    ...upcomingAppointments,
+  ];
+
+  const now = new Date();
+  const upcoming = appointmentsWithDateObjects?.filter((app) =>
+    isAfter(app?.appt_schedule, now)
+  );
+
+  // Sort by soonest
+  upcoming.sort((a, b) => compareAsc(a.appt_schedule, b.appt_schedule));
+
+  // Get next one
+  const mostRecent = upcoming[0];
 
   const buttonCopy = {
     idle: "Cancel Appointment",

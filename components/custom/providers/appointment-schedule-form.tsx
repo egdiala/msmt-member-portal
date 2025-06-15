@@ -41,6 +41,7 @@ import {
 } from "@/components/icons";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import {
   cn,
   formatTimeToAMPM,
@@ -80,6 +81,7 @@ interface ISetScheduleStep {
 }
 export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const navigate = useRouter();
+  const currency = useGetCurrencyToDisplay();
 
   const [openReschedule, setOpenReschedule] = useState(false);
   const [rescheduleData, setRescheduleData] =
@@ -94,6 +96,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
 
   const searchParams = useSearchParams();
   const booking_link = searchParams.get("booking_link") as string | undefined;
+  const service_offer_id = searchParams.get("service_offer_id") as string;
   const provider_id = searchParams.get("provider_id") as string;
   const org_id = searchParams.get("org_id") as string;
   const appointment_id = searchParams.get("appointment_id") as
@@ -239,7 +242,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
     resolver: zodResolver(setAppointmentSchedule),
     mode: "onChange",
     defaultValues: {
-      service: "",
+      service: isPublic ? service_offer_id : "",
       paymentMethod: "",
       appointmentDate: new Date(),
       appointmentTime: "",
@@ -254,23 +257,25 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
 
   const { mutate: completeOrgBooking, isPending: isSubmitting } =
     useCompleteOrgBooking((res) => {
-      localStorage.setItem("booking-appointment-id", res?.appointment_id);
+      console.log({ res });
+      localStorage.setItem("booking-appointment-id", res?.data?.appointment_id);
       setStep(3);
     });
 
   async function onSubmit(values: z.infer<typeof setAppointmentSchedule>) {
     const dataToBeSent = {
       provider_id: provider_id,
-      service_offer_id:
-        account_service_type === "provider" && user_type === "org"
-          ? orgInfo?.service_data?.filter(
-              (val: { name: string }) =>
-                val.name === values.service.split(" - ")[0]
-            )[0]?.service_offer_id ?? ""
-          : providerInfo?.service_data?.filter(
-              (val: { name: string }) =>
-                val.name === values.service.split(" - ")[0]
-            )[0]?.service_offer_id ?? "",
+      service_offer_id: !isLoggedIn
+        ? service_offer_id
+        : account_service_type === "provider" && user_type === "org"
+        ? orgInfo?.service_data?.filter(
+            (val: { name: string }) =>
+              val.name === values.service?.split(" - ")[0]
+          )[0]?.service_offer_id ?? ""
+        : providerInfo?.service_data?.filter(
+            (val: { name: string }) =>
+              val.name === values.service?.split(" - ")[0]
+          )[0]?.service_offer_id ?? "",
       appt_date: format(values.appointmentDate, "yyyy-MM-dd"),
       appt_time:
         formattedSlots?.filter(
@@ -346,7 +351,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   useEffect(() => {
     const serviceAmount = parseInt(
       formService
-        .split(" - ")?.[1]
+        ?.split(" - ")?.[1]
         ?.replace(/,/g, "")
         ?.split(".")?.[0]
         ?.substring(1)
@@ -494,7 +499,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     <FormItem>
                       <FormControl>
                         <SelectCmp
-                          disabled={!!appointment_id}
+                          disabled={!!appointment_id || !isLoggedIn}
                           selectItems={
                             account_service_type === "provider" &&
                             user_type === "org"
@@ -511,7 +516,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                           : `${
                                               val?.name
                                             } - ${formatNumberWithCommas(
-                                              val?.amount
+                                              val?.amount,
+                                              currency ?? "ngn"
                                             )}`,
                                     };
                                   }
@@ -531,7 +537,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                           : `${
                                               val?.name
                                             } - ${formatNumberWithCommas(
-                                              val?.amount
+                                              val?.amount,
+                                              currency ?? "ngn"
                                             )}`,
                                     };
                                   }
@@ -542,6 +549,14 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                           }}
                           placeholder="Service"
                           {...field}
+                          value={
+                            !isLoggedIn
+                              ? orgInfo?.service_data?.filter(
+                                  (val) =>
+                                    val.service_offer_id === service_offer_id
+                                )[0]?.name
+                              : field.value
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -558,8 +573,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                   isPublic
                     ? "N/A"
                     : `${
-                        form.watch("service").split(" - ")[1] ||
-                        formatNumberWithCommas(0)
+                        form.watch("service")?.split(" - ")[1] ||
+                        formatNumberWithCommas(0, currency ?? "ngn")
                       }
                   /hr`}
                 </p>
@@ -820,6 +835,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               <Button variant="secondary" asChild>
                 <Link href="/providers">Go Back</Link>
               </Button>
+
               <Button
                 type="submit"
                 disabled={!form.formState.isValid || isPending || isSubmitting}

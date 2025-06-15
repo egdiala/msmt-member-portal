@@ -22,6 +22,7 @@ import {
   setPaginationParams,
 } from "@/hooks/use-pagination-params";
 import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import {
   PROVIDER_FILTER_KEY_MATCH,
   PROVIDERS_TABLE_HEADERS,
@@ -54,10 +55,13 @@ export const SingleOrganisationProviderContent = ({
   isPublic?: boolean;
 }) => {
   const { id } = useParams();
+  const currency = useGetCurrencyToDisplay();
 
   const searchParams = useSearchParams();
   const user_type = searchParams.get("type") as "provider" | "org";
   const account_type = searchParams.get("service_type") as "provider" | "payer";
+  const member_id = searchParams.get("member_id") as string;
+  const service_offer_id = searchParams.get("service_offer_id") as string;
 
   const { value, onChangeHandler } = useDebounce(400);
 
@@ -123,13 +127,15 @@ export const SingleOrganisationProviderContent = ({
   >({
     org_id: id!.toString(),
     ...(value ? { q: value } : {}),
-    member_id: userProfile?.user_id,
+    ...(isPublic ? { service_offer_id: service_offer_id } : {}),
+    member_id: isPublic ? member_id : userProfile?.user_id,
     ...filters,
   });
 
   const { data: providersCount } =
     useGetOrganizationProviders<FetchedServiceProvidersCountType>({
       org_id: id!.toString(),
+      member_id: isPublic ? member_id : userProfile?.user_id,
       component: "count",
       ...filters,
     });
@@ -154,7 +160,10 @@ export const SingleOrganisationProviderContent = ({
       title: account_type === "provider" ? "Charge" : "Total Members",
       value:
         account_type === "provider"
-          ? `From ${formatNumberWithCommas(data?.charge_from ?? 0)}/hr`
+          ? `From ${formatNumberWithCommas(
+              data?.charge_from ?? 0,
+              currency ?? "ngn"
+            )}/hr`
           : data?.total_member ?? 0,
     },
     { id: 2, title: "Providers", value: data?.total_provider ?? 0 },
@@ -427,6 +436,7 @@ export const SingleOrganisationProviderContent = ({
                     rating: provider?.rating?.toString(),
                   }}
                   charge_from={provider?.user_data?.charge_from}
+                  serviceOfferId={service_offer_id ?? ""}
                 />
               ))}
             </div>
@@ -474,6 +484,7 @@ export const SingleOrganisationProviderContent = ({
                       rating: provider?.rating?.toString(),
                     }}
                     charge_from={provider?.user_data?.charge_from}
+                    serviceOfferId={service_offer_id ?? ""}
                   />
                 ))}
               </div>

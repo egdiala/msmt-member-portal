@@ -17,6 +17,7 @@ export type BookingQuestionnaireType = {
     sub_question?: string | string[];
     answer: string | string[];
   }[];
+  booking_link?: string;
 };
 
 export interface FetchedQuestionsForQuestionnaireType {

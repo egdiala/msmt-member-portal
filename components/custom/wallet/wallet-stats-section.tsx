@@ -1,6 +1,7 @@
 "use client";
 
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 import { FetchedWalletTransactionsStatsType } from "@/types/wallet";
 import { TransactionStatCard } from "./transaction-stat-card";
@@ -10,6 +11,8 @@ export const WalletStatsSection = () => {
     useGetWalletTransactions<FetchedWalletTransactionsStatsType>({
       component: "count-status",
     });
+
+  const currency = useGetCurrencyToDisplay();
 
   const walletStats = [
     {
@@ -23,13 +26,19 @@ export const WalletStatsSection = () => {
     {
       id: 2,
       title: "Total Credit",
-      value: formatNumberWithCommas(walletTransactionsStats?.total_credit || 0),
+      value: formatNumberWithCommas(
+        walletTransactionsStats?.total_credit || 0,
+        currency ?? "ngn"
+      ),
       bg: "bg-green",
     },
     {
       id: 3,
       title: "Total Deduction",
-      value: formatNumberWithCommas(walletTransactionsStats?.total_debit || 0),
+      value: formatNumberWithCommas(
+        walletTransactionsStats?.total_debit || 0,
+        currency ?? "ngn"
+      ),
       bg: "bg-red-light",
       // href: "/wallet/deductions",
     },

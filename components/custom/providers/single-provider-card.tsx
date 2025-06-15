@@ -11,11 +11,13 @@ import {
 import { RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage } from "@/components/ui";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import { cn } from "@/lib/utils";
 import { FetchedServiceProvidersType } from "@/types/providers";
 
 interface ISingleProviderCard extends FetchedServiceProvidersType {
   key: string;
+  serviceOfferId?: string;
 }
 export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const { id } = useParams();
@@ -24,6 +26,7 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const booking_link = searchParams.get("booking_link") as string | undefined;
 
   const path = usePathname();
+  const currency = useGetCurrencyToDisplay();
 
   const ProviderSpecialtyInfo = () => {
     return (
@@ -46,7 +49,11 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           provider?.provider_data?.user_id
         }?type=${provider?.provider_data?.user_type}&service_type=${
           provider?.provider_data?.account_service_type
-        }${booking_link ? `&booking_link=${booking_link}` : ""}`;
+        }${booking_link ? `&booking_link=${booking_link}` : ""}${
+          provider?.serviceOfferId
+            ? `&service_offer_id=${provider?.serviceOfferId}`
+            : ""
+        }`;
       } else if (
         provider?.provider_data?.user_type.toLowerCase() === "provider"
       ) {
@@ -62,6 +69,10 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
           provider?.provider_data?.account_service_type
         }&user_type=provider&user_service_type=provider${
           booking_link ? `&booking_link=${booking_link}` : ""
+        }${
+          provider?.serviceOfferId
+            ? `&service_offer_id=${provider?.serviceOfferId}`
+            : ""
         }`;
       }
     } else {
@@ -180,7 +191,12 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
             }
           >
             <p className="font-medium text-xs">
-              From {formatNumberWithCommas(provider?.charge_from as number)}/hr
+              From{" "}
+              {formatNumberWithCommas(
+                provider?.charge_from as number,
+                currency ?? "ngn"
+              )}
+              /hr
             </p>
           </RenderIf>
         </div>

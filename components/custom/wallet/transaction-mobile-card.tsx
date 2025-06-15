@@ -1,6 +1,7 @@
 import { IconStethoscope } from "@/components/icons";
 import { RenderIf } from "@/components/shared";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import { WALLET_TRANSACTION_TYPE_FILTER_ENUM } from "@/lib/constants";
 import { cn, formatTableDate } from "@/lib/utils";
 import { FetchedWalletTransactionsType } from "@/types/wallet";
@@ -8,6 +9,8 @@ import { FetchedWalletTransactionsType } from "@/types/wallet";
 export const TransactionMobileCard = (
   transaction: FetchedWalletTransactionsType
 ) => {
+  const currency = useGetCurrencyToDisplay();
+
   return (
     <div
       key={transaction.transaction_id}
@@ -48,7 +51,7 @@ export const TransactionMobileCard = (
         </div>
 
         <p className="text-brand-2 font-medium text-xs">
-          {formatNumberWithCommas(transaction.amount ?? 0)}
+          {formatNumberWithCommas(transaction.amount ?? 0, currency ?? "ngn")}
         </p>
       </div>
     </div>

@@ -41,12 +41,14 @@ import { FundWalletModal } from "./fund-wallet-modal";
 import { FilterTransactionsPopover } from "./filter-transactions-popover";
 import { TransactionMobileCard } from "./transaction-mobile-card";
 import { WALLET_TRANSACTION_STATUS_FILTER_ENUM } from "../../../lib/constants";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 
 export const WalletTable = () => {
   const itemsPerPage = 10;
   const [page, setPage] = useState(1);
 
   const searchParams = useSearchParams();
+  const currency = useGetCurrencyToDisplay();
 
   const [filters, setFilters] = useState<Record<string, any>>({});
 
@@ -74,7 +76,11 @@ export const WalletTable = () => {
         </p>
       ),
       description: transaction.description,
-      amount: <p>{formatNumberWithCommas(transaction.amount ?? 0)}</p>,
+      amount: (
+        <p>
+          {formatNumberWithCommas(transaction.amount ?? 0, currency ?? "ngn")}
+        </p>
+      ),
       type: (
         <p className="capitalize">
           <RenderIf condition={transaction.transaction_type === 1}>

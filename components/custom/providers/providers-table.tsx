@@ -29,6 +29,7 @@ import {
   setPaginationParams,
 } from "@/hooks/use-pagination-params";
 import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import { cn } from "@/lib/utils";
 import {
   PROVIDER_FILTER_KEY_MATCH,
@@ -47,6 +48,7 @@ import { FilterProvidersTable } from "./filter-providers-table";
 export const ProvidersTable = () => {
   const [showGridView, setShowGridView] = useState(true);
   const isLoggedIn = !!Cookies.get("authToken");
+  const currency = useGetCurrencyToDisplay();
 
   const [user, setUser] = useState<UserProfileType>();
 
@@ -205,7 +207,7 @@ export const ProvidersTable = () => {
       ),
       charge_from: (
         <p className="capitalize">
-          {formatNumberWithCommas(provider?.charge_from)}
+          {formatNumberWithCommas(provider?.charge_from, currency ?? "ngn")}
         </p>
       ),
     };

@@ -39,10 +39,12 @@ const VerifyBooking = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const { data, status } = useGetBookOrganization(token as string)
+  const { data, status } = useGetBookOrganization(token as string);
   const { mutate, isPending } = useValidateOrgBooking(() => {
     localStorage.setItem("booking-link", token!);
-    router.push(`/organisation/${data?.org_data?.org_id}?type=org&service_type=payer&booking_link=${token}`)
+    router.push(
+      `/organisation/${data?.org_data?.org_id}?type=org&service_type=payer&booking_link=${token}&member_id=${data?.member_org_id}&service_offer_id=${data?.service_offer_id}`
+    );
   });
 
   const form = useForm<FormValues>({
@@ -65,25 +67,39 @@ const VerifyBooking = () => {
   return (
     <main className="flex flex-col justify-center w-full h-[calc(100vh-200px)]">
       <div className="mx-auto max-w-[650px] w-full flex flex-col gap-4">
-        <RenderIf condition={(data === undefined) && (status == "error")}>
+        <RenderIf condition={data === undefined && status == "error"}>
           <div className="flex flex-col items-center justify-center flex-1 gap-1 max-w-md mx-auto w-full">
-            <Image src="/link-expired.svg" alt="error" width={212.25} height={194.56} />
+            <Image
+              src="/link-expired.svg"
+              alt="error"
+              width={212.25}
+              height={194.56}
+            />
             <h1 className="text-brand-1 text-3xl font-bold">Link Expired</h1>
-            <p className="text-brand-2 text-center text-base font-medium">This link has expired cannot be used again. Please contact your administrator or book a new appointment</p>
+            <p className="text-brand-2 text-center text-base font-medium">
+              This link has expired cannot be used again. Please contact your
+              administrator or book a new appointment
+            </p>
           </div>
         </RenderIf>
         <RenderIf condition={data !== undefined}>
           <div className="py-5 grid gap-1 text-center">
-            <h1 className="text-text-1 text-lg md:text-2xl font-bold">Welcome</h1>
+            <h1 className="text-text-1 text-lg md:text-2xl font-bold">
+              Welcome
+            </h1>
             <p className="text-sm font-normal text-text-2">
               {" "}
-              Your organization has taken the first step in booking an appointment
-              on your behalf. To complete the process, we will need you to select
-              a provider of your choice and set your availability.
+              Your organization has taken the first step in booking an
+              appointment on your behalf. To complete the process, we will need
+              you to select a provider of your choice and set your availability.
             </p>
           </div>
           <OrganizationCard
-            organization={{ name: data?.org_data?.name || "", type: data?.org_data?.industry_name || "", avatar: data?.org_data?.avatar || "" }}
+            organization={{
+              name: data?.org_data?.name || "",
+              type: data?.org_data?.industry_name || "",
+              avatar: data?.org_data?.avatar || "",
+            }}
           />
         </RenderIf>
 
@@ -99,8 +115,7 @@ const VerifyBooking = () => {
                   Enter booking code
                 </h2>
                 <span className="text-text-1 text-xs">
-                  Please enter the five digit code has been sent to
-                  your email
+                  Please enter the five digit code has been sent to your email
                 </span>
               </div>
 
@@ -160,7 +175,11 @@ const VerifyBooking = () => {
         <RenderIf condition={data?.status === 1}>
           <div className="flex justify-center mt-4">
             <Button asChild className="rounded-full w-41">
-              <Link href={`/organisation/${data?.org_data?.org_id}?type=org&service_type=payer&booking_link=${token}`}>Continue</Link>
+              <Link
+                href={`/organisation/${data?.org_data?.org_id}?type=org&service_type=payer&booking_link=${token}&member_id=${data?.member_org_id}&service_offer_id=${data?.service_offer_id}`}
+              >
+                Continue
+              </Link>
             </Button>
           </div>
         </RenderIf>

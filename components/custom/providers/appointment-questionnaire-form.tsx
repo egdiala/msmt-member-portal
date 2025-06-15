@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import Cookies from "js-cookie";
@@ -32,6 +32,7 @@ export const FillAppointmentQuestionnaireForm = ({
   setStep,
 }: IFillAppointmentQuestionnaireForm) => {
   const router = useRouter();
+  const isLoggedIn = Cookies.get("authToken");
 
   const { data, isLoading } = useMultipleRequestVariables(["booking-question"]);
   const { mutate, isPending } = useSubmitBookingQuestionnaire(() =>
@@ -77,12 +78,11 @@ export const FillAppointmentQuestionnaireForm = ({
     defaultValues,
   });
 
-  // const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
 
   async function onSubmit(values: z.infer<typeof schema>) {
     const bookingId = localStorage.getItem("booking-appointment-id");
-    // const booking_link = searchParams.get("booking_link") as string | undefined;
-    console.log({ bookingId });
+    const booking_link = searchParams.get("booking_link") as string | undefined;
     const isLoggedIn = Cookies.get("authToken");
 
     if (!!isLoggedIn) {
@@ -93,6 +93,7 @@ export const FillAppointmentQuestionnaireForm = ({
     } else {
       submitOrgQuestionnaire({
         data: mapAnswersToData(questions, values),
+        booking_link: booking_link,
         appointment_id: bookingId as string,
       });
     }
@@ -221,14 +222,22 @@ export const FillAppointmentQuestionnaireForm = ({
             </div>
 
             <div className="grid grid-cols-2 md:flex md:items-center md:justify-end gap-x-5">
-              <Button
-                className="shadow-none"
-                variant="secondary"
-                onClick={() => setStep(1)}
-                type="button"
-              >
-                Cancel
-              </Button>
+              <RenderIf condition={!!isLoggedIn}>
+                <Button
+                  className="shadow-none"
+                  variant="secondary"
+                  onClick={() => setStep(1)}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+              </RenderIf>
+
+              <RenderIf condition={!isLoggedIn}>
+                <Button variant="secondary" onClick={() => router.back()}>
+                  Cancel
+                </Button>
+              </RenderIf>
 
               <Button
                 type="submit"
