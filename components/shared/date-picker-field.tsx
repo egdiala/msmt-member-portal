@@ -170,6 +170,9 @@ export const DatePickerField: React.FC<DatePickerPopoverProps> = ({
             }
             label={label}
             className="pr-8"
+            onChange={() => {
+              console.log("");
+            }}
           />
           <IconCalendar className="absolute right-3 bottom-2 -translate-y-1/2 h-5 w-5 stroke-brand-3" />
         </div>

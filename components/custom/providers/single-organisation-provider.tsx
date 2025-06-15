@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { IconList, IconList2, IconStarFull } from "@/components/icons";
@@ -44,6 +44,7 @@ import {
   FetchedSingleOrganizationProviders,
   FetchOrganizationProvider,
 } from "@/types/providers";
+import { UserProfileType } from "@/types/profile";
 import { FilterOrganisationsProvidersPopover } from "./filter-organisations-providers-popover";
 import { SingleProviderCard } from "./single-provider-card";
 
@@ -63,6 +64,13 @@ export const SingleOrganisationProviderContent = ({
   const { value, onChangeHandler } = useDebounce(400);
 
   const { data: userProfile } = useGetProfile();
+  const [user, setUser] = useState<UserProfileType>();
+
+  useEffect(() => {
+    if (window !== undefined) {
+      setUser(JSON.parse(localStorage.getItem("user") as string));
+    }
+  }, []);
 
   const { data, isLoading: isLoadingServiceProviderInfo } =
     useGetServiceProviders<FetchOrganizationProvider>({
@@ -70,6 +78,7 @@ export const SingleOrganisationProviderContent = ({
       user_type: user_type,
       account_service_type: account_type,
       member_id: userProfile?.user_id,
+      residence_country: user?.residence_country,
     });
 
   const [filters, setFilters] = useState<Record<string, any>>({});

@@ -36,6 +36,7 @@ interface MeetingConfig {
 const VideoSDKApp: React.FC = () => {
   const searchParams = useSearchParams();
   const user_id = searchParams.get("user_id");
+  const provider_id = searchParams.get("provider_id");
   const appointment_id = searchParams.get("appointment_id");
   const [meetingConfig, setMeetingConfig] = useState<MeetingConfig | null>(
     null
@@ -63,7 +64,7 @@ const VideoSDKApp: React.FC = () => {
         setIsLoading(true);
         const response = await requestLiveSession({
           appointment_id: appointment_id as string,
-          user_id: user_id as string,
+          user_id: !!provider_id ? provider_id as string : user_id as string,
         });
         const data = response.data;
 
@@ -84,7 +85,7 @@ const VideoSDKApp: React.FC = () => {
           token: data?.token,
           participantName: displayName,
           participantRole: data?.is_host ? "Provider" : "Patient",
-          participantId: user_id as string,
+          participantId: data?.is_host ? provider_id as string : user_id as string,
           metaData: {
             name: displayName,
             avatar: displayAvatar,
@@ -105,10 +106,10 @@ const VideoSDKApp: React.FC = () => {
       }
     };
 
-    if (appointment_id && user_id) {
+    if (appointment_id && (user_id || provider_id)) {
       fetchMeetingDetails();
     }
-  }, [appointment_id, user_id, userAudioEnabled, userVideoEnabled]);
+  }, [appointment_id, user_id, provider_id, userAudioEnabled, userVideoEnabled]);
 
   useEffect(() => {
     const initializeMediaDevices = async () => {

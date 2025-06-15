@@ -67,6 +67,7 @@ export const signUpSchema = z.object({
   terms: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
   }),
+  residence_country: z.string().min(2, "Country is required"),
 });
 
 export const profileSecuritySchema = z

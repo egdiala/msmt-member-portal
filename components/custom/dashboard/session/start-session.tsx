@@ -3,36 +3,37 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 // import { OrganizationCard } from "./organization-card";
 import { ProviderCard } from "./provider-card";
-import Link from "next/link";
-import { formatApptTimeShort } from "@/lib/utils";
-import { formatSessionDate } from "../appointments/details/appointment-details";
-import { useGetAppointmentsById } from "@/services/hooks/queries/use-appointments";
-// import { useGetProfile } from "@/services/hooks/queries/use-profile";
+import { parseISO, format } from "date-fns";
+import { useGetLiveSession } from "@/services/hooks/queries/use-appointments";
+
+import { RenderIf } from "@/components/shared";
+import { useMemo } from "react";
 
 export function StartSession() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const user_id = searchParams.get("user_id");
+  const provider_id = searchParams.get("provider_id");
   const appointment_id = searchParams.get("appointment_id");
-  const { data } = useGetAppointmentsById(appointment_id as string);
-  // const { data: account } = useGetProfile();
 
+  const { data } = useGetLiveSession({
+    appointment_id: appointment_id as string,
+    user_id: user_id as string,
+  });
+  const startDate = useMemo(() => {
+    return data?.end_at ? parseISO(data.end_at) : new Date();
+  }, [data?.end_at]);
 
   const provider = {
-    name: data?.provider_data?.name || "-",
-    role: data?.provider_data?.specialty || "-",
-    imageUrl: data?.provider_data?.avatar,
-    date: formatSessionDate(data?.appt_date || ""),
-    time: formatApptTimeShort(Number(data?.appt_time) || 0),
+    name: !!provider_id ? data?.member_name : data?.provider_name || "-",
+    role: !!provider_id ? "Patient" : data?.provider_specialty || "-",
+    imageUrl: !!provider_id ? data?.member_avatar : data?.provider_avatar,
+    date: format(startDate, "do MMMM yyyy"),
+    time: format(startDate, "h:mm a"),
     duration: "1 hour",
   };
 
-  // const organization = {
-  //   name: account?.org_data[0]?.name || "-",
-  //   avatar: account?.org_data[0]?.avatar,
-  //   type: account?.org_data[0]?.industry_name || "-",
-  // };
   return (
     <div className="w-full max-w-screen-sm mx-auto space-y-4">
       <div className="text-center">
@@ -58,13 +59,20 @@ export function StartSession() {
         >
           Go to Home
         </Button>
-        <Button className="h-12 flex-1 md:flex-none py-3 px-4" asChild>
-          <Link
-            href={`/start-session?user_id=${user_id}&appointment_id=${appointment_id}`}
-          >
-            Join Session
-          </Link>
-        </Button>
+        <RenderIf condition={!!data?.token}>
+          <Button className="h-12 flex-1 md:flex-none py-3 px-4" asChild>
+            <a
+              href={`/start-session?user_id=${user_id}&appointment_id=${appointment_id}${
+                provider_id ? `&provider_id=${provider_id}` : ""
+              }`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="decoration-none text-white font-semibold flex items-center justify-center h-full"
+            >
+              Join Session
+            </a>
+          </Button>
+        </RenderIf>
       </div>
     </div>
   );

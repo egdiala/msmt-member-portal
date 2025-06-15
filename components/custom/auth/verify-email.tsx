@@ -125,6 +125,7 @@ export default function VerifyEmail() {
           email: signUpDetails?.email || "",
           dob: format(signUpDetails?.dob || new Date(), "yyyy-MM-dd"),
           password: signUpDetails?.password || "",
+          residence_country: signUpDetails?.residence_country || "",
         },
         { onSuccess: () => setTimeLeft(120) }
       );
