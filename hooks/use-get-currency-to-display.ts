@@ -10,7 +10,11 @@ export const useGetCurrencyToDisplay = () => {
   let [currency, setCurrency] = useState("");
 
   useEffect(() => {
-    if (user?.data?.residence_country?.toLowerCase() !== "nigeria") {
+    if (
+      user?.data?.residence_country &&
+      user?.data?.residence_country?.length > 0 &&
+      user?.data?.residence_country?.toLowerCase() !== "nigeria"
+    ) {
       setCurrency("USD");
     } else if (user?.data?.residence_country === "") {
       if (userCurrentCountryInfo?.data?.country?.toLowerCase() !== "ng") {
