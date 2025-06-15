@@ -41,6 +41,7 @@ import {
 } from "@/components/icons";
 import { Loader } from "@/components/shared/loader";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import {
   cn,
   formatTimeToAMPM,
@@ -80,6 +81,7 @@ interface ISetScheduleStep {
 }
 export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   const navigate = useRouter();
+  const currency = useGetCurrencyToDisplay();
 
   const [openReschedule, setOpenReschedule] = useState(false);
   const [rescheduleData, setRescheduleData] =
@@ -514,7 +516,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                           : `${
                                               val?.name
                                             } - ${formatNumberWithCommas(
-                                              val?.amount
+                                              val?.amount,
+                                              currency ?? "ngn"
                                             )}`,
                                     };
                                   }
@@ -534,7 +537,8 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                                           : `${
                                               val?.name
                                             } - ${formatNumberWithCommas(
-                                              val?.amount
+                                              val?.amount,
+                                              currency ?? "ngn"
                                             )}`,
                                     };
                                   }
@@ -570,7 +574,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                     ? "N/A"
                     : `${
                         form.watch("service")?.split(" - ")[1] ||
-                        formatNumberWithCommas(0)
+                        formatNumberWithCommas(0, currency ?? "ngn")
                       }
                   /hr`}
                 </p>

@@ -6,6 +6,7 @@ import { IconExternalLink, IconMedicalSavings } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import { BLUR_VARIANTS } from "@/lib/constants";
 import { useGetWalletTransactions } from "@/services/hooks/queries/use-wallet";
 import { FetchedWalletTransactionsStatsType } from "@/types/wallet";
@@ -15,6 +16,7 @@ export const WalletBalanceCard = () => {
     useGetWalletTransactions<FetchedWalletTransactionsStatsType>({
       component: "count-status",
     });
+  const currency = useGetCurrencyToDisplay();
 
   return (
     <AnimatePresence mode="popLayout">
@@ -42,7 +44,11 @@ export const WalletBalanceCard = () => {
           <div className="grid gap-y-1 place-content-start">
             <h5 className="text-sm text-white">Wallet balance</h5>
             <p className="text-2xl text-white">
-              {formatNumberWithCommas((data as FetchedWalletTransactionsStatsType)?.total_balance ?? 0)}
+              {formatNumberWithCommas(
+                (data as FetchedWalletTransactionsStatsType)?.total_balance ??
+                  0,
+                currency ?? "ngn"
+              )}
             </p>
             <Button
               asChild

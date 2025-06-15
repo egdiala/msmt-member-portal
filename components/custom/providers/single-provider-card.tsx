@@ -11,6 +11,7 @@ import {
 import { RenderIf } from "@/components/shared";
 import { Avatar, AvatarImage } from "@/components/ui";
 import { formatNumberWithCommas } from "@/hooks/use-format-currency";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import { cn } from "@/lib/utils";
 import { FetchedServiceProvidersType } from "@/types/providers";
 
@@ -25,6 +26,7 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
   const booking_link = searchParams.get("booking_link") as string | undefined;
 
   const path = usePathname();
+  const currency = useGetCurrencyToDisplay();
 
   const ProviderSpecialtyInfo = () => {
     return (
@@ -189,7 +191,12 @@ export const SingleProviderCard = (provider: Partial<ISingleProviderCard>) => {
             }
           >
             <p className="font-medium text-xs">
-              From {formatNumberWithCommas(provider?.charge_from as number)}/hr
+              From{" "}
+              {formatNumberWithCommas(
+                provider?.charge_from as number,
+                currency ?? "ngn"
+              )}
+              /hr
             </p>
           </RenderIf>
         </div>

@@ -22,6 +22,7 @@ import {
   setPaginationParams,
 } from "@/hooks/use-pagination-params";
 import { useGetTableTotalPages } from "@/hooks/use-format-table-info";
+import { useGetCurrencyToDisplay } from "@/hooks/use-get-currency-to-display";
 import {
   PROVIDER_FILTER_KEY_MATCH,
   PROVIDERS_TABLE_HEADERS,
@@ -54,6 +55,7 @@ export const SingleOrganisationProviderContent = ({
   isPublic?: boolean;
 }) => {
   const { id } = useParams();
+  const currency = useGetCurrencyToDisplay();
 
   const searchParams = useSearchParams();
   const user_type = searchParams.get("type") as "provider" | "org";
@@ -158,7 +160,10 @@ export const SingleOrganisationProviderContent = ({
       title: account_type === "provider" ? "Charge" : "Total Members",
       value:
         account_type === "provider"
-          ? `From ${formatNumberWithCommas(data?.charge_from ?? 0)}/hr`
+          ? `From ${formatNumberWithCommas(
+              data?.charge_from ?? 0,
+              currency ?? "ngn"
+            )}/hr`
           : data?.total_member ?? 0,
     },
     { id: 2, title: "Providers", value: data?.total_provider ?? 0 },
