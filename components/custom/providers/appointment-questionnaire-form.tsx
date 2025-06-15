@@ -32,6 +32,7 @@ export const FillAppointmentQuestionnaireForm = ({
   setStep,
 }: IFillAppointmentQuestionnaireForm) => {
   const router = useRouter();
+  const isLoggedIn = Cookies.get("authToken");
 
   const { data, isLoading } = useMultipleRequestVariables(["booking-question"]);
   const { mutate, isPending } = useSubmitBookingQuestionnaire(() =>
@@ -221,14 +222,22 @@ export const FillAppointmentQuestionnaireForm = ({
             </div>
 
             <div className="grid grid-cols-2 md:flex md:items-center md:justify-end gap-x-5">
-              <Button
-                className="shadow-none"
-                variant="secondary"
-                onClick={() => setStep(1)}
-                type="button"
-              >
-                Cancel
-              </Button>
+              <RenderIf condition={!!isLoggedIn}>
+                <Button
+                  className="shadow-none"
+                  variant="secondary"
+                  onClick={() => setStep(1)}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+              </RenderIf>
+
+              <RenderIf condition={!isLoggedIn}>
+                <Button variant="secondary" onClick={() => router.back()}>
+                  Cancel
+                </Button>
+              </RenderIf>
 
               <Button
                 type="submit"

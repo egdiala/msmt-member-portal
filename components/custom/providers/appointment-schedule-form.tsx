@@ -268,11 +268,11 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
         : account_service_type === "provider" && user_type === "org"
         ? orgInfo?.service_data?.filter(
             (val: { name: string }) =>
-              val.name === values.service.split(" - ")[0]
+              val.name === values.service?.split(" - ")[0]
           )[0]?.service_offer_id ?? ""
         : providerInfo?.service_data?.filter(
             (val: { name: string }) =>
-              val.name === values.service.split(" - ")[0]
+              val.name === values.service?.split(" - ")[0]
           )[0]?.service_offer_id ?? "",
       appt_date: format(values.appointmentDate, "yyyy-MM-dd"),
       appt_time:
@@ -349,7 +349,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
   useEffect(() => {
     const serviceAmount = parseInt(
       formService
-        .split(" - ")?.[1]
+        ?.split(" - ")?.[1]
         ?.replace(/,/g, "")
         ?.split(".")?.[0]
         ?.substring(1)
@@ -569,7 +569,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
                   isPublic
                     ? "N/A"
                     : `${
-                        form.watch("service").split(" - ")[1] ||
+                        form.watch("service")?.split(" - ")[1] ||
                         formatNumberWithCommas(0)
                       }
                   /hr`}
@@ -831,6 +831,7 @@ export const SetScheduleStep = ({ setStep, isPublic }: ISetScheduleStep) => {
               <Button variant="secondary" asChild>
                 <Link href="/providers">Go Back</Link>
               </Button>
+
               <Button
                 type="submit"
                 disabled={!form.formState.isValid || isPending || isSubmitting}
